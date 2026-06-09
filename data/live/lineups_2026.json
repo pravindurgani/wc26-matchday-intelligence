@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-06-10T00:00:00+00:00",
+  "schema_version": 1,
+  "source": "api_football",
+  "hours_ahead": 4,
+  "lineups": [],
+  "warnings": [
+    {
+      "type": "placeholder",
+      "message": "pre-tournament empty snapshot; live fetcher populates within T-4h of each fixture"
+    }
+  ]
+}
