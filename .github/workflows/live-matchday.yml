@@ -155,7 +155,12 @@ jobs:
             echo "No JSON changes to commit."
             exit 0
           fi
-          git commit -m "live: update [skip ci]"
+          # NO `[skip ci]` tag — Vercel treats it as "do not deploy", which is
+          # the opposite of what we want. We need each live update to trigger
+          # a Vercel rebuild so vercel.app serves the fresh JSON. The only
+          # other workflow (daily-baseline.yml) is schedule-only, so there's
+          # nothing here for `[skip ci]` to usefully skip.
+          git commit -m "live: update results @ $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || echo "Push failed — will retry next tick."
           exit 0
 
