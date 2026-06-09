@@ -1,0 +1,88 @@
+name: Probe API-Football knockout shape (one-shot research)
+
+# CI-ONLY empirical probe. Captures sanitized API-Football response shapes
+# for completed knockout tournaments (Euro 2024, World Cup 2022) so we can
+# ground Stream A (knockout fixture map + PEN extraction) in real data
+# instead of guessing at field names.
+#
+# Why not run this locally:
+#   - API_FOOTBALL_KEY lives only in GitHub secrets
+#   - The probe never logs the key, but running it locally puts the key
+#     in shell history. CI is safer.
+#
+# This workflow is deliberately manual-dispatch ONLY — no cron, no push
+# trigger. Run it once when you need to refresh the samples, then commit
+# the resulting files under tests/live/provider_samples/ to the branch.
+#
+# Quota cost: 2 API requests (well under the 7500/day Pro ceiling).
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_samples:
+        description: 'Auto-commit the captured samples to the current branch? (false = artifact only)'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  # Only need write access if commit_samples=true. Default is read.
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run probe (no key in logs)
+        env:
+          # Secret never expanded into a `run:` script — the Python script
+          # reads it from env directly. GitHub redacts secret values from
+          # logs even if accidentally echoed, but defence-in-depth.
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: |
+          python scripts/research/probe_apifootball_knockouts.py
+
+      - name: Upload sanitized samples as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apifootball-knockout-samples
+          path: tests/live/provider_samples/apifootball_*.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload markdown summary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apifootball-probe-summary
+          path: tests/live/provider_samples/apifootball_probe_summary.md
+          if-no-files-found: error
+          retention-days: 30
+
+      # Optional convenience: auto-commit the samples back to the branch
+      # if the dispatcher set commit_samples=true. Off by default so the
+      # captured payloads are reviewable as an artifact first.
+      - name: Commit samples to branch (opt-in)
+        if: github.event.inputs.commit_samples == 'true'
+        run: |
+          set +e
+          git config user.name  "wc26-bot"
+          git config user.email "wc26-bot@users.noreply.github.com"
+          git add tests/live/provider_samples/apifootball_*.json \
+                  tests/live/provider_samples/apifootball_probe_summary.md
+          if git diff --quiet --cached; then
+            echo "No sample changes to commit."
+            exit 0
+          fi
+          git commit -m "research: refresh API-Football knockout probe samples"
+          git pull --rebase origin "$GITHUB_REF_NAME" || true
+          git push origin "HEAD:$GITHUB_REF_NAME" || echo "Push failed — pull samples from the workflow artifact instead."
+          exit 0
