@@ -6,16 +6,16 @@
   "cleanUrls": true,
   "headers": [
     {
-      "source": "/(predictions|predictions_live|live_state|live_delta)\\.json",
+      "source": "/(.*\\.json)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, s-maxage=60, stale-while-revalidate=120" },
+        { "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
     },
     {
-      "source": "/(.*\\.json)",
+      "source": "/(predictions|predictions_live|live_state|live_delta)\\.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, s-maxage=60, stale-while-revalidate=120" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
     },
