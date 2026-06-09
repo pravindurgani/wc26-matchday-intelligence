@@ -217,10 +217,11 @@ In a browser, also test:
 
 ## 6 · Turn on live updates during the tournament
 
-The GitHub Action is already wired but currently runs in **mock** mode (manual
-result entry). To go fully automatic during the tournament:
+The live pipeline has two modes. **Manual / mock** is the default and always
+works without any external service. **API-Football** is the real-provider mode
+— the adapter is fully wired; you just need a key + one CI secret.
 
-### Option A — keep manual mode (default, zero cost, fine for soft-launch)
+### Option A — manual / mock mode (default, zero cost)
 
 Edit `data/live/results_2026.json` after each match and push:
 
@@ -231,29 +232,151 @@ git commit -am "live: lock M1 (Mexico 2-0 South Africa)"
 git push
 ```
 
-The daily-baseline + live-matchday workflows pick it up automatically on the
-next tick (every 15 minutes during 11 Jun → 19 Jul 2026).
+The `live-matchday` workflow runs every 10 minutes (11 Jun → 19 Jul 2026),
+detects the new locked match, re-simulates, and commits updated JSON. The
+dashboard label reads `provider: manual / mock`.
 
-### Option B — wire a real provider feed
+### Option B — activate API-Football (recommended for the tournament)
 
-1. Get an API key from [API-Football](https://www.api-football.com/) or
-   [Sportmonks](https://www.sportmonks.com/).
-2. On the GitHub repo: *Settings → Secrets and variables → Actions → New
-   repository secret* — add `WC_APIFOOTBALL_KEY` (or `WC_SPORTMONKS_TOKEN`).
-3. Also add a variable `WC_RESULTS_SOURCE` set to `apifootball` (or
-   `sportmonks`).
-4. Implement the adapter in `scripts/live/fetch_results.py`
-   (`fetch_apifootball` / `fetch_sportmonks` — placeholder stubs are already
-   present, with the documented API endpoint and headers in their docstrings).
-5. Push. The next matchday tick will exercise the live path.
+**Total time:** ~10 minutes once you have the key.
 
-The orchestrator (`scripts/live/run_live_update.py`) is already hardened:
+#### Step 1 — Get the key
 
-- atomic writes (no half-written JSON ever served)
-- **circuit breaker** — after 3 consecutive sim failures, the loop refuses to
-  overwrite production state and surfaces a warning on `live_state.json`
-- POSTPONED / ABANDONED / CANCELED matches are tracked in `live_state.warnings`
-- the previous `predictions_live.json` is preserved on any failure path
+1. Sign up at <https://www.api-football.com/> (free tier = 100 requests/day,
+   plenty for 10-minute polling during a 38-day tournament).
+2. From your API-Football dashboard, copy the API key.
+3. Find the FIFA World Cup 2026 league id — it appears in the dashboard's
+   "Coverage / Leagues" section. The default is `1`; if API-Football uses a
+   different id for WC26 specifically, copy that one.
+
+#### Step 2 — Configure the repo
+
+In the GitHub repo: **Settings → Secrets and variables → Actions**
+
+Add **Secret** (encrypted, never exposed in logs):
+- `API_FOOTBALL_KEY` = `<paste your key>`
+
+Add **Variable** (plain, visible in workflow logs):
+- `FOOTBALL_PROVIDER` = `api_football`
+- *(Optional)* `API_FOOTBALL_LEAGUE_ID` = the WC2026 league id (default `1`)
+- *(Optional)* `API_FOOTBALL_SEASON` = `2026` (default already correct)
+
+#### Step 3 — Build the fixture map (one-time, local)
+
+The fixture map gives `fetch_results.py` an O(1) `provider_fixture_id → match_id`
+lookup, so we don't fuzzy-match teams every tick.
+
+```bash
+export FOOTBALL_PROVIDER=api_football
+export API_FOOTBALL_KEY="<your key>"
+
+# Dry-run first — prints what would map without writing anything:
+python3 scripts/live/build_provider_fixture_map.py --provider api_football
+
+# Inspect the output. It must say "✓ all 72 group fixtures mapped".
+# If any are unmapped, add the missing team alias to TEAM_ALIAS
+# (scripts/live/fetch_results.py) and re-run.
+
+# Once 72/72 maps, write the file:
+python3 scripts/live/build_provider_fixture_map.py --provider api_football --write
+```
+
+This writes `data/live/provider_fixture_map.json` with all 72 group fixtures
+mapped to provider IDs. **Commit it to the repo** — it's deterministic input
+data, not runtime state.
+
+```bash
+git add data/live/provider_fixture_map.json
+git commit -m "feat: API-Football fixture-id map for WC2026"
+git push
+```
+
+#### Step 4 — Dry-run the orchestrator (no commits, no sim)
+
+```bash
+python3 scripts/live/run_live_update.py --provider api_football --dry-run
+```
+
+You should see:
+
+```
+[fetch_results] provider=api_football (dry-run)
+[fetch_results] GET https://v3.football.api-sports.io/fixtures?league=1&season=2026
+[fetch_results] API-Football returned 72 fixtures
+[dry-run] status distribution: {'NS': 72}     # all not-started, pre-kickoff
+[fetch_results] valid=0 rejected=0 warnings=0
+[fetch_results] dry-run — no file written
+```
+
+If you see HTTP errors (401, 403, 429), the key is wrong or rate-limited —
+fix at API-Football's dashboard.
+
+#### Step 5 — Trigger the workflow manually
+
+```bash
+gh workflow run live-matchday.yml -f provider=api_football -f dry_run=true
+gh run watch
+```
+
+If the dry-run succeeds, trigger a real run:
+
+```bash
+gh workflow run live-matchday.yml
+gh run list --workflow live-matchday.yml --limit 3
+```
+
+#### Step 6 — Verify
+
+After the run completes (~1 min), check:
+
+```bash
+curl -s https://fifa-wc-26-prediction.vercel.app/live_state.json | python3 -m json.tool
+```
+
+You should see:
+
+```json
+{
+  "mode": "pre_tournament",
+  "completed_matches_count": 0,
+  "source": "api_football",
+  "provider_mode": "active",
+  "warnings": [],
+  ...
+}
+```
+
+The dashboard's status badge now reads
+**`provider: API-Football (live)`** instead of `manual / mock`.
+
+#### What's hardened (so you don't get woken up at 3 AM)
+
+- **Atomic writes** — every JSON file goes via `.tmp + rename`. Browsers never
+  see half-written data.
+- **Refuse-to-shrink** — if the provider returns 5 locked matches but
+  `results_2026.json` already has 12, the fetcher refuses (assumes partial
+  fetch / auth issue) and preserves the existing file.
+- **Circuit breaker** — 3 consecutive sim failures and the orchestrator stops
+  trying. Delete `data/live/circuit_breaker_state.json` to reset.
+- **Status filter** — only `FT`, `AET`, `PEN` lock. `HT` / `2H` / `LIVE` /
+  in-progress states are skipped silently. `POSTPONED` / `ABANDONED` /
+  `SUSPENDED` / `WALKOVER` go to `live_state.warnings` and never lock.
+- **Date tolerance ±1 day** — handles UTC↔local boundary for NA evening
+  kickoffs.
+- **Graceful fallback** — if `API_FOOTBALL_KEY` is missing or the API errors
+  out, the orchestrator falls back to mock mode without crashing CI.
+
+#### Falling back
+
+If API-Football has an outage or you want to pause auto-updates, just unset
+the variable:
+
+```
+GitHub → Settings → Variables → FOOTBALL_PROVIDER = mock
+```
+
+The next tick falls back to manual mode and the dashboard label updates
+within 10 minutes.
 
 ---
 

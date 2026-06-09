@@ -390,18 +390,19 @@
         <h3>How live updates work</h3>
         <div class="live-info-grid">
           <div>
-            <strong>Automatic re-simulation.</strong> A GitHub Actions cron job runs every 15 minutes during the tournament window (11 Jun → 19 Jul 2026).
-            It checks for newly-finalised matches, locks their scorelines, and re-runs the full Monte Carlo simulator. Updated JSON is committed and the dashboard
-            picks it up on the next page load. No restart needed.
+            <strong>Automatic re-simulation.</strong> A GitHub Actions cron job runs every 10 minutes during the tournament window (11 Jun → 19 Jul 2026).
+            It checks for newly-finalised matches (status <code>FT</code> / <code>AET</code> / <code>PEN</code> only), locks their scorelines, re-runs the
+            full Monte Carlo simulator, and commits the new JSON. The dashboard picks it up on the next page load — no manual refresh needed.
           </div>
           <div>
-            <strong>Data sources.</strong> A pluggable fetcher supports manual entry (default), API-Football, and Sportmonks. To go fully autonomous, add the
-            relevant API key as a CI secret — the orchestrator handles deduping, status filtering (FT / AET / PEN), and retries.
+            <strong>Data source.</strong> Live provider shown in the status badge above. Supports <strong>API-Football</strong> (active when
+            <code>API_FOOTBALL_KEY</code> is configured in CI secrets) and Sportmonks. Without a key the orchestrator falls back to manual / mock mode —
+            scorelines are edited in <code>data/live/results_2026.json</code> and pushed.
           </div>
           <div>
-            <strong>Weather forecast (roadmap).</strong> Today the model uses static climate buckets (mild / hot / very_hot / high_altitude_*) derived from
-            venue metadata. A future patch pulls 24-hour forecasts from OpenWeatherMap or similar at simulation time and converts wet-bulb / dew-point into a
-            graded heat penalty — keeping the prediction current with conditions on the ground.
+            <strong>What's <em>not</em> automated yet.</strong> Injuries / lineup changes still go through the manual <code>team_adjustments.json</code> Elo
+            nudge file (deliberate — auto-news ingestion has higher false-positive risk than manual entry). Live weather forecasts are a planned add:
+            OpenWeatherMap pull → wet-bulb / dew-point → graded heat penalty, replacing the current static climate buckets.
           </div>
         </div>
       </div>

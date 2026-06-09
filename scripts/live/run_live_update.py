@@ -22,6 +22,7 @@ Hardening (Jun 2026):
   - Top-level try/except so a partial crash still produces a usable live_state
 """
 from __future__ import annotations
+import argparse
 import json
 import os
 import subprocess
@@ -103,15 +104,41 @@ def get_live_predictions_locked_count() -> int:
         return -1
 
 
+def detect_provider_source() -> tuple[str, str]:
+    """Returns (source_label, provider_mode).
+
+    source_label: human-readable string surfaced on the dashboard
+    provider_mode: 'active' if a real provider key is configured, else 'manual'
+    """
+    provider = (os.environ.get("FOOTBALL_PROVIDER")
+                or os.environ.get("WC_RESULTS_SOURCE")
+                or "mock").strip().lower().replace("-", "_")
+    apifootball_key = (os.environ.get("API_FOOTBALL_KEY")
+                       or os.environ.get("WC_APIFOOTBALL_KEY"))
+    sportmonks_token = (os.environ.get("SPORTMONKS_TOKEN")
+                        or os.environ.get("WC_SPORTMONKS_TOKEN"))
+    if provider in ("api_football", "apifootball") and apifootball_key:
+        return "api_football", "active"
+    if provider == "sportmonks" and sportmonks_token:
+        return "sportmonks", "active"
+    return "manual/mock", "manual"
+
+
 def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
-                     warnings: list | None = None, source: str = "manual/mock"):
+                     warnings: list | None = None, source: str | None = None,
+                     provider_mode: str | None = None):
     """Atomic live_state.json write."""
+    if source is None or provider_mode is None:
+        auto_source, auto_mode = detect_provider_source()
+        source = source or auto_source
+        provider_mode = provider_mode or auto_mode
     state = {
         "mode": mode,
         "last_updated_utc": datetime.now(timezone.utc).isoformat(),
         "completed_matches_count": completed_count,
         "simulation_rerun_this_tick": sim_rerun,
         "source": source,
+        "provider_mode": provider_mode,
         "warnings": warnings or [],
     }
     atomic_write_json(DASH / "live_state.json", state)
@@ -166,7 +193,18 @@ def build_live_delta(min_pp: float = 0.5):
 
 
 def main() -> int:
-    print("== Live update tick ==")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--provider", default=None,
+                    help="Override provider (mock | api_football | sportmonks). "
+                         "Default: FOOTBALL_PROVIDER env, then WC_RESULTS_SOURCE, then mock.")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="Fetch + diff but do not re-simulate or write dashboard JSON.")
+    args = ap.parse_args()
+
+    if args.provider:
+        os.environ["FOOTBALL_PROVIDER"] = args.provider
+
+    print("== Live update tick ==" + (" [dry-run]" if args.dry_run else ""))
 
     failures = read_circuit_breaker()
     if failures >= CB_THRESHOLD:
@@ -178,8 +216,11 @@ def main() -> int:
                          warnings=[{"type": "circuit_breaker", "message": msg}])
         return 2
 
-    # Step 1: fetch results
-    rc = run([sys.executable, "scripts/live/fetch_results.py"])
+    # Step 1: fetch results (pass --dry-run through)
+    fetch_cmd = [sys.executable, "scripts/live/fetch_results.py"]
+    if args.dry_run:
+        fetch_cmd.append("--dry-run")
+    rc = run(fetch_cmd)
     if rc != 0:
         print("[run_live_update] fetch_results failed — emitting warning, keeping prior state")
         write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
@@ -199,6 +240,13 @@ def main() -> int:
         mode = "pre_tournament" if new_count == 0 else "live"
         write_live_state(mode, new_count, sim_rerun=False, warnings=warns)
         write_circuit_breaker(0)  # success path resets
+        return 0
+
+    if args.dry_run:
+        print(f"[run_live_update] dry-run: would re-simulate "
+              f"({last_synced} locked → {new_count} locked)")
+        mode = "pre_tournament" if new_count == 0 else "live"
+        write_live_state(mode, new_count, sim_rerun=False, warnings=warns)
         return 0
 
     # Step 3: update team state (soft Elo deltas) — non-fatal if it fails

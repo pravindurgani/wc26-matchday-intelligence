@@ -1,0 +1,70 @@
+{
+  "_comment": "Synthetic API-Football v3 /fixtures response, used by tests/live/test_status_mapping.py. Covers FT, AET, PEN, HT, 2H, PST, ABD, AWD, malformed score, and unknown fixture.",
+  "get": "fixtures",
+  "parameters": {"league": "1", "season": "2026"},
+  "errors": [],
+  "results": 10,
+  "paging": {"current": 1, "total": 1},
+  "response": [
+    {
+      "fixture": {"id": 1000001, "date": "2026-06-11T20:00:00+00:00",
+                  "status": {"long": "Match Finished", "short": "FT", "elapsed": 90}},
+      "teams":   {"home": {"name": "Mexico"}, "away": {"name": "South Africa"}},
+      "goals":   {"home": 2, "away": 0}
+    },
+    {
+      "fixture": {"id": 1000002, "date": "2026-06-12T03:00:00+00:00",
+                  "status": {"long": "Match Finished (After Extra Time)", "short": "AET", "elapsed": 120}},
+      "teams":   {"home": {"name": "Korea Republic"}, "away": {"name": "Czech Republic"}},
+      "goals":   {"home": 2, "away": 2}
+    },
+    {
+      "fixture": {"id": 1000003, "date": "2026-06-12T22:00:00+00:00",
+                  "status": {"long": "Match Finished (Penalty Shootout)", "short": "PEN", "elapsed": 120}},
+      "teams":   {"home": {"name": "Canada"}, "away": {"name": "Bosnia-Herzegovina"}},
+      "goals":   {"home": 1, "away": 1}
+    },
+    {
+      "fixture": {"id": 1000004, "date": "2026-06-13T00:00:00+00:00",
+                  "status": {"long": "Halftime", "short": "HT", "elapsed": 45}},
+      "teams":   {"home": {"name": "USA"}, "away": {"name": "Paraguay"}},
+      "goals":   {"home": 1, "away": 0}
+    },
+    {
+      "fixture": {"id": 1000005, "date": "2026-06-13T19:00:00+00:00",
+                  "status": {"long": "Second Half", "short": "2H", "elapsed": 67}},
+      "teams":   {"home": {"name": "Qatar"}, "away": {"name": "Switzerland"}},
+      "goals":   {"home": 0, "away": 1}
+    },
+    {
+      "fixture": {"id": 1000006, "date": "2026-06-13T22:00:00+00:00",
+                  "status": {"long": "Match Postponed", "short": "PST", "elapsed": null}},
+      "teams":   {"home": {"name": "Brazil"}, "away": {"name": "Morocco"}},
+      "goals":   {"home": null, "away": null}
+    },
+    {
+      "fixture": {"id": 1000007, "date": "2026-06-13T23:00:00+00:00",
+                  "status": {"long": "Match Abandoned", "short": "ABD", "elapsed": 35}},
+      "teams":   {"home": {"name": "Haiti"}, "away": {"name": "Scotland"}},
+      "goals":   {"home": 0, "away": 0}
+    },
+    {
+      "fixture": {"id": 1000008, "date": "2026-06-14T18:00:00+00:00",
+                  "status": {"long": "Walkover Award", "short": "AWD", "elapsed": null}},
+      "teams":   {"home": {"name": "Germany"}, "away": {"name": "Côte d'Ivoire"}},
+      "goals":   {"home": 3, "away": 0}
+    },
+    {
+      "fixture": {"id": 1000009, "date": "2026-06-14T21:00:00+00:00",
+                  "status": {"long": "Match Finished", "short": "FT", "elapsed": 90}},
+      "teams":   {"home": {"name": "Belgium"}, "away": {"name": "Egypt"}},
+      "goals":   {"home": null, "away": 1}
+    },
+    {
+      "fixture": {"id": 9999999, "date": "2026-06-15T18:00:00+00:00",
+                  "status": {"long": "Match Finished", "short": "FT", "elapsed": 90}},
+      "teams":   {"home": {"name": "Atlantis"}, "away": {"name": "El Dorado"}},
+      "goals":   {"home": 1, "away": 1}
+    }
+  ]
+}

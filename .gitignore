@@ -32,4 +32,6 @@ models/*.joblib
 !data/processed/predictions.json
 !models/metrics.json
 circuit-breaker-state.json
+circuit_breaker_state.json
+data/live/circuit_breaker_state.json
 .vercel

@@ -298,8 +298,11 @@ def phase_6_provider_feed():
     wf = ROOT / ".github" / "workflows" / "live-matchday.yml"
     if wf.exists():
         wf_txt = wf.read_text()
-        check("live-matchday workflow uses CI secrets (not literals)",
-              "secrets.WC_APIFOOTBALL_KEY" in wf_txt or "secrets.WC_SPORTMONKS_TOKEN" in wf_txt)
+        any_secret = any(s in wf_txt for s in (
+            "secrets.API_FOOTBALL_KEY", "secrets.WC_APIFOOTBALL_KEY",
+            "secrets.SPORTMONKS_TOKEN", "secrets.WC_SPORTMONKS_TOKEN",
+        ))
+        check("live-matchday workflow uses CI secrets (not literals)", any_secret)
         check("live-matchday workflow has date gate for tournament window",
               "2026-06-11" in wf_txt and "2026-07-" in wf_txt)
 
@@ -473,6 +476,70 @@ def stress_tests():
           and re.search(r"_openContenderDrawer\s*=\s*\(team\)\s*=>\s*\{[^}]*\.some\(", js) is not None)
 
 
+# ─── Phase 11: Provider integration ────────────────────────────────────────
+def phase_11_provider():
+    section("Phase 11 · Live provider integration (API-Football)")
+
+    fr = (ROOT / "scripts" / "live" / "fetch_results.py").read_text()
+    bm = ROOT / "scripts" / "live" / "build_provider_fixture_map.py"
+
+    check("fetch_results has API-Football adapter (real HTTP)",
+          "v3.football.api-sports.io" in fr and "x-apisports-key" in fr)
+    check("fetch_results normalises team names (TEAM_ALIAS)",
+          "TEAM_ALIAS" in fr and '"Korea Republic"' in fr and '"Türkiye"' in fr)
+    check("fetch_results maps API-Football statuses",
+          "APIFOOTBALL_STATUS_MAP" in fr
+          and '"FT":   "FT"' in fr
+          and '"PEN":  "PEN"' in fr
+          and '"ABD":  "ABANDONED"' in fr)
+    check("fetch_results retries transient 5xx",
+          "http_get_json" in fr and "retries" in fr)
+    check("fetch_results --dry-run supported",
+          'add_argument("--dry-run"' in fr)
+    check("fetch_results refuses to shrink locked count",
+          "refusing to shrink" in fr)
+    check("build_provider_fixture_map.py exists", bm.exists())
+    if bm.exists():
+        bm_txt = bm.read_text()
+        check("builder uses ±1 day tolerance (UTC↔local)",
+              "_td(days=1)" in bm_txt or "timedelta(days=1)" in bm_txt
+              or "abs((_date" in bm_txt or "gap <= 1" in bm_txt)
+        check("builder requires --write to commit", '--write' in bm_txt)
+
+    # run_live_update integration
+    ru = (ROOT / "scripts" / "live" / "run_live_update.py").read_text()
+    check("run_live_update has --provider flag", '"--provider"' in ru)
+    check("run_live_update has --dry-run flag", '"--dry-run"' in ru)
+    check("run_live_update detects provider_mode", "detect_provider_source" in ru)
+    check("run_live_update emits provider_mode in live_state",
+          '"provider_mode"' in ru)
+
+    # Workflow
+    wf = (ROOT / ".github" / "workflows" / "live-matchday.yml").read_text()
+    check("workflow exposes API_FOOTBALL_KEY secret",
+          re.search(r"API_FOOTBALL_KEY:\s*\$\{\{\s*secrets\.API_FOOTBALL_KEY\s*\}\}", wf) is not None)
+    check("workflow supports manual dry-run input",
+          "workflow_dispatch:" in wf and "dry_run:" in wf)
+    check("workflow uses FOOTBALL_PROVIDER env",
+          "FOOTBALL_PROVIDER:" in wf)
+    check("workflow runs every 10 minutes (was 15)",
+          "'*/10 * * * *'" in wf)
+
+    # Dashboard
+    js = (ROOT / "dashboard" / "app.js").read_text()
+    check("dashboard surfaces provider name",
+          "providerLabel" in js and "API-Football" in js)
+    check("dashboard distinguishes provider_mode active vs manual",
+          "provider_mode" in js)
+
+    # Tests
+    tf = ROOT / "tests" / "live" / "test_status_mapping.py"
+    check("provider tests file exists", tf.exists())
+    if tf.exists():
+        rc = subprocess.run([sys.executable, str(tf)], capture_output=True, text=True).returncode
+        check("provider tests pass", rc == 0)
+
+
 # ─── Phase 10 / report ─────────────────────────────────────────────────────
 def report():
     print("\n" + "=" * 70)
@@ -505,6 +572,7 @@ def main():
     phase_8_mobile_css()
     phase_9_public_copy()
     stress_tests()
+    phase_11_provider()
     report()
 
 

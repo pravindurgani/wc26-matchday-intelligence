@@ -144,11 +144,20 @@ function renderLastUpdated(data, liveState) {
   el.title = ts;
 }
 
+function providerLabel(source) {
+  const s = (source || '').toLowerCase();
+  if (s === 'api_football')      return 'API-Football (live)';
+  if (s === 'sportmonks')        return 'Sportmonks (live)';
+  if (s === 'manual/mock' || s === 'mock' || !s) return 'manual / mock';
+  return source;
+}
+
 function renderLiveStatusBar(liveState) {
   if (!liveState) return;
   const banner = document.getElementById('live-status');
   if (!banner) return;
   const isLive = liveState.mode === 'live';
+  const providerActive = liveState.provider_mode === 'active';
   banner.classList.toggle('is-live', isLive);
   banner.classList.toggle('is-pre', !isLive);
   banner.innerHTML = `
@@ -156,7 +165,9 @@ function renderLiveStatusBar(liveState) {
     <span class="live-mode">${isLive ? 'Live-adjusted' : 'Pre-tournament static'}</span>
     <span class="live-meta">
       ${liveState.completed_matches_count} of 104 matches locked ·
-      ${isLive ? `last update from ${escapeHtml(liveState.source || '—')}` : 'live updates activate once kickoff begins on 11 Jun 2026'}
+      provider: ${escapeHtml(providerLabel(liveState.source))}${providerActive ? '' : ' (no live API key configured)'}${
+        isLive ? '' : ' · live updates activate once kickoff begins on 11 Jun 2026'
+      }
     </span>
   `;
 }

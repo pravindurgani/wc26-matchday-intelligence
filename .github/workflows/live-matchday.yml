@@ -1,14 +1,28 @@
 name: Live matchday refresh
 
-# Polls every 15 minutes during the tournament window (06:00-04:00 UTC each day,
-# covering all NA kickoffs). The orchestrator exits fast if no match has changed
-# to a final state — only re-simulates when something genuinely happened.
+# Polls every 10 minutes during the tournament window (11 Jun → 19 Jul 2026).
+# The orchestrator exits fast if no match has changed to a final state —
+# only re-simulates when something genuinely happened.
 #
-# Tournament dates: 2026-06-11 → 2026-07-19.
+# Provider selection:
+#   - Set repo VARIABLE `FOOTBALL_PROVIDER` to `api_football` (or leave unset for mock)
+#   - Add repo SECRET `API_FOOTBALL_KEY` for API-Football
+#   - (Optional) Add repo SECRET `SPORTMONKS_TOKEN` if using Sportmonks
+# Without a provider key the orchestrator silently falls back to manual/mock mode.
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Override provider for this manual run (mock|api_football|sportmonks)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Dry-run only (no write, no commit)'
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: wc26-live
@@ -18,8 +32,6 @@ jobs:
   live:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Only run during the tournament window
-    if: ${{ true }}   # guard logic is in the python orchestrator
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,16 +57,43 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Resolve provider for this run
+        id: provider
+        run: |
+          PROVIDER="${{ github.event.inputs.provider }}"
+          if [ -z "$PROVIDER" ]; then
+            PROVIDER="${{ vars.FOOTBALL_PROVIDER }}"
+          fi
+          if [ -z "$PROVIDER" ]; then
+            PROVIDER="${{ vars.WC_RESULTS_SOURCE }}"
+          fi
+          if [ -z "$PROVIDER" ]; then
+            PROVIDER="mock"
+          fi
+          echo "provider=$PROVIDER" >> $GITHUB_OUTPUT
+          echo "Provider for this run: $PROVIDER"
+
       - name: Run live update orchestrator
         if: steps.gate.outputs.skip != 'true'
         env:
-          WC_RESULTS_SOURCE: ${{ vars.WC_RESULTS_SOURCE || 'mock' }}
-          WC_APIFOOTBALL_KEY: ${{ secrets.WC_APIFOOTBALL_KEY }}
-          WC_SPORTMONKS_TOKEN: ${{ secrets.WC_SPORTMONKS_TOKEN }}
-        run: python scripts/live/run_live_update.py
+          FOOTBALL_PROVIDER: ${{ steps.provider.outputs.provider }}
+          # Backward-compatible alias — orchestrator reads either name
+          WC_RESULTS_SOURCE: ${{ steps.provider.outputs.provider }}
+          API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
+          WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+          WC_SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+          API_FOOTBALL_LEAGUE_ID: ${{ vars.API_FOOTBALL_LEAGUE_ID }}
+          API_FOOTBALL_SEASON: ${{ vars.API_FOOTBALL_SEASON }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python scripts/live/run_live_update.py --dry-run
+          else
+            python scripts/live/run_live_update.py
+          fi
 
       - name: Commit updated JSON (if changed)
-        if: steps.gate.outputs.skip != 'true'
+        if: steps.gate.outputs.skip != 'true' && github.event.inputs.dry_run != 'true'
         run: |
           git config user.name "wc26-bot"
           git config user.email "wc26-bot@users.noreply.github.com"
@@ -62,5 +101,5 @@ jobs:
           git diff --quiet --cached || git commit -m "live: update [skip ci]"
           git push || echo "Nothing to push"
 
-      # Optional: trigger Vercel rebuild
+      # Optional: trigger Vercel rebuild explicitly via deploy hook
       # - run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
