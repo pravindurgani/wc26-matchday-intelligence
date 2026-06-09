@@ -124,6 +124,70 @@ async function init() {
   // Apply deep link AFTER renders settle
   applyDeepLink();
   window.addEventListener('hashchange', applyDeepLink);
+
+  // Start live polling — fetches live_state/live_delta/predictions_live on
+  // an interval and re-renders only the live-dependent sections when the
+  // server-side `last_updated_utc` changes. Pauses while the tab is hidden.
+  startLivePolling();
+}
+
+// Re-fetch the three live JSON files. Returns the new triple if any of them
+// changed vs the in-memory snapshot, else null.
+async function fetchLiveTriple() {
+  const buster = `?t=${Date.now()}`;
+  const fetchOptional = (url) =>
+    fetch(url + buster, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null);
+  const [liveState, liveDelta, livePred] = await Promise.all([
+    fetchOptional('./live_state.json'),
+    fetchOptional('./live_delta.json'),
+    fetchOptional('./predictions_live.json'),
+  ]);
+  return { liveState, liveDelta, livePred };
+}
+
+function applyLiveUpdate({ liveState, liveDelta, livePred }) {
+  const data = window._data;
+  const travel = window._travel;
+  const cal = window._cal;
+  window._liveDelta = liveDelta;
+  window._livePred = livePred;
+  renderLastUpdated(data, liveState);
+  renderLiveStatusBar(liveState);
+  renderHero(data, liveState, liveDelta);
+  renderMovers(data, liveState, liveDelta);
+  renderContenders(data, liveDelta, travel);
+  renderMatches(data, liveState);
+  renderFooter(data, liveState);
+}
+
+let _livePollTimer = null;
+let _lastLiveTimestamp = null;
+
+function startLivePolling(intervalMs = 60_000) {
+  // Seed last-seen ts from whatever was loaded at boot.
+  _lastLiveTimestamp =
+    document.querySelector('#last-updated')?.getAttribute('title') || null;
+
+  const tick = async () => {
+    if (document.hidden) return;          // pause when tab not visible
+    const triple = await fetchLiveTriple();
+    if (!triple.liveState) return;
+    const ts = triple.liveState.last_updated_utc;
+    if (ts && ts === _lastLiveTimestamp) return;   // nothing new
+    _lastLiveTimestamp = ts;
+    applyLiveUpdate(triple);
+  };
+
+  if (_livePollTimer) clearInterval(_livePollTimer);
+  _livePollTimer = setInterval(tick, intervalMs);
+
+  // Refresh immediately when tab regains focus — avoids waiting for the
+  // next tick after returning from another app.
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) tick();
+  });
 }
 
 function renderAllCharts(data, cal) {

@@ -254,7 +254,26 @@ nav.top-nav a:hover { color: var(--text); background: var(--surface); }
 [data-theme="light"] .theme-toggle .moon-icon { display: none; }
 
 @media (max-width: 1100px) {
-  nav.top-nav { display: none; }
+  /* Tablet/phone: collapse nav to a horizontally-scrolling secondary row
+     instead of hiding it entirely — otherwise mobile users have no way to
+     reach Methodology / Appendix / section anchors. */
+  nav.top-nav {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex: 1 0 100%;
+    order: 3;
+    justify-content: flex-start;
+    gap: 2px;
+    margin: 4px -8px 0;
+    padding: 4px 8px;
+    border-top: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  nav.top-nav::-webkit-scrollbar { display: none; }
+  nav.top-nav a { flex: 0 0 auto; }
+  .site-header .container { flex-wrap: wrap; }
   .last-updated { display: none; }
 }
 @media (max-width: 600px) {
@@ -1267,6 +1286,131 @@ section#contenders .card > .filter-row {
 .footer-grid > p:last-child { grid-column: 1 / -1; margin: 4px 0 0; }
 @media (max-width: 600px) {
   .footer-grid { grid-template-columns: 1fr; text-align: left; }
+}
+
+/* ==========================================================================
+   MOBILE / PHONE OVERRIDES — appended audit pass (small-screen polish)
+   Tested mentally at 360px (small Android) and 390px (iPhone).
+   Preserves desktop look & feel; only narrows, stacks, and enlarges touch targets.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Shrink edge padding so cards aren't squeezed */
+  .container { padding: 0 14px; }
+  .site-header .container { padding: 10px 14px; gap: 10px; }
+
+  /* Header: scrollable mobile nav (no hamburger needed, keeps minimal footprint) */
+  nav.top-nav {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    margin: 0 -14px;
+    padding: 4px 14px;
+    border-top: 1px solid var(--border);
+    flex: 1 0 100%;
+    order: 3;
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+  nav.top-nav::-webkit-scrollbar { display: none; }
+  nav.top-nav a {
+    padding: 10px 12px;
+    font-size: 13px;
+    flex: 0 0 auto;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .site-header .container { flex-wrap: wrap; }
+
+  /* Hero champion: smaller display number to avoid overflow */
+  .hero-champion .team { font-size: 28px; }
+
+  /* Section headings: tighter on small screens */
+  section { margin: 28px 0; }
+  section h2 { font-size: 19px; }
+  .section-desc { font-size: 13px; }
+
+  /* Touch-target floor: 44px tappable area for all interactive controls */
+  button, select, .btn-ghost, .btn-secondary, .chip,
+  .match-view-toggle button {
+    min-height: 40px;
+  }
+  .btn-ghost, .btn-secondary { padding: 8px 14px; }
+  .chip { padding: 8px 14px; font-size: 13px; }
+  .match-view-toggle button { padding: 8px 14px; min-height: 36px; }
+
+  /* Filter rows: stack and let selects take full width */
+  .filter-row { gap: 8px; }
+  .filter-row label { width: 100%; }
+  .filter-row select { width: 100%; min-height: 40px; font-size: 14px; }
+  .filter-row .search-label { width: 100%; }
+  .search-label input[type="search"] {
+    min-width: 0; width: 100%; font-size: 16px; /* 16px prevents iOS zoom */
+    padding: 10px 0;
+  }
+  .filter-count { margin-left: 0; }
+
+  /* Live status: wrap items vertically when cramped */
+  .live-status { flex-wrap: wrap; gap: 6px 10px; padding: 10px 12px; }
+  .live-status .live-meta { flex-basis: 100%; font-size: 11px; }
+
+  /* Compare pickers: full-width selects on mobile */
+  .compare-pickers { gap: 8px; }
+  .compare-pickers label { width: 100%; }
+  .compare-pickers select { min-width: 0; width: 100%; }
+  .compare-pickers .vs-pill { align-self: center; }
+  #cmp-swap { width: 100%; }
+
+  /* Charts: don't waste vertical space on phones */
+  .chart-card { height: 360px; padding: 14px; }
+  .chart-card.small { height: 300px; }
+  .chart-card.tall { height: 420px; }
+
+  /* Cards: a little less internal padding to claw back width */
+  .card { padding: 16px; }
+  .stats-strip .card { padding: 12px 14px; }
+  .live-info-card { padding: 16px; }
+
+  /* Tables: keep horizontal scroll, but make sticky thead behave on phones
+     (80vh is fine; ensure tap-friendly row height) */
+  table.tbl { font-size: 12.5px; }
+  table.tbl tbody td, table.tbl thead th { padding: 10px 10px; }
+  table.tbl tbody td { white-space: nowrap; }
+  .table-wrap.sticky-thead { max-height: 70vh; }
+
+  /* Caveat banner: tighter padding */
+  .caveat-banner { padding: 12px 14px; font-size: 13px; gap: 10px; }
+
+  /* How-to-read: keep summary tappable */
+  .how-to-read summary { padding: 14px 14px; min-height: 44px; }
+
+  /* Footer: vertical stack reads better on phones */
+  .footer-grid { grid-template-columns: 1fr; text-align: left; gap: 10px; }
+  .footer-author { justify-content: flex-start; }
+
+  /* Downloads: ensure tap target is comfortable */
+  .download-card { padding: 14px !important; min-height: 64px; }
+
+  /* Top controls don't crowd brand */
+  .top-controls { gap: 8px; }
+  .last-updated { display: none; }
+
+  /* Prevent any errant horizontal overflow at viewport edges */
+  html, body { overflow-x: hidden; }
+}
+
+@media (max-width: 380px) {
+  /* Extra-small phones (iPhone SE / small Android): one more squeeze */
+  .container { padding: 0 12px; }
+  .hero-champion .team { font-size: 24px; }
+  .stats-strip .stat-val { font-size: 18px; }
+  section h2 { font-size: 18px; }
+  .brand-title { font-size: 14px; }
+  .brand-icon { width: 32px; height: 32px; }
+  .brand-icon svg { width: 18px; height: 18px; }
 }
 
 /* PRINT */

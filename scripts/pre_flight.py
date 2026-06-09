@@ -303,8 +303,11 @@ def phase_6_provider_feed():
             "secrets.SPORTMONKS_TOKEN", "secrets.WC_SPORTMONKS_TOKEN",
         ))
         check("live-matchday workflow uses CI secrets (not literals)", any_secret)
+        # Accept either tournament start (2026-06-11) or the 24h-early
+        # warm-up gate (2026-06-10) we now ship by default.
         check("live-matchday workflow has date gate for tournament window",
-              "2026-06-11" in wf_txt and "2026-07-" in wf_txt)
+              ("2026-06-11" in wf_txt or "2026-06-10" in wf_txt)
+              and "2026-07-" in wf_txt)
 
 
 # ─── Phase 7 ────────────────────────────────────────────────────────────────
