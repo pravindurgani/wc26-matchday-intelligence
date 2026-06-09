@@ -1,0 +1,35 @@
+{
+  "updated_at": "2026-06-09T22:56:32.296803+00:00",
+  "source": "open_meteo + wc2026_config_fallback",
+  "forecast_horizon_days": 16,
+  "fetched_count": 1,
+  "fallback_count": 0,
+  "weather": [
+    {
+      "match_id": 1,
+      "phase": "group",
+      "home": "Mexico",
+      "away": "South Africa",
+      "home_team": "Mexico",
+      "away_team": "South Africa",
+      "venue": "Mexico City",
+      "city": "Mexico City",
+      "kickoff_utc": "2026-06-11T13:00:00Z",
+      "temperature_c": 15.5,
+      "humidity_pct": 92,
+      "apparent_temperature_c": 16.7,
+      "precipitation_mm": 0.1,
+      "wind_kph": 1.5,
+      "gust_kph": 10.1,
+      "weather_code": 51,
+      "cloud_cover_pct": 100,
+      "heat_index_c": 15.5,
+      "wet_bulb_proxy_c": 14.564302377051206,
+      "weather_bucket": "normal",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "confidence": "forecast",
+      "source": "open_meteo"
+    }
+  ]
+}
