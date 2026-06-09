@@ -1,0 +1,190 @@
+name: Matchday intelligence (slow cadence)
+
+# Runs every 3 hours during the tournament window.
+#
+# This is the SLOW companion to live-matchday.yml (which fires every 10 min
+# for results + simulator). The matchday-intel layers don't change minute-
+# to-minute:
+#   - injuries: API-Football publishes daily-ish at best
+#   - weather: Open-Meteo updates hourly but forecasts move slowly
+#   - lineups: confirmed XI lands ~60 min before kickoff; a 3h cadence still
+#     catches every kickoff (we widen the window to --hours-ahead 4)
+#   - stats proxy: post-match, never changes after FT
+#
+# Polling all four hourly would waste ~99% of the API-Football daily budget
+# on no-ops. 3h cadence = ~8 ticks/day × 4 endpoint calls + per-fixture
+# fan-out ≈ 30-200 calls/day depending on schedule density. Comfortably
+# inside the 7,500/day Pro-plan ceiling.
+on:
+  schedule:
+    - cron: '0 */3 * * *'    # 00:00, 03:00, 06:00, ... UTC
+  workflow_dispatch:
+    inputs:
+      hours_ahead:
+        description: 'Lineups window hours-ahead (default 4)'
+        required: false
+        default: '4'
+      dry_run:
+        description: 'Dry-run only (no write, no commit)'
+        type: boolean
+        required: false
+        default: false
+      skip_injuries:
+        description: 'Skip the injuries fetcher this run'
+        type: boolean
+        required: false
+        default: false
+
+# Separate concurrency group from the fast workflow so they can interleave.
+# Cancel in-progress slow runs if a new slow run starts — the latest snapshot
+# wins, no point holding up the queue with a stale fetch.
+concurrency:
+  group: wc26-matchday-intel-slow
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  matchday-intel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - run: pip install -r requirements.txt
+
+      - name: Date gate (skip if outside tournament window)
+        id: gate
+        run: |
+          # Manual dispatches always run — used for pre-tournament smoke tests.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Manual dispatch — bypassing date gate."
+            exit 0
+          fi
+          NOW=$(date -u +%s)
+          # Start 24h early so the first kickoff is already covered by an active loop.
+          START=$(date -u -d '2026-06-10 00:00:00' +%s 2>/dev/null || python -c "import datetime;print(int(datetime.datetime(2026,6,10).timestamp()))")
+          END=$(date -u -d '2026-07-20 00:00:00' +%s 2>/dev/null || python -c "import datetime;print(int(datetime.datetime(2026,7,20).timestamp()))")
+          if [ $NOW -lt $START ] || [ $NOW -gt $END ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Outside tournament window — exiting."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fetch injuries (API-Football /injuries)
+        if: steps.gate.outputs.skip != 'true' && github.event.inputs.skip_injuries != 'true'
+        env:
+          API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
+          WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          API_FOOTBALL_LEAGUE_ID: ${{ vars.API_FOOTBALL_LEAGUE_ID }}
+          API_FOOTBALL_SEASON: ${{ vars.API_FOOTBALL_SEASON }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e   # one fetcher failing must not block the others
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/fetch_injuries.py --dry-run
+          else
+            python scripts/live/fetch_injuries.py
+          fi
+          exit 0
+
+      - name: Fetch weather (Open-Meteo — no key required)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/fetch_weather.py --dry-run
+          else
+            python scripts/live/fetch_weather.py
+          fi
+          exit 0
+
+      - name: Fetch lineups (API-Football /fixtures/lineups)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
+          WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          INPUT_HOURS_AHEAD: ${{ github.event.inputs.hours_ahead }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          HOURS_AHEAD="${INPUT_HOURS_AHEAD:-4}"
+          # Defensive validation — dispatch input flows to CLI, must be an int.
+          if ! [ "$HOURS_AHEAD" -eq "$HOURS_AHEAD" ] 2>/dev/null; then
+            echo "Refusing non-integer hours_ahead: $HOURS_AHEAD" >&2
+            exit 1
+          fi
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/fetch_lineups.py --dry-run --hours-ahead "$HOURS_AHEAD"
+          else
+            python scripts/live/fetch_lineups.py --hours-ahead "$HOURS_AHEAD"
+          fi
+          exit 0
+
+      - name: Fetch post-match stats proxy (API-Football /fixtures/statistics)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
+          WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/fetch_match_stats.py --dry-run
+          else
+            python scripts/live/fetch_match_stats.py
+          fi
+          exit 0
+
+      - name: Consolidate via apply_matchday_adjustments
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/apply_matchday_adjustments.py --dry-run
+          else
+            python scripts/live/apply_matchday_adjustments.py
+          fi
+          exit 0
+
+      - name: Commit updated matchday-intelligence JSON (if changed)
+        if: steps.gate.outputs.skip != 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          set +e
+          git config user.name "wc26-bot"
+          git config user.email "wc26-bot@users.noreply.github.com"
+          # Explicit allow-list — fetcher snapshots + consolidated dashboard
+          # JSON + audit log. The simulator is NOT re-run here; the fast
+          # workflow (live-matchday.yml) reads these files on its next tick
+          # via the apply_matchday_adjustments integration point in 03_simulate.py.
+          git add data/live/injuries_2026.json \
+                  data/live/weather_2026.json \
+                  data/live/lineups_2026.json \
+                  data/live/match_stats_2026.json \
+                  data/live/matchday_intelligence_log.jsonl \
+                  dashboard/matchday_intelligence.json 2>/dev/null
+          if git diff --quiet --cached; then
+            echo "No matchday-intelligence changes to commit."
+            exit 0
+          fi
+          git commit -m "matchday-intel: refresh @ $(date -u +%Y-%m-%dT%H:%MZ)"
+          # Same push-race protection as live-matchday.yml — rebase on origin
+          # before pushing so a fast-workflow tick committing in parallel doesn't
+          # race-condition our slow update out of existence.
+          git pull --rebase origin main || echo "Rebase failed — pushing anyway."
+          git push || echo "Push failed — will retry next 3h tick."
+          exit 0
