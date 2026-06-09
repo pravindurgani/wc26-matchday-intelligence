@@ -1,5 +1,5 @@
 """
-Unit tests for B.1 — apply_matchday_adjustments.py.
+Unit tests for B.1 + B.3 — apply_matchday_adjustments.py.
 
 Verifies:
   - Empty state path: all feeds missing → returns 0 components, no
@@ -11,8 +11,9 @@ Verifies:
   - Aggregate matchday cap (±35) clamps the sum across layers.
   - Audit log appends one JSONL record per call.
   - get_team_elo_adjustment public API returns the right per-team sum.
-  - Injuries DEFERRED in B.1 (the legacy load_injury_adjustments path
-    still owns team_adjustments.json; this module returns 0 for injuries).
+  - B.3: injuries loaded from API file + manual overlay, both capped,
+    legacy semantics (approved default True, doubtful 0.5x, expires_at
+    filter) preserved.
 
 Tests use tempfile fixture files so we don't touch the real repo state.
 
@@ -79,13 +80,14 @@ class TestEmptyState(unittest.TestCase):
         self.assertEqual(state["summary"]["teams_affected"], 0)
 
     def test_no_feeds_emits_one_warning_per_real_feed(self):
-        """Three real feeds (weather, lineups, stats_proxy) → three warnings.
+        """Four real feeds (injuries, weather, lineups, stats_proxy) → four warnings.
         The meta-flag injuries_handled_by_this_module must NOT produce a warning."""
         with _TempFeeds({}):
             state = amd.build_adjustments_state()
         warning_feeds = sorted([w["feed"] for w in state["warnings"]])
-        self.assertEqual(warning_feeds, ["lineups", "stats_proxy", "weather"],
-                         "expected exactly 3 feed_missing warnings — not the "
+        self.assertEqual(warning_feeds,
+                         ["injuries", "lineups", "stats_proxy", "weather"],
+                         "expected exactly 4 feed_missing warnings — not the "
                          "meta-flag")
 
     def test_get_team_elo_adjustment_zero_when_empty(self):
@@ -252,20 +254,92 @@ class TestAggregateCap(unittest.TestCase):
             self.assertEqual(amd.get_team_elo_adjustment("A", match_id=12), -35.0)
 
 
-class TestInjuriesDeferredInB1(unittest.TestCase):
-    """B.1 must NOT load team_adjustments.json — that's B.3's job."""
+class TestInjuriesLayer(unittest.TestCase):
+    """B.3: injuries from injuries_2026.json (API) + team_adjustments.json (manual)."""
 
-    def test_team_adjustments_file_ignored(self):
+    def test_api_only_under_cap(self):
+        """API-sourced injuries aggregate per team, capped at INJURY_CAP_NORMAL (±25)."""
+        feeds = {"injuries_2026.json": {
+            "teams": {
+                "France": {"total_elo_adjustment": -18.0,
+                           "players": [{"name": "Player A", "elo": -12.0},
+                                       {"name": "Player B", "elo": -6.0}]},
+            }
+        }}
+        with _TempFeeds(feeds):
+            self.assertEqual(amd.get_team_elo_adjustment("France"), -18.0)
+
+    def test_api_clamps_at_normal_cap(self):
+        feeds = {"injuries_2026.json": {
+            "teams": {
+                "France": {"total_elo_adjustment": -100.0, "players": []},
+            }
+        }}
+        with _TempFeeds(feeds):
+            self.assertEqual(amd.get_team_elo_adjustment("France"),
+                             -amd.INJURY_CAP_NORMAL)
+
+    def test_manual_overlay_only_legacy_semantics(self):
+        """Manual overlay honours approved (default True), doubtful 0.5x,
+        and expires_at filter."""
+        feeds = {"team_adjustments.json": {
+            "adjustments": [
+                {"team": "Spain", "adjustment_elo": -12.0,
+                 "status": "confirmed_out",
+                 "expires_at": "2099-01-01T00:00:00+00:00"},
+                {"team": "Spain", "adjustment_elo": -12.0,
+                 "status": "doubtful",
+                 "expires_at": "2099-01-01T00:00:00+00:00"},
+                {"team": "Spain", "adjustment_elo": -30.0,
+                 "status": "confirmed_out",
+                 "expires_at": "2000-01-01T00:00:00+00:00"},  # expired → ignored
+                {"team": "Spain", "adjustment_elo": -30.0,
+                 "approved": False,
+                 "status": "confirmed_out"},  # unapproved → ignored
+            ]
+        }}
+        with _TempFeeds(feeds):
+            # -12 (confirmed) + -12 * 0.5 (doubtful) = -18
+            self.assertEqual(amd.get_team_elo_adjustment("Spain"), -18.0)
+
+    def test_overlay_uses_extreme_cap(self):
+        """Manual overlay can push toward INJURY_CAP_EXTREME (±35)."""
         feeds = {"team_adjustments.json": {
             "adjustments": [{
-                "team": "France", "adjustment_elo": -30.0,
-                "expires_at": "2099-01-01T00:00:00Z",
-                "approved": True, "status": "confirmed_out",
+                "team": "Brazil", "adjustment_elo": -100.0,
+                "status": "confirmed_out",
+                "expires_at": "2099-01-01T00:00:00+00:00",
             }]
         }}
         with _TempFeeds(feeds):
-            self.assertEqual(amd.get_team_elo_adjustment("France"), 0.0,
-                             "B.1 must defer injuries to the legacy path")
+            self.assertEqual(amd.get_team_elo_adjustment("Brazil"),
+                             -amd.INJURY_CAP_EXTREME)
+
+    def test_api_and_overlay_stack_within_aggregate_cap(self):
+        """API + manual overlay stack per team — clamped by aggregate matchday
+        cap (35) since both flow into the same (team, None) bucket."""
+        feeds = {
+            "injuries_2026.json": {"teams": {
+                "Germany": {"total_elo_adjustment": -20.0, "players": []},
+            }},
+            "team_adjustments.json": {"adjustments": [{
+                "team": "Germany", "adjustment_elo": -25.0,
+                "status": "confirmed_out",
+                "expires_at": "2099-01-01T00:00:00+00:00",
+            }]},
+        }
+        with _TempFeeds(feeds):
+            # API -20 (under normal cap 25) + overlay -25 (under extreme cap 35)
+            # → raw sum -45 → aggregate matchday cap clamps to -35.
+            self.assertEqual(amd.get_team_elo_adjustment("Germany"),
+                             -amd.AGGREGATE_MATCHDAY_CAP)
+
+    def test_feeds_available_flips_to_handled(self):
+        with _TempFeeds({"injuries_2026.json": {"teams": {}}}):
+            state = amd.build_adjustments_state()
+            self.assertTrue(
+                state["feeds_available"]["injuries_handled_by_this_module"])
+            self.assertTrue(state["feeds_available"]["injuries"])
 
 
 class TestAuditLog(unittest.TestCase):

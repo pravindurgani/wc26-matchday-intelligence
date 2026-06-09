@@ -106,24 +106,94 @@ def _now_iso() -> str:
 # team-level injury covering multiple matches).
 
 def _load_injury_components(now_iso: str) -> dict:
-    """B.1: DEFERRED to B.3.
+    """B.3: read API-sourced injuries_2026.json and merge with the legacy
+    manual overlay in team_adjustments.json.
 
-    Returns empty so this module doesn't double-count injuries.
+    The legacy loader in 03_simulate.py used to own team_adjustments.json and
+    feed `elo_eff_base` directly. In B.3 we centralise: API-Football is the
+    primary source, team_adjustments.json is an OVERLAY for operator manual
+    notes (the tournament team can still set tier_1_star for a Mbappé-tier
+    out, since the API doesn't expose importance).
 
-    The legacy load_injury_adjustments() at scripts/03_simulate.py:527-546
-    currently owns team_adjustments.json. If we read it here too, the
-    simulator's elo_eff_base computation would add injury Elo twice (once
-    via legacy injury_adjustments, once via get_team_elo_adjustment).
+    Combination rule per team:
+      sum = api_total_elo + manual_overlay_elo
 
-    B.3 plan: atomically (one commit) remove the legacy loader call from
-    03_simulate.py AND enable this loader. Until then, injuries flow
-    through the old path unchanged and the new module handles weather,
-    lineups, and stats only.
+    The aggregate matchday cap downstream still clamps the team-match
+    contribution at ±35 even if both layers stack.
 
-    The full implementation is preserved in version control history of
-    this file — see this commit for the backwards-compatible loader body.
+    Backwards compatible with the legacy team_adjustments.json schema:
+      - Honours `expires_at` (filters expired entries)
+      - Honours `approved` (default True, matches legacy)
+      - Halves `adjustment_elo` for status == "doubtful" (legacy 0.5x)
     """
-    return {}
+    out: dict[tuple[str, int | None], list[dict]] = {}
+
+    # Per-team API totals (tournament-wide, not match-scoped).
+    api_path = LIVE / "injuries_2026.json"
+    api_data = _read_json(api_path, default={}) or {}
+    for team, blob in (api_data.get("teams") or {}).items():
+        raw = float(blob.get("total_elo_adjustment", 0.0) or 0.0)
+        # API source uses the "normal" injury cap (manual overlay can push
+        # toward "extreme" — see overlay block below).
+        capped = max(-INJURY_CAP_NORMAL, min(INJURY_CAP_NORMAL, raw))
+        if capped == 0.0:
+            continue
+        n_players = len(blob.get("players") or [])
+        out.setdefault((team, None), []).append({
+            "type": "injury",
+            "subtype": "api_aggregate",
+            "raw_elo": raw,
+            "capped_elo": capped,
+            "cap_used": INJURY_CAP_NORMAL,
+            "n_players": n_players,
+            "source": "api_football",
+        })
+
+    # Manual overlay (operator-curated tier_1 / suspensions / notes).
+    overlay_path = LIVE / "team_adjustments.json"
+    overlay = _read_json(overlay_path, default={}) or {}
+    overlay_by_team: dict[str, float] = {}
+    overlay_reasons: dict[str, list[str]] = {}
+    for adj in overlay.get("adjustments", []) or []:
+        # Legacy semantics: approved defaults True, doubtful → 0.5x, expired skipped.
+        if not adj.get("approved", True):
+            continue
+        exp = adj.get("expires_at")
+        if exp:
+            try:
+                # Tolerate both "Z" and offset-suffixed timestamps.
+                exp_iso = exp.replace("Z", "+00:00")
+                if exp_iso < now_iso:
+                    continue
+            except Exception:
+                pass
+        amount = float(adj.get("adjustment_elo", 0) or 0)
+        if adj.get("status") == "doubtful":
+            amount *= 0.5
+        team = adj.get("team")
+        if not team:
+            continue
+        overlay_by_team[team] = overlay_by_team.get(team, 0.0) + amount
+        overlay_reasons.setdefault(team, []).append(
+            adj.get("reason") or adj.get("player") or adj.get("status") or "manual"
+        )
+    for team, raw in overlay_by_team.items():
+        # Overlay may exceed the "normal" cap if the operator flagged extreme
+        # circumstances (multiple tier_1 players out) — use extreme cap here.
+        capped = max(-INJURY_CAP_EXTREME, min(INJURY_CAP_EXTREME, raw))
+        if capped == 0.0:
+            continue
+        out.setdefault((team, None), []).append({
+            "type": "injury",
+            "subtype": "manual_overlay",
+            "raw_elo": raw,
+            "capped_elo": capped,
+            "cap_used": INJURY_CAP_EXTREME,
+            "reasons": overlay_reasons.get(team, []),
+            "source": "team_adjustments_manual",
+        })
+
+    return out
 
 
 def _load_weather_components() -> dict:
@@ -309,11 +379,14 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
             "aggregate_caps_hit": sum(1 for x in per_team_per_match if x["aggregate_cap_applied"]),
         },
         "feeds_available": {
-            # injuries listed here for dashboard completeness, but B.1
-            # defers loading them — the legacy path in 03_simulate.py
-            # still owns team_adjustments.json. B.3 will migrate.
-            "injuries": (LIVE / "team_adjustments.json").exists(),
-            "injuries_handled_by_this_module": False,  # flips True in B.3
+            # B.3: this module now owns injuries. We accept EITHER the
+            # API-sourced injuries_2026.json OR the legacy manual overlay
+            # team_adjustments.json (or both — overlay stacks on API).
+            "injuries": (
+                (LIVE / "injuries_2026.json").exists()
+                or (LIVE / "team_adjustments.json").exists()
+            ),
+            "injuries_handled_by_this_module": True,
             "weather": (LIVE / "weather_2026.json").exists(),
             "lineups": (LIVE / "lineups_2026.json").exists(),
             "stats_proxy": (LIVE / "match_stats_2026.json").exists(),
@@ -322,10 +395,8 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
     }
 
     # Surface a friendly warning when a feed THIS MODULE consumes is absent.
-    # In B.1 that's weather/lineups/stats only — injuries are deferred to
-    # the legacy load_injury_adjustments path (migrated to this module in B.3,
-    # at which point we'll add "injuries" to this set).
-    _FEEDS_THIS_MODULE_CONSUMES = {"weather", "lineups", "stats_proxy"}
+    # As of B.3, injuries are owned here (API-Football primary + manual overlay).
+    _FEEDS_THIS_MODULE_CONSUMES = {"injuries", "weather", "lineups", "stats_proxy"}
     for feed, present in state["feeds_available"].items():
         if feed not in _FEEDS_THIS_MODULE_CONSUMES:
             continue
