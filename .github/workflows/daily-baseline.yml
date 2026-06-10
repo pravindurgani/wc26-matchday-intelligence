@@ -4,8 +4,18 @@ name: Daily baseline refresh
 # Re-trains the model on the latest historical data and runs the static
 # pre-tournament simulation. Live updates are handled by the matchday workflow.
 on:
-  schedule:
-    - cron: '0 5 * * *'
+  # ─── SAFETY: schedule disabled on this branch ───────────────────────
+  # This file lives on feature/matchday-intelligence (research branch). When
+  # the 05:00 UTC cron fires from this branch, the existing `vercel deploy
+  # --prod` step at the end would clobber production with feature-branch
+  # state. Same triple defence as live-matchday.yml on this branch:
+  #   1) cron commented (no auto-fire — schedules only fire from default
+  #      branch anyway, but kept commented for explicit intent)
+  #   2) Vercel deploy step gated `if: github.ref == 'refs/heads/main'`
+  #   3) `--prod` removed; `vercel pull --environment=preview`
+  # The main-branch copy of this workflow keeps cron + --prod active.
+  # schedule:
+  #   - cron: '0 5 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -111,24 +121,32 @@ jobs:
             exit 0
           fi
           git commit -m "baseline: refresh @ $(date -u +%Y-%m-%dT%H:%MZ)"
-          # Rebase against the same branch we push to — live-matchday may have
-          # landed a tick in parallel.
-          BRANCH="${GITHUB_REF_NAME:-main}"
+          # SAFETY: pin push target to feature branch explicitly. The previous
+          # `${GITHUB_REF_NAME:-main}` was safe for cron-on-feature (refname =
+          # feature/…) but dangerous if env got unset (defaulted to main).
+          # The main-branch copy of this workflow uses `BRANCH="main"`.
+          BRANCH="feature/matchday-intelligence"
           git pull --rebase origin "$BRANCH" || echo "Rebase failed — pushing anyway."
           git push origin "HEAD:$BRANCH" || echo "Push failed — next daily run will retry."
           exit 0
 
-      # C5: direct Vercel deploy. Mirror live-matchday's pattern.
-      # Set up: gh secret set VERCEL_TOKEN, gh variable set VERCEL_ORG_ID /
-      # VERCEL_PROJECT_ID, then every daily baseline auto-deploys.
+      # ─── DEPLOY STEP — feature-branch variant ──────────────────────
+      # Production deploys come from the main-branch copy of this file.
+      # Three independent gates on this branch's copy:
+      #   (a) `github.ref == 'refs/heads/main'` → cron + dispatch on feature
+      #       branch evaluate to refs/heads/feature/…, step skips.
+      #   (b) `--prod` removed → preview URL only, never the prod alias.
+      #   (c) `vercel pull --environment=preview` → no production env vars
+      #       hydrated into the build.
       - name: Deploy refreshed baseline to Vercel
-        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        if: github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != ''
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
           set +e
-          npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
-          npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN" --no-clipboard
+          npx --yes vercel@latest pull --yes --environment=preview --token="$VERCEL_TOKEN"
+          # NO `--prod` flag — feature branch deploys preview only.
+          npx --yes vercel@latest deploy --yes --token="$VERCEL_TOKEN" --no-clipboard
           exit 0
