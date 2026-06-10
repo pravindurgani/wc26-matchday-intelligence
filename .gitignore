@@ -22,6 +22,10 @@ Thumbs.db
 # Data / model artifacts
 data/processed/*.parquet
 models/*.joblib
+# But commit the artifacts the live workflow needs to simulate without retraining:
+!data/processed/matches_clean.parquet
+!models/home_goals_model.joblib
+!models/away_goals_model.joblib
 
 # Local agent / tooling state
 .claude/
@@ -31,6 +35,9 @@ models/*.joblib
 !data/raw/
 !data/processed/predictions.json
 !models/metrics.json
+!models/metrics_v2.json
+!models/feature_cols.json
+!models/feature_cols_v2.json
 circuit-breaker-state.json
 circuit_breaker_state.json
 data/live/circuit_breaker_state.json
