@@ -90,17 +90,44 @@ vercel ls fifa-wc-26-prediction
 vercel alias set <old-preview-url> wc26-matchday-intelligence.vercel.app
 ```
 
-### You decide to go full-auto (touch the main branch's workflow files once)
-This is the "Choice 3" from the deployment summary. It changes only
-`live-matchday.yml` and `daily-baseline.yml` on main so they target the
-feature branch (same FEATURE_REF pattern `matchday-intel-slow.yml` uses).
-After that, all three workflows fire on schedule and your preview link
-updates on its own — no daily manual intervention.
+### Choice 3 — full autopilot (NEVER touches main)
+A macOS launchd agent on **your Mac** runs `deploy_preview.sh` every 15 min
+during tournament + match windows. Zero changes to main, zero changes to
+GitHub Actions, zero remote infra — just one plist in
+`~/Library/LaunchAgents/`.
 
-If you want this, tell me and I'll prepare the workflow-only patches.
-Production won't see them because production only redeploys when its
-tracked branch (main) builds, and the only thing changing on main would
-be inert workflow YAML (no dashboard/code changes).
+```bash
+# Install (loads immediately, fires automatically every 15 min):
+./scripts/launchd/install.sh
+
+# Check status:
+./scripts/launchd/install.sh status
+
+# Watch ticks live:
+tail -f logs/launchd-tick.log
+
+# Disable:
+./scripts/launchd/uninstall.sh
+```
+
+**Windowing** (in `scripts/launchd/run_if_tournament.sh`):
+- Tournament: 11 Jun – 19 Jul 2026 only — outside this range every tick is a <1s no-op
+- Match hours: 11:00–23:00 UTC — outside this range the tick skips
+- Daily baseline: 05:00 UTC fires regardless of match-hour gate
+
+**Why this beats "patch main workflows":** GitHub Actions `schedule:` only fires
+from the default branch, so any cron approach requires patching main, which
+you've explicitly ruled out. Local launchd sidesteps that limitation entirely.
+The trade-off: it only fires when your Mac is awake. If you sleep through a
+match, the deploy waits until the next wake-up — usually fine since the
+state-first dashboard keeps polling and picks up changes the moment your Mac
+catches up.
+
+**Safety:** the agent calls `./scripts/deploy_preview.sh`, which deploys
+**preview only** (no `--prod` flag) and re-aliases to
+`wc26-matchday-intelligence.vercel.app`. Production at
+`fifa-wc-26-prediction.vercel.app` is on `main` and is untouched by this
+file or any agent it spawns.
 
 ---
 
