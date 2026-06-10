@@ -5,13 +5,13 @@
     "accuracy": 0.5959909072122339
   },
   "goal_model_full": {
-    "log_loss": 0.8689274610910961,
-    "brier": 0.5107817519059079,
+    "log_loss": 0.8689274612137369,
+    "brier": 0.5107817517419898,
     "accuracy": 0.6021905352345526
   },
   "lift": {
-    "log_loss_lift_goal_over_elo": 0.03886121882759952,
-    "brier_lift_goal_over_elo": 0.024250724284319625
+    "log_loss_lift_goal_over_elo": 0.03886121870495873,
+    "brier_lift_goal_over_elo": 0.024250724448237726
   },
   "note": "Note: venue/squad-value effects apply at simulation time (as Elo bumps), not at model training time. See sensitivity.json for impact of those Elo bumps on tournament outcomes."
 }
