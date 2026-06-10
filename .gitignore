@@ -45,3 +45,6 @@ data/live/circuit_breaker_state.json
 
 # launchd autopilot logs (Choice 3)
 logs/
+
+# Wrangler local state
+cf-worker/.wrangler/
