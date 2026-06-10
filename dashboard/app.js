@@ -989,7 +989,7 @@ function renderMatches(data, liveState) {
   function featuredMatches() {
     // P1-C: always include the most-recent locked results in the Featured
     // tab. Without this, the morning after the opener visitors see no
-    // result anywhere above the fold unless they tap "All 72".
+    // result anywhere above the fold unless they tap "All 104".
     const all = data.match_predictions.slice().sort(
       (a, b) => ((a.date || '') + (a.time || '')).localeCompare((b.date || '') + (b.time || '')));
     const locked = all.filter(m => m.locked_score);
@@ -1048,7 +1048,7 @@ function renderMatches(data, liveState) {
     if (countEl) countEl.textContent = `${filtered.length} of ${total}`;
 
     if (!filtered.length) {
-      list.innerHTML = `<div class="empty-state" style="grid-column: 1/-1"><strong>No matches found.</strong> Try clearing filters or switching to "All 72".</div>`;
+      list.innerHTML = `<div class="empty-state" style="grid-column: 1/-1"><strong>No matches found.</strong> Try clearing filters or switching to "All 104".</div>`;
       return;
     }
 

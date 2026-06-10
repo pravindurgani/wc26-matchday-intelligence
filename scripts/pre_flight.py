@@ -542,9 +542,13 @@ def phase_11_provider():
           "workflow_dispatch:" in wf and "dry_run:" in wf)
     check("workflow uses FOOTBALL_PROVIDER env",
           "FOOTBALL_PROVIDER:" in wf)
-    check("workflow runs every 10 minutes (was 15)",
+    check("workflow cron is safety-muzzled OR windowed",
           # H6: window-scoped crons replaced the open-ended `*/10 * * * *`.
-          "'*/10 * 10-30 6 *'" in wf and "'*/10 * 1-20 7 *'" in wf)
+          # On feature/matchday-intelligence the schedule is intentionally
+          # disabled (a32856d safety commit) so cron can't fire from this
+          # branch and clobber prod. Either state is valid here.
+          ("'*/10 * 10-30 6 *'" in wf and "'*/10 * 1-20 7 *'" in wf)
+          or "SAFETY: schedule disabled on this branch" in wf)
 
     # Dashboard
     js = (ROOT / "dashboard" / "app.js").read_text()
@@ -622,9 +626,13 @@ def phase_12_matchday_intel():
     check("slow workflow exists (B.8)", slow_wf.exists())
     if slow_wf.exists():
         wf_txt = slow_wf.read_text()
-        check("slow workflow runs every 3h",
+        check("slow workflow cron is safety-muzzled OR windowed",
               # H6: window-scoped cron — every 3h, but only during tournament.
-              "'0 */3 10-30 6 *'" in wf_txt and "'0 */3 1-20 7 *'" in wf_txt)
+              # Same safety-muzzle escape as live-matchday.yml when running
+              # on the feature branch (a32856d).
+              ("'0 */3 10-30 6 *'" in wf_txt and "'0 */3 1-20 7 *'" in wf_txt)
+              or "SAFETY: schedule disabled on this branch" in wf_txt
+              or "disabled during launch" in wf_txt)
         check("slow workflow calls all four fetchers",
               all(s in wf_txt for s in (
                   "fetch_injuries.py", "fetch_weather.py",

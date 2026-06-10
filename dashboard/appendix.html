@@ -8,13 +8,16 @@
   <meta property="og:title" content="World Cup 2026 — Technical Appendix" />
   <meta property="og:description" content="Negative Binomial goal model, Dixon-Coles correction, Annex C lookup, walk-forward, ablation, sensitivity." />
   <meta property="og:type" content="article" />
-  <meta property="og:image" content="./og-image.svg" />
+  <meta property="og:url" content="https://wc26-matchday-intelligence.vercel.app/appendix.html" />
+  <meta property="og:image" content="https://wc26-matchday-intelligence.vercel.app/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="World Cup 2026 Simulator — technical appendix" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="World Cup 2026 — Technical Appendix" />
   <meta name="twitter:description" content="Math + calibration + ablation behind the simulator." />
-  <meta name="twitter:image" content="./og-image.svg" />
+  <meta name="twitter:image" content="https://wc26-matchday-intelligence.vercel.app/og-image.png" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B82F6' stroke-width='1.8' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolygon points='12,7 16,9.5 16,14.5 12,17 8,14.5 8,9.5'/%3E%3Cline x1='12' y1='7' x2='12' y2='2'/%3E%3Cline x1='16' y1='9.5' x2='20' y2='8'/%3E%3Cline x1='16' y1='14.5' x2='20' y2='16'/%3E%3Cline x1='12' y1='17' x2='12' y2='22'/%3E%3Cline x1='8' y1='14.5' x2='4' y2='16'/%3E%3Cline x1='8' y1='9.5' x2='4' y2='8'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="methodology.css" />
@@ -159,27 +162,27 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
         <h2>Calibration &amp; performance metrics</h2>
 
         <h3 class="apx-sub">Holdout (4,839 unseen modern matches)</h3>
-        <table class="tbl apx-tbl">
+        <div class="table-wrap"><table class="tbl apx-tbl">
           <thead><tr><th>Metric</th><th class="num">Model</th><th class="num">Elo-only</th><th class="num">Naive (33/33/33)</th></tr></thead>
           <tbody>
             <tr><td>Log-loss</td><td class="num">0.869</td><td class="num">0.908</td><td class="num">1.055</td></tr>
             <tr><td>Brier</td><td class="num">0.511</td><td class="num">0.535</td><td class="num">0.667</td></tr>
             <tr><td>Top-1 accuracy</td><td class="num">60.2%</td><td class="num">55.4%</td><td class="num">48.1%</td></tr>
           </tbody>
-        </table>
+        </table></div>
 
         <h3 class="apx-sub">Walk-forward backtest</h3>
         <p>Each test World Cup is run with only training data <em>strictly older</em> than that tournament (no peeking). All hyperparameters tuned once on pre-2010 data.</p>
-        <table class="tbl apx-tbl">
+        <div class="table-wrap"><table class="tbl apx-tbl">
           <thead><tr><th>WC</th><th class="num">N</th><th class="num">Log-loss</th><th class="num">Brier</th><th class="num">Acc</th><th class="num">Lift vs Elo</th></tr></thead>
           <tbody id="apx-wf"><tr><td colspan="6" class="muted small">Loading walk_forward.json…</td></tr></tbody>
-        </table>
+        </table></div>
 
         <h3 class="apx-sub">Feature ablation</h3>
-        <table class="tbl apx-tbl">
+        <div class="table-wrap"><table class="tbl apx-tbl">
           <thead><tr><th>Configuration</th><th class="num">Log-loss</th><th class="num">Brier</th><th class="num">Accuracy</th></tr></thead>
           <tbody id="apx-abl"><tr><td colspan="4" class="muted small">Loading ablation.json…</td></tr></tbody>
-        </table>
+        </table></div>
       </div>
     </section>
 
@@ -190,7 +193,7 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
       <div>
         <h2>Sensitivity audit (22 scenarios)</h2>
         <p>Every hand-coded assumption was varied across the ranges below. Each scenario is a full 5×5,000 re-run.</p>
-        <table class="tbl apx-tbl">
+        <div class="table-wrap"><table class="tbl apx-tbl">
           <thead><tr><th>Parameter</th><th class="num">Default</th><th class="num">Tested range</th></tr></thead>
           <tbody>
             <tr><td>Host-country Elo boost</td><td class="num">+50</td><td class="num">[+30, +70]</td></tr>
@@ -205,12 +208,12 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
             <tr><td>λ-noise σ</td><td class="num">0.289</td><td class="num">[0.183 – 0.354]</td></tr>
             <tr><td>Penalty-shootout slope</td><td class="num">0.30</td><td class="num">[0.20, 0.45]</td></tr>
           </tbody>
-        </table>
+        </table></div>
         <p><strong>Top-team ranges from latest sensitivity run:</strong></p>
-        <table class="tbl apx-tbl">
+        <div class="table-wrap"><table class="tbl apx-tbl">
           <thead><tr><th>Team</th><th class="num">Mean</th><th class="num">Min</th><th class="num">Max</th><th class="num">Range</th></tr></thead>
           <tbody id="apx-sens"><tr><td colspan="5" class="muted small">Loading sensitivity.json…</td></tr></tbody>
-        </table>
+        </table></div>
         <p class="muted small">Top-6 rank ordering is identical across all 22 scenarios.</p>
       </div>
     </section>

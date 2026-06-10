@@ -231,6 +231,19 @@ def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
         "in_play_count": len(in_play), # convenient summary
         "warnings": warnings or [],
     }
+    # Deploy-churn guard: if every field except last_updated_utc is identical
+    # to what's already on disk, preserve the old timestamp so the file's
+    # bytes don't change. The workflow's git-add then sees no diff and skips
+    # the commit, which keeps Vercel Hobby's 100 deploys/day cap comfortable
+    # during quiet ticks and during in-play windows where nothing has moved.
+    try:
+        existing = json.loads((DASH / "live_state.json").read_text())
+        a = {k: v for k, v in state.items() if k != "last_updated_utc"}
+        b = {k: v for k, v in existing.items() if k != "last_updated_utc"}
+        if a == b and existing.get("last_updated_utc"):
+            state["last_updated_utc"] = existing["last_updated_utc"]
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        pass
     atomic_write_json(DASH / "live_state.json", state)
     return state
 
