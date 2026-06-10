@@ -1,0 +1,32 @@
+# Cloudflare Worker config — wc26-dispatcher
+# Fires every 10 minutes and POSTs workflow_dispatch to the GitHub repo
+# so live-matchday.yml runs on schedule without depending on GitHub's
+# best-effort cron or the user's laptop.
+
+name = "wc26-dispatcher"
+main = "worker.js"
+compatibility_date = "2026-06-10"
+
+# CF cron triggers are reliably delivered (unlike GitHub Actions schedule,
+# which load-sheds during peak). 10-min cadence matches the design intent
+# of live-matchday.yml.
+[triggers]
+crons = ["*/10 * * * *"]
+
+# Tunable knobs without re-deploying. Override per environment as needed.
+[vars]
+WORKFLOW = "live-matchday.yml"
+REF = "main"
+WINDOW_START_UTC_DATE = "2026-06-11"
+WINDOW_END_UTC_DATE = "2026-07-19"
+WINDOW_HOUR_FROM = "4"
+WINDOW_HOUR_TO = "23"
+
+# Secrets (DO NOT put in this file). Set via:
+#   wrangler secret put GH_TOKEN
+#   wrangler secret put GH_OWNER
+#   wrangler secret put GH_REPO
+#
+# GH_TOKEN must be a fine-grained PAT scoped to the wc26-matchday-intelligence
+# repo with Actions: Read and write. Set expiry to 2026-07-25 (one week
+# after the final) so the token auto-expires after the tournament.

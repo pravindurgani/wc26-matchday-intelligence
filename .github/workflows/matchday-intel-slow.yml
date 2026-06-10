@@ -16,22 +16,11 @@ name: Matchday intelligence (slow cadence)
 # fan-out ≈ 30-200 calls/day depending on schedule density. Comfortably
 # inside the 7,500/day Pro-plan ceiling.
 on:
-  # ─── SAFETY: schedule disabled on this branch ───────────────────────────────
-  # This file lives on feature/matchday-intelligence (a research branch that
-  # MUST NOT auto-deploy to the shared Vercel project). A previous incident
-  # had this cron firing every 3h, pushing fetcher output to the feature
-  # branch, which the companion live-matchday.yml then deployed to PROD via
-  # `vercel deploy --prod`. Belt-and-braces fix:
-  #   1) cron commented here (this line) — no auto-fire from feature branch
-  #   2) commit/push step in this file already pushes to the checked-out
-  #      branch (feature/…) — does NOT touch main
-  #   3) live-matchday.yml on this branch has its cron disabled AND its
-  #      Vercel deploy step gated `if: github.ref == 'refs/heads/main'`
-  #      AND drops `--prod` as third defence
-  # Re-enable ONLY after this branch is either merged to main OR pointed at
-  # a separate Vercel project.
-  # schedule:
-  #   - cron: '0 */3 * * *'    # 00:00, 03:00, 06:00, ... UTC
+  # Window-scoped 3h cron. Tournament-only — outside this range every fetch
+  # is wasted API budget on dormant teams.
+  schedule:
+    - cron: '0 */3 11-30 6 *'    # group stage: 11–30 Jun, every 3h
+    - cron: '0 */3 1-19 7 *'     # knockouts:   1–19 Jul, every 3h
   workflow_dispatch:
     inputs:
       hours_ahead:
@@ -196,13 +185,8 @@ jobs:
             exit 0
           fi
           git commit -m "matchday-intel: refresh @ $(date -u +%Y-%m-%dT%H:%MZ)"
-          # SAFETY: explicit refspec — push to the feature branch ONLY.
-          # `git push` without args is "smart" and would push to upstream;
-          # being explicit prevents any future config change from accidentally
-          # pushing this branch's state to main.
-          # Rebase target is also the feature branch (not main) so we don't
-          # pull main commits into a feature-branch push.
-          BRANCH="feature/matchday-intelligence"
+          # Explicit refspec — main is production for this repo.
+          BRANCH="main"
           git pull --rebase origin "$BRANCH" || echo "Rebase failed — pushing anyway."
           git push origin "HEAD:$BRANCH" || echo "Push failed — will retry next 3h tick."
           exit 0
