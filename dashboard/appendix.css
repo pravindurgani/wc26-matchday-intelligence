@@ -101,9 +101,14 @@
    Measured @ 390px: body scrollWidth = 986px due to wide formulas, code,
    and tables inside .explain cards leaking past the icon column. The grid
    needs `min-width: 0` on the content cell + scrollable overflow on the
-   wide children. Below 600px the icon column collapses entirely. */
+   wide children. Below 600px the icon column collapses entirely.
+
+   Round-5: also pin `.table-wrap` itself to `max-width: 100%` — without
+   this the table-wrap inherits its child table's intrinsic width and
+   pushes the page to 409px on a 390px viewport (17px residual bleed). */
 .explain > *:not(.explain-icon) { min-width: 0; }
 .explain pre, .explain code, .explain table, .apx-tbl { max-width: 100%; }
+.explain .table-wrap { max-width: 100%; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .explain pre, .eqn { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .explain table, .apx-tbl { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 @media (max-width: 600px) {
