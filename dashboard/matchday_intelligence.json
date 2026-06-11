@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-10T15:31:58.859573+00:00",
+  "generated_at": "2026-06-11T04:03:21.872247+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -165,25 +165,6 @@
       ]
     },
     {
-      "team": "Spain",
-      "match_id": 63,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "static_fallback",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Sweden",
       "match_id": 12,
       "total_elo_adjustment": -4.0,
@@ -223,9 +204,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 11,
-    "teams_affected": 9,
-    "matches_affected": 10,
+    "total_active_components": 10,
+    "teams_affected": 8,
+    "matches_affected": 9,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
