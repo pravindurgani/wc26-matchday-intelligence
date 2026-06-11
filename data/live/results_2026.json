@@ -1,19 +1,27 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-11T21:01:16.535769+00:00",
+  "updated_at": "2026-06-11T21:11:09.106541+00:00",
   "source": "api_football",
-  "completed_matches": [],
-  "in_play": [
+  "completed_matches": [
     {
       "m": 1,
+      "provider_fixture_id": "1489369",
+      "date": "2026-06-11",
       "home": "Mexico",
       "away": "South Africa",
       "home_score": 2,
       "away_score": 0,
+      "home_pens": null,
+      "away_pens": null,
+      "winner": "home",
+      "status": "FT",
+      "status_long": "Match Finished",
       "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
+      "source": "api_football",
+      "updated_at": "2026-06-11T21:11:09.105952+00:00",
+      "raw_status": "FT"
     }
   ],
+  "in_play": [],
   "warnings": []
 }
