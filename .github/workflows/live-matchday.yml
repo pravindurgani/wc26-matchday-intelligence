@@ -234,9 +234,20 @@ jobs:
           # second pusher doesn't 403 with non-fast-forward and silently
           # drop its update.
           #
+          # --autostash is LOAD-BEARING: the simulator at 03_simulate.py:1217
+          # writes data/processed/predictions_live.json (canonical output),
+          # which run_live_update.py:506 then copies to dashboard/. The
+          # canonical file in data/processed/ stays modified in the working
+          # tree because it's not in the git-add allow-list above (we only
+          # publish the dashboard/ copy). Without --autostash, `git pull
+          # --rebase` refuses with "you have unstaged changes" and falls
+          # through to the push, which then 403s if origin moved. Don't
+          # remove the flag without first adding data/processed/*.json to
+          # the allow-list.
+          #
           # Main IS production for this repo — push back to main.
           BRANCH="main"
-          git pull --rebase origin "$BRANCH" || echo "Rebase failed — pushing anyway."
+          git pull --rebase --autostash origin "$BRANCH" || echo "Rebase failed — pushing anyway."
           # Push failures previously fell through with `exit 0`, marking the
           # job green and silently freezing the dashboard. Surface the failure
           # so the next scheduled tick (and a human watching Actions) both see
