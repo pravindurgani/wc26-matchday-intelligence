@@ -128,7 +128,7 @@
         </div>
         <div class="htr-item">
           <strong>Robustness is the stress test.</strong>
-          The same simulation is re-run under 22 different parameter assumptions. If the top-6 order survives all of them, the story is real.
+          The same simulation is re-run under 22 different parameter assumptions. The top-4 order survives all of them; positions 5–6 swap under altitude-penalty extremes — the contender story is real, the chasing-pack ordering is not.
         </div>
       </div>
     </details>
@@ -410,7 +410,7 @@
         <div class="card"><h4>6. Travel fatigue</h4><p>Pre-computed 16×16 Haversine matrix. Per-km Elo penalty between consecutive group matches.</p></div>
         <div class="card"><h4>7. Goal model</h4><p>Negative Binomial goal model with Dixon-Coles low-score correction.</p></div>
         <div class="card"><h4>8. FIFA bracket</h4><p>Official Round of 32 → final structure. Annex C 495-row third-place lookup.</p></div>
-        <div class="card"><h4>9. Monte Carlo</h4><p>5 independent seeds × 5,000 sims with extra time, penalties, and 95% confidence intervals.</p></div>
+        <div class="card"><h4>9. Monte Carlo</h4><p>5 independent seeds × 5,000 sims with extra time and penalties. Cross-seed p05/p95 reported as a <em>simulation range</em> (sampling noise from independent rollouts), not a parameter confidence interval.</p></div>
       </div>
 
       <h2 style="margin-top: 36px">Feature importance — home goals model</h2>
@@ -496,7 +496,7 @@
         </a>
         <a class="card download-card" href="./live_delta.json" download>
           <div class="dl-name">live_delta.json</div>
-          <div class="dl-desc">Pre-tournament → live champion-prob movers (≥0.5pp)</div>
+          <div class="dl-desc">Pre-tournament → live champion-prob movers (≥0.3pp)</div>
         </a>
       </div>
     </section>

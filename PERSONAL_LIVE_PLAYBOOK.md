@@ -173,5 +173,6 @@ The dashboard already shows you everything you need on-page:
   orchestrator wrote any `in_play` matches. Disabled in mock mode unless
   you manually inject an `in_play` entry into `results_2026.json`.
 - **Biggest movers section**: starts populating after the first FT result
-  + re-sim. If empty after deploy, the re-sim didn't move anything ≥ 0.5pp
-  (the configured threshold).
+  + re-sim. If empty after deploy, the re-sim didn't move anything ≥ 0.3pp
+  (the configured threshold — see `build_live_delta()` docstring for the
+  paired-SE math that picks 0.3pp).

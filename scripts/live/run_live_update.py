@@ -101,6 +101,43 @@ def get_completed_count() -> int:
         return 0
 
 
+def validate_results_file() -> tuple[bool, str]:
+    """H2: detect a truncated / corrupt results_2026.json BEFORE the hash gate
+    rubber-stamps a re-sim on garbage input.
+
+    Previously: a partial-write or 0-byte file would (a) be caught by
+    json.loads → fallback `b"results_unreadable"` in compute_input_hash, which
+    (b) changes the hash, which (c) triggers a re-sim on the corrupt file.
+    The sim might crash, or worse: silently process an empty completed_matches
+    list and emit pre-tournament numbers on a tournament that's underway.
+
+    Returns (ok, reason). ok=False blocks the re-sim path while keeping the
+    previous predictions_live.json visible to the dashboard.
+    """
+    p = LIVE / "results_2026.json"
+    if not p.exists():
+        # Acceptable pre-tournament state; the fetcher will create it.
+        return True, ""
+    try:
+        size = p.stat().st_size
+    except OSError as e:
+        return False, f"stat({p.name}) failed: {e}"
+    if size < 16:
+        # An empty/near-empty file is never legitimate — fetch_results writes
+        # at minimum a {"completed_matches": [], "in_play": [], ...} skeleton.
+        return False, f"{p.name} is {size} bytes (suspected truncation)"
+    try:
+        data = json.loads(p.read_text())
+    except Exception as e:
+        return False, f"{p.name} is not valid JSON: {type(e).__name__}: {e}"
+    if not isinstance(data, dict):
+        return False, f"{p.name} top-level is {type(data).__name__}, expected object"
+    cm = data.get("completed_matches")
+    if cm is not None and not isinstance(cm, list):
+        return False, f"{p.name}.completed_matches is {type(cm).__name__}, expected list"
+    return True, ""
+
+
 def get_results_warnings() -> list:
     p = LIVE / "results_2026.json"
     if not p.exists():
@@ -257,12 +294,21 @@ def write_empty_delta():
     return out
 
 
-def build_live_delta(min_pp: float = 0.5):
+def build_live_delta(min_pp: float = 0.3):
     """Diff predictions_static.json vs predictions_live.json → live_delta.json.
 
-    `min_pp` filters out movers below the seed-noise threshold (~0.3-0.5pp
-    for 5×5000 vs 3×3000 sample sizes). Pre-tournament deltas should be
-    written via write_empty_delta() instead.
+    `min_pp` filters out small movers. Both static (daily-baseline.yml) and
+    live (Step 4 below) run 5 seeds × 5000 sims = 25,000 tourneys, so paired
+    1σ SE on P(champion) is sqrt(2·p(1-p)/25000):
+        p ≈ 0.05 → 0.20pp     p ≈ 0.2 → 0.36pp     p ≈ 0.5 → 0.45pp
+
+    0.3pp is set just below the lowest-p 1σ floor — intentionally sensitive
+    so subtle moves at small champion probabilities still surface for
+    underdogs. Some 1σ-noise events will pass this filter; readers should
+    trust the directional signal across multiple ticks over single-tick
+    magnitudes. Bump to 0.5pp if user-facing copy needs a "very likely real"
+    threshold (above 1σ at all p). Pre-tournament deltas should be written
+    via write_empty_delta() instead.
     """
     static_p = PROC / "predictions.json"
     live_p = PROC / "predictions_live.json"
@@ -333,6 +379,19 @@ def main() -> int:
                                                "previous predictions retained."}])
         return 0  # don't trip CB for fetch failure — that's transient
 
+    # H2: refuse to feed a truncated / corrupt results_2026.json into the
+    # simulator. The hash gate alone treats "unreadable" as a *change*, which
+    # would trigger a re-sim on garbage. Block that path; keep prior preds.
+    ok, reason = validate_results_file()
+    if not ok:
+        print(f"[run_live_update] input validation failed: {reason}")
+        write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
+                         get_completed_count(), sim_rerun=False,
+                         warnings=[{"type": "input_corruption",
+                                    "message": reason}])
+        # Don't trip CB — this is a data-integrity issue, not a sim regression.
+        return 2
+
     new_count = get_completed_count()
     warns = get_results_warnings()
     last_synced = get_live_predictions_locked_count()
@@ -385,9 +444,28 @@ def main() -> int:
         print("[run_live_update] update_team_state failed; continuing without it")
 
     # Step 4: re-run live simulation
+    # Full parity with daily-baseline.yml: 5 seeds × 5000 sims = 25,000 tourneys.
+    # The earlier 3×3000 shortcut produced a live JSON whose n_seeds=3 silently
+    # contradicted the public "5-seed simulation ranges (p05/p95)" language
+    # on the dashboard, eroding the trust signal.
+    #
+    # Time budget: ~5-10 min wall on GHA Ubuntu in practice (vs ~30s locally;
+    # shared runners are CPU-bound and much slower for numpy-heavy work). The
+    # job's timeout-minutes is 15 → roughly 33-67% headroom depending on
+    # warm-cache state. Empirical anchor: daily-baseline.yml runs this sim
+    # TWICE plus 5 training scripts inside its 25-min cap, so a single live
+    # sim under a 15-min cap is provably feasible.
+    #
+    # Cadence note: CF Worker dispatches every 10 min and the workflow uses
+    # concurrency: cancel-in-progress: false (ticks serialize). If a sim
+    # ever spikes past ~10 min wall, the next dispatch queues behind it; a
+    # sustained spike would drift latency. If queueing is observed in prod,
+    # raise CF Worker cadence to 15 min (external config) BEFORE reducing
+    # fidelity here — fidelity drift is silent and erodes trust; cadence
+    # drift is at most a freshness lag.
     print(f"[run_live_update] {new_count} matches completed, re-simulating…")
     rc = run([sys.executable, "scripts/03_simulate.py",
-              "--live", "--seeds", "3", "--sims", "3000",
+              "--live", "--seeds", "5", "--sims", "5000",
               "--out", "predictions_live.json"])
     if rc != 0:
         new_failures = failures + 1
@@ -414,16 +492,30 @@ def main() -> int:
     mode = "live" if new_count > 0 else "pre_tournament"
     write_live_state(mode, new_count, sim_rerun=True, warnings=warns)
 
-    # Step 7: copy to dashboard (atomic via rename)
+    # Step 7: copy to dashboard (atomic via rename).
+    # H3: parse the source before publishing. The simulator runs in a child
+    # process that we waited on, so under normal exit the file is complete —
+    # but a SIGKILL / OOM / disk-full leaves a partial JSON behind. Reading
+    # raw bytes and renaming would publish that partial file to the live
+    # dashboard. Decoding + a minimal schema spot-check is cheap (~100 KB)
+    # and the dashboard already null-guards everything below team_predictions,
+    # so we keep the *previous* file in place rather than overwrite with
+    # something the UI can't parse.
     src = PROC / "predictions_live.json"
     if src.exists():
         dst = DASH / "predictions_live.json"
         try:
+            raw = src.read_bytes()
+            parsed = json.loads(raw)
+            if not isinstance(parsed, dict) or "team_predictions" not in parsed:
+                raise ValueError("missing team_predictions key")
             tmp = dst.with_suffix(dst.suffix + ".tmp")
-            tmp.write_bytes(src.read_bytes())
+            tmp.write_bytes(raw)
             os.replace(tmp, dst)
         except Exception as e:
-            print(f"[run_live_update] failed to copy predictions_live.json to dashboard: {e}")
+            print(f"[run_live_update] refusing to publish predictions_live.json — "
+                  f"source not a valid prediction file: {type(e).__name__}: {e}. "
+                  f"Previous dashboard copy retained.")
 
     # Step 8: validator
     run([sys.executable, "scripts/09_validate.py"])

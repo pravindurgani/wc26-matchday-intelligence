@@ -94,8 +94,8 @@ def fetch_football_data_fixtures(token: str, competition: str = "WC") -> list[di
         payload = http_get_json(url, headers)
     except urllib.error.HTTPError as e:
         body = ""
-        try: body = e.read().decode("utf-8")[:300]
-        except Exception: pass
+        try: body = e.read().decode("utf-8", errors="replace")[:300]
+        except Exception as _body_err: body = f"<body unreadable: {type(_body_err).__name__}: {_body_err}>"
         print(f"[builder] football-data.org HTTP {e.code}: {body}")
         if e.code == 400:
             print(f"[builder] HTTP 400 usually means: invalid token format, or the WC2026")
@@ -122,8 +122,8 @@ def check_football_data_token(token: str) -> bool:
         payload = http_get_json(url, headers)
     except urllib.error.HTTPError as e:
         body = ""
-        try: body = e.read().decode("utf-8")[:300]
-        except Exception: pass
+        try: body = e.read().decode("utf-8", errors="replace")[:300]
+        except Exception as _body_err: body = f"<body unreadable: {type(_body_err).__name__}: {_body_err}>"
         print(f"[builder] token check failed: HTTP {e.code} {body}")
         return False
     comps = payload.get("competitions") or []

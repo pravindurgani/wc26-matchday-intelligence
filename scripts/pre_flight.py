@@ -376,6 +376,13 @@ def phase_9_public_copy():
         ("AI predicts the winner", "AI-deterministic overclaim"),
         ("guaranteed forecast", "overclaim"),
         ("live API feed active", "live-feed overclaim"),
+        # H5: lock in the "95% CI is sampling noise, not a parameter CI" relabel.
+        # These phrases survived an earlier sweep and contradicted card #9.
+        # If any new copy reintroduces them the gate fails before deploy.
+        ("95% CI", "use 'simulation range (5 seeds)' — p05/p95 is MC sampling noise, not a parameter CI"),
+        ("95% confidence interval", "use 'simulation range' — not a parameter CI"),
+        ("with confidence intervals", "use '5-seed simulation ranges' — not a parameter CI"),
+        ("Top-6 rank ordering", "rank stability holds only for the top-4; positions 5-6 swap under altitude extremes"),
     ]
     for f in targets:
         text = (DASH / f).read_text()

@@ -162,8 +162,8 @@ def _fetch_open_meteo(lat: float, lon: float, day: str) -> dict | None:
         return _http_get_json(url)
     except urllib.error.HTTPError as e:
         body = ""
-        try: body = e.read().decode("utf-8")[:200]
-        except Exception: pass
+        try: body = e.read().decode("utf-8", errors="replace")[:200]
+        except Exception as _body_err: body = f"<body unreadable: {type(_body_err).__name__}: {_body_err}>"
         print(f"[weather] HTTP {e.code} for {lat},{lon} {day}: {body}")
         return None
     except Exception as e:

@@ -178,11 +178,29 @@ jobs:
           # SECURITY: dispatch input goes through env, never shell-interpolated.
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
+          # IMPORTANT: GHA's default shell is `bash --noprofile --norc -eo
+          # pipefail {0}`, so `cmd; rc=$?` aborts on cmd's non-zero exit
+          # before rc=$? runs. `cmd || rc=$?` puts cmd in a conditional
+          # context which suppresses -e, so rc is always captured. Then we
+          # default rc=0 for the success path (|| doesn't fire on rc=0).
+          rc=0
           if [ "$INPUT_DRY_RUN" = "true" ]; then
-            python scripts/live/run_live_update.py --dry-run
+            python scripts/live/run_live_update.py --dry-run || rc=$?
           else
-            python scripts/live/run_live_update.py
+            python scripts/live/run_live_update.py || rc=$?
           fi
+          # rc=2 is the orchestrator's "soft skip" — input corruption, missing
+          # model artifacts, or circuit-breaker tripped. In every rc=2 path,
+          # run_live_update has ALREADY written live_state.json with a typed
+          # warning describing the reason. We want that warning to reach the
+          # dashboard, so convert to exit 0 here; the commit/push step below
+          # will then ship the warning. Anything else (rc=0 success, rc=1
+          # sim crash, rc=other) bubbles up unchanged.
+          if [ "$rc" -eq 2 ]; then
+            echo "::warning::run_live_update returned 2 (soft skip) — live_state.json warning will be published this tick."
+            exit 0
+          fi
+          exit "$rc"
 
       - name: Commit updated JSON (if changed)
         if: steps.gate.outputs.skip != 'true' && github.event.inputs.dry_run != 'true'
@@ -219,7 +237,22 @@ jobs:
           # Main IS production for this repo — push back to main.
           BRANCH="main"
           git pull --rebase origin "$BRANCH" || echo "Rebase failed — pushing anyway."
-          git push origin "HEAD:$BRANCH" || echo "Push failed — will retry next tick."
+          # Push failures previously fell through with `exit 0`, marking the
+          # job green and silently freezing the dashboard. Surface the failure
+          # so the next scheduled tick (and a human watching Actions) both see
+          # it. The local commit is not preserved — next tick clones fresh
+          # (fetch-depth: 1) — but recovery is automatic because each tick
+          # re-fetches results from the provider (scripts/live/fetch_results.py
+          # overwrites results_2026.json), the orchestrator re-derives the diff
+          # from the refetched state, and re-stages an equivalent commit.
+          # Recovery is deterministic *modulo provider idempotence*: FT/locked
+          # matches don't un-lock, so the diff converges. The preservation
+          # branch at fetch_results.py:765-770 also stops a transient empty
+          # provider response from blowing away the previous committed JSON.
+          if ! git push origin "HEAD:$BRANCH"; then
+            echo "::error::git push to $BRANCH failed — dashboard not refreshed this tick. Next scheduled tick will retry."
+            exit 1
+          fi
           exit 0
 
       # Vercel deploy on commit happens automatically via the Git integration

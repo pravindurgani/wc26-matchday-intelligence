@@ -319,8 +319,8 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
         payload = http_get_json(url, headers)
     except urllib.error.HTTPError as e:
         body = ""
-        try: body = e.read().decode("utf-8")[:200]
-        except Exception: pass
+        try: body = e.read().decode("utf-8", errors="replace")[:200]
+        except Exception as _body_err: body = f"<body unreadable: {type(_body_err).__name__}: {_body_err}>"
         print(f"[fetch_results] API-Football HTTP {e.code}: {body}")
         return []
     except Exception as e:
@@ -485,8 +485,8 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
         payload = http_get_json(url, headers)
     except urllib.error.HTTPError as e:
         body = ""
-        try: body = e.read().decode("utf-8")[:200]
-        except Exception: pass
+        try: body = e.read().decode("utf-8", errors="replace")[:200]
+        except Exception as _body_err: body = f"<body unreadable: {type(_body_err).__name__}: {_body_err}>"
         print(f"[fetch_results] football-data.org HTTP {e.code}: {body}")
         return []
     except Exception as e:

@@ -131,9 +131,9 @@ def fetch_apifootball_injuries(api_key: str) -> tuple[list[dict], list[dict]]:
     except urllib.error.HTTPError as e:
         body = ""
         try:
-            body = e.read().decode("utf-8")[:200]
-        except Exception:
-            pass
+            body = e.read().decode("utf-8", errors="replace")[:200]
+        except Exception as _body_err:
+            body = f"<body unreadable: {type(_body_err).__name__}: {_body_err}>"
         return [], [{"type": "http_error", "code": e.code, "body": body}]
     except Exception as e:
         return [], [{"type": "fetch_error", "message": f"{type(e).__name__}: {e}"}]

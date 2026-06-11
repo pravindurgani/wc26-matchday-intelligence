@@ -3572,7 +3572,7 @@
     "Knockout bracket follows the OFFICIAL FIFA-published R32-to-final structure.",
     "Third-place slot assignment uses FIFA Annex C exact lookup (495 combinations).",
     "Tiebreakers follow FIFA 2026 regulations.",
-    "Confidence intervals shown via 5 independent MC seeds.",
+    "Simulation ranges (p05/p95) shown across 5 independent MC seeds \u2014 this is sampling noise from independent tournament rollouts, NOT a parameter confidence interval.",
     "Model does NOT account for: last-minute injuries, refereeing, in-tournament momentum."
   ],
   "data_sources": {

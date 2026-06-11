@@ -9,10 +9,11 @@ Key v3 changes over v2 (addresses two careful reviews):
   • Exact FIFA Annex C lookup (495 combinations) for third-place slot assignment
     — fail-loud if a combination is missing
   • Travel-fatigue penalty (Haversine + rest days), configurable on/off
-  • Multi-seed Monte Carlo — outputs 5/50/95 percentile confidence intervals
+  • Multi-seed Monte Carlo — outputs 5/50/95 percentile simulation ranges
+    (sampling noise across independent rollouts; NOT parameter CIs)
 
 CLI:
-  python 03_simulate.py                  # default 10k sims × 5 seeds
+  python 03_simulate.py                  # default 5k sims × 5 seeds = 25k tourneys (= production)
   python 03_simulate.py --quick          # 2k sims × 3 seeds (faster)
   python 03_simulate.py --no-travel      # disable travel fatigue
   python 03_simulate.py --no-dispersion  # disable Negative Binomial (Poisson)
@@ -23,7 +24,9 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import sys
+import tempfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -1005,7 +1008,8 @@ def main():
     parser.add_argument("--live", action="store_true", help="enable live mode (uses results_2026.json)")
     parser.add_argument("--out", default="predictions.json", help="output filename")
     parser.add_argument("--seeds", type=int, default=5, help="number of MC seeds")
-    parser.add_argument("--sims", type=int, default=10000, help="sims per seed")
+    parser.add_argument("--sims", type=int, default=5000,
+                        help="sims per seed (production = 5000, total 25k with default 5 seeds)")
     args = parser.parse_args()
 
     n_seeds = args.seeds if not args.quick else 3
@@ -1169,7 +1173,7 @@ def main():
             "Knockout bracket follows the OFFICIAL FIFA-published R32-to-final structure.",
             "Third-place slot assignment uses FIFA Annex C exact lookup (495 combinations).",
             "Tiebreakers follow FIFA 2026 regulations.",
-            "Confidence intervals shown via 5 independent MC seeds.",
+            "Simulation ranges (p05/p95) shown across 5 independent MC seeds — this is sampling noise from independent tournament rollouts, NOT a parameter confidence interval.",
             "Model does NOT account for: last-minute injuries, refereeing, in-tournament momentum.",
         ],
         "data_sources": {
@@ -1206,11 +1210,23 @@ def main():
         or x.get("climate_static_h_zeroed_by_forecast")
         or x.get("climate_static_a_zeroed_by_forecast")
     ]
-    (PROC / args.out).write_text(json.dumps(out, indent=2, default=str))
-    print(f"[OK] Wrote {PROC / args.out}")
+    # Atomic write: a SIGKILL/OOM mid-write would otherwise leave the
+    # canonical predictions file partially written and trip the downstream
+    # publish guard (or worse, get copied through to dashboard/). tempfile
+    # in the same dir + os.replace gives same-filesystem atomic rename.
+    _out_path = PROC / args.out
+    _out_path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=str(_out_path.parent),
+        prefix=_out_path.name + ".", suffix=".tmp", delete=False,
+    ) as _tmp:
+        json.dump(out, _tmp, indent=2, default=str)
+        _tmp_path = Path(_tmp.name)
+    os.replace(_tmp_path, _out_path)
+    print(f"[OK] Wrote {_out_path}")
 
-    print("\n=== TOP 15 (v3: NB + DC-τ + Annex C + multi-seed CI) ===")
-    print(f"{'Rank':<5}{'Team':<24}{'P(win)':>10}{'CI 5-95':>14}{'P(SF)':>9}{'Elo':>7}")
+    print("\n=== TOP 15 (v3: NB + DC-τ + Annex C + 5-seed sim range) ===")
+    print(f"{'Rank':<5}{'Team':<24}{'P(win)':>10}{'Sim 5-95':>14}{'P(SF)':>9}{'Elo':>7}")
     for i, t in enumerate(team_summary[:15], 1):
         ci = f"[{t['p_champion_p05']*100:4.1f}-{t['p_champion_p95']*100:4.1f}]"
         print(f"{i:<5}{t['team']:<24}{t['p_champion']*100:>7.1f}%   {ci:>14}  "

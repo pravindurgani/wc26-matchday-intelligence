@@ -66,7 +66,7 @@ def render_contenders_table(pred: dict) -> str:
     return "\n".join([
         header,
         "",
-        "| # | Team       | Champion | 95% CI       | Reach SF | Model Elo |",
+        "| # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |",
         "|---|---|---|---|---|---|",
         *rows,
     ])

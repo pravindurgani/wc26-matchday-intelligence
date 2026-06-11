@@ -1,9 +1,10 @@
 # FIFA World Cup 2026 — AI Prediction Dashboard (v3)
 
 End-to-end probabilistic simulator for the 2026 World Cup. Survived three rounds
-of independent expert review. Production-ready: light/dark theme, multi-seed CIs,
-calibration audit, walk-forward backtests, sensitivity analysis, travel fatigue,
-injury layer, live-mode foundation, pre-launch validation script.
+of independent expert review. Production-ready: light/dark theme, 5-seed
+simulation ranges (p05/p95), calibration audit, walk-forward backtests,
+sensitivity analysis, travel fatigue, injury layer, live-mode foundation,
+pre-launch validation script.
 
 **Live dashboard**: deploy with `vercel deploy` or push to GitHub Pages from `dashboard/`.
 
@@ -215,7 +216,7 @@ fifa-wc-26-prediction/
 <!-- AUTO:TOP_CONTENDERS:BEGIN -->
 ## Top contenders (latest run — 25,000 sims, 5 seeds × 5,000)
 
-| # | Team       | Champion | 95% CI       | Reach SF | Model Elo |
+| # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |
 |---|---|---|---|---|---|
 | 1 | Spain      | 25.5% | [24.9, 26.0] | 49.4% | 2209 |
 | 2 | Argentina  | 18.3% | [18.0, 18.6] | 44.0% | 2174 |
@@ -252,7 +253,7 @@ not edit by hand.
 | France     | 8.8%  | 8.0%  | 10.3% | 2.3pp |
 | England    | 6.5%  | 6.0%  | 6.9%  | 0.9pp |
 
-Top-6 rank ordering identical across all 22 scenarios. The model is robust.
+Top-4 rank ordering (Spain > Argentina > France > England) is identical across all 22 scenarios. Positions 5–6 (Brazil / Colombia) swap under altitude-penalty extremes — the model is robust at the contender level but not perfectly stable on the chasing pack.
 
 ## Known limitations
 

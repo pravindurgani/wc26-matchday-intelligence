@@ -144,7 +144,7 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
       <div>
         <h2>Monte Carlo configuration</h2>
         <ul>
-          <li><strong>Seeds:</strong> 5 independent RNGs (NumPy <code>PCG64</code>, seeded deterministically). Cross-seed variance is reported as the 95% CI for every aggregate probability.</li>
+          <li><strong>Seeds:</strong> 5 independent RNGs (NumPy <code>PCG64</code>, seeded deterministically). Cross-seed variance is reported as the simulation range (5th–95th percentile across seeds) for every aggregate probability. This captures Monte-Carlo sampling noise from independent tournament rollouts — not parameter / model uncertainty (those would need bootstrap or posterior resampling, which this build does not perform).</li>
           <li><strong>Sims per seed:</strong> 5,000 → 25,000 total tournaments. Per-team SE on champion probability ≈ <code>√(p(1-p)/25000)</code> ≤ 0.32pp at the 50% level.</li>
           <li><strong>Knockout overtime:</strong> if tied at 90', play extra time with halved λ (15-min halves); if still tied, penalty shootout sampled with team-specific shootout slope (calibrated on historic finals).</li>
           <li><strong>Travel + venue:</strong> per-match effective Elo = base Elo + host boost − travel penalty − altitude penalty − heat penalty + form decay + squad-value prior. All inputs are pre-computed once per tournament; only the goal sample is stochastic.</li>
@@ -214,7 +214,7 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
           <thead><tr><th>Team</th><th class="num">Mean</th><th class="num">Min</th><th class="num">Max</th><th class="num">Range</th></tr></thead>
           <tbody id="apx-sens"><tr><td colspan="5" class="muted small">Loading sensitivity.json…</td></tr></tbody>
         </table></div>
-        <p class="muted small">Top-6 rank ordering is identical across all 22 scenarios.</p>
+        <p class="muted small">Top-4 rank ordering (Spain &gt; Argentina &gt; France &gt; England) is identical across all 22 scenarios; positions 5–6 (Brazil / Colombia) swap under altitude-penalty extremes.</p>
       </div>
     </section>
 
@@ -341,7 +341,7 @@ cd dashboard &amp;&amp; python3 -m http.server 8765</pre>
         <h2>Raw data downloads</h2>
         <p>All artefacts are static JSON. They are the same files the dashboard reads — no server, no auth, no rate limits.</p>
         <ul class="apx-dl-list">
-          <li><a href="./predictions.json" download><code>predictions.json</code></a> — team + match probabilities with 95% CIs</li>
+          <li><a href="./predictions.json" download><code>predictions.json</code></a> — team + match probabilities with 5-seed simulation ranges (p05/p95)</li>
           <li><a href="./predictions_live.json" download><code>predictions_live.json</code></a> — live-mode rerun with locked completed matches</li>
           <li><a href="./calibration.json" download><code>calibration.json</code></a> — predicted-vs-actual bins on 4,839 unseen matches</li>
           <li><a href="./walk_forward.json" download><code>walk_forward.json</code></a> — backtest on WC 2010/14/18/22</li>

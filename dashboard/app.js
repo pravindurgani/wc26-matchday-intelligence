@@ -180,6 +180,8 @@ let _lastFetchedTs = null;
 let _lastLivePred  = null;
 let _lastLiveDelta = null;
 
+let _liveStateFetchFailures = 0;
+
 async function fetchLiveTriple() {
   const fetchOptional = (url) =>
     fetch(url, { cache: 'no-store' })
@@ -188,13 +190,23 @@ async function fetchLiveTriple() {
   // Cheap probe first — only ~0.2 KB.
   const liveState = await fetchOptional('./live_state.json');
   if (!liveState) {
-    return { liveState: null, liveDelta: _lastLiveDelta, livePred: _lastLivePred };
+    // Surface a fetch-failure signal so renderLastUpdated can show the user
+    // that polling is broken; without this, silent CDN / network failures
+    // age the data indefinitely while the UI shows the last good timestamp.
+    _liveStateFetchFailures += 1;
+    return {
+      liveState: null,
+      liveDelta: _lastLiveDelta,
+      livePred: _lastLivePred,
+      fetchFailures: _liveStateFetchFailures,
+    };
   }
+  _liveStateFetchFailures = 0;
   const ts = liveState.last_updated_utc;
   // Same timestamp as last tick → nothing changed; skip the big fetches and
   // return the cached values. The caller still gets liveState for the bar.
   if (ts && ts === _lastFetchedTs && (_lastLivePred || _lastLiveDelta)) {
-    return { liveState, liveDelta: _lastLiveDelta, livePred: _lastLivePred };
+    return { liveState, liveDelta: _lastLiveDelta, livePred: _lastLivePred, fetchFailures: 0 };
   }
   // Timestamp moved — refresh the big files in parallel.
   const [liveDelta, livePred] = await Promise.all([
@@ -204,7 +216,7 @@ async function fetchLiveTriple() {
   _lastFetchedTs  = ts || _lastFetchedTs;
   _lastLiveDelta  = liveDelta || _lastLiveDelta;
   _lastLivePred   = livePred  || _lastLivePred;
-  return { liveState, liveDelta, livePred };
+  return { liveState, liveDelta, livePred, fetchFailures: 0 };
 }
 
 // C6: choose authoritative data per-tick. When the orchestrator has flipped
@@ -221,7 +233,7 @@ function pickPrimaryData(staticData, livePred, liveState) {
   return (isLive && livePredOk) ? livePred : staticData;
 }
 
-function applyLiveUpdate({ liveState, liveDelta, livePred }) {
+function applyLiveUpdate({ liveState, liveDelta, livePred, fetchFailures = 0 }) {
   const staticData = window._data;
   const travel = window._travel;
   const cal = window._cal;
@@ -238,7 +250,7 @@ function applyLiveUpdate({ liveState, liveDelta, livePred }) {
     try { fn(); }
     catch (e) { console.warn('[live] ' + label + ' failed:', e); }
   };
-  safe(() => renderLastUpdated(primary, liveState),       'renderLastUpdated');
+  safe(() => renderLastUpdated(primary, liveState, fetchFailures), 'renderLastUpdated');
   safe(() => renderLiveStatusBar(liveState),              'renderLiveStatusBar');
   safe(() => renderLiveStrip(liveState),                  'renderLiveStrip');
   safe(() => renderHero(primary, liveState, liveDelta),   'renderHero');
@@ -271,9 +283,21 @@ function startLivePolling(intervalMs = 60_000) {
   const tick = async () => {
     if (document.hidden) return;          // pause when tab not visible
     const triple = await fetchLiveTriple();
-    if (!triple.liveState) return;
+    const fetchFailures = triple.fetchFailures || 0;
+    // Always re-evaluate the staleness badge even when nothing changed
+    // upstream — without this, a wedged pipeline keeps the timestamp visually
+    // identical to a healthy pipeline because renderLastUpdated never reruns.
+    if (!triple.liveState) {
+      renderLastUpdated(window._primary || window._data, null, fetchFailures);
+      return;
+    }
     const ts = triple.liveState.last_updated_utc;
-    if (ts && ts === _lastLiveTimestamp) return;   // nothing new
+    if (ts && ts === _lastLiveTimestamp) {
+      // Same data, but age has advanced — rerun just the timestamp render so
+      // STALE / fetch-error states reflect the latest wall-clock age.
+      renderLastUpdated(window._primary || window._data, triple.liveState, fetchFailures);
+      return;
+    }
     _lastLiveTimestamp = ts;
     applyLiveUpdate(triple);
   };
@@ -315,15 +339,59 @@ function renderAllCharts(data, cal) {
   if (cal) safe(() => renderCalibration(cal), 'calibration');
 }
 
-function renderLastUpdated(data, liveState) {
+function renderLastUpdated(data, liveState, fetchFailures = 0) {
   const el = document.getElementById('last-updated');
   if (!el) return;
   const ts = liveState?.last_updated_utc || data.generated_at || '';
   if (!ts) { el.textContent = ''; return; }
   const d = new Date(ts);
   const opts = { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', timeZone: 'UTC' };
-  el.textContent = `Updated ${d.toLocaleString('en-GB', opts)} UTC`;
-  el.title = ts;
+  const isLive = liveState?.mode === 'live';
+  const ageMs  = Date.now() - d.getTime();
+  // Staleness thresholds keyed on mode AND in_play: live ticks arrive on a
+  // ~10-min cron (live-matchday.yml). During play we expect every tick to
+  // change something (in_play minute / score), so 30 min = ~3 missed ticks =
+  // hard signal the pipeline is wedged. Between matches the deploy-churn
+  // guard in write_live_state() intentionally freezes last_updated_utc when
+  // the payload is byte-identical (no in_play, no FT advances, no warning
+  // shifts) — so we widen the threshold to 90 min (~9 ticks) to absorb
+  // genuinely quiet off-windows without painting a false STALE. Pre-tournament
+  // data regenerates daily — only warn after 30h.
+  const hasLiveMatch = Array.isArray(liveState?.in_play) && liveState.in_play.length > 0;
+  const staleAfterMs = isLive
+    ? (hasLiveMatch ? 30 * 60_000 : 90 * 60_000)
+    : 30 * 3600_000;
+  const isStale = Number.isFinite(ageMs) && ageMs > staleAfterMs;
+  // Typed pipeline warnings (rc=2 soft-skip path, circuit-breaker open,
+  // postponed/abandoned matches in results_2026.json). The pipeline writes
+  // these to liveState.warnings[] specifically so the dashboard can surface
+  // them without killing the deploy — otherwise the user sees identical
+  // data and assumes everything is fine when it isn't.
+  const warnings = Array.isArray(liveState?.warnings) ? liveState.warnings : [];
+  const hasWarning = warnings.length > 0;
+  el.classList.toggle('stale', isStale);
+  el.classList.toggle('fetch-error', fetchFailures >= 3);
+  el.classList.toggle('warning', hasWarning && !isStale && fetchFailures < 3);
+  const base = `Updated ${d.toLocaleString('en-GB', opts)} UTC`;
+  if (fetchFailures >= 3) {
+    el.textContent = `${base} — FETCH FAIL`;
+    el.title = `live_state.json failed to fetch ${fetchFailures} consecutive ticks. Showing last known data.`;
+  } else if (isStale) {
+    const mins = Math.round(ageMs / 60_000);
+    const label = mins >= 60 ? `${Math.round(mins / 60)}h` : `${mins}m`;
+    el.textContent = `${base} — STALE (${label} old)`;
+    el.title = `Data has not refreshed in ${label}. The live update pipeline may be stuck. Timestamp: ${ts}`;
+  } else if (hasWarning) {
+    const w = warnings[0] || {};
+    const typeLabel = String(w.type || 'warning').replace(/_/g, ' ');
+    const more = warnings.length > 1 ? ` (+${warnings.length - 1} more)` : '';
+    el.textContent = `${base} — WARN: ${typeLabel}${more}`;
+    const msg = w.message ? `: ${w.message}` : '';
+    el.title = `Pipeline warning${msg}. Type: ${w.type || 'unknown'}${more}`;
+  } else {
+    el.textContent = base;
+    el.title = ts;
+  }
 }
 
 function providerLabel(source) {
