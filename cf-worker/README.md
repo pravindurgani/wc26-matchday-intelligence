@@ -5,6 +5,13 @@ A 10-line worker that POSTs `workflow_dispatch` to the GitHub repo every
 tournament, without depending on a laptop being awake or GitHub
 Actions' load-shed scheduler firing on time.
 
+> **No package.json here on purpose.** This worker has zero npm dependencies
+> — wrangler bundles the standard-library globals (`fetch`, `URL`, etc.)
+> directly. If you see Vercel's Analytics wizard tell you to `npm i
+> @vercel/analytics` — that's for the **dashboard** (which already uses the
+> `<script defer src="/_vercel/insights/script.js"></script>` tag), not this
+> dispatcher. Don't install it here.
+
 ## One-time setup (15 minutes)
 
 ### 1. Fine-grained GitHub PAT
