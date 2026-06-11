@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-11T04:03:21.872247+00:00",
+  "generated_at": "2026-06-11T16:05:30.663478+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -13,18 +13,18 @@
   },
   "active_adjustments": [
     {
-      "team": "Australia",
-      "match_id": 60,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
+      "team": "Austria",
+      "match_id": 20,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
           "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -71,7 +71,7 @@
     },
     {
       "team": "Japan",
-      "match_id": 36,
+      "match_id": 57,
       "total_elo_adjustment": -1.0,
       "raw_sum_before_aggregate_cap": -1.0,
       "aggregate_cap_applied": false,
@@ -89,8 +89,8 @@
       ]
     },
     {
-      "team": "Japan",
-      "match_id": 57,
+      "team": "Jordan",
+      "match_id": 20,
       "total_elo_adjustment": -1.0,
       "raw_sum_before_aggregate_cap": -1.0,
       "aggregate_cap_applied": false,
@@ -101,6 +101,25 @@
           "weather_bucket": "hot",
           "raw_elo": -1.0,
           "capped_elo": -1.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Netherlands",
+      "match_id": 58,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -139,25 +158,6 @@
           "weather_bucket": "hot",
           "raw_elo": -4.0,
           "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
-      "team": "South Korea",
-      "match_id": 54,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -205,8 +205,8 @@
   ],
   "summary": {
     "total_active_components": 10,
-    "teams_affected": 8,
-    "matches_affected": 9,
+    "teams_affected": 9,
+    "matches_affected": 8,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
