@@ -542,11 +542,13 @@ def phase_11_provider():
           "workflow_dispatch:" in wf and "dry_run:" in wf)
     check("workflow uses FOOTBALL_PROVIDER env",
           "FOOTBALL_PROVIDER:" in wf)
-    check("workflow runs every 10 minutes during tournament windows",
-          # H6: window-scoped crons. New repo's main is production, so
-          # schedules are armed.
-          ("'*/10 * 11-30 6 *'" in wf and "'*/10 * 1-19 7 *'" in wf)
-          or ("'*/10 * 10-30 6 *'" in wf and "'*/10 * 1-20 7 *'" in wf))
+    check("workflow has a 10-min dispatch path",
+          # Live-matchday is dispatched by the Cloudflare Worker every 10 min
+          # via workflow_dispatch — the native `schedule:` block was removed
+          # to avoid doubling the run rate (CF is more reliable). Accept
+          # either a workflow_dispatch trigger OR a windowed schedule.
+          "workflow_dispatch" in wf
+          or ("'*/10 * 11-30 6 *'" in wf and "'*/10 * 1-19 7 *'" in wf))
 
     # Dashboard
     js = (ROOT / "dashboard" / "app.js").read_text()

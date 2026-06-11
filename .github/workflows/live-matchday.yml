@@ -10,18 +10,17 @@ name: Live matchday refresh
 #   - (Optional) Add repo SECRET `SPORTMONKS_TOKEN` if using Sportmonks
 # Without a provider key the orchestrator silently falls back to manual/mock mode.
 on:
-  # Window-scoped cron: every 10 min during tournament windows only.
-  # Outside the window the orchestrator early-exits anyway (no completed
-  # matches → no re-sim), but skipping at the trigger layer saves Actions
-  # minutes + Vercel deploys.
+  # Cloudflare Worker dispatches this workflow every 10 min via the GitHub
+  # API. It's the reliable primary scheduler.
   #
-  # Cloudflare Worker also dispatches this workflow every 10 min via the
-  # GitHub API as the reliable scheduler (GitHub Actions schedule is
-  # best-effort and load-shed during peak). The cron + worker overlap is
-  # de-duped at the concurrency-group level.
-  schedule:
-    - cron: '*/10 * 11-30 6 *'   # group stage: 11–30 Jun, every 10 min
-    - cron: '*/10 * 1-19 7 *'    # knockouts:   1–19 Jul, every 10 min
+  # GitHub Actions' native `schedule:` was removed: it ran at the same
+  # cadence as the CF Worker, doubled the run rate during live matches,
+  # and is load-shed during peak hours anyway. The CF Worker is more
+  # reliable AND deduplicates implicitly (single dispatcher).
+  #
+  # If the CF Worker goes down for an extended period, re-add a
+  # `*/30 * * * *` schedule here as a sparse safety net — but the
+  # Worker's free tier easily covers the tournament.
   workflow_dispatch:
     inputs:
       provider:
@@ -223,22 +222,7 @@ jobs:
           git push origin "HEAD:$BRANCH" || echo "Push failed — will retry next tick."
           exit 0
 
-      # Production deploy on main commits. Vercel git integration also
-      # auto-deploys on push, but this CLI deploy is faster + gives us a
-      # deterministic alias step (no waiting on the integration webhook).
-      - name: Deploy fresh JSON to Vercel
-        if: >-
-          steps.gate.outputs.skip != 'true'
-          && github.event.inputs.dry_run != 'true'
-          && env.VERCEL_TOKEN != ''
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
-        run: |
-          set +e
-          echo "Deploying dashboard/ to Vercel production…"
-          npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
-          npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN" --no-clipboard
-          echo "Vercel deploy attempted (exit=$?). Workflow continues either way."
-          exit 0
+      # Vercel deploy on commit happens automatically via the Git integration
+      # connected to this repo. The previous CLI deploy step was removed
+      # because it doubled every deploy (Git integration was already firing
+      # on the same push), wasting Actions minutes + deploy budget.
