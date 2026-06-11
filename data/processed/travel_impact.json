@@ -7,237 +7,251 @@
   },
   "beneficiaries_top5": [
     {
+      "team": "Morocco",
+      "p_champion_with_travel": 0.01808,
+      "p_champion_no_travel": 0.0158,
+      "delta_pp": 0.22799999999999973,
+      "delta_rel": 0.14430379746835426
+    },
+    {
       "team": "Argentina",
-      "p_champion_with_travel": 0.18383999999999998,
-      "p_champion_no_travel": 0.17908,
-      "delta_pp": 0.47599999999999865,
-      "delta_rel": 0.02658029930757196
+      "p_champion_with_travel": 0.18316,
+      "p_champion_no_travel": 0.18104,
+      "delta_pp": 0.2119999999999983,
+      "delta_rel": 0.011710119310649487
     },
     {
-      "team": "Mexico",
-      "p_champion_with_travel": 0.0162,
-      "p_champion_no_travel": 0.01432,
-      "delta_pp": 0.18799999999999997,
-      "delta_rel": 0.13128491620111732
+      "team": "Spain",
+      "p_champion_with_travel": 0.25451999999999997,
+      "p_champion_no_travel": 0.2524799999999999,
+      "delta_pp": 0.20400000000000418,
+      "delta_rel": 0.008079847908745415
     },
     {
-      "team": "Uruguay",
-      "p_champion_with_travel": 0.011359999999999999,
-      "p_champion_no_travel": 0.00968,
-      "delta_pp": 0.16799999999999993,
-      "delta_rel": 0.17355371900826438
+      "team": "Brazil",
+      "p_champion_with_travel": 0.053360000000000005,
+      "p_champion_no_travel": 0.05192,
+      "delta_pp": 0.14400000000000038,
+      "delta_rel": 0.027734976887519334
     },
     {
-      "team": "Senegal",
-      "p_champion_with_travel": 0.0054,
-      "p_champion_no_travel": 0.00448,
-      "delta_pp": 0.09200000000000007,
-      "delta_rel": 0.20535714285714302
-    },
-    {
-      "team": "Netherlands",
-      "p_champion_with_travel": 0.034080000000000006,
-      "p_champion_no_travel": 0.03328,
-      "delta_pp": 0.0800000000000009,
-      "delta_rel": 0.02403846153846181
+      "team": "Switzerland",
+      "p_champion_with_travel": 0.015560000000000001,
+      "p_champion_no_travel": 0.014680000000000002,
+      "delta_pp": 0.08799999999999988,
+      "delta_rel": 0.059945504087193374
     }
   ],
   "losers_top5": [
     {
-      "team": "Colombia",
-      "p_champion_with_travel": 0.04792,
-      "p_champion_no_travel": 0.05192,
-      "delta_pp": -0.40000000000000036,
-      "delta_rel": -0.07704160246533134
+      "team": "Germany",
+      "p_champion_with_travel": 0.02676,
+      "p_champion_no_travel": 0.029759999999999998,
+      "delta_pp": -0.29999999999999993,
+      "delta_rel": -0.1008064516129032
     },
     {
-      "team": "France",
-      "p_champion_with_travel": 0.09028,
-      "p_champion_no_travel": 0.09212,
-      "delta_pp": -0.18399999999999944,
-      "delta_rel": -0.0199739470256187
-    },
-    {
-      "team": "Japan",
-      "p_champion_with_travel": 0.016959999999999996,
-      "p_champion_no_travel": 0.0182,
-      "delta_pp": -0.1240000000000005,
-      "delta_rel": -0.0681318681318684
-    },
-    {
-      "team": "Australia",
-      "p_champion_with_travel": 0.004319999999999999,
-      "p_champion_no_travel": 0.00516,
-      "delta_pp": -0.08400000000000005,
-      "delta_rel": -0.1627906976744187
+      "team": "England",
+      "p_champion_with_travel": 0.06604,
+      "p_champion_no_travel": 0.06764,
+      "delta_pp": -0.16000000000000042,
+      "delta_rel": -0.02365464222353643
     },
     {
       "team": "Ecuador",
-      "p_champion_with_travel": 0.02536,
-      "p_champion_no_travel": 0.026119999999999997,
-      "delta_pp": -0.07599999999999968,
-      "delta_rel": -0.029096477794793144
+      "p_champion_with_travel": 0.025880000000000004,
+      "p_champion_no_travel": 0.02732,
+      "delta_pp": -0.14399999999999968,
+      "delta_rel": -0.05270863836017558
+    },
+    {
+      "team": "Netherlands",
+      "p_champion_with_travel": 0.0316,
+      "p_champion_no_travel": 0.03296,
+      "delta_pp": -0.136,
+      "delta_rel": -0.04126213592233009
+    },
+    {
+      "team": "Uruguay",
+      "p_champion_with_travel": 0.00996,
+      "p_champion_no_travel": 0.01116,
+      "delta_pp": -0.11999999999999997,
+      "delta_rel": -0.10752688172043008
     }
   ],
   "all_diffs": [
     {
+      "team": "Morocco",
+      "p_champion_with_travel": 0.01808,
+      "p_champion_no_travel": 0.0158,
+      "delta_pp": 0.22799999999999973,
+      "delta_rel": 0.14430379746835426
+    },
+    {
       "team": "Argentina",
-      "p_champion_with_travel": 0.18383999999999998,
-      "p_champion_no_travel": 0.17908,
-      "delta_pp": 0.47599999999999865,
-      "delta_rel": 0.02658029930757196
-    },
-    {
-      "team": "Mexico",
-      "p_champion_with_travel": 0.0162,
-      "p_champion_no_travel": 0.01432,
-      "delta_pp": 0.18799999999999997,
-      "delta_rel": 0.13128491620111732
-    },
-    {
-      "team": "Uruguay",
-      "p_champion_with_travel": 0.011359999999999999,
-      "p_champion_no_travel": 0.00968,
-      "delta_pp": 0.16799999999999993,
-      "delta_rel": 0.17355371900826438
-    },
-    {
-      "team": "Senegal",
-      "p_champion_with_travel": 0.0054,
-      "p_champion_no_travel": 0.00448,
-      "delta_pp": 0.09200000000000007,
-      "delta_rel": 0.20535714285714302
-    },
-    {
-      "team": "Netherlands",
-      "p_champion_with_travel": 0.034080000000000006,
-      "p_champion_no_travel": 0.03328,
-      "delta_pp": 0.0800000000000009,
-      "delta_rel": 0.02403846153846181
-    },
-    {
-      "team": "Algeria",
-      "p_champion_with_travel": 0.0020800000000000003,
-      "p_champion_no_travel": 0.0016,
-      "delta_pp": 0.048000000000000015,
-      "delta_rel": 0.3000000000000001
-    },
-    {
-      "team": "Norway",
-      "p_champion_with_travel": 0.018119999999999997,
-      "p_champion_no_travel": 0.01764,
-      "delta_pp": 0.04799999999999978,
-      "delta_rel": 0.02721088435374137
-    },
-    {
-      "team": "Switzerland",
-      "p_champion_with_travel": 0.015480000000000002,
-      "p_champion_no_travel": 0.01508,
-      "delta_pp": 0.04000000000000028,
-      "delta_rel": 0.026525198938992228
+      "p_champion_with_travel": 0.18316,
+      "p_champion_no_travel": 0.18104,
+      "delta_pp": 0.2119999999999983,
+      "delta_rel": 0.011710119310649487
     },
     {
       "team": "Spain",
-      "p_champion_with_travel": 0.2536,
-      "p_champion_no_travel": 0.25320000000000004,
-      "delta_pp": 0.039999999999995595,
-      "delta_rel": 0.001579778830963491
+      "p_champion_with_travel": 0.25451999999999997,
+      "p_champion_no_travel": 0.2524799999999999,
+      "delta_pp": 0.20400000000000418,
+      "delta_rel": 0.008079847908745415
     },
     {
-      "team": "Jordan",
-      "p_champion_with_travel": 0.0004,
-      "p_champion_no_travel": 0.00016,
-      "delta_pp": 0.024,
-      "delta_rel": 0.24
+      "team": "Brazil",
+      "p_champion_with_travel": 0.053360000000000005,
+      "p_champion_no_travel": 0.05192,
+      "delta_pp": 0.14400000000000038,
+      "delta_rel": 0.027734976887519334
     },
     {
-      "team": "Ivory Coast",
-      "p_champion_with_travel": 0.00184,
-      "p_champion_no_travel": 0.0016,
-      "delta_pp": 0.023999999999999997,
-      "delta_rel": 0.14999999999999997
+      "team": "Switzerland",
+      "p_champion_with_travel": 0.015560000000000001,
+      "p_champion_no_travel": 0.014680000000000002,
+      "delta_pp": 0.08799999999999988,
+      "delta_rel": 0.059945504087193374
     },
     {
-      "team": "Morocco",
-      "p_champion_with_travel": 0.0164,
-      "p_champion_no_travel": 0.0162,
-      "delta_pp": 0.020000000000000226,
-      "delta_rel": 0.012345679012345819
+      "team": "Canada",
+      "p_champion_with_travel": 0.0074399999999999996,
+      "p_champion_no_travel": 0.0066,
+      "delta_pp": 0.08399999999999996,
+      "delta_rel": 0.1272727272727272
     },
     {
-      "team": "Iran",
-      "p_champion_with_travel": 0.0048000000000000004,
-      "p_champion_no_travel": 0.00464,
-      "delta_pp": 0.016000000000000042,
-      "delta_rel": 0.034482758620689745
-    },
-    {
-      "team": "Saudi Arabia",
-      "p_champion_with_travel": 0.0002,
-      "p_champion_no_travel": 4e-05,
-      "delta_pp": 0.016,
-      "delta_rel": 0.16
-    },
-    {
-      "team": "Czechia",
-      "p_champion_with_travel": 0.0006000000000000001,
-      "p_champion_no_travel": 0.00047999999999999996,
-      "delta_pp": 0.01200000000000001,
-      "delta_rel": 0.12000000000000009
-    },
-    {
-      "team": "New Zealand",
-      "p_champion_with_travel": 0.0002,
-      "p_champion_no_travel": 0.00012000000000000002,
-      "delta_pp": 0.008,
-      "delta_rel": 0.07999999999999999
+      "team": "Portugal",
+      "p_champion_with_travel": 0.04176,
+      "p_champion_no_travel": 0.04104,
+      "delta_pp": 0.07199999999999984,
+      "delta_rel": 0.017543859649122768
     },
     {
       "team": "Croatia",
-      "p_champion_with_travel": 0.01444,
-      "p_champion_no_travel": 0.014360000000000001,
-      "delta_pp": 0.007999999999999848,
-      "delta_rel": 0.005571030640668417
+      "p_champion_with_travel": 0.015479999999999999,
+      "p_champion_no_travel": 0.01476,
+      "delta_pp": 0.07199999999999984,
+      "delta_rel": 0.04878048780487794
     },
     {
-      "team": "England",
-      "p_champion_with_travel": 0.06552,
-      "p_champion_no_travel": 0.06544,
-      "delta_pp": 0.007999999999999674,
-      "delta_rel": 0.0012224938875305125
+      "team": "Algeria",
+      "p_champion_with_travel": 0.00212,
+      "p_champion_no_travel": 0.00148,
+      "delta_pp": 0.064,
+      "delta_rel": 0.4324324324324324
     },
     {
-      "team": "Sweden",
-      "p_champion_with_travel": 0.00012000000000000002,
-      "p_champion_no_travel": 8e-05,
-      "delta_pp": 0.004000000000000001,
-      "delta_rel": 0.04000000000000001
+      "team": "Australia",
+      "p_champion_with_travel": 0.0050799999999999994,
+      "p_champion_no_travel": 0.00448,
+      "delta_pp": 0.059999999999999984,
+      "delta_rel": 0.1339285714285714
+    },
+    {
+      "team": "Japan",
+      "p_champion_with_travel": 0.01824,
+      "p_champion_no_travel": 0.017759999999999998,
+      "delta_pp": 0.048000000000000126,
+      "delta_rel": 0.0270270270270271
+    },
+    {
+      "team": "Panama",
+      "p_champion_with_travel": 0.00104,
+      "p_champion_no_travel": 0.00064,
+      "delta_pp": 0.03999999999999999,
+      "delta_rel": 0.39999999999999986
     },
     {
       "team": "Paraguay",
-      "p_champion_with_travel": 0.005280000000000001,
-      "p_champion_no_travel": 0.00528,
-      "delta_pp": 8.673617379884035e-17,
-      "delta_rel": 1.6427305643719765e-16
+      "p_champion_with_travel": 0.00492,
+      "p_champion_no_travel": 0.00456,
+      "delta_pp": 0.036000000000000004,
+      "delta_rel": 0.07894736842105265
+    },
+    {
+      "team": "Turkey",
+      "p_champion_with_travel": 0.01156,
+      "p_champion_no_travel": 0.01124,
+      "delta_pp": 0.032000000000000084,
+      "delta_rel": 0.02846975088967979
+    },
+    {
+      "team": "DR Congo",
+      "p_champion_with_travel": 0.0004,
+      "p_champion_no_travel": 0.00024000000000000003,
+      "delta_pp": 0.016,
+      "delta_rel": 0.15999999999999998
+    },
+    {
+      "team": "Belgium",
+      "p_champion_with_travel": 0.0128,
+      "p_champion_no_travel": 0.012640000000000002,
+      "delta_pp": 0.01599999999999987,
+      "delta_rel": 0.01265822784810116
+    },
+    {
+      "team": "Tunisia",
+      "p_champion_with_travel": 0.00012000000000000002,
+      "p_champion_no_travel": 4e-05,
+      "delta_pp": 0.008000000000000002,
+      "delta_rel": 0.08000000000000002
+    },
+    {
+      "team": "United States",
+      "p_champion_with_travel": 0.00224,
+      "p_champion_no_travel": 0.0021999999999999997,
+      "delta_pp": 0.0040000000000000105,
+      "delta_rel": 0.018181818181818233
     },
     {
       "team": "Scotland",
       "p_champion_with_travel": 0.00136,
-      "p_champion_no_travel": 0.00136,
-      "delta_pp": 0.0,
-      "delta_rel": 0.0
+      "p_champion_no_travel": 0.00132,
+      "delta_pp": 0.0040000000000000105,
+      "delta_rel": 0.030303030303030384
     },
     {
-      "team": "Bosnia and Herzegovina",
+      "team": "South Africa",
       "p_champion_with_travel": 8e-05,
-      "p_champion_no_travel": 8e-05,
-      "delta_pp": 0.0,
-      "delta_rel": 0.0
+      "p_champion_no_travel": 4e-05,
+      "delta_pp": 0.004,
+      "delta_rel": 0.04
     },
     {
-      "team": "Cape Verde",
+      "team": "Haiti",
       "p_champion_with_travel": 4e-05,
-      "p_champion_no_travel": 4e-05,
+      "p_champion_no_travel": 0.0,
+      "delta_pp": 0.004,
+      "delta_rel": 0.04
+    },
+    {
+      "team": "Saudi Arabia",
+      "p_champion_with_travel": 0.00011999999999999999,
+      "p_champion_no_travel": 8e-05,
+      "delta_pp": 0.003999999999999998,
+      "delta_rel": 0.03999999999999998
+    },
+    {
+      "team": "Egypt",
+      "p_champion_with_travel": 0.0009599999999999999,
+      "p_champion_no_travel": 0.00092,
+      "delta_pp": 0.003999999999999989,
+      "delta_rel": 0.03999999999999989
+    },
+    {
+      "team": "Senegal",
+      "p_champion_with_travel": 0.00476,
+      "p_champion_no_travel": 0.0047599999999999995,
+      "delta_pp": 8.673617379884035e-17,
+      "delta_rel": 1.822188525185722e-16
+    },
+    {
+      "team": "Norway",
+      "p_champion_with_travel": 0.01736,
+      "p_champion_no_travel": 0.01736,
       "delta_pp": 0.0,
       "delta_rel": 0.0
     },
@@ -256,165 +270,151 @@
       "delta_rel": 0.0
     },
     {
-      "team": "DR Congo",
-      "p_champion_with_travel": 0.00024000000000000003,
-      "p_champion_no_travel": 0.00028000000000000003,
-      "delta_pp": -0.004,
-      "delta_rel": -0.039999999999999994
+      "team": "Ghana",
+      "p_champion_with_travel": 0.0,
+      "p_champion_no_travel": 0.0,
+      "delta_pp": 0.0,
+      "delta_rel": 0.0
     },
     {
-      "team": "South Africa",
-      "p_champion_with_travel": 4e-05,
-      "p_champion_no_travel": 8e-05,
-      "delta_pp": -0.004,
-      "delta_rel": -0.04
-    },
-    {
-      "team": "Haiti",
-      "p_champion_with_travel": 4e-05,
-      "p_champion_no_travel": 8e-05,
+      "team": "Cape Verde",
+      "p_champion_with_travel": 0.0,
+      "p_champion_no_travel": 4e-05,
       "delta_pp": -0.004,
       "delta_rel": -0.04
-    },
-    {
-      "team": "Egypt",
-      "p_champion_with_travel": 0.00076,
-      "p_champion_no_travel": 0.0008399999999999999,
-      "delta_pp": -0.007999999999999988,
-      "delta_rel": -0.07999999999999988
     },
     {
       "team": "Iraq",
-      "p_champion_with_travel": 0.00024000000000000003,
-      "p_champion_no_travel": 0.00032,
+      "p_champion_with_travel": 0.00012000000000000002,
+      "p_champion_no_travel": 0.0002,
       "delta_pp": -0.008,
       "delta_rel": -0.07999999999999999
     },
     {
-      "team": "Ghana",
-      "p_champion_with_travel": 0.0,
-      "p_champion_no_travel": 8e-05,
-      "delta_pp": -0.008,
-      "delta_rel": -0.08
-    },
-    {
-      "team": "Tunisia",
+      "team": "Bosnia and Herzegovina",
       "p_champion_with_travel": 4e-05,
       "p_champion_no_travel": 0.00012000000000000002,
       "delta_pp": -0.008000000000000002,
       "delta_rel": -0.08000000000000002
     },
     {
-      "team": "United States",
-      "p_champion_with_travel": 0.00184,
-      "p_champion_no_travel": 0.002,
-      "delta_pp": -0.016,
-      "delta_rel": -0.07999999999999999
+      "team": "Sweden",
+      "p_champion_with_travel": 0.00012000000000000002,
+      "p_champion_no_travel": 0.00028,
+      "delta_pp": -0.015999999999999997,
+      "delta_rel": -0.15999999999999995
+    },
+    {
+      "team": "Czechia",
+      "p_champion_with_travel": 0.0006,
+      "p_champion_no_travel": 0.00076,
+      "delta_pp": -0.01600000000000001,
+      "delta_rel": -0.1600000000000001
     },
     {
       "team": "Uzbekistan",
-      "p_champion_with_travel": 0.0012799999999999999,
-      "p_champion_no_travel": 0.00144,
-      "delta_pp": -0.01600000000000002,
-      "delta_rel": -0.11111111111111124
+      "p_champion_with_travel": 0.0013599999999999997,
+      "p_champion_no_travel": 0.00152,
+      "delta_pp": -0.016000000000000042,
+      "delta_rel": -0.10526315789473711
     },
     {
-      "team": "Belgium",
-      "p_champion_with_travel": 0.0128,
-      "p_champion_no_travel": 0.013000000000000001,
-      "delta_pp": -0.020000000000000052,
-      "delta_rel": -0.015384615384615424
+      "team": "New Zealand",
+      "p_champion_with_travel": 4e-05,
+      "p_champion_no_travel": 0.00024000000000000003,
+      "delta_pp": -0.020000000000000004,
+      "delta_rel": -0.20000000000000004
     },
     {
-      "team": "Panama",
-      "p_champion_with_travel": 0.00064,
-      "p_champion_no_travel": 0.00092,
+      "team": "Iran",
+      "p_champion_with_travel": 0.0036000000000000003,
+      "p_champion_no_travel": 0.00388,
+      "delta_pp": -0.027999999999999987,
+      "delta_rel": -0.07216494845360821
+    },
+    {
+      "team": "Jordan",
+      "p_champion_with_travel": 0.00012000000000000002,
+      "p_champion_no_travel": 0.0004,
       "delta_pp": -0.027999999999999997,
       "delta_rel": -0.27999999999999997
     },
     {
-      "team": "Canada",
-      "p_champion_with_travel": 0.006959999999999999,
-      "p_champion_no_travel": 0.00728,
-      "delta_pp": -0.032000000000000084,
-      "delta_rel": -0.04395604395604407
+      "team": "Ivory Coast",
+      "p_champion_with_travel": 0.00116,
+      "p_champion_no_travel": 0.00152,
+      "delta_pp": -0.036000000000000004,
+      "delta_rel": -0.23684210526315794
     },
     {
       "team": "Austria",
-      "p_champion_with_travel": 0.0028,
-      "p_champion_no_travel": 0.0031600000000000005,
-      "delta_pp": -0.03600000000000005,
-      "delta_rel": -0.11392405063291154
-    },
-    {
-      "team": "Brazil",
-      "p_champion_with_travel": 0.052000000000000005,
-      "p_champion_no_travel": 0.0524,
-      "delta_pp": -0.03999999999999976,
-      "delta_rel": -0.007633587786259496
-    },
-    {
-      "team": "Portugal",
-      "p_champion_with_travel": 0.041240000000000006,
-      "p_champion_no_travel": 0.04176,
-      "delta_pp": -0.05199999999999927,
-      "delta_rel": -0.012452107279693312
-    },
-    {
-      "team": "Germany",
-      "p_champion_with_travel": 0.029359999999999997,
-      "p_champion_no_travel": 0.02988,
-      "delta_pp": -0.05200000000000031,
-      "delta_rel": -0.01740294511378859
-    },
-    {
-      "team": "Turkey",
-      "p_champion_with_travel": 0.01032,
-      "p_champion_no_travel": 0.01088,
-      "delta_pp": -0.05600000000000015,
-      "delta_rel": -0.05147058823529425
+      "p_champion_with_travel": 0.0027999999999999995,
+      "p_champion_no_travel": 0.0033999999999999994,
+      "delta_pp": -0.059999999999999984,
+      "delta_rel": -0.1764705882352941
     },
     {
       "team": "South Korea",
-      "p_champion_with_travel": 0.00312,
-      "p_champion_no_travel": 0.0037199999999999998,
-      "delta_pp": -0.059999999999999984,
-      "delta_rel": -0.16129032258064513
-    },
-    {
-      "team": "Ecuador",
-      "p_champion_with_travel": 0.02536,
-      "p_champion_no_travel": 0.026119999999999997,
-      "delta_pp": -0.07599999999999968,
-      "delta_rel": -0.029096477794793144
-    },
-    {
-      "team": "Australia",
-      "p_champion_with_travel": 0.004319999999999999,
-      "p_champion_no_travel": 0.00516,
-      "delta_pp": -0.08400000000000005,
-      "delta_rel": -0.1627906976744187
-    },
-    {
-      "team": "Japan",
-      "p_champion_with_travel": 0.016959999999999996,
-      "p_champion_no_travel": 0.0182,
-      "delta_pp": -0.1240000000000005,
-      "delta_rel": -0.0681318681318684
-    },
-    {
-      "team": "France",
-      "p_champion_with_travel": 0.09028,
-      "p_champion_no_travel": 0.09212,
-      "delta_pp": -0.18399999999999944,
-      "delta_rel": -0.0199739470256187
+      "p_champion_with_travel": 0.00284,
+      "p_champion_no_travel": 0.00356,
+      "delta_pp": -0.07199999999999997,
+      "delta_rel": -0.2022471910112359
     },
     {
       "team": "Colombia",
-      "p_champion_with_travel": 0.04792,
-      "p_champion_no_travel": 0.05192,
-      "delta_pp": -0.40000000000000036,
-      "delta_rel": -0.07704160246533134
+      "p_champion_with_travel": 0.048560000000000006,
+      "p_champion_no_travel": 0.0494,
+      "delta_pp": -0.08399999999999935,
+      "delta_rel": -0.01700404858299582
+    },
+    {
+      "team": "France",
+      "p_champion_with_travel": 0.09084,
+      "p_champion_no_travel": 0.09172,
+      "delta_pp": -0.08799999999999919,
+      "delta_rel": -0.00959441779328382
+    },
+    {
+      "team": "Mexico",
+      "p_champion_with_travel": 0.015000000000000003,
+      "p_champion_no_travel": 0.01604,
+      "delta_pp": -0.10399999999999958,
+      "delta_rel": -0.06483790523690747
+    },
+    {
+      "team": "Uruguay",
+      "p_champion_with_travel": 0.00996,
+      "p_champion_no_travel": 0.01116,
+      "delta_pp": -0.11999999999999997,
+      "delta_rel": -0.10752688172043008
+    },
+    {
+      "team": "Netherlands",
+      "p_champion_with_travel": 0.0316,
+      "p_champion_no_travel": 0.03296,
+      "delta_pp": -0.136,
+      "delta_rel": -0.04126213592233009
+    },
+    {
+      "team": "Ecuador",
+      "p_champion_with_travel": 0.025880000000000004,
+      "p_champion_no_travel": 0.02732,
+      "delta_pp": -0.14399999999999968,
+      "delta_rel": -0.05270863836017558
+    },
+    {
+      "team": "England",
+      "p_champion_with_travel": 0.06604,
+      "p_champion_no_travel": 0.06764,
+      "delta_pp": -0.16000000000000042,
+      "delta_rel": -0.02365464222353643
+    },
+    {
+      "team": "Germany",
+      "p_champion_with_travel": 0.02676,
+      "p_champion_no_travel": 0.029759999999999998,
+      "delta_pp": -0.29999999999999993,
+      "delta_rel": -0.1008064516129032
     }
   ],
   "total_group_travel_km_by_team": {
