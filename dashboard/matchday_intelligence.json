@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-11T20:25:32.001637+00:00",
+  "generated_at": "2026-06-11T22:51:44.638586+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -70,6 +70,25 @@
       ]
     },
     {
+      "team": "Germany",
+      "match_id": 55,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "Japan",
       "match_id": 57,
       "total_elo_adjustment": -1.0,
@@ -108,18 +127,41 @@
       ]
     },
     {
+      "team": "Mexico",
+      "match_id": null,
+      "total_elo_adjustment": 1.83,
+      "raw_sum_before_aggregate_cap": 1.83,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 1,
+          "raw_elo": 1.83,
+          "capped_elo_per_match": 1.83,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.83,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
       "team": "Netherlands",
       "match_id": 58,
-      "total_elo_adjustment": -8.0,
-      "raw_sum_before_aggregate_cap": -8.0,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -8.0,
-          "capped_elo": -8.0,
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -165,6 +207,29 @@
       ]
     },
     {
+      "team": "South Africa",
+      "match_id": null,
+      "total_elo_adjustment": -1.83,
+      "raw_sum_before_aggregate_cap": -1.83,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 1,
+          "raw_elo": -1.83,
+          "capped_elo_per_match": -1.83,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.83,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
       "team": "Sweden",
       "match_id": 12,
       "total_elo_adjustment": -4.0,
@@ -204,9 +269,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 10,
-    "teams_affected": 9,
-    "matches_affected": 8,
+    "total_active_components": 13,
+    "teams_affected": 12,
+    "matches_affected": 9,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
