@@ -268,17 +268,40 @@ def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
         "in_play_count": len(in_play), # convenient summary
         "warnings": warnings or [],
     }
-    # Deploy-churn guard: if every field except last_updated_utc is identical
-    # to what's already on disk, preserve the old timestamp so the file's
-    # bytes don't change. The workflow's git-add then sees no diff and skips
-    # the commit, which keeps Vercel Hobby's 100 deploys/day cap comfortable
-    # during quiet ticks and during in-play windows where nothing has moved.
+    # Deploy-churn guard WITH HEARTBEAT: if every field except last_updated_utc
+    # is identical to what's already on disk, preserve the old timestamp so
+    # the file's bytes don't change and git-add skips the commit. This keeps
+    # Vercel Hobby's 100 deploys/day cap comfortable during quiet ticks.
+    #
+    # HEARTBEAT_MAX_AGE caps how long we'll preserve a stale timestamp. The
+    # dashboard's staleness UI in app.js:357-363 flips to STALE when the
+    # timestamp is >90 min old (mode=live, in_play=[]). Without a heartbeat,
+    # natural tournament off-windows (multi-hour gaps between matches) cause
+    # the deploy-churn guard to keep writing identical bytes for hours, the
+    # file stays committed at its first off-window timestamp, and the
+    # dashboard shouts STALE on a perfectly healthy pipeline.
+    #
+    # 30 min heartbeat → ~2 forced refreshes per hour during quiet windows,
+    # 3× margin against the 90-min staleness threshold. Worst-case extra
+    # deploys: ~30/day during off-windows (well under the 100/day cap).
+    HEARTBEAT_MAX_AGE_SECS = 30 * 60
     try:
         existing = json.loads((DASH / "live_state.json").read_text())
         a = {k: v for k, v in state.items() if k != "last_updated_utc"}
         b = {k: v for k, v in existing.items() if k != "last_updated_utc"}
         if a == b and existing.get("last_updated_utc"):
-            state["last_updated_utc"] = existing["last_updated_utc"]
+            try:
+                existing_ts = datetime.fromisoformat(existing["last_updated_utc"])
+                if existing_ts.tzinfo is None:
+                    existing_ts = existing_ts.replace(tzinfo=timezone.utc)
+                age_secs = (datetime.now(timezone.utc) - existing_ts).total_seconds()
+                if age_secs < HEARTBEAT_MAX_AGE_SECS:
+                    # Fresh enough — preserve to skip the deploy.
+                    state["last_updated_utc"] = existing["last_updated_utc"]
+                # else: fall through with the new timestamp → heartbeat write.
+            except (ValueError, TypeError):
+                # Malformed existing timestamp — write fresh, don't preserve.
+                pass
     except (FileNotFoundError, json.JSONDecodeError, OSError):
         pass
     atomic_write_json(DASH / "live_state.json", state)
