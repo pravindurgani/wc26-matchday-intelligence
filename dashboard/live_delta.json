@@ -1,46 +1,46 @@
 {
-  "generated_at": "2026-06-12T10:20:15.572535+00:00",
+  "generated_at": "2026-06-12T10:30:02.856258+00:00",
   "min_pp_threshold": 0.3,
   "top_movers_up": [
     {
       "team": "Spain",
       "static": 0.24611999999999998,
-      "live": 0.25212,
-      "delta_pp": 0.6000000000000033
+      "live": 0.25124,
+      "delta_pp": 0.5120000000000041
     },
     {
       "team": "Mexico",
       "static": 0.01572,
-      "live": 0.01988,
-      "delta_pp": 0.4159999999999997
+      "live": 0.01904,
+      "delta_pp": 0.332
     }
   ],
   "top_movers_down": [
     {
       "team": "Argentina",
       "static": 0.18812,
-      "live": 0.18460000000000001,
-      "delta_pp": -0.35199999999999954
+      "live": 0.18112,
+      "delta_pp": -0.7000000000000006
     }
   ],
   "all_movers": [
     {
+      "team": "Argentina",
+      "static": 0.18812,
+      "live": 0.18112,
+      "delta_pp": -0.7000000000000006
+    },
+    {
       "team": "Spain",
       "static": 0.24611999999999998,
-      "live": 0.25212,
-      "delta_pp": 0.6000000000000033
+      "live": 0.25124,
+      "delta_pp": 0.5120000000000041
     },
     {
       "team": "Mexico",
       "static": 0.01572,
-      "live": 0.01988,
-      "delta_pp": 0.4159999999999997
-    },
-    {
-      "team": "Argentina",
-      "static": 0.18812,
-      "live": 0.18460000000000001,
-      "delta_pp": -0.35199999999999954
+      "live": 0.01904,
+      "delta_pp": 0.332
     }
   ]
 }
