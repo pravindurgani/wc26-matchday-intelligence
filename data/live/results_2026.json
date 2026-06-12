@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-12T02:01:02.003873+00:00",
+  "updated_at": "2026-06-12T02:11:07.272286+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,10 +18,21 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-12T02:01:02.003288+00:00",
+      "updated_at": "2026-06-12T02:11:07.271730+00:00",
       "raw_status": "FT"
     }
   ],
-  "in_play": [],
+  "in_play": [
+    {
+      "m": 2,
+      "home": "South Korea",
+      "away": "Czechia",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 6,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
   "warnings": []
 }
