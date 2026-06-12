@@ -271,7 +271,8 @@ def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
     # Deploy-churn guard WITH HEARTBEAT: if every field except last_updated_utc
     # is identical to what's already on disk, preserve the old timestamp so
     # the file's bytes don't change and git-add skips the commit. This keeps
-    # Vercel Hobby's 100 deploys/day cap comfortable during quiet ticks.
+    # the Vercel deploy budget comfortable during quiet ticks (Pro = unlimited
+    # per day, Hobby = 100/day; the math below is sized for the Hobby case).
     #
     # HEARTBEAT_MAX_AGE caps how long we'll preserve a stale timestamp. The
     # dashboard's staleness UI in app.js:357-363 flips to STALE when the
@@ -283,7 +284,7 @@ def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
     #
     # 30 min heartbeat → ~2 forced refreshes per hour during quiet windows,
     # 3× margin against the 90-min staleness threshold. Worst-case extra
-    # deploys: ~30/day during off-windows (well under the 100/day cap).
+    # deploys: ~30/day during off-windows (well within any Vercel plan budget).
     HEARTBEAT_MAX_AGE_SECS = 30 * 60
     try:
         existing = json.loads((DASH / "live_state.json").read_text())
