@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T20:13:40.475218+00:00",
+  "generated_at": "2026-06-12T22:27:04.449728+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -28,6 +28,52 @@
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Bosnia and Herzegovina",
+      "match_id": null,
+      "total_elo_adjustment": -1.68,
+      "raw_sum_before_aggregate_cap": -1.68,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 3,
+          "raw_elo": -1.68,
+          "capped_elo_per_match": -1.68,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.68,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
+      "team": "Canada",
+      "match_id": null,
+      "total_elo_adjustment": 1.68,
+      "raw_sum_before_aggregate_cap": 1.68,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 3,
+          "raw_elo": 1.68,
+          "capped_elo_per_match": 1.68,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.68,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -372,8 +418,8 @@
     }
   ],
   "summary": {
-    "total_active_components": 18,
-    "teams_affected": 12,
+    "total_active_components": 20,
+    "teams_affected": 14,
     "matches_affected": 11,
     "aggregate_caps_hit": 0
   },

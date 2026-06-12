@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-12T20:13:40.405890+00:00",
+  "generated_at": "2026-06-12T22:27:04.385685+00:00",
   "schema_version": 1,
   "source": "api_football",
-  "n_completed": 2,
+  "n_completed": 3,
   "matches": [
     {
       "match_id": 1,
@@ -53,7 +53,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489369",
-      "captured_at": "2026-06-12T20:13:40.297404+00:00"
+      "captured_at": "2026-06-12T22:27:04.137219+00:00"
     },
     {
       "match_id": 2,
@@ -104,7 +104,58 @@
         "goals_prevented": 0
       },
       "fixture_id": "1538999",
-      "captured_at": "2026-06-12T20:13:40.405871+00:00"
+      "captured_at": "2026-06-12T22:27:04.256810+00:00"
+    },
+    {
+      "match_id": 3,
+      "status": "FT",
+      "home": "Canada",
+      "away": "Bosnia and Herzegovina",
+      "home_form_adjustment_elo": 3.36,
+      "away_form_adjustment_elo": -3.36,
+      "true_xg_available": false,
+      "home_stats": {
+        "Shots on Goal": 4,
+        "Shots off Goal": 5,
+        "Total Shots": 13,
+        "Blocked Shots": 4,
+        "Shots insidebox": 10,
+        "Shots outsidebox": 3,
+        "Fouls": 10,
+        "Corner Kicks": 9,
+        "Offsides": 1,
+        "Ball Possession": 61,
+        "Yellow Cards": 2,
+        "Red Cards": null,
+        "Goalkeeper Saves": 2,
+        "Total passes": 415,
+        "Passes accurate": 310,
+        "Passes %": 75,
+        "expected_goals": 1,
+        "goals_prevented": 0
+      },
+      "away_stats": {
+        "Shots on Goal": 3,
+        "Shots off Goal": 4,
+        "Total Shots": 8,
+        "Blocked Shots": 1,
+        "Shots insidebox": 5,
+        "Shots outsidebox": 3,
+        "Fouls": 20,
+        "Corner Kicks": 4,
+        "Offsides": 0,
+        "Ball Possession": 39,
+        "Yellow Cards": 3,
+        "Red Cards": null,
+        "Goalkeeper Saves": 1,
+        "Total passes": 270,
+        "Passes accurate": 172,
+        "Passes %": 64,
+        "expected_goals": 0,
+        "goals_prevented": 0
+      },
+      "fixture_id": "1539000",
+      "captured_at": "2026-06-12T22:27:04.385670+00:00"
     }
   ],
   "warnings": [],
