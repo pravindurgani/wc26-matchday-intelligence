@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-12T03:01:02.231948+00:00",
+  "updated_at": "2026-06-12T03:11:06.014187+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-12T03:01:02.231401+00:00",
+      "updated_at": "2026-06-12T03:11:06.013589+00:00",
       "raw_status": "FT"
     }
   ],
@@ -29,9 +29,9 @@
       "away": "Czechia",
       "home_score": 0,
       "away_score": 0,
-      "elapsed": 45,
+      "elapsed": 52,
       "status": "LIVE",
-      "status_long": "Halftime"
+      "status_long": "Second Half"
     }
   ],
   "warnings": []
