@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-12T04:04:00.673809+00:00",
+  "generated_at": "2026-06-12T10:17:20.154142+00:00",
   "schema_version": 1,
   "source": "api_football",
-  "n_completed": 1,
+  "n_completed": 2,
   "matches": [
     {
       "match_id": 1,
@@ -53,7 +53,58 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489369",
-      "captured_at": "2026-06-12T04:04:00.673792+00:00"
+      "captured_at": "2026-06-12T10:17:19.986045+00:00"
+    },
+    {
+      "match_id": 2,
+      "status": "FT",
+      "home": "South Korea",
+      "away": "Czechia",
+      "home_form_adjustment_elo": 2.82,
+      "away_form_adjustment_elo": -2.82,
+      "true_xg_available": false,
+      "home_stats": {
+        "Shots on Goal": 6,
+        "Shots off Goal": 5,
+        "Total Shots": 15,
+        "Blocked Shots": 4,
+        "Shots insidebox": 10,
+        "Shots outsidebox": 5,
+        "Fouls": 9,
+        "Corner Kicks": 4,
+        "Offsides": 2,
+        "Ball Possession": 62,
+        "Yellow Cards": 1,
+        "Red Cards": null,
+        "Goalkeeper Saves": 3,
+        "Total passes": 542,
+        "Passes accurate": 469,
+        "Passes %": 87,
+        "expected_goals": 2,
+        "goals_prevented": 0
+      },
+      "away_stats": {
+        "Shots on Goal": 4,
+        "Shots off Goal": 4,
+        "Total Shots": 8,
+        "Blocked Shots": 1,
+        "Shots insidebox": 5,
+        "Shots outsidebox": 3,
+        "Fouls": 16,
+        "Corner Kicks": 5,
+        "Offsides": 2,
+        "Ball Possession": 38,
+        "Yellow Cards": 0,
+        "Red Cards": null,
+        "Goalkeeper Saves": 4,
+        "Total passes": 323,
+        "Passes accurate": 228,
+        "Passes %": 71,
+        "expected_goals": 0,
+        "goals_prevented": 0
+      },
+      "fixture_id": "1538999",
+      "captured_at": "2026-06-12T10:17:20.154127+00:00"
     }
   ],
   "warnings": [],
