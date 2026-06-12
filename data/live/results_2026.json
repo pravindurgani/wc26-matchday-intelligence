@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-12T19:21:05.243372+00:00",
+  "updated_at": "2026-06-12T19:31:03.465755+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-12T19:21:05.242855+00:00",
+      "updated_at": "2026-06-12T19:31:03.465214+00:00",
       "raw_status": "FT"
     },
     {
@@ -36,7 +36,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-12T19:21:05.242863+00:00",
+      "updated_at": "2026-06-12T19:31:03.465223+00:00",
       "raw_status": "FT"
     }
   ],
@@ -46,8 +46,8 @@
       "home": "Canada",
       "away": "Bosnia and Herzegovina",
       "home_score": 0,
-      "away_score": 0,
-      "elapsed": 19,
+      "away_score": 1,
+      "elapsed": 29,
       "status": "LIVE",
       "status_long": "First Half"
     }
