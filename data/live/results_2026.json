@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-13T21:01:32.818851+00:00",
+  "updated_at": "2026-06-13T21:11:31.830648+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-13T21:01:32.818214+00:00",
+      "updated_at": "2026-06-13T21:11:31.830177+00:00",
       "raw_status": "FT"
     },
     {
@@ -36,7 +36,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-13T21:01:32.818223+00:00",
+      "updated_at": "2026-06-13T21:11:31.830204+00:00",
       "raw_status": "FT"
     },
     {
@@ -54,7 +54,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-13T21:01:32.818229+00:00",
+      "updated_at": "2026-06-13T21:11:31.830211+00:00",
       "raw_status": "FT"
     },
     {
@@ -72,21 +72,28 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-13T21:01:32.818296+00:00",
+      "updated_at": "2026-06-13T21:11:31.830215+00:00",
+      "raw_status": "FT"
+    },
+    {
+      "m": 5,
+      "provider_fixture_id": "1489373",
+      "date": "2026-06-13",
+      "home": "Qatar",
+      "away": "Switzerland",
+      "home_score": 1,
+      "away_score": 1,
+      "home_pens": null,
+      "away_pens": null,
+      "winner": null,
+      "status": "FT",
+      "status_long": "Match Finished",
+      "elapsed": 90,
+      "source": "api_football",
+      "updated_at": "2026-06-13T21:11:31.830220+00:00",
       "raw_status": "FT"
     }
   ],
-  "in_play": [
-    {
-      "m": 5,
-      "home": "Qatar",
-      "away": "Switzerland",
-      "home_score": 0,
-      "away_score": 1,
-      "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
-    }
-  ],
+  "in_play": [],
   "warnings": []
 }
