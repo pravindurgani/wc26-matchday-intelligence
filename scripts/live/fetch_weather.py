@@ -386,16 +386,27 @@ def main() -> int:
         if not venue or venue.get("lat") is None or venue.get("lon") is None:
             print(f"[weather] M{m['m']}: no coords for {city!r} — skip")
             continue
-        if _within_forecast_horizon(m["date"], today):
+        # H1: request the UTC date covering the kickoff hour, not the
+        # local date. 31/72 group matches (and most knockout R32 venues
+        # in the LA/PT timezones) kick off late enough locally that the
+        # UTC kickoff is the next day (e.g., M28 Mexico City 23:00 local
+        # = 05:00 UTC next day, M73 Inglewood 20:00 local = 03:00 UTC
+        # next day). Asking Open-Meteo for the local date would return
+        # an hourly array that doesn't even include the kickoff hour.
+        kickoff_dt = _kickoff_utc_dt(m, venue)
+        utc_day = kickoff_dt.strftime("%Y-%m-%d") if kickoff_dt else m["date"]
+        # H1 regression fix (Round 16.1): the horizon check MUST be against
+        # the UTC day we're about to request, not the local match date.
+        # Before this fix, a knockout match like M73 (LA 06-28 local =
+        # 06-29 UTC) was 1 day past Open-Meteo's 16-day window but passed
+        # the local-date horizon check — leading to an HTTP 400 surfaced
+        # as a yellow `http_error` warning pill on the production dash-
+        # board. With this check on `utc_day`, the off-window match falls
+        # cleanly through to the static climate-bucket fallback (the
+        # documented "past horizon, climate bucket carries the load"
+        # behaviour from appendix.html) and emits no warning.
+        if _within_forecast_horizon(utc_day, today):
             in_horizon_attempted += 1
-            # H1: request the UTC date covering the kickoff hour, not the
-            # local date. 31/72 group matches kick off late enough locally
-            # that the UTC kickoff is the next day (e.g., M28 Mexico City
-            # 23:00 local = 05:00 UTC next day). Asking Open-Meteo for the
-            # local date would return a hourly array that doesn't even
-            # include the kickoff hour for those 31 matches.
-            kickoff_dt = _kickoff_utc_dt(m, venue)
-            utc_day = kickoff_dt.strftime("%Y-%m-%d") if kickoff_dt else m["date"]
             payload = _fetch_open_meteo(
                 venue["lat"], venue["lon"], utc_day,
                 match_id=m.get("m"), warnings_acc=warnings_acc)

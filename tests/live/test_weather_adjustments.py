@@ -389,6 +389,63 @@ class TestFetchWeatherWarningEmission(unittest.TestCase):
         self.assertIsNone(result)  # legacy behavior unchanged
 
 
+class TestHorizonUtcRegression(unittest.TestCase):
+    """Round 16.1 regression gate — UTC-day horizon check.
+
+    Round 16's tz-aware kickoff_utc conversion introduced a silent
+    HTTP 400 from Open-Meteo for matches whose LOCAL date is the last
+    in-window day but whose UTC kickoff date rolls one day past. The
+    smoking-gun case was M73 (R32, LA 2026-06-28 20:00 local = 03:00
+    UTC 2026-06-29) which surfaced a yellow `http_error` warning pill
+    on the production dashboard from 19:27Z onwards. Round 16.1 moved
+    the horizon check to operate on `utc_day` instead of `m["date"]`.
+
+    This test pins both the new behavior (UTC out-of-window matches
+    skip Open-Meteo cleanly) and the cooperative shape (local in-window
+    + UTC in-window matches still attempt a fetch).
+    """
+
+    def test_m73_shape_falls_through_silently(self):
+        """Local-in-window + UTC-out-of-window MUST NOT call Open-Meteo."""
+        import fetch_weather
+        from datetime import date
+        # Today shape: M73-like — local 2026-06-28 is the 16th day from
+        # today (inclusive max), UTC 2026-06-29 is past the cutoff.
+        today = date(2026, 6, 13)
+        # Local date 06-28: (06-28 - 06-13).days = 15 < 16 → IN horizon
+        self.assertTrue(
+            fetch_weather._within_forecast_horizon("2026-06-28", today),
+            "local date 06-28 should be in horizon (16-day strict-less-than)")
+        # UTC date 06-29: (06-29 - 06-13).days = 16 NOT < 16 → OUT of horizon
+        self.assertFalse(
+            fetch_weather._within_forecast_horizon("2026-06-29", today),
+            "UTC date 06-29 must be OUT of horizon "
+            "(this is the M73 regression — see Round 16.1 patch)")
+
+    def test_utc_day_within_horizon_still_passes(self):
+        """Group-stage no-wrap matches (local == UTC date) still attempt
+        a fetch when in-window. Sanity check that the regression fix
+        didn't over-rotate and exclude legitimate forecasts."""
+        import fetch_weather
+        from datetime import date
+        today = date(2026, 6, 13)
+        # Local 06-15 (no wrap) — well inside the window.
+        self.assertTrue(
+            fetch_weather._within_forecast_horizon("2026-06-15", today))
+
+    def test_kickoff_utc_dt_handles_missing_tz(self):
+        """Defensive: a venue dict without `tz` returns None so the
+        main loop falls back to local-date semantics rather than
+        throwing. This preserves the staged-rollout safety property."""
+        import fetch_weather
+        match = {"m": 99, "date": "2026-06-28", "time": "20:00"}
+        venue_no_tz = {"city": "Mystery", "lat": 0.0, "lon": 0.0}
+        self.assertIsNone(fetch_weather._kickoff_utc_dt(match, venue_no_tz))
+        # And the iso helper falls back to local-as-Z.
+        iso = fetch_weather._kickoff_utc_iso(match, venue_no_tz)
+        self.assertEqual(iso, "2026-06-28T20:00:00Z")
+
+
 def _summary(result):
     print()
     print(f"  Ran {result.testsRun} tests")

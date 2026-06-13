@@ -7,7 +7,7 @@ Follow these steps **in order**. Each block tells you (a) what to do, (b) which 
 ## 0. Sanity check (run from the repo root)
 
 ```bash
-.venv/bin/python -m pytest tests/ -q          # 270 tests pass (Stream B v2 + knockout + stability + Patch Q WARN gate)
+.venv/bin/python -m pytest tests/ -q          # 273 tests pass (Stream B v2 + knockout + stability + Patch Q WARN gate + H1 horizon regression)
 .venv/bin/python scripts/09_validate.py       # 38 / 38
 .venv/bin/python scripts/pre_flight.py        # 217 / 217 — READY TO DEPLOY
 node --check dashboard/app.js                 # JS syntax OK
