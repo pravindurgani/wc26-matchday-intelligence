@@ -16,6 +16,13 @@ concurrency:
 permissions:
   contents: write
 
+# Determinism: pin hash ordering so re-trains land on byte-identical artifacts
+# when the input data is unchanged. XGBoost is deterministic given its own
+# seed, but Python set iteration is the last source of run-to-run drift in
+# feature engineering hash maps. Belt-and-braces — empirically reproducible.
+env:
+  PYTHONHASHSEED: '0'
+
 jobs:
   refresh:
     runs-on: ubuntu-latest

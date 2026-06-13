@@ -7,8 +7,8 @@ Follow these steps **in order**. Each block tells you (a) what to do, (b) which 
 ## 0. Sanity check (run from the repo root)
 
 ```bash
-.venv/bin/python -m pytest tests/ -q          # 215+ tests pass (Stream B v2 hardening)
-.venv/bin/python scripts/09_validate.py       # 37 / 37
+.venv/bin/python -m pytest tests/ -q          # 269 tests pass (Stream B v2 + knockout + stability)
+.venv/bin/python scripts/09_validate.py       # 38 / 38
 .venv/bin/python scripts/pre_flight.py        # 217 / 217 — READY TO DEPLOY
 node --check dashboard/app.js                 # JS syntax OK
 ```
@@ -17,13 +17,11 @@ If any of those fail, **stop**. Don't ship.
 
 ### Known follow-ups (post-tournament, non-blocking)
 
-- **GitHub Actions Node 20 → newer LTS bump.** Workflows use `actions/checkout@v4`,
-  `actions/setup-python@v5`, `actions/upload-artifact@v4` — all on Node 20.
-  Node 20 LTS ends ~April 2026; GH Actions issues warning-only deprecation
-  notices on the runner before any hard cutoff. Verify the latest stable
-  major (likely v5/v6 of each action) and bump on a branch first, watch one
-  cron cycle succeed, then merge. Don't bump mid-tournament — pipeline
-  stability >  warning suppression. WC26 ends 19 Jul 2026.
+- **GitHub Actions runtime — DONE.** Workflows pinned to `actions/checkout@v6`,
+  `actions/setup-python@v6`, `actions/upload-artifact@v7` (all on Node 24).
+  Bumped in Round 14 once Node 20 LTS aged out; verified one full cron cycle
+  green before merge. Re-check Action major-version drift post-tournament
+  (after WC26 ends 19 Jul 2026).
 
 ---
 
@@ -150,7 +148,7 @@ gh run watch
 Both runs should go green end-to-end:
 - Date gate: "Manual dispatch — bypassing date gate."
 - Fetchers run with API key present.
-- Validator: 37 / 37.
+- Validator: 38 / 38.
 
 Then on your phone open the prod URL. Confirm:
 - Hero renders.

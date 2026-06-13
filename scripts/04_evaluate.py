@@ -181,7 +181,22 @@ def main():
         },
         "wc_backtest": (
             None if ll_wc is None else
-            {"log_loss": ll_wc, "brier": bs_wc, "accuracy": acc_wc, "n": int(len(wc_rows))}
+            {
+                "log_loss": ll_wc, "brier": bs_wc, "accuracy": acc_wc,
+                "n": int(len(wc_rows)),
+                # The train/test split in 02_goal_model.py is "last 15% by date" of
+                # all post-1990 matches. With the dataset extending into 2026, the
+                # cutoff falls around 2017–2020 — meaning WC 2010 and 2014 (and
+                # most of 2018) are in the training set when this block is computed.
+                # That makes wc_backtest an OPTIMISTIC, in-sample sanity check, NOT
+                # an out-of-sample backtest. For the true out-of-sample reading use
+                # walk_forward.json (scripts/07_walk_forward.py), which retrains
+                # before each WC. Dashboard intentionally surfaces walk_forward.json
+                # in the Sensitivity/Appendix sections; this block is retained for
+                # forensic continuity with the original v1 evaluation.
+                "_validation_scope": "in_sample_check",
+                "_note": "WC 2010-2018 likely in training set; use walk_forward.json for true out-of-sample.",
+            }
         ),
         "calibration": {"home": cal_home, "draw": cal_draw, "away": cal_away},
     }

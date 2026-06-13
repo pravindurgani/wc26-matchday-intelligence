@@ -48,6 +48,12 @@ concurrency:
 permissions:
   contents: write
 
+# Determinism: pin hash ordering so warning aggregation order stays stable
+# across runs. Defense-in-depth — fetchers don't iterate sets in hot loops,
+# but log/log_jsonl diffs become reproducible.
+env:
+  PYTHONHASHSEED: '0'
+
 jobs:
   matchday-intel:
     runs-on: ubuntu-latest

@@ -67,6 +67,13 @@ concurrency:
 permissions:
   contents: write
 
+# Determinism: PYTHONHASHSEED='0' pins set/dict hash ordering across runs.
+# The simulator already seeds its NumPy RNG (scripts/03_simulate.py:349) and
+# the hot loops iterate over pre-sorted lists, so this is belt-and-braces
+# rather than a fix for an observed bug — but it makes log diffs reproducible.
+env:
+  PYTHONHASHSEED: '0'
+
 jobs:
   live:
     runs-on: ubuntu-latest

@@ -15,7 +15,9 @@
     "log_loss": 0.9567836250386773,
     "brier": 0.5605401048899084,
     "accuracy": 0.5625,
-    "n": 256
+    "n": 256,
+    "_validation_scope": "in_sample_check",
+    "_note": "WC 2010-2018 likely in training set; use walk_forward.json for true out-of-sample."
   },
   "calibration": {
     "home": [

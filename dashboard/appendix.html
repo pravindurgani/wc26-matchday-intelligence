@@ -173,6 +173,7 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
 
         <h3 class="apx-sub">Walk-forward backtest</h3>
         <p>Each test World Cup is run with only training data <em>strictly older</em> than that tournament (no peeking). All hyperparameters tuned once on pre-2010 data.</p>
+        <p class="muted small"><strong>Scope:</strong> walk-forward validates the base goal-model layer only (Elo + form + rest + neutrality + importance). The deployed simulator additionally applies host-boost, squad-value, altitude, climate, travel, and injury bonuses pre-injected as Elo deltas (see <code>scripts/03_simulate.py:806-810</code>). Those layers are validated separately via ablation and sensitivity — they are not in the walk-forward chain.</p>
         <div class="table-wrap"><table class="tbl apx-tbl">
           <thead><tr><th>WC</th><th class="num">N</th><th class="num">Log-loss</th><th class="num">Brier</th><th class="num">Acc</th><th class="num">Lift vs Elo</th></tr></thead>
           <tbody id="apx-wf"><tr><td colspan="6" class="muted small">Loading walk_forward.json…</td></tr></tbody>
@@ -191,7 +192,7 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16h6"/><path d="M21 12.5V16"/><path d="M22 12.5V21a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h14"/><path d="m18 3 4 4-4 4"/><path d="M22 7H10"/></svg>
       </div>
       <div>
-        <h2>Sensitivity audit (22 scenarios)</h2>
+        <h2>Sensitivity audit (27 scenarios)</h2>
         <p>Every hand-coded assumption was varied across the ranges below. Each scenario is a full 5×5,000 re-run.</p>
         <div class="table-wrap"><table class="tbl apx-tbl">
           <thead><tr><th>Parameter</th><th class="num">Default</th><th class="num">Tested range</th></tr></thead>
@@ -214,7 +215,7 @@ P(G = k) = Γ(k+φ) / (k! · Γ(φ)) · (φ/(φ+λ))^φ · (λ/(φ+λ))^k</pre>
           <thead><tr><th>Team</th><th class="num">Mean</th><th class="num">Min</th><th class="num">Max</th><th class="num">Range</th></tr></thead>
           <tbody id="apx-sens"><tr><td colspan="5" class="muted small">Loading sensitivity.json…</td></tr></tbody>
         </table></div>
-        <p class="muted small">Top-4 rank ordering (Spain &gt; Argentina &gt; France &gt; England) is identical across all 22 scenarios; positions 5–6 (Brazil / Colombia) swap under altitude-penalty extremes.</p>
+        <p class="muted small">Top-4 rank ordering (Spain &gt; Argentina &gt; France &gt; England) is identical across all 27 scenarios; positions 5–6 (Brazil / Colombia) swap under altitude-penalty extremes.</p>
       </div>
     </section>
 
@@ -243,7 +244,7 @@ python scripts/02_goal_model.py
 python scripts/04_evaluate.py
 python scripts/06_ablation.py
 python scripts/07_walk_forward.py
-python scripts/05_sensitivity.py           # slowest — ≈ 5 min for 22 scenarios
+python scripts/05_sensitivity.py           # slowest — ≈ 5 min for 27 scenarios
 
 # 5. Production simulations
 python scripts/03_simulate.py --no-travel --out predictions_no_travel.json --seeds 5 --sims 5000
@@ -323,6 +324,12 @@ cd dashboard &amp;&amp; python3 -m http.server 8765</pre>
     "home_travel_penalty":float,   // Elo points
     "away_travel_penalty":float,
     "locked_score":       null | "H-A"
+    // Note: when locked_score is non-null (completed match), the
+    // p_home_win / p_draw / p_away fields remain the original PRE-MATCH
+    // forecast — they are NOT collapsed to a one-hot of the realised
+    // result. Inside each Monte Carlo rollout the scoreline is forced to
+    // the locked value (scripts/03_simulate.py:388-394); the displayed
+    // forecast is preserved for backtest / calibration use.
   }, ...],
 
   "concentration":   { top1_champion_p, top2_combined, top5_combined },
@@ -346,7 +353,7 @@ cd dashboard &amp;&amp; python3 -m http.server 8765</pre>
           <li><a href="./calibration.json" download><code>calibration.json</code></a> — predicted-vs-actual bins on 4,839 unseen matches</li>
           <li><a href="./walk_forward.json" download><code>walk_forward.json</code></a> — backtest on WC 2010/14/18/22</li>
           <li><a href="./ablation.json" download><code>ablation.json</code></a> — feature ablation log-loss + accuracy</li>
-          <li><a href="./sensitivity.json" download><code>sensitivity.json</code></a> — 22-scenario hyper-parameter audit</li>
+          <li><a href="./sensitivity.json" download><code>sensitivity.json</code></a> — 27-scenario hyper-parameter audit</li>
           <li><a href="./travel_impact.json" download><code>travel_impact.json</code></a> — champion-prob diff with/without travel penalty</li>
           <li><a href="./live_state.json" download><code>live_state.json</code></a> — mode, completed count, last-updated timestamp</li>
           <li><a href="./live_delta.json" download><code>live_delta.json</code></a> — top movers between static and live predictions</li>

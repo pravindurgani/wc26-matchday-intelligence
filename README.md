@@ -16,7 +16,7 @@ pre-launch validation script.
 | `scripts/02_goal_model.py` | Train two XGBoost Poisson regressors (home/away goals) |
 | `scripts/03_simulate.py` | Monte Carlo sim — Annex C bracket, NB+Dixon-Coles, travel, injuries, live mode |
 | `scripts/04_evaluate.py` | Calibration + holdout backtest |
-| `scripts/05_sensitivity.py` | 22-scenario sensitivity audit |
+| `scripts/05_sensitivity.py` | 27-scenario sensitivity audit |
 | `scripts/06_ablation.py` | Elo-only vs goal-model lift |
 | `scripts/07_walk_forward.py` | Walk-forward backtest on WC 2010/14/18/22 |
 | `scripts/08_travel_impact.py` | Diff travel-on vs travel-off, output travel_impact.json |
@@ -244,7 +244,7 @@ not edit by hand.
 | Spain       | ~700 km      | **+1.35pp** (benefits from others' fatigue) |
 | France      | varies       | **−0.93pp** (Group I travel) |
 
-## Sensitivity audit (across 22 scenarios)
+## Sensitivity audit (across 27 scenarios)
 
 | Team       | Mean  | Min   | Max   | Range |
 |---|---|---|---|---|
@@ -253,7 +253,7 @@ not edit by hand.
 | France     | 8.8%  | 8.0%  | 10.3% | 2.3pp |
 | England    | 6.5%  | 6.0%  | 6.9%  | 0.9pp |
 
-Top-4 rank ordering (Spain > Argentina > France > England) is identical across all 22 scenarios. Positions 5–6 (Brazil / Colombia) swap under altitude-penalty extremes — the model is robust at the contender level but not perfectly stable on the chasing pack.
+Top-4 rank ordering (Spain > Argentina > France > England) is identical across all 27 scenarios. Positions 5–6 (Brazil / Colombia) swap under altitude-penalty extremes — the model is robust at the contender level but not perfectly stable on the chasing pack.
 
 ## Known limitations
 

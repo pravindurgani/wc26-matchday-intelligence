@@ -37,6 +37,13 @@ concurrency:
 permissions:
   contents: read
 
+# Determinism parity with live-matchday / matchday-intel-slow / daily-baseline.
+# The stability test (tests/test_simulator_stability.py:50) also pins this for
+# its subprocess; setting it at workflow level means the parent pytest process
+# and any whitelist/alias-dict iteration tests see the same fixed hash seed.
+env:
+  PYTHONHASHSEED: '0'
+
 jobs:
   test:
     runs-on: ubuntu-latest
