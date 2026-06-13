@@ -1,21 +1,33 @@
 {
-  "generated_at": "2026-06-13T09:17:52.435324+00:00",
+  "generated_at": "2026-06-13T09:27:58.755860+00:00",
   "min_pp_threshold": 0.3,
   "top_movers_up": [
     {
-      "team": "Colombia",
-      "static": 0.04632000000000001,
-      "live": 0.050359999999999995,
-      "delta_pp": 0.4039999999999988
+      "team": "Spain",
+      "static": 0.24855999999999998,
+      "live": 0.2564,
+      "delta_pp": 0.7840000000000041
+    },
+    {
+      "team": "Mexico",
+      "static": 0.01628,
+      "live": 0.0216,
+      "delta_pp": 0.5320000000000001
     }
   ],
   "top_movers_down": [],
   "all_movers": [
     {
-      "team": "Colombia",
-      "static": 0.04632000000000001,
-      "live": 0.050359999999999995,
-      "delta_pp": 0.4039999999999988
+      "team": "Spain",
+      "static": 0.24855999999999998,
+      "live": 0.2564,
+      "delta_pp": 0.7840000000000041
+    },
+    {
+      "team": "Mexico",
+      "static": 0.01628,
+      "live": 0.0216,
+      "delta_pp": 0.5320000000000001
     }
   ]
 }
