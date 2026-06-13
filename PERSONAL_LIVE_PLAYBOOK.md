@@ -147,9 +147,9 @@ is a reasonable cadence).
 ## Sanity checks before each major group of matches
 
 ```bash
-.venv/bin/python -m pytest tests/ -q          # expect: 134 passed
+.venv/bin/python -m pytest tests/ -q          # expect: ~180 passed (Stream B v2)
 .venv/bin/python scripts/09_validate.py       # expect: 38/38
-.venv/bin/python scripts/pre_flight.py        # expect: 179/179 (READY)
+.venv/bin/python scripts/pre_flight.py        # expect: 212/212 (READY)
 node --check dashboard/app.js                 # expect: silent (OK)
 ```
 

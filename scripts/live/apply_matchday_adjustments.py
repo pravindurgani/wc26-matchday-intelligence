@@ -436,6 +436,45 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
                 "message": f"{feed} feed not present — adjustments from this layer are skipped",
             })
 
+    # Lift upstream feed warnings into the consolidated state. Today this
+    # surfaces `ambiguous_classification` items from fetch_injuries (an
+    # operator can disambiguate via team_adjustments.json) plus any
+    # fetch-error warnings from past API failures. Tagging with `feed:`
+    # lets the dashboard scope the alert. We deliberately don't lift
+    # benign info-only items like `filter_non_wc` (those are expected
+    # every cycle and would be noise).
+    _UPSTREAM_FEEDS_WITH_WARNINGS = [
+        ("injuries", LIVE / "injuries_2026.json"),
+        ("weather",  LIVE / "weather_2026.json"),
+        ("lineups",  LIVE / "lineups_2026.json"),
+        ("stats_proxy", LIVE / "match_stats_2026.json"),
+    ]
+    _PROPAGATE_WARNING_TYPES = {
+        "ambiguous_classification", "fetch_error", "http_error",
+        "api_error", "missing_key",
+    }
+    for feed, path in _UPSTREAM_FEEDS_WITH_WARNINGS:
+        upstream = _read_json(path, default={}) or {}
+        raw_warnings = upstream.get("warnings")
+        if not isinstance(raw_warnings, list):
+            # Malformed upstream payload (warnings field corrupted or
+            # truncated mid-write). Skip silently rather than crash —
+            # the matchday cron must continue producing a snapshot.
+            continue
+        for w in raw_warnings:
+            # Guard against non-dict elements in the warnings list — a
+            # truncated or hand-edited JSON could produce strings/null
+            # entries. Without this, .get() raises AttributeError and
+            # aborts the entire build_adjustments_state call.
+            if not isinstance(w, dict):
+                continue
+            if w.get("type") in _PROPAGATE_WARNING_TYPES:
+                # Shallow copy so the dashboard label doesn't mutate the
+                # original on-disk record between runs.
+                lifted = dict(w)
+                lifted["feed"] = feed
+                state["warnings"].append(lifted)
+
     return state
 
 

@@ -59,7 +59,7 @@ APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from injury_adjustments import (  # noqa: E402
-    classify_api_type, discounted_elo, DEFAULT_TIER,
+    classify_api_type, classify_tier, discounted_elo, DEFAULT_TIER,
 )
 
 # Reuse the same canonical-name aliases as the results fetcher so a single
@@ -155,6 +155,7 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
     teams: dict[str, dict] = {}
     skipped_non_wc = 0
     skipped_bad = 0
+    ambiguous_cases: list[dict] = []
     for rec in records:
         team_raw = (rec.get("team") or {}).get("name", "")
         team = normalize_team(team_raw)
@@ -171,13 +172,20 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
         ptype = player_block.get("type")
         reason = player_block.get("reason")
         status = classify_api_type(ptype)
-        tier = DEFAULT_TIER  # v1: API doesn't expose importance; conservative default
+        # v2: cross-reference the player + team against the hand-curated
+        # whitelist at data/raw/key_players_2026.json. Headline names get
+        # auto-upgraded to tier_1_star / tier_1_keeper; everyone else falls
+        # through to DEFAULT_TIER (= tier_2_starter), matching v1 behaviour.
+        # The `auto_tier_source` audit field records which path produced
+        # the tier so post-hoc reviews can spot mismatches.
+        tier, tier_source = classify_tier(name, team)
         elo = discounted_elo(tier, status)
         fixture_id = (rec.get("fixture") or {}).get("id")
         teams.setdefault(team, {"total_elo_adjustment": 0.0, "players": []})
         teams[team]["players"].append({
             "name": name,
             "tier": tier,
+            "auto_tier_source": tier_source,
             "status": status,
             "reason": reason,
             "elo": round(elo, 3),
@@ -186,6 +194,14 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
         teams[team]["total_elo_adjustment"] = round(
             teams[team]["total_elo_adjustment"] + elo, 3
         )
+        # Surface every ambiguity — the operator can disambiguate via the
+        # manual overlay (team_adjustments.json). Without this, an
+        # Emiliano Martínez reported as "Dibu Martinez" silently routes
+        # to DEFAULT_TIER (-12) instead of tier_1_keeper (-25) and the
+        # operator has no signal to act on.
+        if tier_source == "whitelist_ambiguous":
+            ambiguous_cases.append({"team": team, "input": name,
+                                    "fixture_id": fixture_id})
     if skipped_non_wc:
         warnings.append({
             "type": "filter_non_wc",
@@ -197,6 +213,24 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
             "type": "skipped_bad_record",
             "count": skipped_bad,
             "message": f"Skipped {skipped_bad} records missing team name",
+        })
+    if ambiguous_cases:
+        # One aggregate warning carries every case so the dashboard
+        # surfaces a single actionable item per snapshot (not N separate
+        # alerts). `cases` is preserved in full for the operator audit log.
+        samples = ", ".join(
+            f"{c['team']}/{c['input']!r}" for c in ambiguous_cases[:3]
+        )
+        more = f" (+{len(ambiguous_cases) - 3} more)" if len(ambiguous_cases) > 3 else ""
+        warnings.append({
+            "type": "ambiguous_classification",
+            "count": len(ambiguous_cases),
+            "cases": ambiguous_cases,
+            "message": (
+                f"{len(ambiguous_cases)} ambiguous classification(s) "
+                f"defaulted to tier_2_starter — disambiguate in "
+                f"team_adjustments.json: {samples}{more}"
+            ),
         })
     return teams, warnings
 

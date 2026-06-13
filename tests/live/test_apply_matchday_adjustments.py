@@ -415,6 +415,152 @@ class TestStatsProxyDownweight(unittest.TestCase):
         self.assertAlmostEqual(ar, -4.0, places=2)
 
 
+class TestUpstreamWarningLift(unittest.TestCase):
+    """The consolidated state must surface upstream feed warnings so the
+    dashboard (which reads matchday_intelligence.json[`warnings`]) can
+    alert operators about ambiguous classifications, fetch errors, etc.
+
+    Without this, fetch_injuries records a warning that nobody reads —
+    the operator never sees that an Emiliano Martínez injury reported
+    as 'Dibu Martinez' silently routed to tier_2_starter (-12) instead
+    of tier_1_keeper (-25). The dashboard renders intel.warnings via
+    renderMatchdayIntelligence (dashboard/app.js:1664)."""
+
+    def test_lifts_ambiguous_classification_from_injuries(self):
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [{
+                "type": "ambiguous_classification",
+                "count": 1,
+                "cases": [{"team": "Argentina", "input": "Dibu Martinez",
+                           "fixture_id": 1}],
+                "message": "1 ambiguous classification(s) defaulted ...",
+            }],
+        }}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        amb = [w for w in state["warnings"]
+               if w.get("type") == "ambiguous_classification"]
+        self.assertEqual(len(amb), 1)
+        # The propagator tags `feed:` so the dashboard can scope alerts.
+        self.assertEqual(amb[0]["feed"], "injuries")
+        # The original case payload survives the lift.
+        self.assertEqual(amb[0]["cases"][0]["input"], "Dibu Martinez")
+
+    def test_ignores_benign_filter_warnings(self):
+        """`filter_non_wc` is expected every cycle (qualifier carry-over)
+        and would be noise on the dashboard. The lifter must NOT
+        propagate it."""
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [
+                {"type": "filter_non_wc", "count": 3,
+                 "message": "Skipped 3 records for teams not in WC2026"},
+            ],
+        }}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        filt = [w for w in state["warnings"]
+                if w.get("type") == "filter_non_wc"]
+        self.assertEqual(filt, [])
+
+    def test_lifts_fetch_errors_from_injuries(self):
+        """API failures (http_error, fetch_error) must propagate so the
+        dashboard pill turns on — otherwise a silent 500 from
+        API-Football would let the operator believe data is fresh."""
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [{"type": "http_error", "code": 503,
+                          "body": "service unavailable"}],
+        }}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        errs = [w for w in state["warnings"] if w.get("type") == "http_error"]
+        self.assertEqual(len(errs), 1)
+        self.assertEqual(errs[0]["feed"], "injuries")
+
+    def test_no_double_lift_of_feed_missing(self):
+        """`feed_missing` is generated locally by build_adjustments_state
+        for absent feeds. Without the type filter the lifter would also
+        re-lift any old `feed_missing` saved in the on-disk snapshot,
+        producing duplicates. Verify the filter holds."""
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [{"type": "feed_missing", "feed": "weather"}],
+        }}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        # Should see exactly the locally-generated `feed_missing` items
+        # (weather, lineups, stats_proxy) — NOT an extra one re-lifted
+        # from the injuries file.
+        feed_missing = [w for w in state["warnings"]
+                        if w.get("type") == "feed_missing"]
+        # injuries IS present here (we wrote it), so weather + lineups
+        # + stats_proxy should all generate their own feed_missing.
+        feeds_alerting = sorted(w["feed"] for w in feed_missing)
+        self.assertEqual(feeds_alerting,
+                         ["lineups", "stats_proxy", "weather"])
+
+
+class TestMalformedUpstreamGuards(unittest.TestCase):
+    """REGRESSION: a truncated or hand-edited upstream JSON must NOT
+    crash build_adjustments_state. A matchday cron that crashes on a
+    malformed warnings field loses every other layer (weather, lineups,
+    stats_proxy) until the next run — outage rather than degraded
+    output. Two failure modes pinned:
+
+      1. `warnings` is present but not a list (a string, int, dict).
+      2. `warnings` is a list but contains non-dict elements
+         (strings, None) mixed with valid warnings.
+    """
+
+    def test_non_list_warnings_field_survives(self):
+        """`warnings: "oops a string"` must not crash the consolidator."""
+        feeds = {"injuries_2026.json": {"teams": {}, "warnings": "oops"}}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        # Only the locally-generated feed_missing items (for absent
+        # weather/lineups/stats_proxy) should appear.
+        amb = [w for w in state["warnings"]
+               if w.get("type") == "ambiguous_classification"]
+        self.assertEqual(amb, [])
+
+    def test_mixed_type_warnings_list_skips_bad_items(self):
+        """A warnings list with mixed strings + dicts must drop the
+        strings silently and propagate the valid dicts."""
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [
+                "stray string",
+                None,
+                42,
+                {"type": "ambiguous_classification", "count": 1,
+                 "cases": [{"team": "X", "input": "Y"}],
+                 "message": "ambiguous test"},
+                {"type": "http_error", "code": 500},
+            ],
+        }}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        amb = [w for w in state["warnings"]
+               if w.get("type") == "ambiguous_classification"]
+        self.assertEqual(len(amb), 1)
+        self.assertEqual(amb[0]["feed"], "injuries")
+        err = [w for w in state["warnings"]
+               if w.get("type") == "http_error"]
+        self.assertEqual(len(err), 1)
+        self.assertEqual(err[0]["feed"], "injuries")
+
+    def test_missing_warnings_field_survives(self):
+        """No `warnings` field at all — common on a fresh snapshot — is
+        handled by the existing `or []` path. Pin it explicitly."""
+        feeds = {"injuries_2026.json": {"teams": {}}}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        self.assertNotIn("AttributeError",
+                         repr(state))  # smoke check; if it raised we never got here
+
+
 def _summary(result):
     print()
     print(f"  Ran {result.testsRun} tests")

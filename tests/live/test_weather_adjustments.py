@@ -20,6 +20,7 @@ from weather_adjustments import (  # noqa: E402
     heat_index_c, wet_bulb_proxy_c,
     classify_weather_bucket, team_elo_adjustment,
     WEATHER_ELO_CAP, CONFED_BY_TEAM,
+    HYDRATION_BREAK_WBGT_THRESHOLD, HYDRATION_BREAK_DAMPENER,
 )
 
 
@@ -193,6 +194,108 @@ class TestEloAdjustment(unittest.TestCase):
         valid = {"UEFA", "CONMEBOL", "CONCACAF", "CAF", "AFC", "OFC"}
         for team, confed in CONFED_BY_TEAM.items():
             self.assertIn(confed, valid, f"{team} has unknown confed: {confed}")
+
+
+class TestHydrationBreakDampener(unittest.TestCase):
+    """WBGT ≥ 32 °C → FIFA cooling-break protocol fires → dampen heat penalty.
+
+    The dampener is bucket-specific: only `extreme_heat` (the only bucket
+    triggered by a high WBGT in the first place) is dampened, and only when
+    WBGT is actually supplied.
+    """
+
+    def test_constants_sane(self):
+        # Sanity-check the constants stay consistent with the model design.
+        self.assertEqual(HYDRATION_BREAK_WBGT_THRESHOLD, 32.0)
+        self.assertGreater(HYDRATION_BREAK_DAMPENER, 0.5)
+        self.assertLess(HYDRATION_BREAK_DAMPENER, 1.0)
+
+    def test_no_wbgt_backwards_compatible(self):
+        """Callers passing no WBGT see the original penalty."""
+        # England UEFA extreme_heat without WBGT → full -12 (was the v1 behaviour).
+        self.assertEqual(team_elo_adjustment("England", "extreme_heat"), -12.0)
+
+    def test_wbgt_below_threshold_no_dampener(self):
+        """WBGT < 32 → no cooling-break protocol → penalty unchanged."""
+        # WBGT=29.5 → bucket-classifier would already pick extreme_heat
+        # via the wet_bulb >= 30 threshold (weather_adjustments.py:134),
+        # but FIFA cooling breaks only fire at WBGT >= 32. So we keep
+        # the full penalty until the breaks actually start.
+        adj = team_elo_adjustment("England", "extreme_heat", wet_bulb_c=29.5)
+        self.assertEqual(adj, -12.0)
+
+    def test_wbgt_at_threshold_dampens(self):
+        """WBGT == 32 → cooling breaks → 0.75× dampener."""
+        adj = team_elo_adjustment("England", "extreme_heat", wet_bulb_c=32.0)
+        self.assertAlmostEqual(adj, -12.0 * 0.75)  # -9.0
+
+    def test_wbgt_just_below_threshold_no_dampener(self):
+        """Off-by-one boundary: WBGT == 31.99 must NOT dampen.
+
+        The threshold check is `wet_bulb_c >= HYDRATION_BREAK_WBGT_THRESHOLD`
+        (i.e. inclusive at 32.0 exactly). 31.99 falls one hundredth below
+        and should leave the full penalty intact. This test pins the
+        boundary so a future > vs >= refactor cannot quietly shift it.
+        """
+        adj = team_elo_adjustment("England", "extreme_heat", wet_bulb_c=31.99)
+        self.assertEqual(adj, -12.0)
+
+    def test_wbgt_just_above_threshold_dampens(self):
+        """Off-by-one boundary: WBGT == 32.01 dampens, same as exactly 32.0."""
+        adj = team_elo_adjustment("England", "extreme_heat", wet_bulb_c=32.01)
+        self.assertAlmostEqual(adj, -12.0 * 0.75)
+
+    def test_wbgt_well_above_threshold_dampens_same_amount(self):
+        """Dampener is a flat 0.75× — no further attenuation at higher WBGT.
+
+        Rationale: FIFA breaks are binary (2x 3min). Sustained extreme
+        heat above 32 has DIMINISHING returns from the break, but
+        modelling that curve adds noise we can't calibrate from public
+        data. Flat dampener is the honest choice.
+        """
+        adj_32 = team_elo_adjustment("England", "extreme_heat", wet_bulb_c=32.0)
+        adj_35 = team_elo_adjustment("England", "extreme_heat", wet_bulb_c=35.0)
+        self.assertAlmostEqual(adj_32, adj_35)
+
+    def test_dampener_only_fires_for_extreme_heat_bucket(self):
+        """A hot_humid bucket with high WBGT should NOT be dampened.
+
+        FIFA cooling breaks are tied to WBGT, but the Elo table only
+        encodes heat penalties for the extreme_heat bucket. The
+        hot/hot_humid penalties are smaller and shouldn't shrink further
+        on borderline WBGT — that would double-attenuate.
+        """
+        adj = team_elo_adjustment("England", "hot_humid", wet_bulb_c=33.0)
+        self.assertEqual(adj, -8.0)   # unchanged from the no-WBGT case
+
+    def test_dampener_skips_zero_penalty_teams(self):
+        """CAF/CONMEBOL/CONCACAF have 0 penalty for extreme_heat.
+
+        Multiplying 0 × 0.75 is still 0, so the result is unchanged,
+        but verify the `raw < 0.0` guard at the dampener site keeps
+        the code path obvious (no silent positive→smaller-positive
+        regression if the table ever changes).
+        """
+        for team in ("Morocco", "Brazil", "Mexico"):
+            self.assertEqual(
+                team_elo_adjustment(team, "extreme_heat", wet_bulb_c=34.0),
+                0.0,
+            )
+
+    def test_indoor_zeroes_dampener_path(self):
+        """Roof closed → no outdoor weather → also no cooling breaks."""
+        self.assertEqual(
+            team_elo_adjustment(
+                "England", "extreme_heat", indoor=True, wet_bulb_c=35.0),
+            0.0,
+        )
+
+    def test_unknown_team_unaffected(self):
+        """Unknown teams (None / typo) still 0 even with WBGT supplied."""
+        self.assertEqual(
+            team_elo_adjustment(None, "extreme_heat", wet_bulb_c=35.0), 0.0)
+        self.assertEqual(
+            team_elo_adjustment("Atlantis", "extreme_heat", wet_bulb_c=35.0), 0.0)
 
 
 def _summary(result):

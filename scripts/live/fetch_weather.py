@@ -207,8 +207,10 @@ def _build_entry_forecast(match: dict, venue: dict, hour_data: dict) -> dict:
     home, away = match.get("home"), match.get("away")
     # Knockout fixtures (no teams assigned yet) get an empty adjustment block
     # but still surface the weather metadata for the dashboard.
-    home_adj = team_elo_adjustment(home, bucket) if home else 0.0
-    away_adj = team_elo_adjustment(away, bucket) if away else 0.0
+    # Pass the computed WBGT so the hydration-break dampener fires when
+    # FIFA cooling-break threshold is reached (wet_bulb_c >= 32 °C).
+    home_adj = team_elo_adjustment(home, bucket, wet_bulb_c=wb) if home else 0.0
+    away_adj = team_elo_adjustment(away, bucket, wet_bulb_c=wb) if away else 0.0
 
     return {
         "match_id": match["m"],

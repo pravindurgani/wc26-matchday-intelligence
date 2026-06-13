@@ -682,6 +682,304 @@ def phase_12_matchday_intel():
                                 capture_output=True, text=True).returncode
             check(f"tests pass: {tf}", rc == 0)
 
+    # ─ v2 auto-tier whitelist (B.3 enhancement: per-player tier upgrade)
+    kp_path = ROOT / "data" / "raw" / "key_players_2026.json"
+    check("key_players_2026.json whitelist present", kp_path.exists())
+    if kp_path.exists():
+        try:
+            kp = json.loads(kp_path.read_text())
+            entries = kp.get("players", []) or []
+            check("key_players_2026.json has ≥40 entries (sanity floor)",
+                  len(entries) >= 40)
+            tiers = {e.get("tier") for e in entries}
+            check("whitelist contains tier_1_star entries",
+                  "tier_1_star" in tiers)
+            check("whitelist contains tier_1_keeper entries",
+                  "tier_1_keeper" in tiers)
+            # All entries must carry the load-bearing keys.
+            required_keys = {"team", "name", "name_normalized",
+                             "last_name_normalized", "tier"}
+            shape_ok = all(required_keys.issubset(e.keys()) for e in entries)
+            check("every whitelist entry has required keys", shape_ok)
+            # tier values must be valid (matches the TIER_TO_ELO taxonomy).
+            valid_tiers = {"tier_1_star", "tier_1_keeper",
+                           "tier_2_starter", "tier_3_squad"}
+            check("every whitelist entry uses a valid tier",
+                  all(e.get("tier") in valid_tiers for e in entries))
+            # Top-12 coverage — marquee teams must have a tier_1_keeper AND
+            # at least one tier_1_star. Without the star gate, a future
+            # whitelist edit that drops e.g. Mbappé from France would slip
+            # past the gates because France still has a keeper, and the
+            # model would silently lose its biggest single-player signal.
+            top12 = {
+                "France", "Spain", "Argentina", "Brazil", "England", "Portugal",
+                "Germany", "Netherlands", "Belgium", "Croatia", "Morocco", "Mexico",
+            }
+            keepers_by_team = {e["team"] for e in entries
+                               if e.get("tier") == "tier_1_keeper"}
+            stars_by_team = {e["team"] for e in entries
+                             if e.get("tier") == "tier_1_star"}
+            missing_keeper = sorted(top12 - keepers_by_team)
+            missing_star = sorted(top12 - stars_by_team)
+            check(
+                "top-12 teams each have a tier_1_keeper entry "
+                f"(missing: {missing_keeper or 'none'})",
+                not missing_keeper,
+            )
+            check(
+                "top-12 teams each have a tier_1_star entry "
+                f"(missing: {missing_star or 'none'})",
+                not missing_star,
+            )
+            # SELF-CONSISTENCY: stored name_normalized must equal the function
+            # output, otherwise classify_tier will silently miscategorise. This
+            # gate is what would have caught the Ø-drops-from-NFKD bug at commit
+            # time (Ødegaard → 'degaard' under the old normaliser).
+            sys.path.insert(0, str(ROOT / "scripts" / "live"))
+            from injury_adjustments import (  # noqa: E402
+                normalize_player_name as _norm,
+            )
+            drift_full = []
+            drift_last = []
+            for e in entries:
+                name = e.get("name", "")
+                stored_full = e.get("name_normalized", "")
+                computed_full = _norm(name)
+                if stored_full != computed_full:
+                    drift_full.append((e.get("team"), name, stored_full, computed_full))
+                # last_name_normalized must be a trailing window of the full
+                # normalised name — otherwise the by_last index key never
+                # matches what classify_tier computes for an incoming injury.
+                stored_last = e.get("last_name_normalized", "")
+                if stored_last:
+                    tokens = computed_full.split()
+                    valid_windows = {
+                        " ".join(tokens[-n:]) for n in range(1, len(tokens) + 1)
+                    }
+                    if stored_last not in valid_windows:
+                        drift_last.append((e.get("team"), name, stored_last))
+            sample_full = ", ".join(
+                f"{t}:{n!r}(stored={s!r}, computed={c!r})"
+                for t, n, s, c in drift_full[:3]
+            ) or "none"
+            check(
+                f"whitelist name_normalized matches normalize_player_name() "
+                f"(drifts: {len(drift_full)}; sample: {sample_full})",
+                not drift_full,
+            )
+            sample_last = ", ".join(
+                f"{t}:{n!r}(stored={s!r})" for t, n, s in drift_last[:3]
+            ) or "none"
+            check(
+                f"whitelist last_name_normalized is a trailing window of full "
+                f"(drifts: {len(drift_last)}; sample: {sample_last})",
+                not drift_last,
+            )
+            # DUPLICATE DETECTION (HIGH-1 catcher): two whitelist entries
+            # with the same (team, name_normalized) key would cause
+            # silent collisions in classify_tier — the second one would
+            # overwrite the first in by_full. Hard-fail on exact dups.
+            from collections import Counter
+            name_keys = [(e.get("team"), e.get("name_normalized")) for e in entries]
+            exact_dups = [k for k, c in Counter(name_keys).items() if c > 1]
+            check(
+                f"whitelist has no (team, name_normalized) duplicates "
+                f"({len(exact_dups)} found{': ' + str(exact_dups[:3]) if exact_dups else ''})",
+                not exact_dups,
+            )
+            # ALIASES validation — the optional per-entry list of additional
+            # full-form strings the API might emit (e.g. "Son" bare, "Vini
+            # Jr", "Mohammed Salah"). Each alias normalises to a by_full
+            # key. Three failure modes to gate:
+            #   1. Non-list aliases field (type mismatch — silent skip).
+            #   2. Non-string alias element (silent normalize fail).
+            #   3. Alias collides with another entry's name_normalized on
+            #      the SAME team (would silently lose tier resolution).
+            bad_alias_shape = []
+            empty_aliases = []
+            cross_team_collisions = []
+            # Build same-team by_full from EVERY entry's canonical name
+            # (not just alias-bearing ones) so the collision gate below
+            # also fires if a curator typo'd alias=['Lionel Messi'] onto
+            # a teammate whose own entry has no aliases field. The
+            # previous version skipped non-alias entries here, leaving
+            # a silent bypass.
+            same_team_by_full = {}
+            for e in entries:
+                same_team_by_full.setdefault(e.get("team"), set()).add(
+                    e.get("name_normalized") or "")
+            # Detect bad-shape aliases fields in a separate pass.
+            for e in entries:
+                aliases = e.get("aliases")
+                if aliases is None:
+                    continue
+                if not isinstance(aliases, list):
+                    bad_alias_shape.append(
+                        (e.get("team"), e.get("name"), type(aliases).__name__))
+            check(
+                f"whitelist 'aliases' field is a list when present "
+                f"(bad shapes: {len(bad_alias_shape)})",
+                not bad_alias_shape,
+            )
+            # Now sweep each alias.
+            for e in entries:
+                aliases = e.get("aliases") or []
+                if not isinstance(aliases, list):
+                    continue
+                team = e.get("team")
+                own_full = e.get("name_normalized") or ""
+                for a in aliases:
+                    if not isinstance(a, str) or not a.strip():
+                        empty_aliases.append((team, e.get("name"), repr(a)))
+                        continue
+                    a_norm = _norm(a)
+                    if not a_norm:
+                        empty_aliases.append((team, e.get("name"), a))
+                        continue
+                    # Collision: an alias that equals a DIFFERENT entry's
+                    # canonical name_normalized on the same team would
+                    # silently overwrite (or be discarded by setdefault).
+                    other_canon = same_team_by_full.get(team, set()) - {own_full}
+                    if a_norm in other_canon:
+                        cross_team_collisions.append((team, e.get("name"), a, a_norm))
+            check(
+                f"whitelist aliases are non-empty strings that normalise "
+                f"(invalid: {len(empty_aliases)})",
+                not empty_aliases,
+            )
+            check(
+                f"whitelist aliases don't collide with another entry's "
+                f"name_normalized on the same team "
+                f"(collisions: {len(cross_team_collisions)})",
+                not cross_team_collisions,
+            )
+            # INTRA-TEAM FORENAME PREFIX OVERLAP — the bidirectional
+            # forename-prefix disambiguator only stays unambiguous if no
+            # two whitelisted players on the same team have forenames
+            # where one starts with the other. France with Kylian +
+            # Karim would silently break the disambiguator (both prefix
+            # 'K'/'Karim' inputs would match both candidates). Today
+            # the whitelist has 0 such overlaps — pin the invariant so
+            # future curator edits surface the risk.
+            forename_overlaps = []
+            forenames_by_team: dict[str, list[tuple[str, str]]] = {}
+            for e in entries:
+                full = e.get("name_normalized") or ""
+                first = full.split()[0] if full else ""
+                if first:
+                    forenames_by_team.setdefault(e.get("team"), []).append(
+                        (first, e.get("name", "")))
+            for team, items in forenames_by_team.items():
+                for i, (f1, n1) in enumerate(items):
+                    for j, (f2, n2) in enumerate(items):
+                        if i >= j:
+                            continue
+                        if f1.startswith(f2) or f2.startswith(f1):
+                            forename_overlaps.append((team, n1, n2, f1, f2))
+            check(
+                f"whitelist has no intra-team forename-prefix overlaps "
+                f"(overlaps: {len(forename_overlaps)}"
+                f"{': ' + str(forename_overlaps[:2]) if forename_overlaps else ''})",
+                not forename_overlaps,
+            )
+            # PROPERTY TEST — every registered alias must resolve to a
+            # tier_1_* tier when fed back through classify_tier. Catches
+            # alias drift (e.g. a curator edits name_normalized and
+            # forgets the alias). One-line invariant; expensive only at
+            # gate time.
+            sys.path.insert(0, str(ROOT / "scripts" / "live"))
+            from injury_adjustments import (  # noqa: E402
+                classify_tier as _classify,
+                reset_key_players_index_for_tests as _reset,
+            )
+            _reset()
+            alias_drift = []
+            for e in entries:
+                aliases = e.get("aliases") or []
+                if not isinstance(aliases, list):
+                    continue
+                expected_tier = e.get("tier", "")
+                team = e.get("team", "")
+                for a in aliases:
+                    if not isinstance(a, str) or not a.strip():
+                        continue
+                    tier, src = _classify(a, team)
+                    if tier != expected_tier:
+                        alias_drift.append((team, e.get("name"), a, tier, src))
+            sample = ", ".join(
+                f"{t}/{n!r}: alias {a!r} → ({tier},{src})"
+                for t, n, a, tier, src in alias_drift[:3]
+            ) or "none"
+            check(
+                f"every whitelist alias resolves back to its owner's tier "
+                f"(drift: {len(alias_drift)}; sample: {sample})",
+                not alias_drift,
+            )
+            # Intra-team last-name collisions are now SAFE (handled by
+            # classify_tier's forename-prefix disambiguator), but we still
+            # want curator visibility: are the collisions intentional
+            # (Argentina's two Martínez) or accidental (typo, wrong player)?
+            # The allowlist lives IN the JSON ("expected_last_name_collisions"),
+            # so the source of truth is one file. We detect both unexpected
+            # NEW collisions (warn) AND stale allowlist entries that no
+            # longer collide (warn — likely indicates a whitelist removal
+            # the allowlist wasn't updated to reflect).
+            last_keys = [(e.get("team"), e.get("last_name_normalized")) for e in entries
+                         if e.get("last_name_normalized")]
+            last_collisions = {k for k, c in Counter(last_keys).items() if c > 1}
+            # Hardened against a malformed allowlist: a typo'd JSON field
+            # (string instead of list, dict instead of list, etc.) must
+            # not crash the gate with a confusing 'str has no attribute
+            # get'. Treat anything non-list as "no allowlist" so unexpected
+            # collisions still surface and stale-detection is skipped.
+            raw_allowed = kp.get("expected_last_name_collisions")
+            if not isinstance(raw_allowed, list):
+                raw_allowed = []
+            allowed = {
+                (item.get("team"), item.get("last_name_normalized"))
+                for item in raw_allowed
+                if isinstance(item, dict)
+            }
+            unexpected = sorted(last_collisions - allowed)
+            stale_allowed = sorted(allowed - last_collisions)
+            if unexpected:
+                warn(
+                    f"unexpected intra-team last-name collision(s) — "
+                    f"add to key_players_2026.json "
+                    f"'expected_last_name_collisions' once verified safe: "
+                    f"{unexpected[:3]}"
+                )
+            if stale_allowed:
+                warn(
+                    f"stale entries in 'expected_last_name_collisions' — "
+                    f"these no longer collide in the whitelist and should "
+                    f"be removed: {stale_allowed[:3]}"
+                )
+        except Exception as e:
+            check(f"key_players_2026.json parses cleanly ({e})", False)
+
+    # ─ Module wiring: injury_adjustments exposes classify_tier + helpers
+    ij = (LIVE_DIR / "injury_adjustments.py").read_text()
+    check("injury_adjustments exports classify_tier",
+          "def classify_tier(" in ij)
+    check("injury_adjustments exports normalize_player_name",
+          "def normalize_player_name(" in ij)
+    fi = (LIVE_DIR / "fetch_injuries.py").read_text()
+    check("fetch_injuries imports classify_tier",
+          "classify_tier" in fi)
+    check("fetch_injuries records auto_tier_source per player",
+          '"auto_tier_source"' in fi)
+
+    # ─ Module wiring: weather_adjustments exposes hydration-break constants
+    wa = (LIVE_DIR / "weather_adjustments.py").read_text()
+    check("weather_adjustments exposes HYDRATION_BREAK_WBGT_THRESHOLD",
+          "HYDRATION_BREAK_WBGT_THRESHOLD" in wa)
+    check("weather_adjustments exposes HYDRATION_BREAK_DAMPENER",
+          "HYDRATION_BREAK_DAMPENER" in wa)
+    fw = (LIVE_DIR / "fetch_weather.py").read_text()
+    check("fetch_weather passes wet_bulb_c into team_elo_adjustment",
+          "wet_bulb_c=wb" in fw)
+
 
 # ─── Phase 10 / report ─────────────────────────────────────────────────────
 def report():

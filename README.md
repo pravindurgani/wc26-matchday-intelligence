@@ -177,7 +177,7 @@ fifa-wc-26-prediction/
 │   ├── research/
 │   │   ├── probe_apifootball_knockouts.py         # one-shot knockout-shape probe
 │   │   └── cwc2025_weather_calibration.py        # CWC2025 backtest of weather table (B.6)
-│   └── pre_flight.py                              # 178-check launch audit
+│   └── pre_flight.py                              # 212-check launch audit
 ├── models/                                         # trained joblib + metrics JSON
 ├── dashboard/
 │   ├── index.html                                  # main dashboard

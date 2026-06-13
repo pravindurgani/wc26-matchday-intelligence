@@ -114,6 +114,10 @@ async function init() {
   window._travel = travel;
   window._liveDelta = liveDelta;
   window._livePred = livePred;
+  // Cache the slow-cron matchday intel so renderLastUpdated can fold its
+  // ambiguity/error warnings into the top pill on the auto-refresh tick
+  // (which doesn't re-fetch this file — see applyLiveUpdate).
+  window._matchdayIntel = matchdayIntel;
   window._charts = [];
   // P1-F: seed the polling cache from the first-load values so the next tick
   // doesn't re-download the heavy files when nothing's changed.
@@ -137,7 +141,7 @@ async function init() {
   };
 
   safe(() => initTooltips(),                                    'initTooltips');
-  safe(() => renderLastUpdated(primary, liveState),             'renderLastUpdated');
+  safe(() => renderLastUpdated(primary, liveState, 0, matchdayIntel), 'renderLastUpdated');
   safe(() => renderLiveStatusBar(liveState),                    'renderLiveStatusBar');
   safe(() => renderLiveStrip(liveState),                        'renderLiveStrip');
   safe(() => renderHero(primary, liveState, liveDelta),         'renderHero');
@@ -250,7 +254,8 @@ function applyLiveUpdate({ liveState, liveDelta, livePred, fetchFailures = 0 }) 
     try { fn(); }
     catch (e) { console.warn('[live] ' + label + ' failed:', e); }
   };
-  safe(() => renderLastUpdated(primary, liveState, fetchFailures), 'renderLastUpdated');
+  safe(() => renderLastUpdated(primary, liveState, fetchFailures, window._matchdayIntel),
+       'renderLastUpdated');
   safe(() => renderLiveStatusBar(liveState),              'renderLiveStatusBar');
   safe(() => renderLiveStrip(liveState),                  'renderLiveStrip');
   safe(() => renderHero(primary, liveState, liveDelta),   'renderHero');
@@ -288,14 +293,19 @@ function startLivePolling(intervalMs = 60_000) {
     // upstream — without this, a wedged pipeline keeps the timestamp visually
     // identical to a healthy pipeline because renderLastUpdated never reruns.
     if (!triple.liveState) {
-      renderLastUpdated(window._primary || window._data, null, fetchFailures);
+      // Pass the cached matchdayIntel through explicitly so the top pill
+      // surfaces any standing ambiguity / fetch-error warning even when
+      // live_state.json itself failed to fetch this tick.
+      renderLastUpdated(window._primary || window._data, null,
+                        fetchFailures, window._matchdayIntel);
       return;
     }
     const ts = triple.liveState.last_updated_utc;
     if (ts && ts === _lastLiveTimestamp) {
       // Same data, but age has advanced — rerun just the timestamp render so
       // STALE / fetch-error states reflect the latest wall-clock age.
-      renderLastUpdated(window._primary || window._data, triple.liveState, fetchFailures);
+      renderLastUpdated(window._primary || window._data, triple.liveState,
+                        fetchFailures, window._matchdayIntel);
       return;
     }
     _lastLiveTimestamp = ts;
@@ -339,15 +349,19 @@ function renderAllCharts(data, cal) {
   if (cal) safe(() => renderCalibration(cal), 'calibration');
 }
 
-function renderLastUpdated(data, liveState, fetchFailures = 0) {
+function renderLastUpdated(data, liveState, fetchFailures = 0, matchdayIntel = null) {
   const el = document.getElementById('last-updated');
   if (!el) return;
-  const ts = liveState?.last_updated_utc || data.generated_at || '';
+  const ts = liveState?.last_updated_utc || data?.generated_at || '';
   if (!ts) { el.textContent = ''; return; }
   const d = new Date(ts);
   const opts = { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', timeZone: 'UTC' };
   const isLive = liveState?.mode === 'live';
   const ageMs  = Date.now() - d.getTime();
+  // Fall back to the window-cached intel if the caller didn't pass one.
+  // Auto-tick (applyLiveUpdate) re-fetches liveState but not the slower
+  // matchday_intelligence feed; reuse the most recent fetch.
+  if (matchdayIntel == null) matchdayIntel = window._matchdayIntel || null;
   // Staleness thresholds keyed on mode AND in_play: live ticks arrive on a
   // ~10-min cron (live-matchday.yml). During play we expect every tick to
   // change something (in_play minute / score), so 30 min = ~3 missed ticks =
@@ -367,7 +381,25 @@ function renderLastUpdated(data, liveState, fetchFailures = 0) {
   // these to liveState.warnings[] specifically so the dashboard can surface
   // them without killing the deploy — otherwise the user sees identical
   // data and assumes everything is fine when it isn't.
-  const warnings = Array.isArray(liveState?.warnings) ? liveState.warnings : [];
+  const liveStateWarnings = Array.isArray(liveState?.warnings) ? liveState.warnings : [];
+  // Surface operator-actionable matchday-intel warnings IN THE TOP PILL
+  // (not just inside the 15th-of-17-sections #matchday-intel block, where
+  // they previously sat collapsed-by-default below the fold). Only lift
+  // alert-grade types — benign info (`feed_missing`, `filter_non_wc`)
+  // would noise-up the pill every tick.
+  const INTEL_TOP_BAR_TYPES = new Set([
+    'ambiguous_classification', 'http_error', 'fetch_error',
+    'api_error', 'missing_key',
+  ]);
+  const intelWarningsRaw = Array.isArray(matchdayIntel?.warnings) ? matchdayIntel.warnings : [];
+  const intelWarnings = intelWarningsRaw
+    .filter(w => w && typeof w === 'object' && INTEL_TOP_BAR_TYPES.has(w.type));
+  // liveState warnings keep priority position (M-class incidents > injury
+  // ambiguity). Intel warnings tag with a source so the title-text /
+  // tooltip can name which feed.
+  const warnings = liveStateWarnings.concat(
+    intelWarnings.map(w => ({ ...w, _source: 'matchday-intel' }))
+  );
   const hasWarning = warnings.length > 0;
   el.classList.toggle('stale', isStale);
   el.classList.toggle('fetch-error', fetchFailures >= 3);

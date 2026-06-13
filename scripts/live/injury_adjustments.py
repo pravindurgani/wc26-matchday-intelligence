@@ -22,13 +22,18 @@ API-Football's /injuries endpoint exposes `player.type`:
   "Missing Fixture"  → confirmed out      → status = "confirmed_out"
   "Questionable"     → doubtful           → status = "doubtful"
 
-It does NOT expose per-player importance, so for v1 every API-sourced player
-defaults to tier_2_starter. Manual overrides in team_adjustments.json may
-upgrade individual players to tier_1_*. Conservative default keeps the layer
-from over-reacting to depth-chart noise (a 3rd-string CB out shouldn't move
-the model -30 Elo).
+It does NOT expose per-player importance. For v2 we cross-reference each
+injured player against data/raw/key_players_2026.json — a small hand-curated
+whitelist of obvious tier_1_star + tier_1_keeper names per WC26 squad — and
+upgrade matching entries from the conservative tier_2_starter default.
+Manual overrides in team_adjustments.json still take priority at the
+apply_matchday_adjustments layer.
 """
 from __future__ import annotations
+
+import json
+import unicodedata
+from pathlib import Path
 
 TIER_TO_ELO = {
     "tier_1_star":    -30.0,
@@ -48,6 +53,12 @@ APIFOOTBALL_TYPE_MAP = {
 
 DOUBTFUL_DISCOUNT = 0.5
 DEFAULT_TIER = "tier_2_starter"  # conservative v1 default for API-sourced players
+
+# Path to the hand-curated tier_1 whitelist. Resolved here so both the
+# fetcher and the consumer share one source of truth; the loader is cached
+# so the disk read happens once per process.
+ROOT = Path(__file__).resolve().parents[2]
+KEY_PLAYERS_PATH = ROOT / "data" / "raw" / "key_players_2026.json"
 
 
 def classify_api_type(player_type: str | None) -> str:
@@ -75,3 +86,283 @@ def discounted_elo(tier: str, status: str) -> float:
     if status == "doubtful":
         return base * DOUBTFUL_DISCOUNT
     return 0.0
+
+
+# ── Name normalisation + tier classification (v2 auto-upgrade) ──────────
+
+# Stroke / ligature characters that NFKD does NOT decompose — the
+# character has no base letter + combining mark structure, it's a
+# self-contained codepoint, so .encode("ascii", "ignore") drops it
+# silently (Ødegaard → degaard, Łewandowski → ewandowski).
+# We pre-translate these BEFORE NFKD so the resulting normalised
+# string is a stable, comparable key. Map covers every codepoint
+# we expect across WC2026 squads (Nordic, Polish, Icelandic, German,
+# Croatian, French ligature, OE) plus a few currency-neutral siblings
+# in case the API returns oddities.
+_NORDIC_SLAVIC_MAP = {
+    "\u00d8": "O",  "\u00f8": "o",    # Ø ø — Nordic O-slash (Ødegaard, Højbjerg)
+    "\u0141": "L",  "\u0142": "l",    # Ł ł — Polish L-slash (Łewandowski)
+    "\u00d0": "D",  "\u00f0": "d",    # Ð ð — Icelandic eth
+    "\u00de": "Th", "\u00fe": "th",   # Þ þ — Icelandic thorn
+    "\u00c6": "AE", "\u00e6": "ae",   # Æ æ — Nordic/Old-English ligature
+    "\u0152": "OE", "\u0153": "oe",   # Œ œ — French ligature
+    "\u0110": "D",  "\u0111": "d",    # Đ đ — Croatian/Serbian D-stroke (Đoković, Mihailović)
+    "\u00df": "ss",                   # ß — German sharp s
+    # Turkish dotted/dotless I — NFKD decomposes neither. Without these,
+    # 'Uğurcan Çakır' → 'ugurcan cakr' (ı dropped) and 'İlkay' → 'lkay'
+    # (İ dropped). Both miss the whitelist.
+    "\u0130": "I",  "\u0131": "i",    # İ ı — Turkish dotted-I / dotless-i
+    # Greek omicron-like? (skip — out of scope for football names)
+    # Cyrillic transliteration intentionally not handled — API-Football
+    # already returns Latin script for WC2026 squads.
+}
+
+
+def normalize_player_name(name: str | None) -> str:
+    """Collapse a player name to a comparable key.
+
+    - pre-translate stroke / ligature characters NFKD won't decompose
+      (Ø → O, Ł → L, Đ → D, Æ → AE, ß → ss, Þ → Th, etc.)
+    - NFKD decompose remaining accented letters (é → e + ́)
+    - drop everything outside ASCII (the combining marks above)
+    - lowercase
+    - replace periods, commas, apostrophes with spaces
+    - collapse whitespace
+
+    Designed so 'Kylian Mbappé', 'K. Mbappé', 'mbappe' (last-name only),
+    'K Mbappe' all collapse to comparable forms. Also handles
+    'Martin Ødegaard' → 'martin odegaard' and 'Robert Łewandowski'
+    → 'robert lewandowski' which a naive NFKD-only pipeline silently
+    truncates to 'degaard' / 'ewandowski'. Callers use `classify_tier`
+    which handles full-name AND multi-token last-name matching.
+    """
+    if not name:
+        return ""
+    text = str(name)
+    # Step 1: pre-translate stroke/ligature characters that NFKD doesn't
+    # decompose. Without this, 'Ødegaard' silently becomes 'degaard' and
+    # an injury to Norway's tier_1_star routes to tier_2_starter (-18 Elo
+    # undercount).
+    for src, dst in _NORDIC_SLAVIC_MAP.items():
+        if src in text:
+            text = text.replace(src, dst)
+    # Step 2: NFKD decompose any remaining accented letters so 'é' → 'e'.
+    nfkd = unicodedata.normalize("NFKD", text)
+    ascii_only = nfkd.encode("ascii", "ignore").decode("ascii")
+    cleaned = ascii_only.lower().replace(".", " ").replace(",", " ").replace("'", "")
+    return " ".join(cleaned.split())
+
+
+def _load_key_players_index(path: Path = KEY_PLAYERS_PATH) -> dict:
+    """Build a tiered lookup: {team: {by_full: {full: entry},
+                                      by_last: {last: [entry, ...]}}}.
+
+    Indexed per-team to disambiguate same-last-name players on different
+    sides (e.g. multiple 'Martínez' across teams). Within a team, the
+    by_last index stores a LIST of entries per surname so that intra-team
+    collisions (Argentina's Lautaro + Emiliano Martínez) can be
+    disambiguated at lookup time by classify_tier() via forename prefix.
+
+    Mononyms (entries where the full normalised name is identical to the
+    last-name token, e.g. Pedri, Rodri, Rodrygo, Raphinha, Alisson) are
+    deliberately EXCLUDED from the by_last index — they can only match
+    via exact `by_full` lookup. Without this guard, any same-team player
+    whose surname accidentally collides with the mononym would
+    false-positive auto-upgrade (e.g. a fictional 'Carlos Pedri' on Spain
+    would inherit Pedri's tier_1_star).
+
+    Falls back to an empty index if the file is missing — fetch_injuries
+    then defaults every player to tier_2_starter (the pre-v2 behaviour).
+    """
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text())
+    except Exception:
+        return {}
+    index: dict[str, dict[str, dict]] = {}
+    for entry in data.get("players", []) or []:
+        team = entry.get("team")
+        if not team:
+            continue
+        bucket = index.setdefault(team, {"by_full": {}, "by_last": {}})
+        full = entry.get("name_normalized") or normalize_player_name(entry.get("name"))
+        last = entry.get("last_name_normalized") or (full.split()[-1] if full else "")
+        if full:
+            bucket["by_full"][full] = entry
+        # Skip mononyms from by_last: the surname alone IS the player's
+        # canonical name, so by_full carries the match. Indexing them
+        # under by_last would let any same-team teammate with that
+        # surname auto-promote incorrectly.
+        if last and last != full:
+            bucket["by_last"].setdefault(last, []).append(entry)
+        # Aliases — per-entry list of additional full-form strings the API
+        # might emit that don't match the canonical name_normalized. The
+        # most common cases:
+        #   - "Son" bare (canonical = "Son Heung-min" but API can drop
+        #     given name for Korean players)
+        #   - "Vini Jr" / "Vinicius" (canonical = "Vinicius Junior")
+        #   - "Mohammed Salah" (English spelling drift — also handled by
+        #     the bidirectional prefix in _resolve_from_last_match)
+        # Registered ONLY in by_full (not by_last) so they cannot widen
+        # the surname leak surface — the team-scoped index already
+        # prevents cross-team confusion.
+        for alias_raw in (entry.get("aliases") or []):
+            alias_norm = normalize_player_name(alias_raw)
+            if alias_norm:
+                bucket["by_full"].setdefault(alias_norm, entry)
+    return index
+
+
+# Process-level cache so a single fetch_injuries run reads the file once.
+_KEY_PLAYERS_INDEX: dict | None = None
+
+
+def _get_key_players_index() -> dict:
+    global _KEY_PLAYERS_INDEX
+    if _KEY_PLAYERS_INDEX is None:
+        _KEY_PLAYERS_INDEX = _load_key_players_index()
+    return _KEY_PLAYERS_INDEX
+
+
+def reset_key_players_index_for_tests() -> None:
+    """Tests that swap KEY_PLAYERS_PATH at runtime must call this to bust
+    the process-level cache before the next classify_tier()."""
+    global _KEY_PLAYERS_INDEX
+    _KEY_PLAYERS_INDEX = None
+
+
+def _resolve_from_last_match(matches: list[dict],
+                              forename_tokens: list[str],
+                              n_tokens_in_last: int) -> tuple[str, str]:
+    """Given a non-empty by_last hit, decide which whitelist entry (if any)
+    the input actually refers to and return (tier, source).
+
+    Invariants enforced here (closes HIGH #10 — single-entry surname leak):
+      * If the input HAS forename tokens, the input's first forename token
+        MUST be a prefix of the candidate's first forename token. So
+        "Carlos Mbappe" / "John Haaland" / "Random Kane" no longer auto-
+        promote just because the surname is whitelisted under a single
+        entry. The pre-fix branch only enforced this on multi-entry
+        collisions; the single-entry path bypassed all forename checks.
+      * If the input is bare-surname (no forename tokens) AND there's
+        exactly ONE candidate, accept — the team-scoped index already
+        prevents cross-team leaks, and most API short-forms fall here.
+      * Multi-entry collisions still resolve via forename-prefix
+        disambiguator (Round 7 fix) and fall back to "whitelist_ambiguous"
+        when forename doesn't uniquely identify a candidate.
+    """
+    if not forename_tokens:
+        # Bare surname. Single match → accept. Collision → ambiguous.
+        if len(matches) == 1:
+            return matches[0].get("tier", DEFAULT_TIER), "whitelist_last"
+        return DEFAULT_TIER, "whitelist_ambiguous"
+    input_first = forename_tokens[0]
+    disambiguated = []
+    for entry in matches:
+        entry_full = entry.get("name_normalized") or normalize_player_name(
+            entry.get("name"))
+        entry_tokens = entry_full.split()
+        if len(entry_tokens) <= n_tokens_in_last:
+            # Candidate is a mononym / has no forename portion to compare.
+            continue
+        entry_first_forename = entry_tokens[0]
+        # Bidirectional prefix: either side starting with the other
+        # counts as a match. Standard direction handles initial-form
+        # inputs ('K. Mbappé' → 'kylian'.startswith('k')). The reverse
+        # direction handles inputs that extend the canonical forename
+        # (e.g. 'Karima Benzema' against canonical 'karim benzema' —
+        # 'karima'.startswith('karim') is True). It does NOT rescue
+        # spelling variants where the divergence happens mid-string
+        # ('mohammed' vs 'mohamed' diverge at index 5 → both directions
+        # False); those are handled explicitly by the aliases field.
+        # Safe because intra-team forename pairs don't share leading
+        # prefixes on the current whitelist (pre-flight gates this
+        # property going forward — see the new overlap gate below).
+        if (entry_first_forename.startswith(input_first)
+                or input_first.startswith(entry_first_forename)):
+            disambiguated.append(entry)
+    if len(disambiguated) == 1:
+        return disambiguated[0].get("tier", DEFAULT_TIER), "whitelist_last"
+    if len(matches) > 1:
+        # Genuine collision with no unique forename resolution —
+        # operator visibility path.
+        return DEFAULT_TIER, "whitelist_ambiguous"
+    # Single match but the input's first forename didn't prefix the
+    # candidate's first forename → the input is a DIFFERENT player who
+    # happens to share the surname. Conservative default; no audit
+    # ambiguity (we know this isn't the whitelisted player).
+    return DEFAULT_TIER, "default"
+
+
+def classify_tier(player_name: str | None, team_name: str | None,
+                  index: dict | None = None) -> tuple[str, str]:
+    """Return (tier, source) for an injured player.
+
+    Matching strategy (per-team):
+      1. Full normalized name match → use whitelist tier
+         (source = "whitelist_full").
+      2. Trailing-window last-name match — try 3-token, 2-token, then
+         1-token windows so compound surnames ("De Bruyne", "van Dijk",
+         "de Jong") match the by_last keys that store the multi-word
+         form. Forename-prefix check ALWAYS runs (even with a single
+         candidate) so "Carlos Mbappe" no longer silently inherits
+         Mbappé's tier_1_star. Multi-entry collisions (Argentina's
+         Lautaro + Emiliano Martínez) resolve via forename or fall back
+         to "whitelist_ambiguous".
+      3. Leading-window last-name match — surname-FIRST fallback for
+         providers that occasionally return "MARTINEZ Emiliano",
+         "VAN DIJK Virgil", "Pulisic, Christian" (after normalization
+         the comma collapses to whitespace). Same forename-prefix
+         guarantees apply. This step only fires if step 2 didn't return.
+      4. Otherwise fall through to DEFAULT_TIER (source = "default").
+
+    Same team filtering prevents 'Martínez' (Argentina) auto-upgrading a
+    different player called 'Martínez' on Mexico. Caller may pass a
+    custom `index` for testing; otherwise the cached on-disk index is used.
+
+    Audit sources (controlled vocabulary, pinned by test contract):
+      whitelist_full       — exact full-name match in by_full
+      whitelist_last       — unique trailing- or leading-window match
+                             in by_last (forename check passed)
+      whitelist_ambiguous  — collision present, can't disambiguate →
+                             returns DEFAULT_TIER but flags the audit log
+      default              — no whitelist signal OR forename rejected
+                             a single-candidate surname hit
+    """
+    if not player_name or not team_name:
+        return DEFAULT_TIER, "default"
+    idx = index if index is not None else _get_key_players_index()
+    bucket = idx.get(team_name)
+    if not bucket:
+        return DEFAULT_TIER, "default"
+    norm = normalize_player_name(player_name)
+    if not norm:
+        return DEFAULT_TIER, "default"
+    full_hit = bucket.get("by_full", {}).get(norm)
+    if full_hit:
+        return full_hit.get("tier", DEFAULT_TIER), "whitelist_full"
+    by_last = bucket.get("by_last", {})
+    tokens = norm.split()
+    max_window = min(3, len(tokens))
+    # Step 2: trailing-window search (forename-first, the common API format).
+    for n_tokens in range(max_window, 0, -1):
+        candidate = " ".join(tokens[-n_tokens:])
+        matches = by_last.get(candidate, [])
+        if not matches:
+            continue
+        forename_tokens = tokens[:-n_tokens]
+        return _resolve_from_last_match(matches, forename_tokens, n_tokens)
+    # Step 3: leading-window fallback (surname-first format). Only fires
+    # if step 2 found no by_last hit at all. Requires ≥2 input tokens so
+    # at least one forename token remains for the disambiguator.
+    if len(tokens) >= 2:
+        max_leading = min(3, len(tokens) - 1)
+        for n_lead in range(max_leading, 0, -1):
+            candidate_last = " ".join(tokens[:n_lead])
+            matches = by_last.get(candidate_last, [])
+            if not matches:
+                continue
+            forename_tokens = tokens[n_lead:]
+            return _resolve_from_last_match(matches, forename_tokens, n_lead)
+    return DEFAULT_TIER, "default"

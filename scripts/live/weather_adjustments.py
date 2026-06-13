@@ -205,8 +205,20 @@ _ELO_BY_BUCKET_AND_CONFED = {
 }
 
 
+# FIFA cooling-break protocol: when WBGT ≥ 32°C (~89.6°F), referees pause
+# play at the ~30' and ~75' marks for ~3 min cooling/hydration breaks.
+# Empirical evidence (Springer 2025 review on cooling-break effectiveness;
+# PMC11829705 on hydration-break performance recovery) shows these breaks
+# restore ~20-30% of the heat-affected high-speed running capacity that
+# would otherwise be lost. We take the conservative end (25%) of that
+# range and apply it as a dampener on the extreme_heat Elo penalty.
+HYDRATION_BREAK_WBGT_THRESHOLD = 32.0
+HYDRATION_BREAK_DAMPENER = 0.75   # multiply heat penalty by 0.75 → ~25% mitigation
+
+
 def team_elo_adjustment(
-    team: str, weather_bucket: str, indoor: bool = False
+    team: str, weather_bucket: str, indoor: bool = False,
+    wet_bulb_c: float | None = None,
 ) -> float:
     """Return signed Elo adjustment for a team given a weather bucket.
 
@@ -214,6 +226,13 @@ def team_elo_adjustment(
       - indoor matches (roof closed → outdoor conditions don't apply)
       - teams whose confederation has no penalty for this bucket
       - unknown teams (don't penalise blind)
+
+    `wet_bulb_c` (optional): if provided AND the bucket is `extreme_heat` AND
+    WBGT ≥ HYDRATION_BREAK_WBGT_THRESHOLD, the penalty is multiplied by
+    HYDRATION_BREAK_DAMPENER to reflect FIFA's mandatory cooling-break
+    protocol partially restoring heat-affected performance. Callers that
+    don't have a WBGT reading (e.g. static_climate fallback) pass None
+    and behaviour matches pre-dampener semantics.
     """
     if indoor:
         return 0.0
@@ -222,6 +241,16 @@ def team_elo_adjustment(
         return 0.0
     bucket_map = _ELO_BY_BUCKET_AND_CONFED.get(weather_bucket, {})
     raw = bucket_map.get(confed, 0.0)
+    # Hydration-break dampener — only fires on the extreme_heat path because
+    # FIFA's cooling-break trigger is WBGT-based AND only meaningful when
+    # the underlying penalty is heat-related (not rain/wind/cold/etc.).
+    if (
+        weather_bucket == "extreme_heat"
+        and wet_bulb_c is not None
+        and wet_bulb_c >= HYDRATION_BREAK_WBGT_THRESHOLD
+        and raw < 0.0   # only dampen penalties (negative), not zeros
+    ):
+        raw = raw * HYDRATION_BREAK_DAMPENER
     # Cap at the layer ceiling — the consumer (apply_matchday_adjustments)
     # also caps, but defence-in-depth.
     return max(-WEATHER_ELO_CAP, min(WEATHER_ELO_CAP, raw))
