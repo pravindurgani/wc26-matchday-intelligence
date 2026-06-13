@@ -1,11 +1,22 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-13T01:09:50.939468+00:00",
+  "last_updated_utc": "2026-06-13T01:17:31.895594+00:00",
   "completed_matches_count": 3,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 4,
+      "home": "United States",
+      "away": "Paraguay",
+      "home_score": 1,
+      "away_score": 0,
+      "elapsed": 9,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 1,
   "warnings": []
 }
