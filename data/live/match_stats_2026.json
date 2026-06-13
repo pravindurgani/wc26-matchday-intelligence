@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T03:50:09.165688+00:00",
+  "generated_at": "2026-06-13T09:19:16.209575+00:00",
   "schema_version": 1,
   "source": "api_football",
   "n_completed": 4,
@@ -46,14 +46,14 @@
         "Yellow Cards": 2,
         "Red Cards": 2,
         "Goalkeeper Saves": 2,
-        "Total passes": 335,
+        "Total passes": 334,
         "Passes accurate": 272,
         "Passes %": 81,
         "expected_goals": 0,
         "goals_prevented": 0
       },
       "fixture_id": "1489369",
-      "captured_at": "2026-06-13T03:50:08.788063+00:00"
+      "captured_at": "2026-06-13T09:19:15.900408+00:00"
     },
     {
       "match_id": 2,
@@ -104,7 +104,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1538999",
-      "captured_at": "2026-06-13T03:50:08.914660+00:00"
+      "captured_at": "2026-06-13T09:19:16.003370+00:00"
     },
     {
       "match_id": 3,
@@ -155,7 +155,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1539000",
-      "captured_at": "2026-06-13T03:50:09.046189+00:00"
+      "captured_at": "2026-06-13T09:19:16.106387+00:00"
     },
     {
       "match_id": 4,
@@ -206,7 +206,7 @@
         "goals_prevented": -1
       },
       "fixture_id": "1489370",
-      "captured_at": "2026-06-13T03:50:09.165671+00:00"
+      "captured_at": "2026-06-13T09:19:16.209558+00:00"
     }
   ],
   "warnings": [],
