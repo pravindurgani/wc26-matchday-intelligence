@@ -52,6 +52,12 @@ GRAND_TOTAL_CAP_ELO = 45.0
 _OUTCOME_P_GUARD = 0.95
 _MAX_OUTCOME_P_OBS = [0.0, "", ""]  # [max_p, fixture_label, outcome_label]
 
+# H10 (Round 16): lambda clip bounds promoted to module constants so the
+# Dixon-Coles τ boundary guard below can reference them. Values were
+# previously hard-coded in two places inside predict_lambdas (now line ~261).
+LAMBDA_CLIP_MIN = 0.05
+LAMBDA_CLIP_MAX = 7.0
+
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
 PROC = ROOT / "data" / "processed"
@@ -93,6 +99,27 @@ DEFAULTS = dict(
     lambda_noise_alpha=12.0,     # higher = less per-match lambda noise
     travel_per_1000km=4.0,       # Elo penalty per 1000km of recent travel
     short_rest_penalty=8.0,      # extra penalty if rest_days <= 3
+)
+
+# H10 (Round 16): Dixon-Coles τ boundary guard.
+# τ(0,1) = 1 + λ_a × ρ and τ(1,0) = 1 + λ_h × ρ. With ρ negative (we use
+# -0.13 to boost low-score draws), τ flips negative once λ × |ρ| > 1. The
+# build_score_matrix routine clips negative cells to 1e-12 and renormalizes,
+# so the simulator stays numerically valid — but mat[0,1] and mat[1,0]
+# silently collapse, distorting low-score outcomes. With λ_clip=7.0 and
+# ρ=-0.13: 7.0 × 0.13 = 0.91 → τ(0,1) min ≈ 0.09 (positive, but only 9%
+# of mass). The critical λ is 1/|ρ| = 7.69. Catching the boundary at
+# module load means any future tuner who relaxes the lambda clip or pushes
+# ρ more negative fails fast instead of silently smearing the score
+# distribution. Margin today: 9% before the boundary.
+assert LAMBDA_CLIP_MAX * abs(DEFAULTS["dc_rho"]) < 1.0, (
+    f"Dixon-Coles τ boundary violated: λ_max ({LAMBDA_CLIP_MAX}) × |ρ| "
+    f"({abs(DEFAULTS['dc_rho'])}) = "
+    f"{LAMBDA_CLIP_MAX * abs(DEFAULTS['dc_rho']):.3f} >= 1.0. "
+    f"τ(0,1)/τ(1,0) will go negative for high-λ matches, collapsing low-"
+    f"score cells. Either reduce LAMBDA_CLIP_MAX below "
+    f"{1/abs(DEFAULTS['dc_rho']):.2f} or move dc_rho closer to zero "
+    f"(current: {DEFAULTS['dc_rho']})."
 )
 
 
@@ -236,8 +263,8 @@ def predict_lambdas(home, away, home_model, away_model, feature_cols, elo, form_
         "is_neutral": int(is_neutral), "importance": importance,
     }
     x = np.array([[feats[c] for c in feature_cols]])
-    lam_h = float(np.clip(home_model.predict(x)[0], 0.05, 7.0))
-    lam_a = float(np.clip(away_model.predict(x)[0], 0.05, 7.0))
+    lam_h = float(np.clip(home_model.predict(x)[0], LAMBDA_CLIP_MIN, LAMBDA_CLIP_MAX))
+    lam_a = float(np.clip(away_model.predict(x)[0], LAMBDA_CLIP_MIN, LAMBDA_CLIP_MAX))
     return lam_h, lam_a
 
 
@@ -1096,7 +1123,11 @@ def main():
             if mi_p.exists():
                 mi = json.loads(mi_p.read_text())
                 _h.update(str(mi.get("generated_at", "")).encode("utf-8"))
-                _h.update(str(len(mi.get("adjustments") or [])).encode("utf-8"))
+                # Key is `active_adjustments` in matchday_intelligence.json.
+                # `adjustments` was the legacy name; without this fix the count
+                # is always 0 (defense-in-depth signal lost — generated_at
+                # still bumps the hash on every slow-cron tick).
+                _h.update(str(len(mi.get("active_adjustments") or [])).encode("utf-8"))
             lts_p = ROOT / "data" / "live" / "live_team_state.json"
             if lts_p.exists():
                 lts = json.loads(lts_p.read_text())
@@ -1269,7 +1300,8 @@ def main():
             f"\n[WARN] outcome-probability drift: max p({_MAX_OUTCOME_P_OBS[2]}) "
             f"= {_MAX_OUTCOME_P_OBS[0]:.4f} > guard {_OUTCOME_P_GUARD:.2f} "
             f"({_MAX_OUTCOME_P_OBS[1]}). Sum-to-1 invariant preserved (no clip "
-            f"applied). Check lambda clip [0.05, 7.0] or Elo Δ caps.",
+            f"applied). Check lambda clip [{LAMBDA_CLIP_MIN}, {LAMBDA_CLIP_MAX}] "
+            f"or Elo Δ caps.",
             file=sys.stderr,
         )
 

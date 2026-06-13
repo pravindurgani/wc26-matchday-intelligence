@@ -193,8 +193,15 @@ def compute_input_hash() -> str:
             data = json.loads(mi.read_text())
             h.update(str(data.get("generated_at", "")).encode("utf-8"))
             # Also hash the aggregated counts so a fetcher silently emptying
-            # a layer still bumps the hash.
-            adj = data.get("adjustments", []) or []
+            # a layer still bumps the hash. Key is `active_adjustments` —
+            # `adjustments` was a stale name that pre-dated the consolidated
+            # matchday_intelligence.json schema (top-level keys: generated_at,
+            # schema_version, caps, active_adjustments, summary, feeds_available,
+            # warnings). Without this fix the count is always 0 and the count-
+            # delta defense-in-depth never fires; generated_at still bumps the
+            # hash on every slow-cron tick so re-sim still triggers, but a
+            # mid-tick count change wouldn't.
+            adj = data.get("active_adjustments", []) or []
             h.update(str(len(adj)).encode("utf-8"))
         except Exception:
             h.update(b"mi_unreadable")

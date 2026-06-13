@@ -65,6 +65,7 @@ def main():
     probs_elo = elo_only_baseline(te["elo_home"].values, te["elo_away"].values)
 
     # Ablation B: Goal model on Elo + form only (no venue/squad — these aren't in features anyway)
+    # H10 sync: 0.05/7.0 must match scripts/03_simulate.py LAMBDA_CLIP_MIN/MAX.
     lam_h = np.clip(home_model.predict(X_te), 0.05, 7.0)
     lam_a = np.clip(away_model.predict(X_te), 0.05, 7.0)
     probs_goal = np.array([lambdas_to_wdl(lh, la) for lh, la in zip(lam_h, lam_a)])

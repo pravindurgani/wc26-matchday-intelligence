@@ -56,6 +56,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
@@ -97,8 +98,18 @@ def _http_get_json(url: str, headers: dict, timeout: int = 15) -> dict:
 
 
 def _load_schedule() -> list[dict]:
+    """Load schedule and enrich each entry with `_tz` (IANA zone resolved
+    via venue_city_map + host_cities[].tz). Entries whose venue lacks a
+    tz field fall through to legacy local-as-UTC behavior in _kickoff_utc."""
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    return cfg.get("group_stage_schedule", []) or []
+    sched = cfg.get("group_stage_schedule", []) or []
+    venue_city_map = cfg.get("venue_city_map", {}) or {}
+    city_to_tz = {hc["city"]: hc.get("tz")
+                  for hc in (cfg.get("host_cities") or [])}
+    for s in sched:
+        city = venue_city_map.get(s.get("venue", ""), s.get("venue", ""))
+        s["_tz"] = city_to_tz.get(city)
+    return sched
 
 
 def _load_fixture_map() -> dict[int, str]:
@@ -117,12 +128,25 @@ def _load_fixture_map() -> dict[int, str]:
 
 
 def _kickoff_utc(sched_entry: dict) -> datetime | None:
-    """Parse `date` + `time` (local) to UTC. Schedule lacks tz so we treat
-    times as UTC — kickoff-window filtering is approximate by design (we
-    widen the window with `--hours-ahead` to cover the slop)."""
+    """Parse `date` + `time` to true UTC using the venue's IANA tz (H1).
+    Falls back to legacy local-as-UTC behavior when `_tz` is missing —
+    the `--hours-ahead 4` cron widen still papers over the slop for those.
+    Mexico abolished DST in 2023 so MEX cities are UTC-6 year-round;
+    US/Canada cities track DST via IANA tzdb."""
     try:
-        ts = f"{sched_entry['date']}T{sched_entry.get('time','12:00')}:00+00:00"
-        return datetime.fromisoformat(ts)
+        date = sched_entry["date"]
+        local_time = sched_entry.get("time", "12:00")
+        tz_name = sched_entry.get("_tz")
+        if tz_name:
+            try:
+                tz = ZoneInfo(tz_name)
+                local_dt = datetime.fromisoformat(
+                    f"{date}T{local_time}:00").replace(tzinfo=tz)
+                return local_dt.astimezone(timezone.utc)
+            except ZoneInfoNotFoundError:
+                pass
+        # Legacy fallback: treat local as UTC (pre-H1 behavior).
+        return datetime.fromisoformat(f"{date}T{local_time}:00+00:00")
     except Exception:
         return None
 

@@ -59,6 +59,13 @@ class SimulatorStability(unittest.TestCase):
                 f"STDERR:\n{result.stderr[-2000:]}"
             )
         cls.payload = json.loads(OUT_PATH.read_text())
+        # H8 (Round 16): capture stderr so test_no_patch_q_warning can
+        # assert the outcome-probability tracker did not breach its 0.95
+        # guard. Patch Q (scripts/03_simulate.py:_track_max_outcome_p)
+        # writes a "[WARN] outcome-probability drift" line to stderr
+        # AFTER the JSON is written, so a breach would otherwise be
+        # silent — only visible in cron logs.
+        cls.stderr = result.stderr or ""
 
     @classmethod
     def tearDownClass(cls):
@@ -97,6 +104,31 @@ class SimulatorStability(unittest.TestCase):
         # Surface the actual max for log forensics — useful when the threshold
         # is approached but not breached.
         print(f"\n  [stability] top-12 max spread = {max_spread:.2f}pp ({max_team})")
+
+    def test_no_patch_q_outcome_p_drift_warning(self):
+        # H8 (Round 16): Patch Q's stderr WARN is the only signal that
+        # outcome probabilities have drifted past 0.95 (model artifact
+        # swap, Elo cap regression, lambda clip loosening). Without an
+        # explicit gate here, a breach would surface only in cron logs
+        # — operators wouldn't see it until after the dashboard had
+        # already published a degraded prediction set. Empirical 2026
+        # baseline max p ≈ 0.84 (Jordan vs Argentina) at full fidelity;
+        # at reduced 2×300 fidelity the same band holds, so any line
+        # matching the WARN pattern here is a real regression signal.
+        if "[WARN] outcome-probability drift" in self.stderr:
+            # Extract the offending line for forensic clarity.
+            warn_line = next(
+                (ln for ln in self.stderr.splitlines()
+                 if "outcome-probability drift" in ln),
+                "(line not isolated)",
+            )
+            self.fail(
+                "Patch Q outcome-probability tracker breached 0.95 guard. "
+                f"Offending line: {warn_line}. "
+                "Check lambda clip [LAMBDA_CLIP_MIN, LAMBDA_CLIP_MAX], "
+                "Elo Δ caps (per-match ≤12, group ≤30, KO ≤15, grand ≤45), "
+                "or a swapped model artifact."
+            )
 
     def test_top1_p_champion_in_bookmaker_band(self):
         # Independent sanity: the favorite's champion probability must be in

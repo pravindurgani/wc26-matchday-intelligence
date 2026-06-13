@@ -82,6 +82,7 @@ def main():
         ya_te = wc_matches["away_goals"].values
 
         home_model, away_model = make_models(X_tr, yh_tr, ya_tr)
+        # H10 sync: keep 0.05/7.0 aligned with scripts/03_simulate.py LAMBDA_CLIP_*.
         lam_h = np.clip(home_model.predict(X_te), 0.05, 7.0)
         lam_a = np.clip(away_model.predict(X_te), 0.05, 7.0)
         probs = np.array([ev.lambdas_to_wdl(lh, la) for lh, la in zip(lam_h, lam_a)])

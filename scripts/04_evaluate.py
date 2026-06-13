@@ -112,6 +112,9 @@ def main():
     print(f"      Holdout test rows: {len(te):,}")
 
     X_te = te[feature_cols].values
+    # H10 sync: 0.05/7.0 must match scripts/03_simulate.py LAMBDA_CLIP_MIN/MAX.
+    # The Dixon-Coles τ boundary assertion lives in 03_simulate; if anyone
+    # raises the clip ceiling, mirror it here or evaluation drifts from prod.
     lam_h = np.clip(home_model.predict(X_te), 0.05, 7.0)
     lam_a = np.clip(away_model.predict(X_te), 0.05, 7.0)
 
@@ -157,6 +160,7 @@ def main():
     print(f"      WC rows: {len(wc_rows)}")
     if len(wc_rows) > 0:
         X_wc = wc_rows[feature_cols].values
+        # H10 sync: keep in lockstep with 03_simulate.py LAMBDA_CLIP_*.
         lam_h_wc = np.clip(home_model.predict(X_wc), 0.05, 7.0)
         lam_a_wc = np.clip(away_model.predict(X_wc), 0.05, 7.0)
         probs_wc = np.array([lambdas_to_wdl(lh, la) for lh, la in zip(lam_h_wc, lam_a_wc)])

@@ -1,6 +1,6 @@
 name: Test + pre-flight
 
-# Run the local 269-test suite + 217-check pre-flight on every push to main
+# Run the local 270-test suite + 217-check pre-flight on every push to main
 # AND on every PR targeting main. Before this workflow existed, the gate
 # was human-enforced (developers ran `pytest tests/live -q` + `pre_flight.py`
 # locally before pushing) — meaning a regression in classify_tier, a stale

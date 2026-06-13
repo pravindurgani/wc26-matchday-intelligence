@@ -41,6 +41,7 @@ import urllib.request
 from datetime import date as _date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
@@ -143,6 +144,55 @@ def _within_forecast_horizon(match_date: str, today: _date) -> bool:
         return md >= today and (md - today).days < FORECAST_HORIZON_DAYS
     except Exception:
         return False
+
+
+# H1 (Round 16): tz-aware kickoff_utc derivation.
+# Pre-H1, kickoff_utc was f"{local_date}T{local_time}:00Z" — concatenating
+# the schedule's LOCAL clock time with the Z suffix. _pick_hour then matched
+# the (mis-labelled) local hour against Open-Meteo's UTC-indexed hourly array,
+# yielding a sample 4-7h off the true kickoff (e.g., M5 Santa Clara "noon"
+# showed 14°C / 96% humidity — the actual 05:00 PDT dawn fog reading).
+# Also, 31/72 group-stage matches kick off late enough locally that the UTC
+# date wraps into the next day — so even requesting the right hour requires
+# requesting the right UTC date too. Mexico abolished DST in 2023 (UTC-6
+# year-round); US/Canada cities still observe DST per IANA tzdb.
+def _venue_tz(venue: dict | None) -> ZoneInfo | None:
+    """Resolve venue's IANA tz from host_cities[].tz; None if absent."""
+    if not venue:
+        return None
+    tz_name = venue.get("tz")
+    if not tz_name:
+        return None
+    try:
+        return ZoneInfo(tz_name)
+    except ZoneInfoNotFoundError:
+        return None
+
+
+def _kickoff_utc_dt(match: dict, venue: dict | None) -> datetime | None:
+    """Compute true UTC kickoff datetime from local clock + venue tz.
+    Returns None if the venue lacks a tz field — caller falls back to
+    legacy behavior so config migration can be incremental."""
+    tz = _venue_tz(venue)
+    if tz is None:
+        return None
+    try:
+        local_dt = datetime.fromisoformat(
+            f"{match['date']}T{match.get('time','20:00')}:00"
+        ).replace(tzinfo=tz)
+        return local_dt.astimezone(timezone.utc)
+    except (ValueError, KeyError):
+        return None
+
+
+def _kickoff_utc_iso(match: dict, venue: dict | None) -> str:
+    """ISO 8601 'Z'-suffixed UTC kickoff string. Falls back to the
+    legacy local-as-Z format when venue has no tz — keeps the artifact
+    parseable while config rollout is staged."""
+    dt = _kickoff_utc_dt(match, venue)
+    if dt is None:
+        return f"{match['date']}T{match.get('time','20:00')}:00Z"
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 # Per-fetch warnings are sampled (cap = 3) so a wedged Open-Meteo on a
@@ -251,7 +301,7 @@ def _build_entry_forecast(match: dict, venue: dict, hour_data: dict) -> dict:
         "home_team": home, "away_team": away,
         "venue": match.get("venue"),
         "city": match.get("_city", _venue_to_city(match.get("venue", ""), {})),
-        "kickoff_utc": f"{match['date']}T{match.get('time','20:00')}:00Z",
+        "kickoff_utc": _kickoff_utc_iso(match, venue),
         "temperature_c": temp,
         "humidity_pct": rh,
         "apparent_temperature_c": apparent,
@@ -297,7 +347,7 @@ def _build_entry_static_fallback(match: dict, venue: dict) -> dict:
         "home_team": home, "away_team": away,
         "venue": match.get("venue"),
         "city": match.get("_city", _venue_to_city(match.get("venue", ""), {})),
-        "kickoff_utc": f"{match['date']}T{match.get('time','20:00')}:00Z",
+        "kickoff_utc": _kickoff_utc_iso(match, venue),
         "weather_bucket": bucket,
         "static_climate_label": climate,
         "home_team_adjustment_elo": round(home_adj, 2),
@@ -338,11 +388,21 @@ def main() -> int:
             continue
         if _within_forecast_horizon(m["date"], today):
             in_horizon_attempted += 1
+            # H1: request the UTC date covering the kickoff hour, not the
+            # local date. 31/72 group matches kick off late enough locally
+            # that the UTC kickoff is the next day (e.g., M28 Mexico City
+            # 23:00 local = 05:00 UTC next day). Asking Open-Meteo for the
+            # local date would return a hourly array that doesn't even
+            # include the kickoff hour for those 31 matches.
+            kickoff_dt = _kickoff_utc_dt(m, venue)
+            utc_day = kickoff_dt.strftime("%Y-%m-%d") if kickoff_dt else m["date"]
             payload = _fetch_open_meteo(
-                venue["lat"], venue["lon"], m["date"],
+                venue["lat"], venue["lon"], utc_day,
                 match_id=m.get("m"), warnings_acc=warnings_acc)
             if payload and (payload.get("hourly") or {}).get("time"):
-                kickoff_iso = f"{m['date']}T{m.get('time','20:00')}:00"
+                # _pick_hour now receives a true UTC ISO string (or the
+                # legacy local-as-Z string if venue lacks tz — same as before).
+                kickoff_iso = _kickoff_utc_iso(m, venue)
                 hour_data = _pick_hour(payload["hourly"], kickoff_iso)
                 entries.append(_build_entry_forecast(m, venue, hour_data))
                 fetch_count += 1
