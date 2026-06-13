@@ -74,8 +74,6 @@ def render_contenders_table(pred: dict) -> str:
 
 def render_metrics_table(pred: dict) -> str:
     metrics_path = MODELS / "metrics_v2.json"
-    if not metrics_path.exists():
-        metrics_path = MODELS / "metrics.json"
     m = json.loads(metrics_path.read_text()) if metrics_path.exists() else {}
     eval_path = MODELS / "evaluation.json"
     e = json.loads(eval_path.read_text()) if eval_path.exists() else {}

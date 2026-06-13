@@ -1,0 +1,109 @@
+name: Test + pre-flight
+
+# Run the local 269-test suite + 217-check pre-flight on every push to main
+# AND on every PR targeting main. Before this workflow existed, the gate
+# was human-enforced (developers ran `pytest tests/live -q` + `pre_flight.py`
+# locally before pushing) — meaning a regression in classify_tier, a stale
+# alias, or a malformed key_players_2026.json could land on origin/main and
+# deploy to Vercel without anything red surfacing in CI.
+#
+# This is a CI gate, not a deploy gate: Vercel auto-deploys on push regardless
+# of this workflow's status. The red X here is the forensic anchor — it tells
+# the next on-call that "yes, this commit did break the local gate" without
+# requiring them to bisect manually.
+#
+# Cheap: each suite runs in <2s, pre_flight runs in ~3s, JS syntax check is
+# instant. Total wall-clock budget: ~30s including checkout + pip cache.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      # Bot commits touch only data files — skip the gate when nothing else
+      # changed. Pytest + pre_flight cover code paths, not data refresh.
+      - 'data/live/**'
+      - 'dashboard/predictions_live.json'
+      - 'dashboard/live_state.json'
+      - 'dashboard/live_delta.json'
+      - 'dashboard/matchday_intelligence.json'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: wc26-test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - run: pip install -r requirements.txt
+
+      - name: Live test suites (Stream B — matchday intelligence)
+        # All 6 stream-B test runners share an unittest-style _summary() at
+        # the bottom; running them as scripts gets us the full per-file
+        # count printed in CI logs. Pytest discovery would also work but
+        # the explicit invocation pins which files are gated.
+        # test_status_mapping covers fetch_results.py status code mapping
+        # (FT/AET/PEN → locked, others → warn) — kept in stream-B because
+        # the locked-status logic feeds matchday adjustment cutoffs.
+        run: |
+          set -e
+          python tests/live/test_injury_adjustments.py
+          python tests/live/test_apply_matchday_adjustments.py
+          python tests/live/test_weather_adjustments.py
+          python tests/live/test_lineup_adjustments.py
+          python tests/live/test_stats_proxy.py
+          python tests/live/test_status_mapping.py
+
+      - name: Knockout-stage test suites
+        # As the tournament progresses past group stage, regressions in
+        # decide_knockout / knockout_extraction / knockout_fixture_map
+        # have NO local-only gate firing — these test files weren't part
+        # of the Stream-B daily-run habit. Adding them here closes the
+        # silent regression risk on the codepaths that determine which
+        # teams advance + which fixture they play next.
+        #
+        # 36 tests total (9 + 15 + 12). test_decide_knockout imports
+        # 03_simulate which pulls joblib (already in requirements.txt).
+        run: |
+          set -e
+          python tests/live/test_decide_knockout.py
+          python tests/live/test_knockout_extraction.py
+          python tests/live/test_knockout_fixture_map.py
+
+      - name: Simulator stability regression
+        # Smoke-runs scripts/03_simulate.py at reduced fidelity (2 seeds ×
+        # 300 sims) and asserts: (a) Σp_champion ≈ 1.0, (b) top-12 p95-p05
+        # spread < 10pp, (c) top-1 in [5%, 60%] bookmaker band. Catches
+        # determinism breaks (RNG re-seed regressions, parallelism leaks),
+        # broken bracket plumbing, and stale model artifacts before they
+        # land on origin/main. Production runs 5000×5 with ~1.63pp spread;
+        # the 10pp guard scales for noise without false-negative drift.
+        run: python tests/test_simulator_stability.py
+
+      - name: Pre-flight gates
+        # The 217-check whitelist + schema gate. Catches: malformed
+        # key_players_2026.json, alias drift, intra-team forename overlap,
+        # missing tier_1_star coverage, collision allowlist drift, etc.
+        run: python scripts/pre_flight.py
+
+      - name: Dashboard JS syntax
+        # Fast structural check on dashboard/app.js — catches accidental
+        # syntax breakage before the file reaches Vercel and breaks the
+        # rendered dashboard.
+        run: node --check dashboard/app.js

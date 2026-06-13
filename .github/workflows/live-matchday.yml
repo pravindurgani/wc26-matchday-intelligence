@@ -7,8 +7,20 @@ name: Live matchday refresh
 # Provider selection:
 #   - Set repo VARIABLE `FOOTBALL_PROVIDER` to `api_football` (or leave unset for mock)
 #   - Add repo SECRET `API_FOOTBALL_KEY` for API-Football
+#   - (Optional) Add repo SECRET `FOOTBALL_DATA_TOKEN` if using football-data.org
 #   - (Optional) Add repo SECRET `SPORTMONKS_TOKEN` if using Sportmonks
 # Without a provider key the orchestrator silently falls back to manual/mock mode.
+#
+# NOTE on the FOOTBALL_DATA_TOKEN / SPORTMONKS_TOKEN env vars further below:
+# both are referenced as workflow-level secret refs even when the repo doesn't
+# have those secrets configured. This is INTENTIONAL — the env value resolves
+# to "" and run_live_update.py:detect_provider_source only activates those
+# providers when the user explicitly selects them via FOOTBALL_PROVIDER AND
+# the corresponding token exists. The pre_flight gate at scripts/pre_flight.py
+# also REQUIRES these to remain secret-refs (not literals) for security
+# hygiene — don't delete them, even if the repo never plans to configure
+# Sportmonks or football-data.org. Leaving them in keeps the multi-provider
+# fallback path operational the moment a user adds the secrets.
 on:
   # Cloudflare Worker dispatches this workflow every 10 min via the GitHub
   # API. It's the reliable primary scheduler.
@@ -37,6 +49,19 @@ concurrency:
   group: wc26-live
   cancel-in-progress: false   # let any in-flight rerun finish
 
+# Wall-clock risk zone (Round 14 audit observation, 2026-06-13):
+# 9/29 recent runs landed in the 540-588s band — within 60s of the 600s
+# CF Worker dispatch interval. timeout-minutes is 15 (900s) so no hard
+# failure, but a run >600s means the next dispatched run queues behind
+# this one (cancel-in-progress: false) and the dashboard misses the
+# 10-min update tick. The 388s baseline floor is the heavy step:
+# scripts/03_simulate.py at 5000×5. If runs trend higher, options:
+#   - drop --sims for live runs (3000 keeps spread < 3pp empirically)
+#   - move heavy validate/sensitivity steps to daily-baseline only
+#   - relax CF dispatch to 15-min during knockout (fewer matches)
+# Monitor: GHA UI "live-matchday" job duration column. No code change
+# warranted today — the median is ~400s and the trend is flat.
+
 # GITHUB_TOKEN is read-only by default on repos created after 2023.
 # We need contents:write so the bot can push the live JSON updates.
 permissions:
@@ -47,11 +72,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: 'pip'
@@ -172,8 +197,9 @@ jobs:
           WC_FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
           SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
           WC_SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
-          API_FOOTBALL_LEAGUE_ID: ${{ vars.API_FOOTBALL_LEAGUE_ID }}
-          API_FOOTBALL_SEASON: ${{ vars.API_FOOTBALL_SEASON }}
+          # Fallback defaults — see matchday-intel-slow.yml for context.
+          API_FOOTBALL_LEAGUE_ID: ${{ vars.API_FOOTBALL_LEAGUE_ID || '1' }}
+          API_FOOTBALL_SEASON: ${{ vars.API_FOOTBALL_SEASON || '2026' }}
           FOOTBALL_DATA_COMPETITION: ${{ vars.FOOTBALL_DATA_COMPETITION }}
           # SECURITY: dispatch input goes through env, never shell-interpolated.
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}

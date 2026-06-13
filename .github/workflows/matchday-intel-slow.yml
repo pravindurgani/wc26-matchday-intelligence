@@ -53,11 +53,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: 'pip'
@@ -89,8 +89,13 @@ jobs:
         env:
           API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
           WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
-          API_FOOTBALL_LEAGUE_ID: ${{ vars.API_FOOTBALL_LEAGUE_ID }}
-          API_FOOTBALL_SEASON: ${{ vars.API_FOOTBALL_SEASON }}
+          # GitHub repo-level vars are empty by default; fetch_injuries.py
+          # falls back to provider_fixture_map.json (league=1, season=2026).
+          # The fallback works correctly — the `|| '...'` defaults here are
+          # purely for workflow-log clarity so the actual values appear in
+          # the env dump rather than blank strings that hide the truth.
+          API_FOOTBALL_LEAGUE_ID: ${{ vars.API_FOOTBALL_LEAGUE_ID || '1' }}
+          API_FOOTBALL_SEASON: ${{ vars.API_FOOTBALL_SEASON || '2026' }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           set +e   # one fetcher failing must not block the others

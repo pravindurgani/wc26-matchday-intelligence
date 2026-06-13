@@ -40,6 +40,18 @@ from scipy.stats import nbinom, poisson
 # change one, change both.
 GRAND_TOTAL_CAP_ELO = 45.0
 
+# Patch Q (Round 14): observability for outcome-probability drift.
+# wdl_from_matrix returns (p_home, p_draw, p_away) which sum exactly to 1.0
+# by construction; we never clip these — a clip would break the sum-to-1
+# invariant the validator depends on. Instead, we track the max observed
+# outcome probability and stderr-warn at run-end if it exceeds the guard.
+# Catches: lambda clip drift (loosened beyond [0.05, 7.0]), Elo Δ cap
+# regression (per-match >12.0, grand-total >45.0), or model artifact swap.
+# Empirical 2026-06 baseline: max p ≈ 0.84 (Jordan vs Argentina). Guard at
+# 0.95 buys 11pp of headroom before alerting; production has never tripped.
+_OUTCOME_P_GUARD = 0.95
+_MAX_OUTCOME_P_OBS = [0.0, "", ""]  # [max_p, fixture_label, outcome_label]
+
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
 PROC = ROOT / "data" / "processed"
@@ -194,6 +206,17 @@ def wdl_from_matrix(mat):
     p_draw = float(np.trace(mat))
     p_away = float(np.triu(mat, 1).sum())
     return p_home, p_draw, p_away
+
+
+def _track_max_outcome_p(p_h, p_d, p_a, home_team, away_team):
+    """Patch Q: side-effect tracker — updates module-level max-outcome state.
+    No clip; preserves sum-to-1. main() reads the tracker at run-end and
+    stderr-warns if the max breaches _OUTCOME_P_GUARD."""
+    for p, label in ((p_h, "home_win"), (p_d, "draw"), (p_a, "away_win")):
+        if p > _MAX_OUTCOME_P_OBS[0]:
+            _MAX_OUTCOME_P_OBS[0] = p
+            _MAX_OUTCOME_P_OBS[1] = f"{home_team} vs {away_team}"
+            _MAX_OUTCOME_P_OBS[2] = label
 
 
 # ---------- Goal model wrappers --------------------------------------------
@@ -787,6 +810,7 @@ def precompute_context(cfg_data, bracket, annex_c, squad_vals, elo, home_model, 
             is_neutral=is_neutral, importance=1.0)
         mat = build_score_matrix(lam_h, lam_a, cfg, use_dispersion=cfg["use_dispersion"])
         p_home, p_draw, p_away = wdl_from_matrix(mat)
+        _track_max_outcome_p(p_home, p_draw, p_away, h, a)
         group_matrices.append({
             "m": m["m"], "date": m["date"], "time": m["time"], "group": m["group"],
             "home": h, "away": a, "venue": venue, "venue_country": venue_country,
@@ -1235,6 +1259,19 @@ def main():
     print(f"\n  Σ champion = {sum(t['p_champion'] for t in team_summary):.4f}")
     print(f"  Σ finalists = {sum(t['p_reach_final'] for t in team_summary):.4f}")
     print(f"  Σ qualified = {sum(t['p_advance_groups'] for t in team_summary):.4f}")
+
+    # Patch Q (Round 14): outcome-probability drift check. Fires AFTER the
+    # JSON is written so the run still succeeds — the warning is for log
+    # forensics, not a fail-closed gate. If this trips, investigate whether
+    # the lambda clip or Elo Δ caps have been loosened upstream.
+    if _MAX_OUTCOME_P_OBS[0] > _OUTCOME_P_GUARD:
+        print(
+            f"\n[WARN] outcome-probability drift: max p({_MAX_OUTCOME_P_OBS[2]}) "
+            f"= {_MAX_OUTCOME_P_OBS[0]:.4f} > guard {_OUTCOME_P_GUARD:.2f} "
+            f"({_MAX_OUTCOME_P_OBS[1]}). Sum-to-1 invariant preserved (no clip "
+            f"applied). Check lambda clip [0.05, 7.0] or Elo Δ caps.",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":

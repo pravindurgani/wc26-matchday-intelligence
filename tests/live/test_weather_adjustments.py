@@ -298,6 +298,97 @@ class TestHydrationBreakDampener(unittest.TestCase):
             team_elo_adjustment("Atlantis", "extreme_heat", wet_bulb_c=35.0), 0.0)
 
 
+class TestFetchWeatherWarningEmission(unittest.TestCase):
+    """fetch_weather.py previously emitted ZERO warnings — asymmetric with
+    the other 3 fetchers (fetch_injuries, fetch_lineups, fetch_match_stats
+    all emit missing_key / http_error / fetch_error / no_records_returned).
+    A wedged Open-Meteo would silently route every match to climate-bucket
+    fallback with no operator signal.
+
+    Round 12 patch K wires warnings_acc through _fetch_open_meteo and
+    emits an aggregate `no_records_returned` sentinel if ALL in-horizon
+    fetches failed. apply_matchday_adjustments.py's
+    _PROPAGATE_WARNING_TYPES already includes these types — they lift
+    automatically to the dashboard's matchday-intel detail block."""
+
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, str(ROOT / "scripts" / "live"))
+
+    def test_http_error_emits_sampled_warning(self):
+        """A 503 from Open-Meteo populates warnings_acc with an
+        http_error entry tagged with match_id + truncated body."""
+        from unittest.mock import patch
+        import urllib.error
+        import fetch_weather
+        err = urllib.error.HTTPError(
+            url="x", code=503, msg="x", hdrs=None, fp=None)
+        # Stub e.read() so the body-decode path works.
+        err.read = lambda: b"service unavailable"  # type: ignore[method-assign]
+        warnings_acc: list[dict] = []
+        with patch.object(fetch_weather, "_http_get_json", side_effect=err):
+            result = fetch_weather._fetch_open_meteo(
+                25.7, -80.2, "2026-06-15",
+                match_id=12, warnings_acc=warnings_acc)
+        self.assertIsNone(result)
+        self.assertEqual(len(warnings_acc), 1)
+        self.assertEqual(warnings_acc[0]["type"], "http_error")
+        self.assertEqual(warnings_acc[0]["code"], 503)
+        self.assertEqual(warnings_acc[0]["match_id"], 12)
+
+    def test_fetch_error_emits_warning(self):
+        """A network-level error (URLError/TimeoutError) emits a
+        fetch_error warning with the exception class name."""
+        from unittest.mock import patch
+        import fetch_weather
+        with patch.object(fetch_weather, "_http_get_json",
+                          side_effect=TimeoutError("connection timed out")):
+            warnings_acc: list[dict] = []
+            result = fetch_weather._fetch_open_meteo(
+                25.7, -80.2, "2026-06-15",
+                match_id=7, warnings_acc=warnings_acc)
+        self.assertIsNone(result)
+        self.assertEqual(len(warnings_acc), 1)
+        self.assertEqual(warnings_acc[0]["type"], "fetch_error")
+        self.assertEqual(warnings_acc[0]["match_id"], 7)
+        self.assertIn("TimeoutError", warnings_acc[0]["message"])
+
+    def test_warning_sample_cap_prevents_explosion(self):
+        """A 100% failure rate across 104 matches must NOT inflate the
+        warnings array. Cap is _WARNING_SAMPLE_CAP per type (default 3).
+        Aggregate sentinel in main() carries the full count regardless."""
+        from unittest.mock import patch
+        import urllib.error
+        import fetch_weather
+        err = urllib.error.HTTPError(
+            url="x", code=503, msg="x", hdrs=None, fp=None)
+        err.read = lambda: b"down"  # type: ignore[method-assign]
+        warnings_acc: list[dict] = []
+        with patch.object(fetch_weather, "_http_get_json", side_effect=err):
+            for i in range(10):
+                fetch_weather._fetch_open_meteo(
+                    25.7, -80.2, "2026-06-15",
+                    match_id=i, warnings_acc=warnings_acc)
+        http_warns = [w for w in warnings_acc if w["type"] == "http_error"]
+        self.assertEqual(len(http_warns), fetch_weather._WARNING_SAMPLE_CAP,
+                         "sample cap must hold even under 100% failure")
+
+    def test_no_warnings_acc_keeps_legacy_behavior(self):
+        """Pre-Round-12 callers (none in this repo, but defensively) can
+        still call _fetch_open_meteo without warnings_acc — failure
+        path silently returns None as before."""
+        from unittest.mock import patch
+        import urllib.error
+        import fetch_weather
+        err = urllib.error.HTTPError(
+            url="x", code=429, msg="x", hdrs=None, fp=None)
+        err.read = lambda: b"rate limited"  # type: ignore[method-assign]
+        with patch.object(fetch_weather, "_http_get_json", side_effect=err):
+            result = fetch_weather._fetch_open_meteo(
+                25.7, -80.2, "2026-06-15")
+        self.assertIsNone(result)  # legacy behavior unchanged
+
+
 def _summary(result):
     print()
     print(f"  Ran {result.testsRun} tests")

@@ -452,7 +452,36 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
     _PROPAGATE_WARNING_TYPES = {
         "ambiguous_classification", "fetch_error", "http_error",
         "api_error", "missing_key",
+        # `no_records_returned` is INFO-level: emitted when an upstream API
+        # call succeeded but returned an empty payload (could be a quiet day,
+        # could be a misconfigured endpoint). The dashboard's
+        # INTEL_TOP_BAR_TYPES allowlist deliberately omits it — surface it
+        # only in the matchday-intel detail block, not the alert pill, so a
+        # genuinely quiet feed doesn't trigger a false alarm.
+        "no_records_returned",
     }
+    # Types we KNOW are benign info-only and deliberately don't propagate
+    # to the consolidated state. Listed explicitly so the
+    # dropped-unknown-type observability below doesn't log them as
+    # "unknown" every cron tick. To add a new benign filter: add the
+    # type string here. To make a new type alert-grade: add it to
+    # _PROPAGATE_WARNING_TYPES above AND consider adding to
+    # dashboard/app.js:INTEL_TOP_BAR_TYPES for top-pill surface.
+    _BENIGN_DROPPED_WARNING_TYPES = {
+        "filter_non_wc",       # qualifier carry-over records — expected
+        "skipped_bad_record",  # malformed API record — expected occasionally
+        "feed_missing",        # generated locally by this module already;
+                               # re-lifting would double-count
+        "unmapped_fixture",    # local-replay artifact, not production
+        "unmapped_match",      # schedule drift; surfaces in fetch_lineups log
+    }
+    # Track warning types we saw but DIDN'T propagate — surfaces the
+    # "added a new warning type upstream but forgot to extend the
+    # allowlist" maintenance gap. Without this, a future fetch_lineups
+    # patch that emits `provider_quota_exhausted` (say) would silently
+    # disappear here with no trace in logs. Sample once per (feed, type)
+    # pair so a thousand identical warnings don't bloat stderr.
+    dropped_types_seen: set[tuple[str, str]] = set()
     for feed, path in _UPSTREAM_FEEDS_WITH_WARNINGS:
         upstream = _read_json(path, default={}) or {}
         raw_warnings = upstream.get("warnings")
@@ -468,12 +497,28 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
             # aborts the entire build_adjustments_state call.
             if not isinstance(w, dict):
                 continue
-            if w.get("type") in _PROPAGATE_WARNING_TYPES:
+            w_type = w.get("type")
+            if w_type in _PROPAGATE_WARNING_TYPES:
                 # Shallow copy so the dashboard label doesn't mutate the
                 # original on-disk record between runs.
                 lifted = dict(w)
                 lifted["feed"] = feed
                 state["warnings"].append(lifted)
+            elif w_type and w_type not in _BENIGN_DROPPED_WARNING_TYPES:
+                # New / unknown warning type seen — log once per
+                # (feed, type) pair so a future maintainer notices and
+                # decides whether to add it to the allowlist or the
+                # benign-dropped set.
+                key = (feed, w_type)
+                if key not in dropped_types_seen:
+                    dropped_types_seen.add(key)
+                    print(
+                        f"[apply_matchday] WARN: dropping unknown warning "
+                        f"type={w_type!r} from feed={feed!r} — extend "
+                        f"_PROPAGATE_WARNING_TYPES or _BENIGN_DROPPED_"
+                        f"WARNING_TYPES in apply_matchday_adjustments.py",
+                        file=sys.stderr,
+                    )
 
     return state
 

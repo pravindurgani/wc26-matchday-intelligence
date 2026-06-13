@@ -143,6 +143,27 @@ def fetch_apifootball_injuries(api_key: str) -> tuple[list[dict], list[dict]]:
             return [], [{"type": "api_error", "errors": errs}]
     response = payload.get("response") or []
     print(f"[fetch_injuries] {len(response)} injury records returned")
+    if not response:
+        # The call succeeded — no missing_key, no http_error, no api_error —
+        # but the API returned zero records. Two distinct realities live here:
+        #   (a) genuinely quiet day (no team has a reportable injury), or
+        #   (b) misconfigured league_id / season hitting an empty endpoint.
+        # Without a sentinel both look identical on disk (teams: {},
+        # warnings: []), and an operator looking at the dashboard can't
+        # tell whether the feed is alive or wedged. Emit a low-severity
+        # info warning that carries the endpoint coords so post-hoc
+        # forensics has the league/season actually queried.
+        return response, [{
+            "type": "no_records_returned",
+            "endpoint": "/injuries",
+            "league": league_id,
+            "season": season,
+            "message": (
+                f"API returned 0 injury records for league={league_id} "
+                f"season={season} — could be a quiet day, or the league/"
+                f"season pair is wrong (check provider_fixture_map.json)."
+            ),
+        }]
     return response, []
 
 

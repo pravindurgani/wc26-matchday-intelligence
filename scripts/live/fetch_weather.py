@@ -145,11 +145,26 @@ def _within_forecast_horizon(match_date: str, today: _date) -> bool:
         return False
 
 
-def _fetch_open_meteo(lat: float, lon: float, day: str) -> dict | None:
+# Per-fetch warnings are sampled (cap = 3) so a wedged Open-Meteo on a
+# 104-match day doesn't bloat the snapshot. The aggregate sentinel emitted
+# in main() carries the full failure count regardless.
+_WARNING_SAMPLE_CAP = 3
+
+
+def _fetch_open_meteo(lat: float, lon: float, day: str,
+                      match_id: int | None = None,
+                      warnings_acc: list[dict] | None = None) -> dict | None:
     """Hit the Open-Meteo forecast endpoint for a single day.
 
     Returns the parsed JSON or None on any failure (network error, 4xx,
     bogus payload). Caller handles fallback.
+
+    Failures are RECORDED to warnings_acc (sampled at _WARNING_SAMPLE_CAP
+    per type) so apply_matchday_adjustments can lift them to the
+    consolidated state. Prior to Round 12, this function silently
+    print()'d failures — operators had no on-dashboard signal when
+    Open-Meteo went dark and every match silently fell back to climate
+    bucket. The sentinel chain (Round 11B) now wires through here too.
     """
     params = (
         f"latitude={lat}&longitude={lon}"
@@ -165,9 +180,26 @@ def _fetch_open_meteo(lat: float, lon: float, day: str) -> dict | None:
         try: body = e.read().decode("utf-8", errors="replace")[:200]
         except Exception as _body_err: body = f"<body unreadable: {type(_body_err).__name__}: {_body_err}>"
         print(f"[weather] HTTP {e.code} for {lat},{lon} {day}: {body}")
+        if warnings_acc is not None:
+            existing = sum(1 for w in warnings_acc if w.get("type") == "http_error")
+            if existing < _WARNING_SAMPLE_CAP:
+                warnings_acc.append({
+                    "type": "http_error",
+                    "code": e.code,
+                    "match_id": match_id,
+                    "body": body[:200],
+                })
         return None
     except Exception as e:
         print(f"[weather] fetch error for {lat},{lon} {day}: {type(e).__name__}: {e}")
+        if warnings_acc is not None:
+            existing = sum(1 for w in warnings_acc if w.get("type") == "fetch_error")
+            if existing < _WARNING_SAMPLE_CAP:
+                warnings_acc.append({
+                    "type": "fetch_error",
+                    "match_id": match_id,
+                    "message": f"{type(e).__name__}: {e}",
+                })
         return None
 
 
@@ -287,6 +319,14 @@ def main() -> int:
     entries: list[dict] = []
     fetch_count = 0
     fallback_count = 0
+    in_horizon_attempted = 0
+    # warnings_acc collects per-match fetch failures (sampled) and an
+    # aggregate sentinel if Open-Meteo wedged across the whole run.
+    # apply_matchday_adjustments.py:_PROPAGATE_WARNING_TYPES already
+    # includes http_error / fetch_error / no_records_returned, so any
+    # entry we append here will lift to the dashboard's matchday-intel
+    # detail block automatically.
+    warnings_acc: list[dict] = []
     for m in schedule:
         if args.only_match and m["m"] != args.only_match:
             continue
@@ -297,7 +337,10 @@ def main() -> int:
             print(f"[weather] M{m['m']}: no coords for {city!r} — skip")
             continue
         if _within_forecast_horizon(m["date"], today):
-            payload = _fetch_open_meteo(venue["lat"], venue["lon"], m["date"])
+            in_horizon_attempted += 1
+            payload = _fetch_open_meteo(
+                venue["lat"], venue["lon"], m["date"],
+                match_id=m.get("m"), warnings_acc=warnings_acc)
             if payload and (payload.get("hourly") or {}).get("time"):
                 kickoff_iso = f"{m['date']}T{m.get('time','20:00')}:00"
                 hour_data = _pick_hour(payload["hourly"], kickoff_iso)
@@ -308,6 +351,23 @@ def main() -> int:
         entries.append(_build_entry_static_fallback(m, venue))
         fallback_count += 1
 
+    # Aggregate sentinel: if we ATTEMPTED any in-horizon fetches and ALL
+    # of them failed, emit a single high-signal `no_records_returned`
+    # alongside the per-match samples. This is the operator's "is
+    # Open-Meteo wedged today?" signal — without it, a 100% fallback day
+    # is indistinguishable from a 0% in-horizon day (off-window matches).
+    if in_horizon_attempted > 0 and fetch_count == 0:
+        warnings_acc.append({
+            "type": "no_records_returned",
+            "endpoint": "/v1/forecast (open-meteo)",
+            "in_horizon_attempted": in_horizon_attempted,
+            "message": (
+                f"All {in_horizon_attempted} in-horizon Open-Meteo fetches "
+                f"failed — every match fell back to climate bucket. "
+                f"Check Open-Meteo status or rate limits."
+            ),
+        })
+
     out = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "source": "open_meteo + wc2026_config_fallback",
@@ -315,6 +375,7 @@ def main() -> int:
         "fetched_count": fetch_count,
         "fallback_count": fallback_count,
         "weather": entries,
+        "warnings": warnings_acc,
     }
 
     if args.dry_run:

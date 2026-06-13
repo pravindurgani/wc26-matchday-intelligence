@@ -148,6 +148,74 @@ class TestBuildSnapshot(unittest.TestCase):
         self.assertEqual(snap["schema_version"], 1)
 
 
+class TestNoRecordsReturnedSentinel(unittest.TestCase):
+    """A successful API call that returns 0 records is an INFO event,
+    not a silent success. Without a sentinel, an operator looking at
+    `teams_with_injuries: 0, warnings: []` can't tell whether the feed
+    is genuinely quiet or wedged on a misconfigured league_id/season.
+
+    The sentinel propagates to apply_matchday_adjustments
+    (via _PROPAGATE_WARNING_TYPES) so the dashboard's matchday-intel
+    detail block can render it. It is INTENTIONALLY omitted from the
+    dashboard's INTEL_TOP_BAR_TYPES allowlist so a quiet day doesn't
+    trip a false alarm in the top pill."""
+
+    def test_empty_response_emits_sentinel(self):
+        """API responded 200 OK with `response: []` → emit
+        no_records_returned with the actual endpoint coords so post-hoc
+        forensics has the league/season actually queried."""
+        from unittest.mock import patch
+        with patch.object(fetch_injuries, "_http_get_json",
+                          return_value={"response": [], "errors": {}}):
+            records, warnings = fetch_injuries.fetch_apifootball_injuries(
+                "fake-key")
+        self.assertEqual(records, [])
+        types = [w["type"] for w in warnings]
+        self.assertIn("no_records_returned", types)
+        sentinel = next(w for w in warnings
+                        if w["type"] == "no_records_returned")
+        # The warning carries the actual endpoint + league/season pair so
+        # an operator inspecting the audit log can re-run the exact
+        # query that produced 0 records.
+        self.assertEqual(sentinel["endpoint"], "/injuries")
+        self.assertIn("league", sentinel)
+        self.assertIn("season", sentinel)
+
+    def test_non_empty_response_no_sentinel(self):
+        """A real injury record must NOT trigger the sentinel — only the
+        empty case does."""
+        from unittest.mock import patch
+        payload = {"response": [
+            {"team": {"name": "France"},
+             "player": {"name": "K. Mbappe", "type": "Missing Fixture"},
+             "fixture": {"id": 1}},
+        ], "errors": {}}
+        with patch.object(fetch_injuries, "_http_get_json",
+                          return_value=payload):
+            records, warnings = fetch_injuries.fetch_apifootball_injuries(
+                "fake-key")
+        self.assertEqual(len(records), 1)
+        self.assertEqual(
+            [w for w in warnings if w["type"] == "no_records_returned"],
+            [])
+
+    def test_http_error_does_not_double_emit_sentinel(self):
+        """An http_error already explains the failure — the empty-records
+        sentinel must NOT fire on top of it (would noise up the warnings
+        list with a redundant cause). The fetch function returns the
+        http_error warning and short-circuits before the empty-check."""
+        from unittest.mock import patch
+        import urllib.error
+        err = urllib.error.HTTPError(
+            url="x", code=503, msg="x", hdrs=None, fp=None)
+        with patch.object(fetch_injuries, "_http_get_json", side_effect=err):
+            records, warnings = fetch_injuries.fetch_apifootball_injuries(
+                "fake-key")
+        types = [w["type"] for w in warnings]
+        self.assertIn("http_error", types)
+        self.assertNotIn("no_records_returned", types)
+
+
 # ── v2: classify_tier auto-upgrade against the curated whitelist ────────
 class TestNormalizePlayerName(unittest.TestCase):
     def test_accents_stripped(self):

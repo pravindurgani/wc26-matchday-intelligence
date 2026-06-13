@@ -479,6 +479,35 @@ class TestUpstreamWarningLift(unittest.TestCase):
         self.assertEqual(len(errs), 1)
         self.assertEqual(errs[0]["feed"], "injuries")
 
+    def test_lifts_no_records_returned_from_injuries(self):
+        """`no_records_returned` is the empty-feed sentinel emitted by
+        fetch_injuries when the API call succeeded but returned 0 records.
+        It must propagate to the consolidated state so an operator can
+        distinguish a genuinely quiet day from a misconfigured endpoint.
+
+        Note: this type is intentionally OMITTED from the dashboard's
+        INTEL_TOP_BAR_TYPES allowlist — surface in the matchday-intel
+        detail block only, not the alert pill. Pinning the propagation
+        here ensures it reaches the consolidated state where the detail
+        renderer can read it."""
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [{
+                "type": "no_records_returned",
+                "endpoint": "/injuries",
+                "league": "1",
+                "season": "2026",
+                "message": "API returned 0 injury records ...",
+            }],
+        }}
+        with _TempFeeds(feeds):
+            state = amd.build_adjustments_state()
+        info = [w for w in state["warnings"]
+                if w.get("type") == "no_records_returned"]
+        self.assertEqual(len(info), 1)
+        self.assertEqual(info[0]["feed"], "injuries")
+        self.assertEqual(info[0]["endpoint"], "/injuries")
+
     def test_no_double_lift_of_feed_missing(self):
         """`feed_missing` is generated locally by build_adjustments_state
         for absent feeds. Without the type filter the lifter would also
@@ -500,6 +529,73 @@ class TestUpstreamWarningLift(unittest.TestCase):
         feeds_alerting = sorted(w["feed"] for w in feed_missing)
         self.assertEqual(feeds_alerting,
                          ["lineups", "stats_proxy", "weather"])
+
+
+class TestUnknownWarningTypeObservability(unittest.TestCase):
+    """If a future fetcher emits a warning type that's neither in
+    _PROPAGATE_WARNING_TYPES nor _BENIGN_DROPPED_WARNING_TYPES, the
+    matchday consolidator must surface a one-time-per-(feed,type) stderr
+    log line so the gap is visible at the next cron run instead of
+    silently disappearing. The log is sampled — a thousand identical
+    warnings produce ONE log line, not a flood."""
+
+    def test_unknown_type_logs_to_stderr_once(self):
+        """A fetcher emits `provider_quota_exhausted` (hypothetical
+        future type). The consolidator must drop it from `state.warnings`
+        but log a single stderr WARN line."""
+        import io
+        from unittest.mock import patch
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [{"type": "provider_quota_exhausted",
+                          "remaining": 0, "message": "quota gone"}],
+        }}
+        captured = io.StringIO()
+        with _TempFeeds(feeds), patch("sys.stderr", captured):
+            state = amd.build_adjustments_state()
+        # The unknown type is NOT in state.warnings
+        unknown = [w for w in state["warnings"]
+                   if w.get("type") == "provider_quota_exhausted"]
+        self.assertEqual(unknown, [])
+        # But it IS in stderr
+        log = captured.getvalue()
+        self.assertIn("provider_quota_exhausted", log)
+        self.assertIn("injuries", log)
+        self.assertIn("WARN", log)
+
+    def test_benign_dropped_types_do_not_log(self):
+        """filter_non_wc is in _BENIGN_DROPPED_WARNING_TYPES — expected
+        every cycle, must not log as unknown."""
+        import io
+        from unittest.mock import patch
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [{"type": "filter_non_wc", "count": 3,
+                          "message": "skipped 3 records"}],
+        }}
+        captured = io.StringIO()
+        with _TempFeeds(feeds), patch("sys.stderr", captured):
+            amd.build_adjustments_state()
+        log = captured.getvalue()
+        self.assertNotIn("filter_non_wc", log)
+
+    def test_sample_cap_one_per_feed_type_pair(self):
+        """100 identical unknown warnings produce ONE stderr log line,
+        not 100 — prevents log flood under wedged-fetcher scenarios."""
+        import io
+        from unittest.mock import patch
+        feeds = {"injuries_2026.json": {
+            "teams": {},
+            "warnings": [{"type": "novel_warning",
+                          "i": i, "message": f"row {i}"}
+                         for i in range(100)],
+        }}
+        captured = io.StringIO()
+        with _TempFeeds(feeds), patch("sys.stderr", captured):
+            amd.build_adjustments_state()
+        log = captured.getvalue()
+        # Exactly one log line for this (feed, type) pair
+        self.assertEqual(log.count("novel_warning"), 1)
 
 
 class TestMalformedUpstreamGuards(unittest.TestCase):

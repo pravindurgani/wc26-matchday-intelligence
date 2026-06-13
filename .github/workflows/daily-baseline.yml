@@ -21,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # fetch-depth: 0 so the rebase-on-push protect-merge step has the
           # full history needed when racing live-matchday's commits.
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: 'pip'
@@ -67,7 +67,7 @@ jobs:
       - name: Validate
         run: python scripts/09_validate.py
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dashboard-baseline-${{ github.run_id }}
           path: dashboard/*.json
@@ -98,9 +98,7 @@ jobs:
                   data/processed/matches_clean.parquet \
                   models/home_goals_model.joblib \
                   models/away_goals_model.joblib \
-                  models/feature_cols.json \
                   models/feature_cols_v2.json \
-                  models/metrics.json \
                   models/metrics_v2.json \
                   models/walk_forward.json \
                   models/ablation.json \

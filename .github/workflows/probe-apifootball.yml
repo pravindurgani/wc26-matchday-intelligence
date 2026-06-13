@@ -34,11 +34,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -52,7 +52,7 @@ jobs:
           python scripts/research/probe_apifootball_knockouts.py
 
       - name: Upload sanitized samples as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: apifootball-knockout-samples
           path: tests/live/provider_samples/apifootball_*.json
@@ -60,7 +60,7 @@ jobs:
           retention-days: 30
 
       - name: Upload markdown summary as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: apifootball-probe-summary
           path: tests/live/provider_samples/apifootball_probe_summary.md
