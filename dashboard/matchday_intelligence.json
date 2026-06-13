@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T16:15:58.600763+00:00",
+  "generated_at": "2026-06-13T19:27:55.947115+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -13,18 +13,18 @@
   },
   "active_adjustments": [
     {
-      "team": "Australia",
-      "match_id": 60,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
+      "team": "Austria",
+      "match_id": 41,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
           "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -32,8 +32,8 @@
       ]
     },
     {
-      "team": "Austria",
-      "match_id": 20,
+      "team": "Belgium",
+      "match_id": 14,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
@@ -74,6 +74,25 @@
       ]
     },
     {
+      "team": "Bosnia and Herzegovina",
+      "match_id": 50,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "Canada",
       "match_id": null,
       "total_elo_adjustment": 1.68,
@@ -98,7 +117,7 @@
     },
     {
       "team": "Croatia",
-      "match_id": 68,
+      "match_id": 22,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
@@ -159,7 +178,7 @@
     },
     {
       "team": "England",
-      "match_id": 67,
+      "match_id": 22,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
@@ -170,6 +189,25 @@
           "weather_bucket": "hot",
           "raw_elo": -4.0,
           "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Germany",
+      "match_id": 9,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -197,45 +235,7 @@
     },
     {
       "team": "Japan",
-      "match_id": 36,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
-      "team": "Japan",
       "match_id": 57,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
-      "team": "Jordan",
-      "match_id": 20,
       "total_elo_adjustment": -1.0,
       "raw_sum_before_aggregate_cap": -1.0,
       "aggregate_cap_applied": false,
@@ -314,6 +314,25 @@
       ]
     },
     {
+      "team": "Netherlands",
+      "match_id": 33,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "Paraguay",
       "match_id": null,
       "total_elo_adjustment": -3.75,
@@ -338,6 +357,44 @@
     },
     {
       "team": "Portugal",
+      "match_id": 21,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Portugal",
+      "match_id": 45,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Portugal",
       "match_id": 69,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
@@ -349,6 +406,25 @@
           "weather_bucket": "hot",
           "raw_elo": -4.0,
           "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Qatar",
+      "match_id": 50,
+      "total_elo_adjustment": -1.0,
+      "raw_sum_before_aggregate_cap": -1.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -1.0,
+          "capped_elo": -1.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -479,7 +555,7 @@
     },
     {
       "team": "Sweden",
-      "match_id": 12,
+      "match_id": 33,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
@@ -540,7 +616,7 @@
     },
     {
       "team": "Uzbekistan",
-      "match_id": 70,
+      "match_id": 45,
       "total_elo_adjustment": -1.0,
       "raw_sum_before_aggregate_cap": -1.0,
       "aggregate_cap_applied": false,
@@ -559,9 +635,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 27,
-    "teams_affected": 20,
-    "matches_affected": 15,
+    "total_active_components": 31,
+    "teams_affected": 22,
+    "matches_affected": 16,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
@@ -579,6 +655,13 @@
       "season": "2026",
       "message": "API returned 0 injury records for league=1 season=2026 — could be a quiet day, or the league/season pair is wrong (check provider_fixture_map.json).",
       "feed": "injuries"
+    },
+    {
+      "type": "http_error",
+      "code": 400,
+      "match_id": 73,
+      "body": "{\"reason\":\"Parameter 'start_date' is out of allowed range from 2026-03-12 to 2026-06-28\",\"error\":true}",
+      "feed": "weather"
     }
   ]
 }
