@@ -1,70 +1,58 @@
 {
-  "generated_at": "2026-06-13T22:07:59.358447+00:00",
+  "generated_at": "2026-06-13T22:20:26.508849+00:00",
   "min_pp_threshold": 0.3,
   "top_movers_up": [
     {
-      "team": "Colombia",
-      "static": 0.04632000000000001,
-      "live": 0.0518,
-      "delta_pp": 0.5479999999999992
-    },
-    {
       "team": "Mexico",
       "static": 0.01628,
-      "live": 0.02016,
-      "delta_pp": 0.3880000000000001
+      "live": 0.02052,
+      "delta_pp": 0.42400000000000004
+    },
+    {
+      "team": "Portugal",
+      "static": 0.041400000000000006,
+      "live": 0.04512,
+      "delta_pp": 0.37199999999999944
     },
     {
       "team": "South Korea",
       "static": 0.0036,
-      "live": 0.00692,
-      "delta_pp": 0.332
+      "live": 0.00688,
+      "delta_pp": 0.328
     }
   ],
   "top_movers_down": [
     {
       "team": "Switzerland",
       "static": 0.0154,
-      "live": 0.01032,
-      "delta_pp": -0.5080000000000001
-    },
-    {
-      "team": "France",
-      "static": 0.09012,
-      "live": 0.08552,
-      "delta_pp": -0.4600000000000007
+      "live": 0.011280000000000002,
+      "delta_pp": -0.41199999999999987
     }
   ],
   "all_movers": [
     {
-      "team": "Colombia",
-      "static": 0.04632000000000001,
-      "live": 0.0518,
-      "delta_pp": 0.5479999999999992
+      "team": "Mexico",
+      "static": 0.01628,
+      "live": 0.02052,
+      "delta_pp": 0.42400000000000004
     },
     {
       "team": "Switzerland",
       "static": 0.0154,
-      "live": 0.01032,
-      "delta_pp": -0.5080000000000001
+      "live": 0.011280000000000002,
+      "delta_pp": -0.41199999999999987
     },
     {
-      "team": "France",
-      "static": 0.09012,
-      "live": 0.08552,
-      "delta_pp": -0.4600000000000007
-    },
-    {
-      "team": "Mexico",
-      "static": 0.01628,
-      "live": 0.02016,
-      "delta_pp": 0.3880000000000001
+      "team": "Portugal",
+      "static": 0.041400000000000006,
+      "live": 0.04512,
+      "delta_pp": 0.37199999999999944
     },
     {
       "team": "South Korea",
       "static": 0.0036,
-      "live": 0.00692,
-      "delta_pp": 0.332
+      "live": 0.00688,
+      "delta_pp": 0.328
     }
   ]
 }
