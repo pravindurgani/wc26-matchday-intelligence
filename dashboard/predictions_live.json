@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T16:57:53.784443+00:00",
+  "generated_at": "2026-06-13T17:10:23.735973+00:00",
   "n_simulations_per_seed": 5000,
   "n_seeds": 5,
   "n_simulations_total": 25000,
@@ -3781,7 +3781,8 @@
       "lat": 19.3029,
       "lon": -99.1505,
       "altitude_m": 2240,
-      "climate": "high_altitude_mild"
+      "climate": "high_altitude_mild",
+      "tz": "America/Mexico_City"
     },
     {
       "city": "Guadalajara",
@@ -3790,7 +3791,8 @@
       "lat": 20.6816,
       "lon": -103.4626,
       "altitude_m": 1560,
-      "climate": "warm_humid"
+      "climate": "warm_humid",
+      "tz": "America/Mexico_City"
     },
     {
       "city": "Monterrey",
@@ -3799,7 +3801,8 @@
       "lat": 25.6692,
       "lon": -100.2447,
       "altitude_m": 540,
-      "climate": "very_hot"
+      "climate": "very_hot",
+      "tz": "America/Monterrey"
     },
     {
       "city": "Toronto",
@@ -3808,7 +3811,8 @@
       "lat": 43.6332,
       "lon": -79.4185,
       "altitude_m": 76,
-      "climate": "mild"
+      "climate": "mild",
+      "tz": "America/Toronto"
     },
     {
       "city": "Vancouver",
@@ -3817,7 +3821,8 @@
       "lat": 49.2768,
       "lon": -123.1119,
       "altitude_m": 0,
-      "climate": "mild_indoor"
+      "climate": "mild_indoor",
+      "tz": "America/Vancouver"
     },
     {
       "city": "Atlanta",
@@ -3826,7 +3831,8 @@
       "lat": 33.7553,
       "lon": -84.4006,
       "altitude_m": 320,
-      "climate": "hot_humid_indoor"
+      "climate": "hot_humid_indoor",
+      "tz": "America/New_York"
     },
     {
       "city": "Boston",
@@ -3835,7 +3841,8 @@
       "lat": 42.0909,
       "lon": -71.2643,
       "altitude_m": 40,
-      "climate": "warm"
+      "climate": "warm",
+      "tz": "America/New_York"
     },
     {
       "city": "Dallas",
@@ -3844,7 +3851,8 @@
       "lat": 32.7473,
       "lon": -97.0945,
       "altitude_m": 175,
-      "climate": "very_hot_indoor"
+      "climate": "very_hot_indoor",
+      "tz": "America/Chicago"
     },
     {
       "city": "Houston",
@@ -3853,7 +3861,8 @@
       "lat": 29.6847,
       "lon": -95.4107,
       "altitude_m": 15,
-      "climate": "very_hot_humid_indoor"
+      "climate": "very_hot_humid_indoor",
+      "tz": "America/Chicago"
     },
     {
       "city": "Kansas City",
@@ -3862,7 +3871,8 @@
       "lat": 39.0489,
       "lon": -94.4839,
       "altitude_m": 270,
-      "climate": "hot"
+      "climate": "hot",
+      "tz": "America/Chicago"
     },
     {
       "city": "Los Angeles",
@@ -3871,7 +3881,8 @@
       "lat": 33.9535,
       "lon": -118.3392,
       "altitude_m": 30,
-      "climate": "warm_dry_indoor"
+      "climate": "warm_dry_indoor",
+      "tz": "America/Los_Angeles"
     },
     {
       "city": "Miami",
@@ -3880,7 +3891,8 @@
       "lat": 25.958,
       "lon": -80.2389,
       "altitude_m": 2,
-      "climate": "very_hot_humid"
+      "climate": "very_hot_humid",
+      "tz": "America/New_York"
     },
     {
       "city": "New York",
@@ -3889,7 +3901,8 @@
       "lat": 40.8135,
       "lon": -74.0745,
       "altitude_m": 7,
-      "climate": "warm_humid"
+      "climate": "warm_humid",
+      "tz": "America/New_York"
     },
     {
       "city": "Philadelphia",
@@ -3898,7 +3911,8 @@
       "lat": 39.9008,
       "lon": -75.1675,
       "altitude_m": 12,
-      "climate": "warm_humid"
+      "climate": "warm_humid",
+      "tz": "America/New_York"
     },
     {
       "city": "San Francisco",
@@ -3907,7 +3921,8 @@
       "lat": 37.403,
       "lon": -121.97,
       "altitude_m": 8,
-      "climate": "mild_dry"
+      "climate": "mild_dry",
+      "tz": "America/Los_Angeles"
     },
     {
       "city": "Seattle",
@@ -3916,7 +3931,8 @@
       "lat": 47.5952,
       "lon": -122.3316,
       "altitude_m": 5,
-      "climate": "mild"
+      "climate": "mild",
+      "tz": "America/Los_Angeles"
     }
   ],
   "bracket": {
@@ -4215,7 +4231,7 @@
     3,
     4
   ],
-  "input_hash": "2085afe959cf1b88",
+  "input_hash": "2f583c95ba13797b",
   "grand_cap_applied": {},
   "per_match_intel_meta": [
     {
