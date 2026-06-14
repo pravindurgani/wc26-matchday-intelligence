@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-14T09:38:05.040721+00:00",
+  "generated_at": "2026-06-14T14:06:26.300075+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -143,6 +143,25 @@
       ]
     },
     {
+      "team": "Croatia",
+      "match_id": 22,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "Czechia",
       "match_id": null,
       "total_elo_adjustment": -1.41,
@@ -185,18 +204,37 @@
       ]
     },
     {
-      "team": "Germany",
-      "match_id": 9,
-      "total_elo_adjustment": -8.0,
-      "raw_sum_before_aggregate_cap": -8.0,
+      "team": "England",
+      "match_id": 22,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -8.0,
-          "capped_elo": -8.0,
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Germany",
+      "match_id": 9,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -349,25 +387,6 @@
       ]
     },
     {
-      "team": "Netherlands",
-      "match_id": 58,
-      "total_elo_adjustment": -8.0,
-      "raw_sum_before_aggregate_cap": -8.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -8.0,
-          "capped_elo": -8.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Paraguay",
       "match_id": null,
       "total_elo_adjustment": -3.75,
@@ -393,6 +412,25 @@
     {
       "team": "Portugal",
       "match_id": 45,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Portugal",
+      "match_id": 69,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
       "aggregate_cap_applied": false,
@@ -667,9 +705,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 31,
-    "teams_affected": 24,
-    "matches_affected": 10,
+    "total_active_components": 33,
+    "teams_affected": 26,
+    "matches_affected": 11,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
