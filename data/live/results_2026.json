@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-14T03:51:38.233677+00:00",
+  "updated_at": "2026-06-14T04:01:40.353793+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:51:38.233093+00:00",
+      "updated_at": "2026-06-14T04:01:40.352695+00:00",
       "raw_status": "FT"
     },
     {
@@ -36,7 +36,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:51:38.233117+00:00",
+      "updated_at": "2026-06-14T04:01:40.352709+00:00",
       "raw_status": "FT"
     },
     {
@@ -54,7 +54,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:51:38.233125+00:00",
+      "updated_at": "2026-06-14T04:01:40.352720+00:00",
       "raw_status": "FT"
     },
     {
@@ -72,7 +72,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:51:38.233130+00:00",
+      "updated_at": "2026-06-14T04:01:40.352730+00:00",
       "raw_status": "FT"
     },
     {
@@ -90,7 +90,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:51:38.233135+00:00",
+      "updated_at": "2026-06-14T04:01:40.352740+00:00",
       "raw_status": "FT"
     },
     {
@@ -108,7 +108,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:51:38.233140+00:00",
+      "updated_at": "2026-06-14T04:01:40.352755+00:00",
       "raw_status": "FT"
     },
     {
@@ -126,10 +126,21 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:51:38.233150+00:00",
+      "updated_at": "2026-06-14T04:01:40.352763+00:00",
       "raw_status": "FT"
     }
   ],
-  "in_play": [],
+  "in_play": [
+    {
+      "m": 8,
+      "home": "Australia",
+      "away": "Turkey",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 1,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
   "warnings": []
 }
