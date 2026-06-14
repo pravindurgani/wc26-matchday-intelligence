@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-14T03:01:35.632180+00:00",
+  "updated_at": "2026-06-14T03:11:40.311268+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:01:35.631604+00:00",
+      "updated_at": "2026-06-14T03:11:40.310676+00:00",
       "raw_status": "FT"
     },
     {
@@ -36,7 +36,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:01:35.631613+00:00",
+      "updated_at": "2026-06-14T03:11:40.310702+00:00",
       "raw_status": "FT"
     },
     {
@@ -54,7 +54,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:01:35.631618+00:00",
+      "updated_at": "2026-06-14T03:11:40.310711+00:00",
       "raw_status": "FT"
     },
     {
@@ -72,7 +72,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:01:35.631623+00:00",
+      "updated_at": "2026-06-14T03:11:40.310717+00:00",
       "raw_status": "FT"
     },
     {
@@ -90,7 +90,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:01:35.631629+00:00",
+      "updated_at": "2026-06-14T03:11:40.310723+00:00",
       "raw_status": "FT"
     },
     {
@@ -108,21 +108,28 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-14T03:01:35.631635+00:00",
+      "updated_at": "2026-06-14T03:11:40.310728+00:00",
       "raw_status": "FT"
-    }
-  ],
-  "in_play": [
+    },
     {
       "m": 7,
+      "provider_fixture_id": "1489372",
+      "date": "2026-06-13",
       "home": "Haiti",
       "away": "Scotland",
       "home_score": 0,
       "away_score": 1,
+      "home_pens": null,
+      "away_pens": null,
+      "winner": "away",
+      "status": "FT",
+      "status_long": "Match Finished",
       "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
+      "source": "api_football",
+      "updated_at": "2026-06-14T03:11:40.310739+00:00",
+      "raw_status": "FT"
     }
   ],
+  "in_play": [],
   "warnings": []
 }
