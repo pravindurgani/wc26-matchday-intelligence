@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-14T16:23:52.900799+00:00",
+  "generated_at": "2026-06-14T19:28:48.878052+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 9,
-      "home": "Germany",
-      "away": "Curacao",
+      "match_id": 10,
+      "home": "Netherlands",
+      "away": "Japan",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 497,
-          "name": "Manuel Neuer",
+          "id": 129058,
+          "name": "Bart Verbruggen",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 502,
-          "name": "Joshua Kimmich",
-          "number": 6,
+          "id": 226,
+          "name": "Denzel Dumfries",
+          "number": 22,
           "pos": "D"
         },
         {
-          "id": 972,
-          "name": "Jonathan Tah",
-          "number": 4,
-          "pos": "D"
-        },
-        {
-          "id": 26243,
-          "name": "Nico Schlotterbeck",
+          "id": 152849,
+          "name": "Micky van de Ven",
           "number": 15,
           "pos": "D"
         },
         {
-          "id": 280074,
-          "name": "Nathaniel Brown",
-          "number": 18,
+          "id": 290,
+          "name": "Virgil van Dijk",
+          "number": 4,
           "pos": "D"
         },
         {
-          "id": 328033,
-          "name": "Aleksandar Pavlović",
-          "number": 5,
+          "id": 38695,
+          "name": "Jan Paul van Hecke",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 542,
+          "name": "Ryan Gravenberch",
+          "number": 8,
           "pos": "M"
         },
         {
-          "id": 637,
-          "name": "Felix Nmecha",
-          "number": 23,
+          "id": 538,
+          "name": "Frenkie de Jong",
+          "number": 21,
           "pos": "M"
         },
         {
-          "id": 644,
-          "name": "Leroy Sané",
-          "number": 19,
+          "id": 36902,
+          "name": "Tijjani Reijnders",
+          "number": 14,
           "pos": "M"
         },
         {
-          "id": 181812,
-          "name": "Jamal Musiala",
-          "number": 10,
-          "pos": "M"
+          "id": 37724,
+          "name": "Crysencio Summerville",
+          "number": 24,
+          "pos": "F"
         },
         {
-          "id": 203224,
-          "name": "Florian Wirtz",
-          "number": 17,
-          "pos": "M"
+          "id": 249,
+          "name": "Donyell Malen",
+          "number": 18,
+          "pos": "F"
         },
         {
-          "id": 978,
-          "name": "Kai Havertz",
-          "number": 7,
+          "id": 247,
+          "name": "Cody Gakpo",
+          "number": 11,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 221,
-          "name": "Eloy Room",
+          "id": 199578,
+          "name": "Zion Suzuki",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 36970,
-          "name": "Sherel Constancio Floranus",
-          "number": 5,
+          "id": 32858,
+          "name": "Tsuyoshi Watanabe",
+          "number": 16,
           "pos": "D"
         },
         {
-          "id": 37175,
-          "name": "Riechedly Bazoer",
-          "number": 23,
+          "id": 32954,
+          "name": "Shogo Taniguchi",
+          "number": 3,
           "pos": "D"
         },
         {
-          "id": 228,
-          "name": "Armando Obispo",
-          "number": 18,
+          "id": 32893,
+          "name": "Hiroki Itō",
+          "number": 21,
           "pos": "D"
         },
         {
-          "id": 353808,
-          "name": "Deveron Fonville",
-          "number": 24,
-          "pos": "D"
-        },
-        {
-          "id": 309763,
-          "name": "Livano Comenencia",
-          "number": 8,
-          "pos": "M"
-        },
-        {
-          "id": 18997,
-          "name": "Leandro Bacuna",
+          "id": 2598,
+          "name": "Ritsu Doan",
           "number": 10,
           "pos": "M"
         },
         {
-          "id": 161884,
-          "name": "Sontje Hansen",
-          "number": 12,
+          "id": 2601,
+          "name": "Daichi Kamada",
+          "number": 15,
           "pos": "M"
         },
         {
-          "id": 906,
-          "name": "Tahith Chong",
-          "number": 21,
+          "id": 33889,
+          "name": "Kaishu Sano",
+          "number": 24,
           "pos": "M"
         },
         {
-          "id": 19047,
-          "name": "Juninho Bacuna",
-          "number": 7,
+          "id": 33321,
+          "name": "Keito Nakamura",
+          "number": 13,
           "pos": "M"
         },
         {
-          "id": 18981,
-          "name": "Jürgen Locadia",
-          "number": 9,
+          "id": 32862,
+          "name": "Takefusa Kubo",
+          "number": 8,
+          "pos": "F"
+        },
+        {
+          "id": 33224,
+          "name": "Daizen Maeda",
+          "number": 11,
+          "pos": "F"
+        },
+        {
+          "id": 72155,
+          "name": "Ayase Ueda",
+          "number": 18,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-14T16:23:52.788597+00:00"
+      "captured_at": "2026-06-14T19:28:48.748080+00:00"
     }
   ],
   "warnings": []

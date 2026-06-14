@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-14T16:23:53.973494+00:00",
+  "generated_at": "2026-06-14T19:28:50.176977+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -38,16 +38,16 @@
     {
       "team": "Austria",
       "match_id": 41,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -124,21 +124,25 @@
       ]
     },
     {
-      "team": "Croatia",
-      "match_id": 22,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
+      "team": "Curacao",
+      "match_id": null,
+      "total_elo_adjustment": -6.0,
+      "raw_sum_before_aggregate_cap": -6.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
+          "type": "stats_proxy",
+          "match_id": 9,
+          "raw_elo": -6.0,
+          "capped_elo_per_match": -6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -185,21 +189,25 @@
       ]
     },
     {
-      "team": "England",
-      "match_id": 22,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
+      "team": "Germany",
+      "match_id": null,
+      "total_elo_adjustment": 6.0,
+      "raw_sum_before_aggregate_cap": 6.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
+          "type": "stats_proxy",
+          "match_id": 9,
+          "raw_elo": 6.0,
+          "capped_elo_per_match": 6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -475,25 +483,6 @@
       ]
     },
     {
-      "team": "Scotland",
-      "match_id": 51,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "South Africa",
       "match_id": null,
       "total_elo_adjustment": -1.83,
@@ -554,6 +543,25 @@
           "capped_elo": -1.0,
           "cap_used": 15.0,
           "confidence": "static_fallback",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Sweden",
+      "match_id": 12,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
           "source": "open_meteo"
         }
       ]
@@ -683,11 +691,30 @@
           "source": "open_meteo"
         }
       ]
+    },
+    {
+      "team": "Uzbekistan",
+      "match_id": 70,
+      "total_elo_adjustment": -1.0,
+      "raw_sum_before_aggregate_cap": -1.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -1.0,
+          "capped_elo": -1.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
     }
   ],
   "summary": {
-    "total_active_components": 32,
-    "teams_affected": 25,
+    "total_active_components": 33,
+    "teams_affected": 24,
     "matches_affected": 10,
     "aggregate_caps_hit": 0
   },
