@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T22:06:17.193937+00:00",
+  "generated_at": "2026-06-14T04:10:19.770091+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -74,21 +74,25 @@
       ]
     },
     {
-      "team": "Bosnia and Herzegovina",
-      "match_id": 50,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
+      "team": "Brazil",
+      "match_id": null,
+      "total_elo_adjustment": 2.07,
+      "raw_sum_before_aggregate_cap": 2.07,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
+          "type": "stats_proxy",
+          "match_id": 6,
+          "raw_elo": 2.07,
+          "capped_elo_per_match": 2.07,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 2.07,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -196,46 +200,50 @@
       ]
     },
     {
-      "team": "Japan",
-      "match_id": 10,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
+      "team": "Germany",
+      "match_id": 9,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Haiti",
+      "match_id": null,
+      "total_elo_adjustment": 0.27,
+      "raw_sum_before_aggregate_cap": 0.27,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 7,
+          "raw_elo": 0.27,
+          "capped_elo_per_match": 0.27,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 0.27,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
     {
       "team": "Japan",
       "match_id": 57,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
-      "team": "Jordan",
-      "match_id": 72,
       "total_elo_adjustment": -1.0,
       "raw_sum_before_aggregate_cap": -1.0,
       "aggregate_cap_applied": false,
@@ -276,21 +284,25 @@
       ]
     },
     {
-      "team": "Netherlands",
-      "match_id": 10,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
+      "team": "Morocco",
+      "match_id": null,
+      "total_elo_adjustment": -2.07,
+      "raw_sum_before_aggregate_cap": -2.07,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
+          "type": "stats_proxy",
+          "match_id": 6,
+          "raw_elo": -2.07,
+          "capped_elo_per_match": -2.07,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -2.07,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -333,25 +345,6 @@
           "capped_elo": -3.75,
           "cap_used": 20.0,
           "cap_reason": "per_match"
-        }
-      ]
-    },
-    {
-      "team": "Portugal",
-      "match_id": 21,
-      "total_elo_adjustment": -8.0,
-      "raw_sum_before_aggregate_cap": -8.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -8.0,
-          "capped_elo": -8.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
         }
       ]
     },
@@ -417,37 +410,18 @@
       ]
     },
     {
-      "team": "Qatar",
-      "match_id": 50,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Saudi Arabia",
       "match_id": 15,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
+      "total_elo_adjustment": -2.0,
+      "raw_sum_before_aggregate_cap": -2.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
+          "weather_bucket": "hot_humid",
+          "raw_elo": -2.0,
+          "capped_elo": -2.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -470,6 +444,29 @@
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Scotland",
+      "match_id": null,
+      "total_elo_adjustment": -0.27,
+      "raw_sum_before_aggregate_cap": -0.27,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 7,
+          "raw_elo": -0.27,
+          "capped_elo_per_match": -0.27,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -0.27,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -659,12 +656,31 @@
           "source": "open_meteo"
         }
       ]
+    },
+    {
+      "team": "Uzbekistan",
+      "match_id": 70,
+      "total_elo_adjustment": -1.0,
+      "raw_sum_before_aggregate_cap": -1.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -1.0,
+          "capped_elo": -1.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
     }
   ],
   "summary": {
     "total_active_components": 32,
-    "teams_affected": 22,
-    "matches_affected": 15,
+    "teams_affected": 25,
+    "matches_affected": 13,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
@@ -682,13 +698,6 @@
       "season": "2026",
       "message": "API returned 0 injury records for league=1 season=2026 — could be a quiet day, or the league/season pair is wrong (check provider_fixture_map.json).",
       "feed": "injuries"
-    },
-    {
-      "type": "http_error",
-      "code": 400,
-      "match_id": 73,
-      "body": "{\"reason\":\"Parameter 'start_date' is out of allowed range from 2026-03-12 to 2026-06-28\",\"error\":true}",
-      "feed": "weather"
     }
   ]
 }
