@@ -1,58 +1,58 @@
 {
-  "generated_at": "2026-06-14T00:07:49.679621+00:00",
+  "generated_at": "2026-06-14T00:17:48.730406+00:00",
   "min_pp_threshold": 0.3,
   "top_movers_up": [
     {
       "team": "Mexico",
       "static": 0.01628,
-      "live": 0.02052,
-      "delta_pp": 0.42400000000000004
+      "live": 0.02096,
+      "delta_pp": 0.468
     },
     {
-      "team": "Portugal",
-      "static": 0.041400000000000006,
-      "live": 0.04512,
-      "delta_pp": 0.37199999999999944
-    },
-    {
-      "team": "South Korea",
-      "static": 0.0036,
-      "live": 0.00688,
-      "delta_pp": 0.328
+      "team": "Spain",
+      "static": 0.24855999999999998,
+      "live": 0.25212,
+      "delta_pp": 0.35600000000000354
     }
   ],
   "top_movers_down": [
     {
+      "team": "Brazil",
+      "static": 0.0538,
+      "live": 0.043,
+      "delta_pp": -1.0800000000000005
+    },
+    {
       "team": "Switzerland",
       "static": 0.0154,
-      "live": 0.011280000000000002,
-      "delta_pp": -0.41199999999999987
+      "live": 0.00964,
+      "delta_pp": -0.5760000000000001
     }
   ],
   "all_movers": [
     {
-      "team": "Mexico",
-      "static": 0.01628,
-      "live": 0.02052,
-      "delta_pp": 0.42400000000000004
+      "team": "Brazil",
+      "static": 0.0538,
+      "live": 0.043,
+      "delta_pp": -1.0800000000000005
     },
     {
       "team": "Switzerland",
       "static": 0.0154,
-      "live": 0.011280000000000002,
-      "delta_pp": -0.41199999999999987
+      "live": 0.00964,
+      "delta_pp": -0.5760000000000001
     },
     {
-      "team": "Portugal",
-      "static": 0.041400000000000006,
-      "live": 0.04512,
-      "delta_pp": 0.37199999999999944
+      "team": "Mexico",
+      "static": 0.01628,
+      "live": 0.02096,
+      "delta_pp": 0.468
     },
     {
-      "team": "South Korea",
-      "static": 0.0036,
-      "live": 0.00688,
-      "delta_pp": 0.328
+      "team": "Spain",
+      "static": 0.24855999999999998,
+      "live": 0.25212,
+      "delta_pp": 0.35600000000000354
     }
   ]
 }

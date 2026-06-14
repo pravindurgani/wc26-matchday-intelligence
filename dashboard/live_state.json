@@ -1,22 +1,11 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-14T00:07:49.680422+00:00",
-  "completed_matches_count": 5,
+  "last_updated_utc": "2026-06-14T00:17:48.731149+00:00",
+  "completed_matches_count": 6,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [
-    {
-      "m": 6,
-      "home": "Brazil",
-      "away": "Morocco",
-      "home_score": 1,
-      "away_score": 1,
-      "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
-    }
-  ],
-  "in_play_count": 1,
+  "in_play": [],
+  "in_play_count": 0,
   "warnings": []
 }
