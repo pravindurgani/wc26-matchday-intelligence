@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-15T01:01:37.119194+00:00",
+  "updated_at": "2026-06-15T01:11:37.531116+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118711+00:00",
+      "updated_at": "2026-06-15T01:11:37.530465+00:00",
       "raw_status": "FT"
     },
     {
@@ -36,7 +36,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118718+00:00",
+      "updated_at": "2026-06-15T01:11:37.530486+00:00",
       "raw_status": "FT"
     },
     {
@@ -54,7 +54,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118723+00:00",
+      "updated_at": "2026-06-15T01:11:37.530494+00:00",
       "raw_status": "FT"
     },
     {
@@ -72,7 +72,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118728+00:00",
+      "updated_at": "2026-06-15T01:11:37.530500+00:00",
       "raw_status": "FT"
     },
     {
@@ -90,7 +90,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118733+00:00",
+      "updated_at": "2026-06-15T01:11:37.530505+00:00",
       "raw_status": "FT"
     },
     {
@@ -108,7 +108,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118741+00:00",
+      "updated_at": "2026-06-15T01:11:37.530510+00:00",
       "raw_status": "FT"
     },
     {
@@ -126,7 +126,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118746+00:00",
+      "updated_at": "2026-06-15T01:11:37.530517+00:00",
       "raw_status": "FT"
     },
     {
@@ -144,7 +144,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118751+00:00",
+      "updated_at": "2026-06-15T01:11:37.530523+00:00",
       "raw_status": "FT"
     },
     {
@@ -162,7 +162,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118755+00:00",
+      "updated_at": "2026-06-15T01:11:37.530528+00:00",
       "raw_status": "FT"
     },
     {
@@ -180,21 +180,28 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T01:01:37.118761+00:00",
+      "updated_at": "2026-06-15T01:11:37.530533+00:00",
       "raw_status": "FT"
-    }
-  ],
-  "in_play": [
+    },
     {
       "m": 11,
+      "provider_fixture_id": "1489375",
+      "date": "2026-06-14",
       "home": "Ivory Coast",
       "away": "Ecuador",
       "home_score": 1,
       "away_score": 0,
+      "home_pens": null,
+      "away_pens": null,
+      "winner": "home",
+      "status": "FT",
+      "status_long": "Match Finished",
       "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
+      "source": "api_football",
+      "updated_at": "2026-06-15T01:11:37.530543+00:00",
+      "raw_status": "FT"
     }
   ],
+  "in_play": [],
   "warnings": []
 }
