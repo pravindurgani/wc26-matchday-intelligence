@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-15T20:53:46.219280+00:00",
+  "updated_at": "2026-06-15T21:11:34.744664+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218660+00:00",
+      "updated_at": "2026-06-15T21:11:34.744154+00:00",
       "raw_status": "FT"
     },
     {
@@ -36,7 +36,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218669+00:00",
+      "updated_at": "2026-06-15T21:11:34.744178+00:00",
       "raw_status": "FT"
     },
     {
@@ -54,7 +54,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218675+00:00",
+      "updated_at": "2026-06-15T21:11:34.744185+00:00",
       "raw_status": "FT"
     },
     {
@@ -72,7 +72,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218681+00:00",
+      "updated_at": "2026-06-15T21:11:34.744190+00:00",
       "raw_status": "FT"
     },
     {
@@ -90,7 +90,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218688+00:00",
+      "updated_at": "2026-06-15T21:11:34.744194+00:00",
       "raw_status": "FT"
     },
     {
@@ -108,7 +108,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218695+00:00",
+      "updated_at": "2026-06-15T21:11:34.744198+00:00",
       "raw_status": "FT"
     },
     {
@@ -126,7 +126,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218700+00:00",
+      "updated_at": "2026-06-15T21:11:34.744205+00:00",
       "raw_status": "FT"
     },
     {
@@ -144,7 +144,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218707+00:00",
+      "updated_at": "2026-06-15T21:11:34.744210+00:00",
       "raw_status": "FT"
     },
     {
@@ -162,7 +162,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218714+00:00",
+      "updated_at": "2026-06-15T21:11:34.744214+00:00",
       "raw_status": "FT"
     },
     {
@@ -180,7 +180,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218719+00:00",
+      "updated_at": "2026-06-15T21:11:34.744219+00:00",
       "raw_status": "FT"
     },
     {
@@ -198,7 +198,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218723+00:00",
+      "updated_at": "2026-06-15T21:11:34.744223+00:00",
       "raw_status": "FT"
     },
     {
@@ -216,7 +216,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218727+00:00",
+      "updated_at": "2026-06-15T21:11:34.744226+00:00",
       "raw_status": "FT"
     },
     {
@@ -234,21 +234,28 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-15T20:53:46.218732+00:00",
+      "updated_at": "2026-06-15T21:11:34.744229+00:00",
       "raw_status": "FT"
-    }
-  ],
-  "in_play": [
+    },
     {
       "m": 14,
+      "provider_fixture_id": "1489377",
+      "date": "2026-06-15",
       "home": "Belgium",
       "away": "Egypt",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 88,
-      "status": "LIVE",
-      "status_long": "Second Half"
+      "home_pens": null,
+      "away_pens": null,
+      "winner": null,
+      "status": "FT",
+      "status_long": "Match Finished",
+      "elapsed": 90,
+      "source": "api_football",
+      "updated_at": "2026-06-15T21:11:34.744233+00:00",
+      "raw_status": "FT"
     }
   ],
+  "in_play": [],
   "warnings": []
 }
