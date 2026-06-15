@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-15T12:17:31.367644+00:00",
+  "generated_at": "2026-06-15T19:07:05.077379+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 14,
+      "home": "Belgium",
+      "away": "Egypt",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 730,
+          "name": "Thibaut Courtois",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 264,
+          "name": "Thomas Meunier",
+          "number": 15,
+          "pos": "D"
+        },
+        {
+          "id": 312964,
+          "name": "Nathan Ngoy",
+          "number": 25,
+          "pos": "D"
+        },
+        {
+          "id": 69,
+          "name": "Brandon Mechele",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 2920,
+          "name": "Timothy Castagne",
+          "number": 21,
+          "pos": "D"
+        },
+        {
+          "id": 162714,
+          "name": "Amadou Onana",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 2926,
+          "name": "Youri Tielemans",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 1946,
+          "name": "Leandro Trossard",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 629,
+          "name": "Kevin De Bruyne",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 1422,
+          "name": "Jérémy Doku",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 147859,
+          "name": "Charles De Ketelaere",
+          "number": 17,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 269174,
+          "name": "Mostafa Shobeir",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 2654,
+          "name": "Mohamed Hany",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 16804,
+          "name": "Yasser Ibrahim",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 16813,
+          "name": "Hamdy Fathy",
+          "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 2649,
+          "name": "Ahmed Fatouh",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 16841,
+          "name": "Mohanad Lasheen",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 190575,
+          "name": "Marwan Attia",
+          "number": 19,
+          "pos": "M"
+        },
+        {
+          "id": 306,
+          "name": "Mohamed Salah",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 17269,
+          "name": "Emam Ashour",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 395075,
+          "name": "Mostafa Ziko",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 81573,
+          "name": "Omar Marmoush",
+          "number": 22,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-15T19:07:04.908133+00:00"
+    }
+  ],
   "warnings": []
 }
