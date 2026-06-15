@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-15T04:21:28.772487+00:00",
+  "generated_at": "2026-06-15T12:17:32.960704+00:00",
   "schema_version": 1,
   "source": "api_football",
   "n_completed": 12,
@@ -53,7 +53,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489369",
-      "captured_at": "2026-06-15T04:21:27.455525+00:00"
+      "captured_at": "2026-06-15T12:17:31.600171+00:00"
     },
     {
       "match_id": 2,
@@ -104,7 +104,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1538999",
-      "captured_at": "2026-06-15T04:21:27.573615+00:00"
+      "captured_at": "2026-06-15T12:17:31.720078+00:00"
     },
     {
       "match_id": 3,
@@ -155,7 +155,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1539000",
-      "captured_at": "2026-06-15T04:21:27.693900+00:00"
+      "captured_at": "2026-06-15T12:17:31.847758+00:00"
     },
     {
       "match_id": 4,
@@ -179,8 +179,8 @@
         "Yellow Cards": 1,
         "Red Cards": null,
         "Goalkeeper Saves": 1,
-        "Total passes": 596,
-        "Passes accurate": 508,
+        "Total passes": 598,
+        "Passes accurate": 509,
         "Passes %": 85,
         "expected_goals": 1,
         "goals_prevented": -1
@@ -199,29 +199,29 @@
         "Yellow Cards": 5,
         "Red Cards": null,
         "Goalkeeper Saves": 3,
-        "Total passes": 320,
-        "Passes accurate": 230,
-        "Passes %": 72,
+        "Total passes": 319,
+        "Passes accurate": 232,
+        "Passes %": 73,
         "expected_goals": 0,
         "goals_prevented": -1
       },
       "fixture_id": "1489370",
-      "captured_at": "2026-06-15T04:21:27.812926+00:00"
+      "captured_at": "2026-06-15T12:17:31.967426+00:00"
     },
     {
       "match_id": 5,
       "status": "FT",
       "home": "Qatar",
       "away": "Switzerland",
-      "home_form_adjustment_elo": -6.78,
-      "away_form_adjustment_elo": 6.78,
+      "home_form_adjustment_elo": -7.98,
+      "away_form_adjustment_elo": 7.98,
       "true_xg_available": false,
       "home_stats": {
-        "Shots on Goal": 4,
+        "Shots on Goal": 3,
         "Shots off Goal": 3,
-        "Total Shots": 7,
+        "Total Shots": 6,
         "Blocked Shots": 0,
-        "Shots insidebox": 5,
+        "Shots insidebox": 4,
         "Shots outsidebox": 2,
         "Fouls": 12,
         "Corner Kicks": 3,
@@ -230,9 +230,9 @@
         "Yellow Cards": 2,
         "Red Cards": null,
         "Goalkeeper Saves": 5,
-        "Total passes": 275,
-        "Passes accurate": 196,
-        "Passes %": 71,
+        "Total passes": 278,
+        "Passes accurate": 200,
+        "Passes %": 72,
         "expected_goals": 0,
         "goals_prevented": 0
       },
@@ -250,65 +250,65 @@
         "Yellow Cards": 1,
         "Red Cards": null,
         "Goalkeeper Saves": 3,
-        "Total passes": 575,
-        "Passes accurate": 522,
+        "Total passes": 576,
+        "Passes accurate": 527,
         "Passes %": 91,
         "expected_goals": 3,
         "goals_prevented": 0
       },
       "fixture_id": "1489373",
-      "captured_at": "2026-06-15T04:21:27.928461+00:00"
+      "captured_at": "2026-06-15T12:17:32.087900+00:00"
     },
     {
       "match_id": 6,
       "status": "FT",
       "home": "Brazil",
       "away": "Morocco",
-      "home_form_adjustment_elo": 4.14,
-      "away_form_adjustment_elo": -4.14,
+      "home_form_adjustment_elo": 3.66,
+      "away_form_adjustment_elo": -3.66,
       "true_xg_available": false,
       "home_stats": {
-        "Shots on Goal": 4,
+        "Shots on Goal": 5,
         "Shots off Goal": 4,
         "Total Shots": 12,
-        "Blocked Shots": 4,
+        "Blocked Shots": 3,
         "Shots insidebox": 9,
         "Shots outsidebox": 3,
-        "Fouls": 15,
-        "Corner Kicks": 5,
+        "Fouls": 16,
+        "Corner Kicks": 6,
         "Offsides": 0,
-        "Ball Possession": 54,
+        "Ball Possession": 51,
         "Yellow Cards": 2,
         "Red Cards": null,
-        "Goalkeeper Saves": 1,
-        "Total passes": 501,
-        "Passes accurate": 441,
-        "Passes %": 88,
-        "expected_goals": 1,
-        "goals_prevented": 0
-      },
-      "away_stats": {
-        "Shots on Goal": 2,
-        "Shots off Goal": 4,
-        "Total Shots": 12,
-        "Blocked Shots": 6,
-        "Shots insidebox": 6,
-        "Shots outsidebox": 6,
-        "Fouls": 14,
-        "Corner Kicks": 0,
-        "Offsides": 1,
-        "Ball Possession": 46,
-        "Yellow Cards": 0,
-        "Red Cards": null,
-        "Goalkeeper Saves": 3,
-        "Total passes": 432,
-        "Passes accurate": 375,
+        "Goalkeeper Saves": 2,
+        "Total passes": 514,
+        "Passes accurate": 449,
         "Passes %": 87,
         "expected_goals": 1,
         "goals_prevented": 0
       },
+      "away_stats": {
+        "Shots on Goal": 3,
+        "Shots off Goal": 5,
+        "Total Shots": 14,
+        "Blocked Shots": 6,
+        "Shots insidebox": 7,
+        "Shots outsidebox": 7,
+        "Fouls": 14,
+        "Corner Kicks": 2,
+        "Offsides": 1,
+        "Ball Possession": 49,
+        "Yellow Cards": 0,
+        "Red Cards": null,
+        "Goalkeeper Saves": 4,
+        "Total passes": 486,
+        "Passes accurate": 419,
+        "Passes %": 86,
+        "expected_goals": 1,
+        "goals_prevented": 0
+      },
       "fixture_id": "1489371",
-      "captured_at": "2026-06-15T04:21:28.053633+00:00"
+      "captured_at": "2026-06-15T12:17:32.216496+00:00"
     },
     {
       "match_id": 7,
@@ -359,7 +359,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489372",
-      "captured_at": "2026-06-15T04:21:28.171988+00:00"
+      "captured_at": "2026-06-15T12:17:32.339573+00:00"
     },
     {
       "match_id": 8,
@@ -410,7 +410,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1539001",
-      "captured_at": "2026-06-15T04:21:28.292455+00:00"
+      "captured_at": "2026-06-15T12:17:32.470067+00:00"
     },
     {
       "match_id": 9,
@@ -461,7 +461,7 @@
         "goals_prevented": -2
       },
       "fixture_id": "1489374",
-      "captured_at": "2026-06-15T04:21:28.409556+00:00"
+      "captured_at": "2026-06-15T12:17:32.594237+00:00"
     },
     {
       "match_id": 10,
@@ -512,58 +512,58 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489376",
-      "captured_at": "2026-06-15T04:21:28.525721+00:00"
+      "captured_at": "2026-06-15T12:17:32.714721+00:00"
     },
     {
       "match_id": 11,
       "status": "FT",
       "home": "Ivory Coast",
       "away": "Ecuador",
-      "home_form_adjustment_elo": 1.5,
-      "away_form_adjustment_elo": -1.5,
+      "home_form_adjustment_elo": 2.88,
+      "away_form_adjustment_elo": -2.88,
       "true_xg_available": false,
       "home_stats": {
-        "Shots on Goal": 1,
-        "Shots off Goal": 2,
-        "Total Shots": 6,
+        "Shots on Goal": 4,
+        "Shots off Goal": 8,
+        "Total Shots": 15,
         "Blocked Shots": 3,
-        "Shots insidebox": 3,
-        "Shots outsidebox": 3,
-        "Fouls": 8,
-        "Corner Kicks": 2,
+        "Shots insidebox": 8,
+        "Shots outsidebox": 7,
+        "Fouls": 10,
+        "Corner Kicks": 3,
         "Offsides": null,
-        "Ball Possession": 45,
+        "Ball Possession": 48,
         "Yellow Cards": 3,
         "Red Cards": null,
-        "Goalkeeper Saves": 0,
-        "Total passes": 233,
-        "Passes accurate": 193,
-        "Passes %": 83,
-        "expected_goals": 0,
+        "Goalkeeper Saves": 1,
+        "Total passes": 470,
+        "Passes accurate": 397,
+        "Passes %": 84,
+        "expected_goals": 1,
         "goals_prevented": 0
       },
       "away_stats": {
-        "Shots on Goal": 0,
-        "Shots off Goal": 6,
-        "Total Shots": 6,
-        "Blocked Shots": 0,
-        "Shots insidebox": 1,
-        "Shots outsidebox": 5,
-        "Fouls": 3,
-        "Corner Kicks": 0,
+        "Shots on Goal": 1,
+        "Shots off Goal": 8,
+        "Total Shots": 12,
+        "Blocked Shots": 3,
+        "Shots insidebox": 5,
+        "Shots outsidebox": 7,
+        "Fouls": 13,
+        "Corner Kicks": 5,
         "Offsides": null,
-        "Ball Possession": 55,
-        "Yellow Cards": 0,
+        "Ball Possession": 52,
+        "Yellow Cards": 1,
         "Red Cards": null,
-        "Goalkeeper Saves": 1,
-        "Total passes": 285,
-        "Passes accurate": 248,
-        "Passes %": 87,
-        "expected_goals": 0,
+        "Goalkeeper Saves": 3,
+        "Total passes": 492,
+        "Passes accurate": 419,
+        "Passes %": 85,
+        "expected_goals": 1,
         "goals_prevented": 0
       },
       "fixture_id": "1489375",
-      "captured_at": "2026-06-15T04:21:28.650489+00:00"
+      "captured_at": "2026-06-15T12:17:32.836252+00:00"
     },
     {
       "match_id": 12,
@@ -614,7 +614,7 @@
         "goals_prevented": -2
       },
       "fixture_id": "1539002",
-      "captured_at": "2026-06-15T04:21:28.772478+00:00"
+      "captured_at": "2026-06-15T12:17:32.960688+00:00"
     }
   ],
   "warnings": [],
