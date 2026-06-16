@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-15T23:05:04.911530+00:00",
+  "generated_at": "2026-06-16T04:13:26.001541+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 16,
+      "home": "Iran",
+      "away": "New Zealand",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 2682,
+          "name": "Alireza Beiranvand",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 2691,
+          "name": "Ramin Rezaeian",
+          "number": 23,
+          "pos": "D"
+        },
+        {
+          "id": 29704,
+          "name": "Shoja Khalilzadeh",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 29809,
+          "name": "Ali Nemati",
+          "number": 19,
+          "pos": "D"
+        },
+        {
+          "id": 2688,
+          "name": "Milad Mohammadi",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 134217,
+          "name": "Mohammad Mohebi",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 2699,
+          "name": "Saman Ghoddos",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 19614,
+          "name": "Saeid Ezatolahi",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 343405,
+          "name": "Aria Yousefi",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 89982,
+          "name": "Shahriar Moghanlou",
+          "number": 20,
+          "pos": "F"
+        },
+        {
+          "id": 42315,
+          "name": "Mehdi Taremi",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 18110,
+          "name": "Max Crocombe",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 94346,
+          "name": "Tim Payne",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 210165,
+          "name": "Finn Surman",
+          "number": 16,
+          "pos": "D"
+        },
+        {
+          "id": 51149,
+          "name": "Michael Boxall",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 6931,
+          "name": "Liberato Cacace",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 94541,
+          "name": "Joe Bell",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 179862,
+          "name": "Marko Stamenić",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 94322,
+          "name": "Callum McCowatt",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 6935,
+          "name": "Sarpreet Singh",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 94333,
+          "name": "Elijah Just",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 18931,
+          "name": "Chris Wood",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-16T04:13:26.001524+00:00"
+    }
+  ],
   "warnings": []
 }
