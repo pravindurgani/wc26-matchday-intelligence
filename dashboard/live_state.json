@@ -1,22 +1,11 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-16T03:07:51.441901+00:00",
-  "completed_matches_count": 15,
+  "last_updated_utc": "2026-06-16T03:17:23.067943+00:00",
+  "completed_matches_count": 16,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [
-    {
-      "m": 16,
-      "home": "Iran",
-      "away": "New Zealand",
-      "home_score": 2,
-      "away_score": 2,
-      "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
-    }
-  ],
-  "in_play_count": 1,
+  "in_play": [],
+  "in_play_count": 0,
   "warnings": []
 }
