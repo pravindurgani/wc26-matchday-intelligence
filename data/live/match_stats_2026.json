@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-16T20:54:32.730201+00:00",
+  "generated_at": "2026-06-16T22:54:39.210053+00:00",
   "schema_version": 1,
   "source": "api_football",
-  "n_completed": 16,
+  "n_completed": 17,
   "matches": [
     {
       "match_id": 1,
@@ -53,7 +53,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489369",
-      "captured_at": "2026-06-16T20:54:29.832949+00:00"
+      "captured_at": "2026-06-16T22:54:37.290548+00:00"
     },
     {
       "match_id": 2,
@@ -104,7 +104,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1538999",
-      "captured_at": "2026-06-16T20:54:30.032413+00:00"
+      "captured_at": "2026-06-16T22:54:37.404629+00:00"
     },
     {
       "match_id": 3,
@@ -155,7 +155,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1539000",
-      "captured_at": "2026-06-16T20:54:30.231056+00:00"
+      "captured_at": "2026-06-16T22:54:37.588975+00:00"
     },
     {
       "match_id": 4,
@@ -206,7 +206,7 @@
         "goals_prevented": -1
       },
       "fixture_id": "1489370",
-      "captured_at": "2026-06-16T20:54:30.422982+00:00"
+      "captured_at": "2026-06-16T22:54:37.733306+00:00"
     },
     {
       "match_id": 5,
@@ -257,7 +257,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489373",
-      "captured_at": "2026-06-16T20:54:30.629878+00:00"
+      "captured_at": "2026-06-16T22:54:37.839586+00:00"
     },
     {
       "match_id": 6,
@@ -308,7 +308,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489371",
-      "captured_at": "2026-06-16T20:54:30.820869+00:00"
+      "captured_at": "2026-06-16T22:54:37.951501+00:00"
     },
     {
       "match_id": 7,
@@ -359,7 +359,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489372",
-      "captured_at": "2026-06-16T20:54:31.013161+00:00"
+      "captured_at": "2026-06-16T22:54:38.051652+00:00"
     },
     {
       "match_id": 8,
@@ -410,7 +410,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1539001",
-      "captured_at": "2026-06-16T20:54:31.200529+00:00"
+      "captured_at": "2026-06-16T22:54:38.156527+00:00"
     },
     {
       "match_id": 9,
@@ -461,7 +461,7 @@
         "goals_prevented": -1
       },
       "fixture_id": "1489374",
-      "captured_at": "2026-06-16T20:54:31.389639+00:00"
+      "captured_at": "2026-06-16T22:54:38.264602+00:00"
     },
     {
       "match_id": 10,
@@ -512,7 +512,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489376",
-      "captured_at": "2026-06-16T20:54:31.583599+00:00"
+      "captured_at": "2026-06-16T22:54:38.392714+00:00"
     },
     {
       "match_id": 11,
@@ -563,7 +563,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489375",
-      "captured_at": "2026-06-16T20:54:31.768160+00:00"
+      "captured_at": "2026-06-16T22:54:38.505090+00:00"
     },
     {
       "match_id": 12,
@@ -614,7 +614,7 @@
         "goals_prevented": -2
       },
       "fixture_id": "1539002",
-      "captured_at": "2026-06-16T20:54:31.961792+00:00"
+      "captured_at": "2026-06-16T22:54:38.623140+00:00"
     },
     {
       "match_id": 13,
@@ -665,7 +665,7 @@
         "goals_prevented": 1
       },
       "fixture_id": "1489380",
-      "captured_at": "2026-06-16T20:54:32.151618+00:00"
+      "captured_at": "2026-06-16T22:54:38.731805+00:00"
     },
     {
       "match_id": 14,
@@ -716,7 +716,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489377",
-      "captured_at": "2026-06-16T20:54:32.353792+00:00"
+      "captured_at": "2026-06-16T22:54:38.851060+00:00"
     },
     {
       "match_id": 15,
@@ -767,7 +767,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489379",
-      "captured_at": "2026-06-16T20:54:32.544351+00:00"
+      "captured_at": "2026-06-16T22:54:38.963633+00:00"
     },
     {
       "match_id": 16,
@@ -818,7 +818,58 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489378",
-      "captured_at": "2026-06-16T20:54:32.730185+00:00"
+      "captured_at": "2026-06-16T22:54:39.075322+00:00"
+    },
+    {
+      "match_id": 17,
+      "status": "FT",
+      "home": "France",
+      "away": "Senegal",
+      "home_form_adjustment_elo": 8.04,
+      "away_form_adjustment_elo": -8.04,
+      "true_xg_available": false,
+      "home_stats": {
+        "Shots on Goal": 8,
+        "Shots off Goal": 1,
+        "Total Shots": 11,
+        "Blocked Shots": 2,
+        "Shots insidebox": 7,
+        "Shots outsidebox": 4,
+        "Fouls": 5,
+        "Corner Kicks": 6,
+        "Offsides": 1,
+        "Ball Possession": 54,
+        "Yellow Cards": null,
+        "Red Cards": null,
+        "Goalkeeper Saves": 2,
+        "Total passes": 576,
+        "Passes accurate": 505,
+        "Passes %": 88,
+        "expected_goals": 1,
+        "goals_prevented": -1
+      },
+      "away_stats": {
+        "Shots on Goal": 2,
+        "Shots off Goal": 3,
+        "Total Shots": 6,
+        "Blocked Shots": 1,
+        "Shots insidebox": 4,
+        "Shots outsidebox": 2,
+        "Fouls": 9,
+        "Corner Kicks": 4,
+        "Offsides": 3,
+        "Ball Possession": 46,
+        "Yellow Cards": null,
+        "Red Cards": null,
+        "Goalkeeper Saves": 5,
+        "Total passes": 497,
+        "Passes accurate": 427,
+        "Passes %": 86,
+        "expected_goals": 0,
+        "goals_prevented": -1
+      },
+      "fixture_id": "1489383",
+      "captured_at": "2026-06-16T22:54:39.210038+00:00"
     }
   ],
   "warnings": [],
