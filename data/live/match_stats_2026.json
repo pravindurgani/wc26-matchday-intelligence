@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-16T04:13:28.773492+00:00",
+  "generated_at": "2026-06-16T11:13:56.265679+00:00",
   "schema_version": 1,
   "source": "api_football",
   "n_completed": 16,
@@ -53,7 +53,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489369",
-      "captured_at": "2026-06-16T04:13:26.267561+00:00"
+      "captured_at": "2026-06-16T11:13:53.713169+00:00"
     },
     {
       "match_id": 2,
@@ -104,7 +104,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1538999",
-      "captured_at": "2026-06-16T04:13:26.428494+00:00"
+      "captured_at": "2026-06-16T11:13:53.884265+00:00"
     },
     {
       "match_id": 3,
@@ -155,7 +155,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1539000",
-      "captured_at": "2026-06-16T04:13:26.593574+00:00"
+      "captured_at": "2026-06-16T11:13:54.054953+00:00"
     },
     {
       "match_id": 4,
@@ -206,7 +206,7 @@
         "goals_prevented": -1
       },
       "fixture_id": "1489370",
-      "captured_at": "2026-06-16T04:13:26.753730+00:00"
+      "captured_at": "2026-06-16T11:13:54.226848+00:00"
     },
     {
       "match_id": 5,
@@ -257,7 +257,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489373",
-      "captured_at": "2026-06-16T04:13:26.918384+00:00"
+      "captured_at": "2026-06-16T11:13:54.399664+00:00"
     },
     {
       "match_id": 6,
@@ -308,7 +308,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489371",
-      "captured_at": "2026-06-16T04:13:27.089161+00:00"
+      "captured_at": "2026-06-16T11:13:54.565349+00:00"
     },
     {
       "match_id": 7,
@@ -352,14 +352,14 @@
         "Yellow Cards": 3,
         "Red Cards": null,
         "Goalkeeper Saves": 2,
-        "Total passes": 373,
-        "Passes accurate": 306,
+        "Total passes": 374,
+        "Passes accurate": 307,
         "Passes %": 82,
         "expected_goals": 1,
         "goals_prevented": 0
       },
       "fixture_id": "1489372",
-      "captured_at": "2026-06-16T04:13:27.254504+00:00"
+      "captured_at": "2026-06-16T11:13:54.735821+00:00"
     },
     {
       "match_id": 8,
@@ -383,10 +383,10 @@
         "Yellow Cards": 0,
         "Red Cards": null,
         "Goalkeeper Saves": 8,
-        "Total passes": 270,
-        "Passes accurate": 202,
-        "Passes %": 75,
-        "expected_goals": 0,
+        "Total passes": 271,
+        "Passes accurate": 201,
+        "Passes %": 74,
+        "expected_goals": 1,
         "goals_prevented": 0
       },
       "away_stats": {
@@ -403,14 +403,14 @@
         "Yellow Cards": 1,
         "Red Cards": null,
         "Goalkeeper Saves": 2,
-        "Total passes": 707,
-        "Passes accurate": 638,
+        "Total passes": 704,
+        "Passes accurate": 635,
         "Passes %": 90,
         "expected_goals": 1,
         "goals_prevented": 0
       },
       "fixture_id": "1539001",
-      "captured_at": "2026-06-16T04:13:27.421264+00:00"
+      "captured_at": "2026-06-16T11:13:54.910719+00:00"
     },
     {
       "match_id": 9,
@@ -422,10 +422,10 @@
       "true_xg_available": false,
       "home_stats": {
         "Shots on Goal": 12,
-        "Shots off Goal": 7,
-        "Total Shots": 27,
+        "Shots off Goal": 6,
+        "Total Shots": 26,
         "Blocked Shots": 8,
-        "Shots insidebox": 22,
+        "Shots insidebox": 21,
         "Shots outsidebox": 5,
         "Fouls": 18,
         "Corner Kicks": 8,
@@ -434,11 +434,11 @@
         "Yellow Cards": null,
         "Red Cards": null,
         "Goalkeeper Saves": 1,
-        "Total passes": 633,
-        "Passes accurate": 550,
+        "Total passes": 637,
+        "Passes accurate": 554,
         "Passes %": 87,
-        "expected_goals": 3,
-        "goals_prevented": -2
+        "expected_goals": 4,
+        "goals_prevented": -1
       },
       "away_stats": {
         "Shots on Goal": 2,
@@ -454,14 +454,14 @@
         "Yellow Cards": null,
         "Red Cards": null,
         "Goalkeeper Saves": 4,
-        "Total passes": 336,
-        "Passes accurate": 276,
+        "Total passes": 343,
+        "Passes accurate": 282,
         "Passes %": 82,
         "expected_goals": 0,
-        "goals_prevented": -2
+        "goals_prevented": -1
       },
       "fixture_id": "1489374",
-      "captured_at": "2026-06-16T04:13:27.582499+00:00"
+      "captured_at": "2026-06-16T11:13:55.076031+00:00"
     },
     {
       "match_id": 10,
@@ -485,8 +485,8 @@
         "Yellow Cards": 3,
         "Red Cards": null,
         "Goalkeeper Saves": 1,
-        "Total passes": 525,
-        "Passes accurate": 464,
+        "Total passes": 524,
+        "Passes accurate": 463,
         "Passes %": 88,
         "expected_goals": 0,
         "goals_prevented": 0
@@ -505,14 +505,14 @@
         "Yellow Cards": 0,
         "Red Cards": null,
         "Goalkeeper Saves": 4,
-        "Total passes": 342,
-        "Passes accurate": 287,
+        "Total passes": 341,
+        "Passes accurate": 286,
         "Passes %": 84,
         "expected_goals": 0,
         "goals_prevented": 0
       },
       "fixture_id": "1489376",
-      "captured_at": "2026-06-16T04:13:27.748105+00:00"
+      "captured_at": "2026-06-16T11:13:55.247149+00:00"
     },
     {
       "match_id": 11,
@@ -563,7 +563,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489375",
-      "captured_at": "2026-06-16T04:13:27.950963+00:00"
+      "captured_at": "2026-06-16T11:13:55.420854+00:00"
     },
     {
       "match_id": 12,
@@ -614,7 +614,7 @@
         "goals_prevented": -2
       },
       "fixture_id": "1539002",
-      "captured_at": "2026-06-16T04:13:28.115500+00:00"
+      "captured_at": "2026-06-16T11:13:55.587275+00:00"
     },
     {
       "match_id": 13,
@@ -665,7 +665,7 @@
         "goals_prevented": 1
       },
       "fixture_id": "1489380",
-      "captured_at": "2026-06-16T04:13:28.279680+00:00"
+      "captured_at": "2026-06-16T11:13:55.759018+00:00"
     },
     {
       "match_id": 14,
@@ -716,15 +716,15 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489377",
-      "captured_at": "2026-06-16T04:13:28.447721+00:00"
+      "captured_at": "2026-06-16T11:13:55.926593+00:00"
     },
     {
       "match_id": 15,
       "status": "FT",
       "home": "Saudi Arabia",
       "away": "Uruguay",
-      "home_form_adjustment_elo": -9.9,
-      "away_form_adjustment_elo": 9.9,
+      "home_form_adjustment_elo": -12.0,
+      "away_form_adjustment_elo": 12.0,
       "true_xg_available": false,
       "home_stats": {
         "Shots on Goal": 3,
@@ -736,38 +736,38 @@
         "Fouls": 11,
         "Corner Kicks": 4,
         "Offsides": 0,
-        "Ball Possession": 35,
+        "Ball Possession": 33,
         "Yellow Cards": 1,
         "Red Cards": null,
-        "Goalkeeper Saves": 8,
-        "Total passes": 316,
-        "Passes accurate": 232,
+        "Goalkeeper Saves": 9,
+        "Total passes": 322,
+        "Passes accurate": 236,
         "Passes %": 73,
         "expected_goals": 0,
         "goals_prevented": 0
       },
       "away_stats": {
-        "Shots on Goal": 9,
+        "Shots on Goal": 10,
         "Shots off Goal": 10,
-        "Total Shots": 24,
-        "Blocked Shots": 5,
-        "Shots insidebox": 15,
-        "Shots outsidebox": 9,
+        "Total Shots": 27,
+        "Blocked Shots": 7,
+        "Shots insidebox": 16,
+        "Shots outsidebox": 11,
         "Fouls": 6,
-        "Corner Kicks": 10,
+        "Corner Kicks": 14,
         "Offsides": 6,
-        "Ball Possession": 65,
+        "Ball Possession": 67,
         "Yellow Cards": 0,
         "Red Cards": null,
         "Goalkeeper Saves": 2,
-        "Total passes": 571,
-        "Passes accurate": 502,
+        "Total passes": 612,
+        "Passes accurate": 540,
         "Passes %": 88,
         "expected_goals": 1,
         "goals_prevented": 0
       },
       "fixture_id": "1489379",
-      "captured_at": "2026-06-16T04:13:28.607362+00:00"
+      "captured_at": "2026-06-16T11:13:56.095932+00:00"
     },
     {
       "match_id": 16,
@@ -818,7 +818,7 @@
         "goals_prevented": 0
       },
       "fixture_id": "1489378",
-      "captured_at": "2026-06-16T04:13:28.773475+00:00"
+      "captured_at": "2026-06-16T11:13:56.265665+00:00"
     }
   ],
   "warnings": [],
