@@ -218,12 +218,12 @@ fifa-wc-26-prediction/
 
 | # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |
 |---|---|---|---|---|---|
-| 1 | Spain      | 25.5% | [24.8, 26.4] | 50.1% | 2209 |
-| 2 | Argentina  | 18.7% | [18.4, 19.0] | 43.6% | 2174 |
-| 3 | France     | 9.1% | [8.4, 10.0] | 29.3% | 2116 |
-| 4 | England    | 6.6% | [6.4, 6.8] | 23.3% | 2081 |
-| 5 | Brazil     | 5.4% | [5.1, 5.9] | 22.1% | 2054 |
-| 6 | Colombia   | 4.7% | [4.5, 4.9] | 18.1% | 2049 |
+| 1 | Spain      | 26.4% | [25.8, 26.8] | 51.7% | 2209 |
+| 2 | Argentina  | 18.5% | [17.8, 18.9] | 43.7% | 2174 |
+| 3 | France     | 8.8% | [8.3, 9.2] | 28.4% | 2116 |
+| 4 | England    | 6.7% | [6.4, 7.0] | 22.8% | 2081 |
+| 5 | Brazil     | 5.1% | [4.8, 5.5] | 21.6% | 2054 |
+| 6 | Colombia   | 4.8% | [4.5, 5.2] | 18.3% | 2049 |
 <!-- AUTO:TOP_CONTENDERS:END -->
 
 > "Model Elo" is the in-repo Elo (modified Glicko base + extra friendlies +
