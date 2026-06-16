@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-06-16T01:01:37.391131+00:00",
+  "updated_at": "2026-06-16T01:11:42.260759+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -18,7 +18,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390466+00:00",
+      "updated_at": "2026-06-16T01:11:42.260131+00:00",
       "raw_status": "FT"
     },
     {
@@ -36,7 +36,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390491+00:00",
+      "updated_at": "2026-06-16T01:11:42.260139+00:00",
       "raw_status": "FT"
     },
     {
@@ -54,7 +54,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390499+00:00",
+      "updated_at": "2026-06-16T01:11:42.260145+00:00",
       "raw_status": "FT"
     },
     {
@@ -72,7 +72,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390504+00:00",
+      "updated_at": "2026-06-16T01:11:42.260150+00:00",
       "raw_status": "FT"
     },
     {
@@ -90,7 +90,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390509+00:00",
+      "updated_at": "2026-06-16T01:11:42.260155+00:00",
       "raw_status": "FT"
     },
     {
@@ -108,7 +108,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390514+00:00",
+      "updated_at": "2026-06-16T01:11:42.260162+00:00",
       "raw_status": "FT"
     },
     {
@@ -126,7 +126,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390522+00:00",
+      "updated_at": "2026-06-16T01:11:42.260166+00:00",
       "raw_status": "FT"
     },
     {
@@ -144,7 +144,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390528+00:00",
+      "updated_at": "2026-06-16T01:11:42.260171+00:00",
       "raw_status": "FT"
     },
     {
@@ -162,7 +162,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390533+00:00",
+      "updated_at": "2026-06-16T01:11:42.260177+00:00",
       "raw_status": "FT"
     },
     {
@@ -180,7 +180,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390540+00:00",
+      "updated_at": "2026-06-16T01:11:42.260183+00:00",
       "raw_status": "FT"
     },
     {
@@ -198,7 +198,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390545+00:00",
+      "updated_at": "2026-06-16T01:11:42.260188+00:00",
       "raw_status": "FT"
     },
     {
@@ -216,7 +216,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390549+00:00",
+      "updated_at": "2026-06-16T01:11:42.260193+00:00",
       "raw_status": "FT"
     },
     {
@@ -234,7 +234,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390554+00:00",
+      "updated_at": "2026-06-16T01:11:42.260198+00:00",
       "raw_status": "FT"
     },
     {
@@ -252,7 +252,7 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390559+00:00",
+      "updated_at": "2026-06-16T01:11:42.260202+00:00",
       "raw_status": "FT"
     },
     {
@@ -270,10 +270,21 @@
       "status_long": "Match Finished",
       "elapsed": 90,
       "source": "api_football",
-      "updated_at": "2026-06-16T01:01:37.390563+00:00",
+      "updated_at": "2026-06-16T01:11:42.260206+00:00",
       "raw_status": "FT"
     }
   ],
-  "in_play": [],
+  "in_play": [
+    {
+      "m": 16,
+      "home": "Iran",
+      "away": "New Zealand",
+      "home_score": 0,
+      "away_score": 1,
+      "elapsed": 8,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
   "warnings": []
 }
