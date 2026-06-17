@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-17T20:14:36.584160+00:00",
+  "generated_at": "2026-06-17T22:48:06.981823+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 22,
-      "home": "England",
-      "away": "Croatia",
+      "match_id": 23,
+      "home": "Ghana",
+      "away": "Panama",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 2932,
-          "name": "Jordan Pickford",
+          "id": 3412,
+          "name": "Lawrence Ati Zigi",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 19545,
-          "name": "Reece James",
-          "number": 24,
+          "id": 191240,
+          "name": "Marvin Senaya",
+          "number": 26,
           "pos": "D"
         },
         {
-          "id": 19354,
-          "name": "Ezri Konsa",
-          "number": 2,
-          "pos": "D"
-        },
-        {
-          "id": 626,
-          "name": "John Stones",
-          "number": 5,
-          "pos": "D"
-        },
-        {
-          "id": 307123,
-          "name": "Nico O'Reilly",
-          "number": 3,
-          "pos": "D"
-        },
-        {
-          "id": 138908,
-          "name": "Elliot Anderson",
-          "number": 8,
-          "pos": "M"
-        },
-        {
-          "id": 2937,
-          "name": "Declan Rice",
+          "id": 369425,
+          "name": "Jonas Adjei Adjetey",
           "number": 4,
-          "pos": "M"
+          "pos": "D"
         },
         {
-          "id": 136723,
-          "name": "Noni Madueke",
-          "number": 20,
-          "pos": "M"
-        },
-        {
-          "id": 129718,
-          "name": "Jude Bellingham",
-          "number": 10,
-          "pos": "M"
-        },
-        {
-          "id": 138787,
-          "name": "Anthony Gordon",
+          "id": 137223,
+          "name": "Jerome Opoku",
           "number": 18,
+          "pos": "D"
+        },
+        {
+          "id": 7578,
+          "name": "Gideon Mensah",
+          "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 19281,
+          "name": "Antoine Semenyo",
+          "number": 11,
           "pos": "M"
         },
         {
-          "id": 184,
-          "name": "Harry Kane",
+          "id": 21010,
+          "name": "Elisha Owusu",
+          "number": 15,
+          "pos": "M"
+        },
+        {
+          "id": 475575,
+          "name": "Caleb Yirenkyi",
+          "number": 3,
+          "pos": "M"
+        },
+        {
+          "id": 350856,
+          "name": "Ernest Nuamah",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 199837,
+          "name": "Kamaldeen Sulemana",
+          "number": 22,
+          "pos": "F"
+        },
+        {
+          "id": 3428,
+          "name": "Jordan Ayew",
           "number": 9,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 1305,
-          "name": "Dominik Livaković",
-          "number": 1,
+          "id": 2968,
+          "name": "Orlando Mosquera",
+          "number": 22,
           "pos": "G"
         },
         {
-          "id": 14701,
-          "name": "Josip Šutalo",
-          "number": 6,
-          "pos": "D"
-        },
-        {
-          "id": 387521,
-          "name": "Luka Vušković",
-          "number": 22,
-          "pos": "D"
-        },
-        {
-          "id": 129033,
-          "name": "Joško Gvardiol",
-          "number": 4,
-          "pos": "D"
-        },
-        {
-          "id": 125171,
-          "name": "Josip Stanišić",
+          "id": 2975,
+          "name": "César Blackman",
           "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 57667,
+          "name": "Jiovany Ramos",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 57739,
+          "name": "José Córdoba",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 7197,
+          "name": "Andrés Andrade",
+          "number": 16,
+          "pos": "D"
+        },
+        {
+          "id": 2973,
+          "name": "Amir Murillo",
+          "number": 23,
           "pos": "M"
         },
         {
-          "id": 754,
-          "name": "Luka Modrić",
-          "number": 10,
-          "pos": "M"
-        },
-        {
-          "id": 348205,
-          "name": "Petar Sučić",
-          "number": 17,
-          "pos": "M"
-        },
-        {
-          "id": 207,
-          "name": "Ivan Perišić",
+          "id": 71230,
+          "name": "Carlos Harvey",
           "number": 14,
           "pos": "M"
         },
         {
-          "id": 2763,
-          "name": "Mario Pašalić",
-          "number": 15,
+          "id": 50911,
+          "name": "Cristian Martínez",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 2979,
+          "name": "José Luis Rodríguez",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 46855,
+          "name": "Yoel Bárcenas",
+          "number": 11,
           "pos": "F"
         },
         {
-          "id": 295026,
-          "name": "Martin Baturina",
-          "number": 16,
-          "pos": "F"
-        },
-        {
-          "id": 66055,
-          "name": "Petar Musa",
-          "number": 26,
+          "id": 51648,
+          "name": "Cecilio Waterman",
+          "number": 18,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-17T20:14:36.466230+00:00"
+      "captured_at": "2026-06-17T22:48:06.751845+00:00"
     }
   ],
   "warnings": []
