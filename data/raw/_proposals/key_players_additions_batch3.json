@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "wave": "A3",
+    "generated_at": "2026-06-16",
+    "source": "manual_curation_conservative",
+    "tier_to_elo_used": {
+      "tier_1_star": -30.0,
+      "tier_1_keeper": -25.0,
+      "tier_2_starter": -12.0,
+      "tier_3_squad": -4.0
+    },
+    "replacement_formula": "TIER_TO_ELO[replacement_tier] * 0.8 → tier_2_starter=-9.6, tier_3_squad=-3.2",
+    "top20_by_squad_value_rule": "None of Iran/Iraq/Jordan/Uzbekistan/Qatar are in the top 20 by squad value (rankings: Iran #43, Uzbekistan #36, Iraq #45, Jordan #47, Qatar #46) — therefore NO tier_1_keeper entries proposed for any of these five teams.",
+    "notes": "Asian Confederation teams; conservative tiering per Wave A3 instructions. Replacement names left as 'Unknown' unless a clear second-choice exists in confirmed national-team rotation."
+  },
+  "Iran": [
+    {"team": "Iran", "name": "Mehdi Taremi", "name_normalized": "mehdi taremi", "last_name_normalized": "taremi", "tier": "tier_1_star", "reason": "Inter Milan striker; Iran's primary attacking outlet; long-running top scorer alongside Azmoun",
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}},
+    {"team": "Iran", "name": "Sardar Azmoun", "name_normalized": "sardar azmoun", "last_name_normalized": "azmoun", "tier": "tier_1_star", "reason": "Shabab Al-Ahli (ex-Bayer Leverkusen / Roma); co-talisman striker; Iran's joint all-time top scorer",
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ],
+  "Iraq": [
+    {"team": "Iraq", "name": "Ali Al-Hamadi", "name_normalized": "ali al-hamadi", "last_name_normalized": "al-hamadi", "tier": "tier_1_star", "reason": "Ipswich Town (EFL Championship); Iraq's primary striker; only Iraq player at a top-flight European club at time of writing",
+     "aliases": ["Ali Jasim Al-Hamadi", "A. Al-Hamadi"],
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ],
+  "Jordan": [
+    {"team": "Jordan", "name": "Mousa Al-Tamari", "name_normalized": "mousa al-tamari", "last_name_normalized": "al-tamari", "tier": "tier_1_star", "reason": "Rennes (Ligue 1); Jordan's chief creator and headline international; star of 2024 Asian Cup runner-up run",
+     "aliases": ["Musa Al-Taamari", "Mousa Al-Taamari", "M. Al-Tamari"],
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ],
+  "Uzbekistan": [
+    {"team": "Uzbekistan", "name": "Eldor Shomurodov", "name_normalized": "eldor shomurodov", "last_name_normalized": "shomurodov", "tier": "tier_2_starter", "reason": "Roma / Istanbul Başakşehir (Serie A loan); Uzbekistan's primary striker and captain",
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}},
+    {"team": "Uzbekistan", "name": "Abdukodir Khusanov", "name_normalized": "abdukodir khusanov", "last_name_normalized": "khusanov", "tier": "tier_1_star", "reason": "Manchester City (signed Jan 2025); primary centre-back; first Uzbek at a top-5-league title contender",
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ],
+  "Qatar": [
+    {"team": "Qatar", "name": "Akram Afif", "name_normalized": "akram afif", "last_name_normalized": "afif", "tier": "tier_1_star", "reason": "Al-Sadd (QSL); 2024 AFC Asian Cup Player of the Tournament and top scorer; Qatar's chief creator and talisman",
+     "aliases": ["Akram Hassan Afif", "A. Afif"],
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ]
+}

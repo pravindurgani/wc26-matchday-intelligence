@@ -1,0 +1,116 @@
+{
+  "captured": "2026-06-16",
+  "hash": "049bde6d161fea4a",
+  "shape_tree": {
+    "_comment": "str",
+    "errors": "list<empty>",
+    "get": "str",
+    "paging": {
+      "current": "int",
+      "total": "int"
+    },
+    "parameters": {
+      "page": "str",
+      "season": "str",
+      "team": "str"
+    },
+    "response": [
+      {
+        "player": {
+          "age": "int",
+          "birth": {
+            "country": "str",
+            "date": "str",
+            "place": "str"
+          },
+          "firstname": "str",
+          "height": "str",
+          "id": "int",
+          "injured": "bool",
+          "lastname": "str",
+          "name": "str",
+          "nationality": "str",
+          "photo": "str",
+          "weight": "str"
+        },
+        "statistics": [
+          {
+            "cards": {
+              "red": "int",
+              "yellow": "int",
+              "yellowred": "int"
+            },
+            "dribbles": {
+              "attempts": "int",
+              "past": "null",
+              "success": "int"
+            },
+            "duels": {
+              "total": "int",
+              "won": "int"
+            },
+            "fouls": {
+              "committed": "int",
+              "drawn": "int"
+            },
+            "games": {
+              "appearences": "int",
+              "captain": "bool",
+              "lineups": "int",
+              "minutes": "int",
+              "number": "int",
+              "position": "str",
+              "rating": "str"
+            },
+            "goals": {
+              "assists": "int",
+              "conceded": "int",
+              "saves": "null",
+              "total": "int"
+            },
+            "league": {
+              "country": "str",
+              "flag": "null",
+              "id": "int",
+              "logo": "str",
+              "name": "str",
+              "season": "int"
+            },
+            "passes": {
+              "accuracy": "int",
+              "key": "int",
+              "total": "int"
+            },
+            "penalty": {
+              "commited": "int",
+              "missed": "int",
+              "saved": "null",
+              "scored": "int",
+              "won": "int"
+            },
+            "shots": {
+              "on": "int",
+              "total": "int"
+            },
+            "substitutes": {
+              "bench": "int",
+              "in": "int",
+              "out": "int"
+            },
+            "tackles": {
+              "blocks": "null",
+              "interceptions": "int",
+              "total": "int"
+            },
+            "team": {
+              "id": "int",
+              "logo": "str",
+              "name": "str"
+            }
+          }
+        ]
+      }
+    ],
+    "results": "int"
+  }
+}

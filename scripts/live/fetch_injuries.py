@@ -57,9 +57,17 @@ OUT_PATH = LIVE / "injuries_2026.json"
 
 APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 
+# Schema-drift watchdog: compares fresh /injuries responses to the captured
+# baseline under data/live/_provider_schemas/. Soft-mode by default — drift
+# logs a WARNING, does NOT crash the tick.
+from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+_SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from injury_adjustments import (  # noqa: E402
-    classify_api_type, classify_tier, discounted_elo, DEFAULT_TIER,
+    AUTO_TIER_ACTIVE, classify_api_type, classify_tier,
+    classify_tier_with_overrides, classify_tier_with_replacement,
+    discounted_elo, net_injury_elo, normalize_player_name, DEFAULT_TIER,
 )
 
 # Reuse the same canonical-name aliases as the results fetcher so a single
@@ -128,6 +136,11 @@ def fetch_apifootball_injuries(api_key: str) -> tuple[list[dict], list[dict]]:
     print(f"[fetch_injuries] GET {url}")
     try:
         payload = _http_get_json(url, headers)
+        # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+        # never raises. Lets the injuries feed keep flowing while flagging the
+        # operator that the provider changed something.
+        assert_shape(payload,
+                     _SCHEMA_BASELINE_DIR / "apifootball_injuries.shape.json")
     except urllib.error.HTTPError as e:
         body = ""
         try:
@@ -167,16 +180,59 @@ def fetch_apifootball_injuries(api_key: str) -> tuple[list[dict], list[dict]]:
     return response, []
 
 
-def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, list[dict]]:
+def _load_player_stats_snapshot() -> dict:
+    """Best-effort load of data/live/player_stats_2026.json.
+
+    Missing or malformed → empty dict (auto_tier degrades to auto_no_data
+    per-player; the override layer keeps doing its job).
+    """
+    path = LIVE / "player_stats_2026.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text())
+    except Exception:
+        return {}
+
+
+def normalise_records(records: list[dict], wc_teams: set[str],
+                       player_stats_snap: dict | None = None,
+                       auto_tier_active: bool = AUTO_TIER_ACTIVE,
+                       ) -> tuple[dict, list[dict]]:
     """Group API records → {team: {total_elo_adjustment, players}}.
 
     Returns (teams_dict, warnings).
     """
+    # Fix #2 (Wave-B R4): empty/None wc_teams previously bypassed the
+    # whitelist filter (`if wc_teams and team not in wc_teams`) and admitted
+    # every team. A misconfigured _wc_teams_set() returning set() then let
+    # qualifier carry-over records leak through with full Elo penalties.
+    # Fail-closed: an empty whitelist is a configuration error, not a
+    # signal to admit everyone.
+    if not wc_teams:
+        raise ValueError(
+            "normalise_records requires a non-empty wc_teams set "
+            "(empty/None would silently admit every team)"
+        )
     warnings: list[dict] = []
     teams: dict[str, dict] = {}
     skipped_non_wc = 0
     skipped_bad = 0
+    case_mismatch_cases: list[dict] = []
+    duplicate_cases: list[dict] = []
     ambiguous_cases: list[dict] = []
+    stats_teams = (player_stats_snap or {}).get("teams") or {}
+    # Fix #3 (Wave-B R4): build a case-folded view of the canonical set so
+    # we can detect provider casing drift ('france' vs 'France') and surface
+    # a dedicated `case_mismatch` warning instead of silently dropping the
+    # record as non-WC.
+    wc_teams_cf = {t.casefold(): t for t in wc_teams}
+    # Fix #4 (Wave-B R4): dedup duplicate (team, normalised-player) rows so
+    # a provider double-emission (or fixture-scoped + season-scoped pair)
+    # doesn't stack penalties (e.g. -30 + -15 = -45 for Mbappé). Keep the
+    # FIRST occurrence — sufficient for the per-snapshot horizon — and
+    # surface a `duplicate_record` warning for operator visibility.
+    seen: set[tuple[str, str]] = set()
     for rec in records:
         team_raw = (rec.get("team") or {}).get("name", "")
         team = normalize_team(team_raw)
@@ -185,13 +241,46 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
             continue
         # Filter to WC2026 teams only — the league=1 endpoint sometimes returns
         # records for teams not in the active tournament (qualifier carry-over).
-        if wc_teams and team not in wc_teams:
+        if team not in wc_teams:
+            # Fix #3: case-mismatch detection — if the case-folded form
+            # matches a canonical team, surface a warning instead of
+            # silently dropping. The record is still skipped (we don't
+            # auto-canonicalise here; the operator should fix the upstream
+            # alias map so the canonical form arrives intact).
+            canonical_match = wc_teams_cf.get(team.casefold())
+            if canonical_match:
+                case_mismatch_cases.append({
+                    "input": team,
+                    "canonical": canonical_match,
+                })
+                continue
             skipped_non_wc += 1
             continue
-        player_block = rec.get("player") or {}
+        # Fix #1 (Wave-B R4): a record with NO `player` key previously
+        # coerced into a fake 'Unknown' player at DEFAULT_TIER (-12 Elo).
+        # Drop these records and surface a skipped_bad_record warning;
+        # the canonical fields (name/type) are required to emit any
+        # tier-driven penalty at all.
+        player_block_raw = rec.get("player")
+        if not isinstance(player_block_raw, dict) or not player_block_raw:
+            skipped_bad += 1
+            continue
+        player_block = player_block_raw
         name = player_block.get("name") or "Unknown"
         ptype = player_block.get("type")
         reason = player_block.get("reason")
+        # Fix #4: dedup on (team, normalised player name). Skip the rest
+        # of this iteration if we've already booked a penalty for this
+        # player in this snapshot.
+        dedup_key = (team, normalize_player_name(name))
+        if dedup_key in seen:
+            duplicate_cases.append({
+                "team": team,
+                "input": name,
+                "fixture_id": (rec.get("fixture") or {}).get("id"),
+            })
+            continue
+        seen.add(dedup_key)
         status = classify_api_type(ptype)
         # v2: cross-reference the player + team against the hand-curated
         # whitelist at data/raw/key_players_2026.json. Headline names get
@@ -199,10 +288,36 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
         # through to DEFAULT_TIER (= tier_2_starter), matching v1 behaviour.
         # The `auto_tier_source` audit field records which path produced
         # the tier so post-hoc reviews can spot mismatches.
-        tier, tier_source = classify_tier(name, team)
+        tier, tier_source, replacement_elo = classify_tier_with_replacement(
+            name, team
+        )
+        # Phase 6 (shadow): also compute the priority-chain answer to
+        # surface the auto-tier suggestion + components per player. When
+        # auto_tier_active is False the override / DEFAULT_TIER still
+        # drives `tier` above; the auto suggestion is informational only.
+        team_stats_payload = stats_teams.get(team)
+        chain_tier, chain_source, chain_components = classify_tier_with_overrides(
+            name, team,
+            player_stats_payload=team_stats_payload,
+            auto_tier_active=auto_tier_active,
+        )
+        if auto_tier_active:
+            tier = chain_tier
+            tier_source = chain_source
+            # Override path keeps the replacement_elo computed above (the
+            # whitelist entry carries an explicit replacement block).
+            # Any auto_* source has NO replacement data, so net_injury_elo
+            # must collapse to raw elo — force replacement_elo to None.
+            if chain_source.startswith("auto_"):
+                replacement_elo = None
         elo = discounted_elo(tier, status)
+        net_elo = net_injury_elo(elo, replacement_elo)
         fixture_id = (rec.get("fixture") or {}).get("id")
-        teams.setdefault(team, {"total_elo_adjustment": 0.0, "players": []})
+        teams.setdefault(team, {
+            "total_elo_adjustment": 0.0,
+            "total_net_elo_adjustment": 0.0,
+            "players": [],
+        })
         teams[team]["players"].append({
             "name": name,
             "tier": tier,
@@ -210,10 +325,18 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
             "status": status,
             "reason": reason,
             "elo": round(elo, 3),
+            "replacement_elo": (round(replacement_elo, 3)
+                                if replacement_elo is not None else None),
+            "net_elo": round(net_elo, 3),
             "fixture_id": fixture_id,
+            "auto_tier_suggestion": chain_components.get("auto_tier"),
+            "auto_tier_components": chain_components.get("auto_components"),
         })
         teams[team]["total_elo_adjustment"] = round(
             teams[team]["total_elo_adjustment"] + elo, 3
+        )
+        teams[team]["total_net_elo_adjustment"] = round(
+            teams[team]["total_net_elo_adjustment"] + net_elo, 3
         )
         # Surface every ambiguity — the operator can disambiguate via the
         # manual overlay (team_adjustments.json). Without this, an
@@ -233,7 +356,50 @@ def normalise_records(records: list[dict], wc_teams: set[str]) -> tuple[dict, li
         warnings.append({
             "type": "skipped_bad_record",
             "count": skipped_bad,
-            "message": f"Skipped {skipped_bad} records missing team name",
+            "message": (
+                f"Skipped {skipped_bad} records missing team name or "
+                f"player block"
+            ),
+        })
+    if case_mismatch_cases:
+        # Fix #3 (Wave-B R4): a record arrived with the right team in the
+        # wrong case (e.g. 'france' vs 'France'). Surface as a discrete
+        # warning so the operator can fix the upstream alias map; the
+        # record is dropped (not auto-canonicalised) because casing drift
+        # frequently signals a separate provider feed with its own quirks
+        # that warrant explicit triage.
+        samples = ", ".join(
+            f"{c['input']!r}→{c['canonical']!r}"
+            for c in case_mismatch_cases[:3]
+        )
+        more = (f" (+{len(case_mismatch_cases) - 3} more)"
+                if len(case_mismatch_cases) > 3 else "")
+        warnings.append({
+            "type": "team_case_mismatch",
+            "count": len(case_mismatch_cases),
+            "cases": case_mismatch_cases,
+            "message": (
+                f"{len(case_mismatch_cases)} record(s) had a case-mismatched "
+                f"team name and were dropped: {samples}{more}"
+            ),
+        })
+    if duplicate_cases:
+        # Fix #4 (Wave-B R4): provider double-emission stacked penalties
+        # (-30 + -15 = -45 for Mbappé). Now the first occurrence wins and
+        # we surface the dropped duplicates here.
+        samples = ", ".join(
+            f"{c['team']}/{c['input']!r}" for c in duplicate_cases[:3]
+        )
+        more = (f" (+{len(duplicate_cases) - 3} more)"
+                if len(duplicate_cases) > 3 else "")
+        warnings.append({
+            "type": "duplicate_record",
+            "count": len(duplicate_cases),
+            "cases": duplicate_cases,
+            "message": (
+                f"{len(duplicate_cases)} duplicate (team, player) record(s) "
+                f"dropped to avoid double-counting: {samples}{more}"
+            ),
         })
     if ambiguous_cases:
         # One aggregate warning carries every case so the dashboard
@@ -265,13 +431,53 @@ def _load_local_fixture(path: Path) -> list[dict]:
 def build_snapshot(records: list[dict], fetch_warnings: list[dict]) -> dict:
     league_id, season = _resolve_league_season()
     wc_teams = _wc_teams_set()
-    teams, norm_warnings = normalise_records(records, wc_teams)
+    stats_snap = _load_player_stats_snapshot()
+    # Fix #2 (Wave-B R4): normalise_records now raises on an empty wc_teams
+    # set. If the config file is missing/unreadable we surface a dedicated
+    # warning and return an empty snapshot rather than crash the live-update
+    # orchestrator (the legacy manual overlay still applies on top).
+    if not wc_teams:
+        return {
+            "generated_at": _now_iso(),
+            "schema_version": 1,
+            "source": "api_football",
+            "league_id": int(league_id) if str(league_id).isdigit() else league_id,
+            "season": int(season) if str(season).isdigit() else season,
+            "net_elo_active": True,
+            "auto_tier_active": bool(AUTO_TIER_ACTIVE),
+            "teams_with_injuries": 0,
+            "teams": {},
+            "warnings": fetch_warnings + [{
+                "type": "missing_wc_teams_config",
+                "message": (
+                    "wc2026_config.json missing/empty — cannot filter "
+                    "injury records; emitted empty snapshot"
+                ),
+            }],
+        }
+    teams, norm_warnings = normalise_records(
+        records, wc_teams,
+        player_stats_snap=stats_snap,
+        auto_tier_active=AUTO_TIER_ACTIVE,
+    )
     return {
         "generated_at": _now_iso(),
         "schema_version": 1,
         "source": "api_football",
         "league_id": int(league_id) if str(league_id).isdigit() else league_id,
         "season": int(season) if str(season).isdigit() else season,
+        # Phase 1B (CORRECTIONS.md §1): replacement-aware net Elo is now
+        # carried per-player as `net_elo` and per-team as
+        # `total_net_elo_adjustment`. The raw `elo` / `total_elo_adjustment`
+        # fields are preserved for backward compatibility with existing
+        # readers; downstream consumers branch on this flag to decide which
+        # value to apply.
+        "net_elo_active": True,
+        # Phase 6 (CORRECTIONS.md §7): rollout flag — when False, the
+        # override / DEFAULT_TIER answer drives `tier` and only auto-tier
+        # SUGGESTIONS are attached per-player for the disagreement-diff
+        # CLI to consume.
+        "auto_tier_active": bool(AUTO_TIER_ACTIVE),
         "teams_with_injuries": len(teams),
         "teams": teams,
         "warnings": fetch_warnings + norm_warnings,

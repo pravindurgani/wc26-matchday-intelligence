@@ -60,10 +60,35 @@ OUT_PATH = LIVE / "match_stats_2026.json"
 
 APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 
+# Schema-drift watchdog: compares fresh /fixtures/statistics responses to the
+# captured baseline under data/live/_provider_schemas/. Soft-mode by default —
+# drift logs a WARNING, does NOT crash the tick.
+from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+_SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from stats_proxy_adjustments import (  # noqa: E402
-    stats_to_dict, compute_form_delta,
+    stats_to_dict, compute_form_delta, compute_xg_form_delta,
 )
+
+# Real-xG path is dead by default. Flipping to True ALSO requires updating
+# the pre_flight.py:628-629 assertion that enforces true_xg_available=False.
+XG_ENABLED = False
+
+
+def _xg_value(side_stats_raw: list[dict]):
+    """API-Football exposes 'Expected Goals' only on Pro-tier plans. Pulled
+    from the raw stats array because stats_to_dict() coerces to int."""
+    for entry in side_stats_raw or []:
+        if (entry.get("type") or "").strip() == "Expected Goals":
+            v = entry.get("value")
+            if v is None:
+                return None
+            try:
+                return float(str(v).rstrip("%"))
+            except (TypeError, ValueError):
+                return None
+    return None
 
 
 def _now_iso() -> str:
@@ -125,6 +150,11 @@ def fetch_one_fixture(api_key: str, provider_fixture_id: str) -> list[dict]:
     url = f"{APIFOOTBALL_BASE}/fixtures/statistics?fixture={provider_fixture_id}"
     headers = {"x-apisports-key": api_key, "Accept": "application/json"}
     payload = _http_get_json(url, headers)
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. Lets the stats feed keep flowing while flagging the
+    # operator that the provider changed something.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures_statistics.shape.json")
     if payload.get("errors") and any((payload.get("errors") or {}).values()):
         raise RuntimeError(f"API errors: {payload['errors']}")
     return payload.get("response") or []
@@ -148,8 +178,24 @@ def build_match_entry(match: dict, response_sides: list[dict],
             away_stats_raw = side.get("statistics") or []
     home_dict = stats_to_dict(home_stats_raw)
     away_dict = stats_to_dict(away_stats_raw)
-    home_delta = compute_form_delta(home_dict, away_dict)
-    away_delta = compute_form_delta(away_dict, home_dict)
+
+    # Honesty flags: surface whether we even tried to read xG, and whether
+    # the provider returned it. true_xg_available is the gated combination —
+    # the proxy stays in charge until both XG_ENABLED is flipped here AND
+    # pre_flight.py:628-629 is updated.
+    home_xg = _xg_value(home_stats_raw)
+    away_xg = _xg_value(away_stats_raw)
+    xg_attempted = True
+    xg_found = home_xg is not None and away_xg is not None
+    true_xg_available = bool(XG_ENABLED and xg_found)
+
+    if true_xg_available:
+        home_delta = compute_xg_form_delta(home_xg, away_xg)
+        away_delta = compute_xg_form_delta(away_xg, home_xg)
+    else:
+        home_delta = compute_form_delta(home_dict, away_dict)
+        away_delta = compute_form_delta(away_dict, home_dict)
+
     return {
         "match_id": int(match["m"]),
         "status": match.get("status", "FT"),
@@ -157,7 +203,9 @@ def build_match_entry(match: dict, response_sides: list[dict],
         "away": away_team,
         "home_form_adjustment_elo": round(home_delta, 3),
         "away_form_adjustment_elo": round(away_delta, 3),
-        "true_xg_available": False,    # locked by spec — never xG
+        "true_xg_available": true_xg_available,
+        "xg_attempted": xg_attempted,
+        "xg_found": xg_found,
         "home_stats": home_dict,
         "away_stats": away_dict,
         "fixture_id": fixture_id,

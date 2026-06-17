@@ -1,0 +1,67 @@
+{
+  "captured": "2026-06-17",
+  "hash": "8c065844f46d9c7b",
+  "shape_tree": {
+    "_probe_metadata": {
+      "knockout_fixtures_kept": "int",
+      "league_id": "int",
+      "note": "str",
+      "probed_at_utc": "str",
+      "season": "int",
+      "total_fixtures_returned": "int",
+      "tournament": "str"
+    },
+    "fixtures": [
+      {
+        "fixture": {
+          "date": "str",
+          "id": "int",
+          "status": {
+            "elapsed": "int",
+            "long": "str",
+            "short": "str"
+          }
+        },
+        "goals": {
+          "away": "int",
+          "home": "int"
+        },
+        "league": {
+          "id": "int",
+          "round": "str",
+          "season": "int"
+        },
+        "score": {
+          "extratime": {
+            "away": "null",
+            "home": "null"
+          },
+          "fulltime": {
+            "away": "int",
+            "home": "int"
+          },
+          "halftime": {
+            "away": "int",
+            "home": "int"
+          },
+          "penalty": {
+            "away": "null",
+            "home": "null"
+          }
+        },
+        "teams": {
+          "away": {
+            "id": "int",
+            "name": "str",
+            "winner": "bool"
+          },
+          "home": {
+            "id": "int",
+            "name": "str",
+            "winner": "bool"
+          }
+        }
+      }
+    ]
+  }
+}

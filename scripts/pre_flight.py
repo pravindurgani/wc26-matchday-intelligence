@@ -603,7 +603,7 @@ def phase_12_matchday_intel():
         "LINEUP_CAP": "20.0",
         "WEATHER_CAP": "15.0",
         "STATS_CAP_PER_MATCH": "8.0",
-        "STATS_CAP_GROUP_TOTAL": "20.0",
+        "STATS_CAP_TOURNAMENT_TOTAL": "20.0",
         "AGGREGATE_MATCHDAY_CAP": "35.0",
         "GRAND_TOTAL_CAP": "45.0",
     }
@@ -980,6 +980,100 @@ def phase_12_matchday_intel():
     check("fetch_weather passes wet_bulb_c into team_elo_adjustment",
           "wet_bulb_c=wb" in fw)
 
+    # ─ S5 fix: replacement-Elo invariant on key_players_2026.json. Surfaces
+    # data slips that would otherwise flow into net_injury_elo() as a
+    # positive (team-improving) value — runtime clamp catches it at math
+    # time, this gate catches it at commit time.
+    repl_errors = validate_key_players_replacements()
+    check(
+        f"key_players_2026.json replacement.elo_equiv ∈ [tier_floor, 0] "
+        f"({len(repl_errors)} violation"
+        f"{'s' if len(repl_errors) != 1 else ''})",
+        not repl_errors,
+        f"first: {repl_errors[0]}" if repl_errors else "",
+    )
+
+
+# ─── Standalone config validators (callable from tests + CLI) ─────────────
+
+# TIER_TO_ELO mirrored here so the validator stays import-light. Source of
+# truth lives at scripts/live/injury_adjustments.py:38-43; if those values
+# move, this table must move with them (pre_flight.py phase_12 separately
+# locks the tier-cap caps so a drift here would surface in the gate too).
+_VALIDATOR_TIER_TO_ELO = {
+    "tier_1_star":    -30.0,
+    "tier_1_keeper":  -25.0,
+    "tier_2_starter": -12.0,
+    "tier_3_squad":    -4.0,
+}
+
+
+def validate_key_players_replacements(
+    path: Path | None = None,
+) -> list[str]:
+    """Validate the replacement-Elo invariant in key_players_2026.json.
+
+    Invariant (S5): for every player record carrying a `replacement` block,
+    `replacement.elo_equiv ∈ [TIER_TO_ELO[player.tier], 0]` (inclusive).
+
+    Why this matters: scripts/live/injury_adjustments.py:net_injury_elo()
+    computes `net = elo - replacement_elo`. If a curator typo makes
+    `replacement.elo_equiv` MORE NEGATIVE than the full-tier Elo for that
+    player (replacement "worse than the out-player"), `net` flips POSITIVE
+    — an injury that improves the team. The runtime clamp in net_injury_elo
+    is a second line of defence; this validator catches the bad config
+    BEFORE it ever lands in injuries_2026.json.
+
+    Returns a list of human-readable error messages, empty if clean.
+    Records without a `replacement` block or with a `replacement.elo_equiv`
+    that isn't a number are skipped silently (other gates handle those).
+
+    Schema walked: top-level `players` list, each entry a dict with
+    `team`, `name`, `tier`, and an optional `replacement.elo_equiv` float.
+    """
+    target = path if path is not None else (
+        ROOT / "data" / "raw" / "key_players_2026.json"
+    )
+    try:
+        data = json.loads(target.read_text())
+    except FileNotFoundError:
+        return [f"key_players file missing: {target}"]
+    except json.JSONDecodeError as e:
+        return [f"key_players file is not valid JSON: {e}"]
+    errors: list[str] = []
+    players = data.get("players")
+    if not isinstance(players, list):
+        return [f"key_players: top-level 'players' is not a list "
+                f"(got {type(players).__name__})"]
+    for entry in players:
+        if not isinstance(entry, dict):
+            errors.append(f"player entry is not a dict: {entry!r}")
+            continue
+        team = entry.get("team")
+        name = entry.get("name")
+        tier = entry.get("tier")
+        replacement = entry.get("replacement")
+        if not isinstance(replacement, dict):
+            continue  # no replacement → nothing to validate
+        repl_elo = replacement.get("elo_equiv")
+        if not isinstance(repl_elo, (int, float)):
+            continue  # other gates flag non-numeric / missing fields
+        floor = _VALIDATOR_TIER_TO_ELO.get(tier)
+        if floor is None:
+            errors.append(
+                f"{team} / {name!r}: unknown tier {tier!r} "
+                f"(no Elo floor available to validate replacement.elo_equiv)"
+            )
+            continue
+        # Invariant: floor <= repl_elo <= 0. Note `floor` is negative.
+        if not (floor <= float(repl_elo) <= 0.0):
+            errors.append(
+                f"{team} / {name!r}: replacement.elo_equiv={repl_elo} "
+                f"violates invariant [{floor}, 0] for tier {tier!r} "
+                f"(net_injury_elo would emit a value outside [elo, 0])"
+            )
+    return errors
+
 
 # ─── Phase 10 / report ─────────────────────────────────────────────────────
 def report():
@@ -1018,5 +1112,31 @@ def main():
     report()
 
 
+def _cli_validate_key_players(argv: list[str]) -> int:
+    """CLI entry point for the S5 validator only.
+
+    `python3 scripts/pre_flight.py validate-key-players [path]`
+    exits 0 on clean config, 1 on any invariant violation (errors → stderr).
+    The optional positional argument lets tests point at a synthetic
+    fixture without monkey-patching ROOT.
+    """
+    target: Path | None = None
+    if len(argv) >= 2:
+        target = Path(argv[1])
+    errors = validate_key_players_replacements(target)
+    if errors:
+        for e in errors:
+            print(f"INVALID: {e}", file=sys.stderr)
+        return 1
+    print("OK — all key_players replacements within [tier_floor, 0]")
+    return 0
+
+
 if __name__ == "__main__":
+    # Sub-command dispatch. The default invocation (no args) still runs the
+    # full pre-flight audit. `validate-key-players` runs just the S5 gate,
+    # so CI hooks and tests can probe it in isolation without the 12-phase
+    # HTTP-serving stress run.
+    if len(sys.argv) >= 2 and sys.argv[1] == "validate-key-players":
+        sys.exit(_cli_validate_key_players(sys.argv[1:]))
     main()

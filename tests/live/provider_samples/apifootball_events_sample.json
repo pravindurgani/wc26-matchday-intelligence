@@ -1,0 +1,82 @@
+{
+  "_comment": "Synthetic API-Football v3 /fixtures/events response — covers Goal (normal/penalty/own-goal), Card (yellow/red/second yellow), Substitution, VAR. Used by tests/live/test_fetch_events.py.",
+  "get": "fixtures/events",
+  "parameters": {"fixture": "1489369"},
+  "errors": [],
+  "results": 8,
+  "paging": {"current": 1, "total": 1},
+  "response": [
+    {
+      "time": {"elapsed": 12, "extra": null},
+      "team": {"id": 30, "name": "Mexico"},
+      "player": {"id": 1001, "name": "R. Jiménez"},
+      "assist": {"id": 1002, "name": "H. Lozano"},
+      "type": "Goal",
+      "detail": "Normal Goal",
+      "comments": null
+    },
+    {
+      "time": {"elapsed": 33, "extra": null},
+      "team": {"id": 31, "name": "South Africa"},
+      "player": {"id": 2001, "name": "T. Mokoena"},
+      "assist": {"id": null, "name": null},
+      "type": "Card",
+      "detail": "Yellow Card",
+      "comments": "Foul"
+    },
+    {
+      "time": {"elapsed": 45, "extra": 2},
+      "team": {"id": 30, "name": "Mexico"},
+      "player": {"id": 1003, "name": "L. Chávez"},
+      "assist": {"id": null, "name": null},
+      "type": "Goal",
+      "detail": "Penalty",
+      "comments": null
+    },
+    {
+      "time": {"elapsed": 58, "extra": null},
+      "team": {"id": 31, "name": "South Africa"},
+      "player": {"id": 2001, "name": "T. Mokoena"},
+      "assist": {"id": null, "name": null},
+      "type": "Card",
+      "detail": "Second Yellow card",
+      "comments": null
+    },
+    {
+      "time": {"elapsed": 67, "extra": null},
+      "team": {"id": 30, "name": "Mexico"},
+      "player": {"id": 1001, "name": "R. Jiménez"},
+      "assist": {"id": 1010, "name": "S. Giménez"},
+      "type": "subst",
+      "detail": "Substitution 1",
+      "comments": null
+    },
+    {
+      "time": {"elapsed": 71, "extra": null},
+      "team": {"id": 31, "name": "South Africa"},
+      "player": {"id": 2003, "name": "P. Nkata"},
+      "assist": {"id": null, "name": null},
+      "type": "Card",
+      "detail": "Red Card",
+      "comments": null
+    },
+    {
+      "time": {"elapsed": 78, "extra": null},
+      "team": {"id": 31, "name": "South Africa"},
+      "player": {"id": 2004, "name": "M. Sithole"},
+      "assist": {"id": null, "name": null},
+      "type": "Goal",
+      "detail": "Own Goal",
+      "comments": null
+    },
+    {
+      "time": {"elapsed": 82, "extra": null},
+      "team": {"id": 30, "name": "Mexico"},
+      "player": {"id": null, "name": null},
+      "assist": {"id": null, "name": null},
+      "type": "Var",
+      "detail": "Goal cancelled",
+      "comments": "Offside"
+    }
+  ]
+}

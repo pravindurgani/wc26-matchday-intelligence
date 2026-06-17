@@ -22,7 +22,7 @@ v1 formula (signed, in Elo points):
 
 Then the consumer (apply_matchday_adjustments) re-clamps at the locked
 caps: per-match ±8 (STATS_CAP_PER_MATCH) and group-stage total ±20
-(STATS_CAP_GROUP_TOTAL). Our raw cap is intentionally a bit looser so
+(STATS_CAP_TOURNAMENT_TOTAL). Our raw cap is intentionally a bit looser so
 the simulator-side caps remain the load-bearing ceiling.
 
 Sign convention: positive means "deserved more than the scoreboard shows"
@@ -37,11 +37,17 @@ Reference fields in /fixtures/statistics response items:
 """
 from __future__ import annotations
 
+import math
+
 STATS_PROXY_RAW_CAP = 12.0  # downstream re-caps at ±8 per match
 
 SHOT_DOMINANCE_WEIGHT = 1.2
 POSSESSION_WEIGHT = 0.06
 CORNER_WEIGHT = 0.3
+# Possession within ±5pp of 50/50 is noise — score it as zero.
+POSSESSION_DEADZONE_PP = 5.0
+# Real-xG branch (dead by default; flag-gated upstream in fetch_match_stats).
+XG_EDGE_WEIGHT = 6.0  # 1.0 xG edge ≈ 6 Elo of "deserved" credit
 
 
 def _to_int(v) -> int | None:
@@ -70,22 +76,39 @@ def stats_to_dict(side_stats: list[dict]) -> dict:
     return out
 
 
+def _possession_signal(own_poss) -> float:
+    if own_poss is None or (isinstance(own_poss, float) and math.isnan(own_poss)):
+        return 0.0
+    edge = own_poss - 50.0
+    if abs(edge) <= POSSESSION_DEADZONE_PP:
+        return 0.0
+    adjusted = edge - (POSSESSION_DEADZONE_PP if edge > 0 else -POSSESSION_DEADZONE_PP)
+    return adjusted * POSSESSION_WEIGHT
+
+
 def compute_form_delta(own: dict, opp: dict) -> float:
     """Apply v1 weighted-sum heuristic. Returns signed Elo points, clamped
     at ±STATS_PROXY_RAW_CAP."""
     own_sot = own.get("Shots on Goal") or 0
     opp_sot = opp.get("Shots on Goal") or 0
-    own_poss = own.get("Ball Possession")
     own_corn = own.get("Corner Kicks") or 0
     opp_corn = opp.get("Corner Kicks") or 0
 
     shot_dominance = (own_sot - opp_sot) * SHOT_DOMINANCE_WEIGHT
-    possession_edge = (
-        (own_poss - 50.0) * POSSESSION_WEIGHT if own_poss is not None else 0.0
-    )
+    possession_edge = _possession_signal(own.get("Ball Possession"))
     corner_edge = (own_corn - opp_corn) * CORNER_WEIGHT
 
     raw = shot_dominance + possession_edge + corner_edge
+    return max(-STATS_PROXY_RAW_CAP, min(STATS_PROXY_RAW_CAP, raw))
+
+
+def compute_xg_form_delta(own_xg: float, opp_xg: float) -> float:
+    """Real-xG form delta. Dead by default — gated upstream by
+    fetch_match_stats.XG_ENABLED + per-row xg_found honesty flags. Same
+    cap as the proxy so downstream re-clamps stay load-bearing."""
+    if not (math.isfinite(own_xg) and math.isfinite(opp_xg)):
+        raise ValueError("xg must be finite")
+    raw = (float(own_xg) - float(opp_xg)) * XG_EDGE_WEIGHT
     return max(-STATS_PROXY_RAW_CAP, min(STATS_PROXY_RAW_CAP, raw))
 
 

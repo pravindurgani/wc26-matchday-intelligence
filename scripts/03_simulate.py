@@ -1265,6 +1265,23 @@ def main():
         or x.get("climate_static_h_zeroed_by_forecast")
         or x.get("climate_static_a_zeroed_by_forecast")
     ]
+    # S7 (Round 7): export symmetrized knockout λ table so the
+    # `scripts/live/export_ko_advance.py` post-processor can derive
+    # `p_advance_match = p_home_win + 0.5*p_draw` (90-min + 50/50 penalty
+    # shootout assumption) for KO fixtures (m ≥ 73) once both teams resolve.
+    # Purely additive: serialises ctx["knock_lambdas"] (already computed at
+    # :956-980 for every team-pair) — no sim behavior change. Pre-resolution
+    # post-processor writes nothing; once an R32 winner locks, the table is
+    # the source of truth for downstream advance-prob pricing on the sheet.
+    _knock_lambdas = ctx.get("knock_lambdas") or {}
+    out["knock_lambdas_table"] = [
+        {
+            "home": h, "away": a,
+            "lambda_home": float(lam_h), "lambda_away": float(lam_a),
+            "effective_elo_home": float(eff_h), "effective_elo_away": float(eff_a),
+        }
+        for (h, a), (lam_h, lam_a, eff_h, eff_a) in sorted(_knock_lambdas.items())
+    ]
     # Atomic write: a SIGKILL/OOM mid-write would otherwise leave the
     # canonical predictions file partially written and trip the downstream
     # publish guard (or worse, get copied through to dashboard/). tempfile

@@ -54,6 +54,12 @@ ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
 RAW = ROOT / "data" / "raw"
 
+# Schema-drift watchdog (Round 5/6): compares fresh provider responses to
+# captured baselines under data/live/_provider_schemas/. Soft-mode by default —
+# drift logs a WARNING, does NOT crash the tick.
+from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+_SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
+
 LOCKED_STATUSES = {"FT", "AET", "PEN"}
 WARN_STATUSES = {"POSTPONED", "ABANDONED", "CANCELED", "CANCELLED",
                  "SUSPENDED", "INTERRUPTED", "WALKOVER", "WALKOVERAWARD"}
@@ -275,6 +281,183 @@ def fetch_mock() -> list[dict]:
 APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 
 
+# ─── EVENT NORMALISATION (Phase B3) ────────────────────────────────────────
+# API-Football /fixtures/events shape:
+#   {"time": {"elapsed": 25, "extra": null},
+#    "team": {"id": 463, "name": "..."},
+#    "player": {"id": 6126, "name": "..."},
+#    "assist": {"id": null, "name": null},
+#    "type": "Goal" | "Card" | "subst" | "Var",
+#    "detail": "Normal Goal" | "Yellow Card" | "Red Card" | "Substitution 1" | ...,
+#    "comments": null | str}
+#
+# Compact internal shape (consumed by suspension_tracker, scorer-rate, CLV):
+#   {"type": "goal" | "card" | "subst" | "var" | "other",
+#    "subtype": "normal_goal" | "yellow_card" | "red_card" | "second_yellow" | ...,
+#    "team": "<canonical>",
+#    "player": "<name>", "assist": "<name | None>",
+#    "minute": int, "extra_minute": int | None,
+#    "comments": str | None}
+EVENT_TYPE_MAP = {
+    "goal":  "goal",
+    "card":  "card",
+    "subst": "subst",
+    "var":   "var",
+}
+
+
+def _slug_detail(detail: str | None) -> str:
+    if not detail:
+        return ""
+    return "_".join(detail.strip().lower().split())
+
+
+def normalize_event(e: dict) -> dict | None:
+    """Map a raw API-Football event → compact dict. None on malformed input.
+
+    Subtype slugging is deliberately verbatim ("normal_goal", "yellow_card",
+    "substitution_1") so the suspension tracker can pattern-match without an
+    enum table that lags the provider's vocabulary. Card detection keys off
+    `type == "card"` + `subtype.startswith("yellow"/"red"/"second")`.
+    """
+    if not isinstance(e, dict):
+        return None
+    raw_type = str(e.get("type") or "").strip().lower()
+    canon_type = EVENT_TYPE_MAP.get(raw_type, "other")
+    detail = e.get("detail")
+    subtype = _slug_detail(detail)
+    time_block = e.get("time") or {}
+    elapsed = time_block.get("elapsed")
+    extra = time_block.get("extra")
+    try:
+        minute = int(elapsed) if elapsed is not None else None
+    except (TypeError, ValueError):
+        minute = None
+    try:
+        extra_minute = int(extra) if extra is not None else None
+    except (TypeError, ValueError):
+        extra_minute = None
+    team_name_raw = (e.get("team") or {}).get("name", "")
+    team_name = normalize_team(team_name_raw) if team_name_raw else None
+    player = ((e.get("player") or {}).get("name") or None)
+    assist = ((e.get("assist") or {}).get("name") or None)
+    comments = e.get("comments")
+    # API-Football encodes a 2nd-yellow as detail="Second Yellow card" — fold
+    # it under the card type even if its provider type slug drifts.
+    if canon_type == "other" and subtype.startswith(("yellow", "red", "second")):
+        canon_type = "card"
+    return {
+        "type": canon_type,
+        "subtype": subtype,
+        "team": team_name,
+        "player": player,
+        "assist": assist,
+        "minute": minute,
+        "extra_minute": extra_minute,
+        "comments": comments,
+    }
+
+
+def fetch_apifootball_events_for_fixture(
+    api_key: str, fixture_id: str | int, timeout: int = 15,
+) -> tuple[list[dict], dict | None]:
+    """Fetch /fixtures/events?fixture={id}. Returns (events, warning_or_None).
+
+    Returns ([], warning) on http/api errors so callers can attach the warning
+    and continue — the events feed is supplemental to results_2026.json's
+    locked scores. A failure here must never block the score-locking path.
+    """
+    headers = {"x-apisports-key": api_key, "Accept": "application/json"}
+    url = f"{APIFOOTBALL_BASE}/fixtures/events?fixture={fixture_id}"
+    try:
+        payload = http_get_json(url, headers, timeout=timeout, retries=2)
+    except urllib.error.HTTPError as e:
+        body = ""
+        try: body = e.read().decode("utf-8", errors="replace")[:200]
+        except Exception: body = "<body unreadable>"
+        return [], {"type": "events_http_error", "fixture_id": str(fixture_id),
+                    "code": e.code, "body": body}
+    except Exception as e:
+        return [], {"type": "events_fetch_error", "fixture_id": str(fixture_id),
+                    "message": f"{type(e).__name__}: {e}"}
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. Lets the events feed keep flowing while flagging the
+    # operator that the provider changed something.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures_events.shape.json")
+    if isinstance(payload, dict) and payload.get("errors"):
+        errs = payload.get("errors") or {}
+        if any(errs.values() if isinstance(errs, dict) else errs):
+            return [], {"type": "events_api_error", "fixture_id": str(fixture_id),
+                        "errors": errs}
+    raw = payload.get("response") or []
+    out: list[dict] = []
+    for e in raw:
+        norm = normalize_event(e)
+        if norm is not None:
+            out.append(norm)
+    return out, None
+
+
+def enrich_matches_with_events(
+    matches: list[dict],
+    api_key: str | None,
+    existing_events_by_m: dict[int, list[dict]] | None = None,
+    sleep_between: float = 0.15,
+) -> tuple[list[dict], list[dict]]:
+    """Attach `events: [...]` to each locked match record. Cache-aware.
+
+    For any match `m` present in `existing_events_by_m`, we reuse the cached
+    events (immutable once status is locked — see CORRECTIONS.md §4). For
+    everything else we hit /fixtures/events once per fixture, with a small
+    inter-request sleep to stay polite under API-Football's rate limit.
+
+    A per-fixture failure attaches `events: []` + records a warning; the
+    locked score itself is left untouched. Returns (matches, warnings).
+    """
+    cache = existing_events_by_m or {}
+    warnings_out: list[dict] = []
+    if not api_key:
+        # No key — just thread cached events through and warn.
+        for m in matches:
+            mid = m.get("m")
+            if mid in cache and "events" not in m:
+                m["events"] = cache[mid]
+        if any(m.get("status") in LOCKED_STATUSES for m in matches):
+            warnings_out.append({"type": "events_missing_key",
+                                 "message": "API_FOOTBALL_KEY not in env — events not fetched"})
+        return matches, warnings_out
+    fetched = 0
+    reused = 0
+    for m in matches:
+        if (m.get("status") or "").upper() not in LOCKED_STATUSES:
+            continue
+        mid = m.get("m")
+        if mid in cache:
+            m["events"] = cache[mid]
+            reused += 1
+            continue
+        fixture_id = m.get("provider_fixture_id")
+        if not fixture_id:
+            m["events"] = []
+            warnings_out.append({"type": "events_no_fixture_id", "m": mid,
+                                 "message": "no provider_fixture_id — cannot fetch events"})
+            continue
+        events, warn = fetch_apifootball_events_for_fixture(api_key, fixture_id)
+        if warn:
+            warn["m"] = mid
+            warnings_out.append(warn)
+            m["events"] = []
+        else:
+            m["events"] = events
+            fetched += 1
+        if sleep_between:
+            time.sleep(sleep_between)
+    if fetched or reused:
+        print(f"[fetch_results] events: fetched={fetched} reused={reused} (cached)")
+    return matches, warnings_out
+
+
 def load_fixture_map() -> dict | None:
     """Returns {provider_fixture_id_str: internal_match_id} if map file exists."""
     p = LIVE / "provider_fixture_map.json"
@@ -326,6 +509,13 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
     except Exception as e:
         print(f"[fetch_results] API-Football fetch failed: {type(e).__name__}: {e}")
         return []
+
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. The scoring + locking logic below stays intact even if
+    # the provider added/removed/renamed a field; the warning gives the
+    # operator a heads-up before a silent data loss bug appears.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures.shape.json")
 
     if payload.get("errors"):
         print(f"[fetch_results] API-Football returned errors: {payload['errors']}")
@@ -436,6 +626,12 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
             print(f"[fetch_results] WARN: M{m_id} status=PEN but no winner field — skipping")
             continue
 
+        # Phase 2 — referee name from fixture.referee (probed in A.0 as present).
+        # May be None for unassigned/early fixtures; downstream lookup handles
+        # absence gracefully (zero contribution).
+        referee_raw = fx.get("referee")
+        referee = referee_raw.strip() if isinstance(referee_raw, str) else None
+
         out.append({
             "m": int(m_id),
             "provider_fixture_id": provider_fixture_id,
@@ -450,6 +646,7 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
             "status": canon_status,
             "status_long": status.get("long", ""),
             "elapsed": status.get("elapsed"),
+            "referee": referee,
             "source": "api_football",
             "updated_at": datetime.now(timezone.utc).isoformat(),
             "raw_status": short,
@@ -647,6 +844,11 @@ def main() -> int:
                     help="mock | api_football | sportmonks (default: env)")
     ap.add_argument("--dry-run", action="store_true",
                     help="Fetch and print plan, but do not write results_2026.json")
+    ap.add_argument("--with-events", action="store_true",
+                    default=(os.environ.get("WC_FETCH_EVENTS", "").lower()
+                             in ("1", "true", "yes", "on")),
+                    help="Enrich locked matches with /fixtures/events. "
+                         "Cached events on existing results_2026.json are reused.")
     args = ap.parse_args()
 
     src = (args.provider or get_provider_name()).lower().replace("-", "_")
@@ -756,11 +958,30 @@ def main() -> int:
     for w in warnings_list[:5]:
         print(f"  ⚠ M{w['m']}: {w['status']} {('· ' + w['note']) if w['note'] else ''}")
 
+    out_path = LIVE / "results_2026.json"
+
+    # Phase B3: optional events enrichment. Cache already-fetched events from
+    # the existing results_2026.json so we only hit /fixtures/events for
+    # matches that newly entered a LOCKED status this run.
+    if args.with_events and src in ("api_football", "apifootball"):
+        existing_events_by_m: dict[int, list[dict]] = {}
+        if out_path.exists():
+            try:
+                existing = json.loads(out_path.read_text())
+                for em in existing.get("completed_matches", []) or []:
+                    if isinstance(em.get("events"), list) and em.get("m") is not None:
+                        existing_events_by_m[int(em["m"])] = em["events"]
+            except Exception as e:
+                print(f"[fetch_results] events cache read failed: {e}")
+        api_key = get_api_football_key()
+        valid, ev_warnings = enrich_matches_with_events(
+            valid, api_key, existing_events_by_m=existing_events_by_m,
+        )
+        warnings_list.extend(ev_warnings)
+
     if args.dry_run:
         print("[fetch_results] dry-run — no file written")
         return 0
-
-    out_path = LIVE / "results_2026.json"
     # Preserve existing locked data if provider returned nothing useful
     if not valid and not warnings_list and out_path.exists():
         try:

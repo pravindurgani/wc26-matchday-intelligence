@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-16T00:00:00+00:00",
+  "source": "wave_a5_proposal",
+  "notes": "Proposed replacement objects for each existing tier-1 entry in data/raw/key_players_2026.json. tier_2_starter elo_equiv = TIER_TO_ELO['tier_2_starter'] * 0.8 = -9.6. tier_3_squad (Unknown fallback) elo_equiv = TIER_TO_ELO['tier_3_squad'] * 0.8 = -3.2. Each named replacement is annotated with the player's club for reviewer verification. Keyed by team, then by the existing player's exact `name` field from key_players_2026.json.",
+  "tier_to_elo_quoted": {
+    "tier_1_star": -30.0,
+    "tier_1_keeper": -25.0,
+    "tier_2_starter": -12.0,
+    "tier_3_squad": -4.0
+  },
+  "replacements": {
+    "France": {
+      "Kylian Mbappé":     {"name": "Ousmane Dembélé",  "club": "Paris Saint-Germain", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Antoine Griezmann": {"name": "Bradley Barcola",  "club": "Paris Saint-Germain", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Mike Maignan":      {"name": "Brice Samba",      "club": "Rennes",               "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Spain": {
+      "Lamine Yamal": {"name": "Nico Williams",  "club": "Athletic Bilbao",     "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Pedri":        {"name": "Fabián Ruiz",    "club": "Paris Saint-Germain", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Rodri":        {"name": "Martín Zubimendi","club": "Arsenal",            "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Unai Simón":   {"name": "David Raya",     "club": "Arsenal",             "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Argentina": {
+      "Lionel Messi":      {"name": "Paulo Dybala",     "club": "Roma",        "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Lautaro Martínez":  {"name": "Julián Álvarez",   "club": "Atlético Madrid", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Emiliano Martínez": {"name": "Walter Benítez",   "club": "PSV Eindhoven","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Cristian Romero":   {"name": "Lisandro Martínez","club": "Manchester United","tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Brazil": {
+      "Vinícius Júnior": {"name": "Antony",         "club": "Real Betis",     "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Rodrygo":         {"name": "Savinho",        "club": "Manchester City","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Raphinha":        {"name": "Estêvão",        "club": "Chelsea",        "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Alisson":         {"name": "Ederson",        "club": "Manchester City","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Casemiro":        {"name": "Bruno Guimarães","club": "Newcastle United","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Marquinhos":      {"name": "Gabriel Magalhães","club": "Arsenal",      "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Neymar":          {"name": "Endrick",        "club": "Real Madrid",    "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "England": {
+      "Jude Bellingham":         {"name": "Cole Palmer",     "club": "Chelsea",          "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Bukayo Saka":             {"name": "Anthony Gordon",  "club": "Newcastle United", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Harry Kane":              {"name": "Ollie Watkins",   "club": "Aston Villa",      "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Jordan Pickford":         {"name": "Dean Henderson",  "club": "Crystal Palace",   "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Phil Foden":              {"name": "Morgan Rogers",   "club": "Aston Villa",      "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Declan Rice":             {"name": "Adam Wharton",    "club": "Crystal Palace",   "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Trent Alexander-Arnold":  {"name": "Reece James",     "club": "Chelsea",          "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Portugal": {
+      "Cristiano Ronaldo": {"name": "Gonçalo Ramos", "club": "Paris Saint-Germain", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Bruno Fernandes":   {"name": "Bernardo Silva","club": "Manchester City",     "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Diogo Costa":       {"name": "José Sá",       "club": "Wolverhampton Wanderers", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Germany": {
+      "Jamal Musiala":   {"name": "Leroy Sané",       "club": "Galatasaray",         "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Florian Wirtz":   {"name": "Kai Havertz",      "club": "Arsenal",             "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Joshua Kimmich":  {"name": "Pascal Groß",      "club": "Borussia Dortmund",   "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Manuel Neuer":    {"name": "Marc-André ter Stegen","club": "Barcelona",       "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Antonio Rüdiger": {"name": "Jonathan Tah",     "club": "Bayern Munich",       "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Netherlands": {
+      "Cody Gakpo":       {"name": "Memphis Depay",    "club": "Corinthians",   "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Virgil van Dijk":  {"name": "Matthijs de Ligt", "club": "Manchester United","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Frenkie de Jong":  {"name": "Tijjani Reijnders","club": "Manchester City","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Bart Verbruggen":  {"name": "Mark Flekken",     "club": "Bayer Leverkusen","tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Belgium": {
+      "Kevin De Bruyne":  {"name": "Youri Tielemans", "club": "Aston Villa",       "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Romelu Lukaku":    {"name": "Lois Openda",     "club": "RB Leipzig",        "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Thibaut Courtois": {"name": "Koen Casteels",   "club": "Al-Qadsiah",        "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Croatia": {
+      "Luka Modrić":       {"name": "Mateo Kovačić",   "club": "Manchester City", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Dominik Livaković": {"name": "Ivica Ivušić",    "club": "Pafos",           "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Norway": {
+      "Erling Haaland":   {"name": "Alexander Sørloth", "club": "Atlético Madrid", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Martin Ødegaard":  {"name": "Sander Berge",      "club": "Fulham",          "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Colombia": {
+      "Luis Díaz":        {"name": "Jhon Arias",       "club": "Wolverhampton Wanderers", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "James Rodríguez":  {"name": "Juan Fernando Quintero", "club": "América de Cali",   "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Ecuador": {
+      "Moisés Caicedo":     {"name": "Jhoanner Chávez", "club": "Lens",             "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Enner Valencia":     {"name": "Kevin Rodríguez", "club": "Union Saint-Gilloise","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Pervis Estupiñán":   {"name": "Diego Palacios",  "club": "Corinthians",      "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Hernán Galíndez":    {"name": "Alexander Domínguez","club": "LDU Quito",     "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Uruguay": {
+      "Federico Valverde": {"name": "Rodrigo Bentancur","club": "Tottenham Hotspur","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Darwin Núñez":      {"name": "Maximiliano Araújo","club": "Sporting CP",     "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Ronald Araújo":     {"name": "José María Giménez","club": "Atlético Madrid", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Morocco": {
+      "Achraf Hakimi":  {"name": "Noussair Mazraoui", "club": "Manchester United", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Hakim Ziyech":   {"name": "Brahim Díaz",       "club": "Real Madrid",       "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Yassine Bounou": {"name": "Munir Mohamedi",    "club": "Almería",           "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Mexico": {
+      "Edson Álvarez":    {"name": "Luis Romo",        "club": "Monterrey",        "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Guillermo Ochoa":  {"name": "Luis Malagón",     "club": "Club América",     "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "United States": {
+      "Christian Pulisic": {"name": "Timothy Weah", "club": "Juventus", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Senegal": {
+      "Sadio Mané": {"name": "Nicolas Jackson", "club": "Chelsea", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Egypt": {
+      "Mohamed Salah": {"name": "Trezeguet", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Japan": {
+      "Kaoru Mitoma":   {"name": "Junya Ito",        "club": "Stade de Reims",     "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Takefusa Kubo":  {"name": "Ritsu Doan",       "club": "Eintracht Frankfurt","tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Wataru Endo":    {"name": "Hidemasa Morita",  "club": "Sporting CP",        "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "Daichi Kamada":  {"name": "Hiroki Sakai",     "club": "Urawa Red Diamonds", "tier": "tier_3_squad",   "elo_equiv": -3.2}
+    },
+    "South Korea": {
+      "Son Heung-min": {"name": "Hwang Hee-chan", "club": "Wolverhampton Wanderers", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Saudi Arabia": {
+      "Salem Al-Dawsari": {"name": "Firas Al-Buraikan", "club": "Al-Ahli", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Sweden": {
+      "Alexander Isak": {"name": "Viktor Gyökeres", "club": "Arsenal", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Switzerland": {
+      "Granit Xhaka": {"name": "Remo Freuler", "club": "Bologna", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Canada": {
+      "Alphonso Davies": {"name": "Sam Adekugbe", "club": "Hatayspor", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Algeria": {
+      "Riyad Mahrez": {"name": "Saïd Benrahma", "club": "Lyon", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Austria": {
+      "David Alaba": {"name": "Kevin Danso", "club": "Tottenham Hotspur", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    "Turkey": {
+      "Arda Güler": {"name": "Hakan Çalhanoğlu", "club": "Inter Milan", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    }
+  }
+}

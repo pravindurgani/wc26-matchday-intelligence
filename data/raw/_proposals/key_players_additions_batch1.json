@@ -1,0 +1,112 @@
+{
+  "_meta": {
+    "wave": "A1",
+    "generated_at": "2026-06-16",
+    "author": "claude-opus-4-7 (PROMPT pane proposal — NOT yet merged into key_players_2026.json)",
+    "tier_to_elo_source": "scripts/live/injury_adjustments.py:38-43",
+    "tier_to_elo_values": {
+      "tier_1_star": -30.0,
+      "tier_1_keeper": -25.0,
+      "tier_2_starter": -12.0,
+      "tier_3_squad": -4.0
+    },
+    "replacement_formula": "elo_equiv = TIER_TO_ELO[replacement_tier] * 0.8 -> tier_2_starter=-9.6, tier_3_squad=-3.2",
+    "tier_1_keeper_eligibility": "team must rank in top 20 by squad_values_2026.json; cutoff is Switzerland at EUR 334M. None of {Czechia(28), Scotland(29), Paraguay(30), Bosnia and Herzegovina(31), Cape Verde(38)} qualify -> no tier_1_keeper entries proposed.",
+    "confidence_flags": "See per-team _confidence notes. Bosnia and Herzegovina + Cape Verde flagged <80%."
+  },
+  "Czechia": [
+    {
+      "team": "Czechia",
+      "name": "Patrik Schick",
+      "name_normalized": "patrik schick",
+      "last_name_normalized": "schick",
+      "tier": "tier_1_star",
+      "reason": "Bayer Leverkusen striker; Czechia's primary goalscorer and headline attacker through the 2026 cycle",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}
+    },
+    {
+      "team": "Czechia",
+      "name": "Tomáš Souček",
+      "name_normalized": "tomas soucek",
+      "last_name_normalized": "soucek",
+      "tier": "tier_2_starter",
+      "reason": "West Ham captain and undisputed midfield anchor; long-running pillar of the national side",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}
+    }
+  ],
+  "Scotland": [
+    {
+      "team": "Scotland",
+      "name": "Andy Robertson",
+      "name_normalized": "andy robertson",
+      "last_name_normalized": "robertson",
+      "tier": "tier_2_starter",
+      "reason": "Liverpool left-back; Scotland captain and primary attacking outlet from defence",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2},
+      "aliases": ["Andrew Robertson", "A. Robertson"]
+    },
+    {
+      "team": "Scotland",
+      "name": "Scott McTominay",
+      "name_normalized": "scott mctominay",
+      "last_name_normalized": "mctominay",
+      "tier": "tier_1_star",
+      "reason": "Napoli midfielder; Scotland's leading scorer through recent qualifying cycles",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}
+    },
+    {
+      "team": "Scotland",
+      "name": "John McGinn",
+      "name_normalized": "john mcginn",
+      "last_name_normalized": "mcginn",
+      "tier": "tier_2_starter",
+      "reason": "Aston Villa midfielder; vice-captain and primary central creator",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}
+    }
+  ],
+  "Bosnia and Herzegovina": [
+    {
+      "team": "Bosnia and Herzegovina",
+      "name": "Edin Džeko",
+      "name_normalized": "edin dzeko",
+      "last_name_normalized": "dzeko",
+      "tier": "tier_1_star",
+      "reason": "All-time top scorer and long-running captain; CONDITIONAL on him being selected for WC26 (born 1986, age 40 at tournament). If he retires from national duty before kickoff, drop this entry.",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2},
+      "_confidence": "<80% — verify 2026 international active status before merge"
+    }
+  ],
+  "Cape Verde": [],
+  "_Cape_Verde_note": "Cape Verde debut WC team; no consensus tier-1 international headline player verifiable to >=80% confidence as of 2026 squad-call era. Proposing zero tier-1 entries rather than fabricate. Recommend human review of latest CV squad list (Ryan Mendes / Stopira / Bebé were historical mainstays but their 2026 status is not verifiable here). Per the task brief: 'Unknown is a better outcome than a made-up name.'",
+  "Paraguay": [
+    {
+      "team": "Paraguay",
+      "name": "Miguel Almirón",
+      "name_normalized": "miguel almiron",
+      "last_name_normalized": "almiron",
+      "tier": "tier_1_star",
+      "reason": "Long-standing Paraguay attacking talisman; previously Newcastle United, primary wide creator for the national team",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2},
+      "_confidence": "club affiliation as of mid-2026 may have shifted from Newcastle; international status as a tier-1 talisman is the load-bearing claim"
+    },
+    {
+      "team": "Paraguay",
+      "name": "Antonio Sanabria",
+      "name_normalized": "antonio sanabria",
+      "last_name_normalized": "sanabria",
+      "tier": "tier_2_starter",
+      "reason": "Torino striker; primary Paraguay forward through the 2026 qualifying cycle",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}
+    },
+    {
+      "team": "Paraguay",
+      "name": "Julio Enciso",
+      "name_normalized": "julio enciso",
+      "last_name_normalized": "enciso",
+      "tier": "tier_2_starter",
+      "reason": "Brighton attacking midfielder; emerging primary creator for Paraguay",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2},
+      "_confidence": "<80% — verify whether Enciso is starting XI / talisman versus rotation in the 2026 setup"
+    }
+  ]
+}

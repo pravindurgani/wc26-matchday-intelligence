@@ -19,16 +19,19 @@ sys.path.insert(0, str(ROOT / "scripts" / "live"))
 from lineup_adjustments import (  # noqa: E402
     extract_starting_xi, compute_lineup_delta_elo,
     GK_SWAP_ELO, HEAVY_ROTATION_ELO, HEAVY_ROTATION_THRESHOLD,
+    POSITION_WEIGHTS, PENALTY_PER_WEIGHTED_SWAP,
 )
 import fetch_lineups  # noqa: E402
 
 
-def _xi(gk_id: int, outfield_ids: list[int]) -> dict:
+def _xi(gk_id: int, outfield_ids: list[int],
+        position_by_id: dict[int, str] | None = None) -> dict:
     """Helper: build an extract_starting_xi-style dict directly."""
     return {
         "gk_id": gk_id,
         "outfield_ids": set(outfield_ids),
         "raw_players": [],
+        "position_by_id": position_by_id or {},
     }
 
 
@@ -55,7 +58,8 @@ class TestExtractStartingXi(unittest.TestCase):
 
     def test_empty_block(self):
         self.assertEqual(extract_starting_xi({}),
-                         {"gk_id": None, "outfield_ids": set(), "raw_players": []})
+                         {"gk_id": None, "outfield_ids": set(),
+                          "raw_players": [], "position_by_id": {}})
 
 
 class TestComputeLineupDeltaElo(unittest.TestCase):
@@ -112,6 +116,61 @@ class TestComputeLineupDeltaElo(unittest.TestCase):
         delta, reason = compute_lineup_delta_elo(prior, curr)
         self.assertEqual(delta, 0.0)
         self.assertIsNone(reason)
+
+
+class TestPositionAwarePenalty(unittest.TestCase):
+    """Phase 4: rotation penalty scales with position weight of OUTGOING
+    starters. Defaults to legacy `-3.0 per 3 swaps` when positions are
+    unknown (DEFAULT_POSITION_WEIGHT=1.0 × PENALTY_PER_WEIGHTED_SWAP=-1.0)."""
+
+    def test_three_defenders_drops_lighter_than_three_forwards(self):
+        # 3 defenders dropped (weights 0.7 each = 2.1) → -2.1 Elo
+        prior_d = _xi(1, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                      position_by_id={i: "D" for i in range(2, 12)})
+        curr = _xi(1, [20, 30, 40, 5, 6, 7, 8, 9, 10, 11])
+        delta_d, _ = compute_lineup_delta_elo(prior_d, curr)
+        self.assertAlmostEqual(delta_d, 3 * 0.7 * -1.0, places=4)
+
+        # 3 forwards dropped (weights 1.5 each = 4.5) → -4.5 Elo
+        prior_f = _xi(1, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                      position_by_id={i: "F" for i in range(2, 12)})
+        delta_f, _ = compute_lineup_delta_elo(prior_f, curr)
+        self.assertAlmostEqual(delta_f, 3 * 1.5 * -1.0, places=4)
+        self.assertLess(delta_f, delta_d)  # forward loss hurts more
+
+    def test_mixed_position_weighting(self):
+        # 1D + 1M + 1F dropped → 0.7 + 1.0 + 1.5 = 3.2 → -3.2 Elo
+        prior = _xi(1, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                    position_by_id={2: "D", 3: "M", 4: "F"})
+        curr = _xi(1, [20, 30, 40, 5, 6, 7, 8, 9, 10, 11])
+        delta, reason = compute_lineup_delta_elo(prior, curr)
+        self.assertAlmostEqual(delta, -(0.7 + 1.0 + 1.5), places=4)
+        self.assertIn("outfield changes", reason)
+
+    def test_unknown_position_falls_back_to_default_weight(self):
+        # No position_by_id → all weights default 1.0 → 3 swaps = -3.0
+        prior = _xi(1, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        curr = _xi(1, [20, 30, 40, 5, 6, 7, 8, 9, 10, 11])
+        delta, _ = compute_lineup_delta_elo(prior, curr)
+        self.assertEqual(delta, HEAVY_ROTATION_ELO)
+
+    def test_threshold_floor_unchanged(self):
+        # Only 2 dropped (D + F) — below threshold → 0, no position bonus
+        prior = _xi(1, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                    position_by_id={2: "F", 3: "F"})
+        curr = _xi(1, [20, 30, 4, 5, 6, 7, 8, 9, 10, 11])
+        delta, reason = compute_lineup_delta_elo(prior, curr)
+        self.assertEqual(delta, 0.0)
+        self.assertIsNone(reason)
+
+    def test_constants_calibrated_to_preserve_legacy(self):
+        # Legacy "3 swaps = HEAVY_ROTATION_ELO" only holds if
+        # mid weight × penalty equals HEAVY_ROTATION_ELO / 3.
+        self.assertAlmostEqual(
+            POSITION_WEIGHTS["M"] * PENALTY_PER_WEIGHTED_SWAP * 3,
+            HEAVY_ROTATION_ELO,
+            places=4,
+        )
 
 
 class TestFixturesInWindow(unittest.TestCase):

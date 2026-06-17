@@ -1,0 +1,193 @@
+{
+  "_meta": {
+    "generated_at": "2026-06-16",
+    "source": "Wave A2 manual curation — 5 missing WC26 teams",
+    "tier_to_elo_used": {
+      "tier_1_star": -30.0,
+      "tier_1_keeper": -25.0,
+      "tier_2_starter": -12.0,
+      "tier_3_squad": -4.0
+    },
+    "replacement_elo_formula": "TIER_TO_ELO[tier] * 0.8",
+    "replacement_elo_values": {
+      "tier_2_starter_x_0.8": -9.6,
+      "tier_3_squad_x_0.8": -3.2
+    },
+    "squad_value_ranking_check": {
+      "Ivory Coast": "rank 11 of 48 (TOP 20 — keeper eligible)",
+      "Ghana": "rank 25 of 48 (no keeper)",
+      "DR Congo": "rank 32 of 48 (no keeper)",
+      "Australia": "rank 35 of 48 (no keeper)",
+      "Tunisia": "rank 37 of 48 (no keeper)"
+    },
+    "confidence_flags": [
+      "Ivory Coast GK Yahia Fofana: <80% confidence — first-choice at AFCON 2024 but rotation with Brou Brice Konan & Badra Ali Sangaré has been documented post-tournament.",
+      "DR Congo only proposes 2 tier_1_star entries (Mbemba + Wissa) — Bakambu/Bongonda/Masuaku status volatile enough to omit rather than fabricate.",
+      "Tunisia Hannibal Mejbri club listed as Burnley reflects 2024-25 loan; if he has moved on by the squad list publish, the club field should be re-verified before consumption.",
+      "Australia has no consensus tier_1_star at Mbappé/Bellingham level — entries represent best available headline internationals (captain + recognised regulars), not generational talents.",
+      "Australia Riley McGree as tier_1_star: <80% confidence — recognised regular but not at generational-talent level; consider downgrading to tier_2_starter if reviewer prefers stricter tier_1_star bar."
+    ]
+  },
+  "Ivory Coast": [
+    {
+      "team": "Ivory Coast",
+      "name": "Franck Kessié",
+      "name_normalized": "franck kessie",
+      "last_name_normalized": "kessie",
+      "tier": "tier_1_star",
+      "reason": "Captain; midfield anchor; Al-Ahli (Saudi Pro League); AFCON 2024 winner",
+      "current_club": "Al-Ahli",
+      "replacement": {"name": "Ibrahim Sangaré", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Ivory Coast",
+      "name": "Simon Adingra",
+      "name_normalized": "simon adingra",
+      "last_name_normalized": "adingra",
+      "tier": "tier_1_star",
+      "reason": "Brighton winger; AFCON 2024 final standout; primary wide attacking outlet",
+      "current_club": "Brighton & Hove Albion",
+      "replacement": {"name": "Max-Alain Gradel", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Ivory Coast",
+      "name": "Sébastien Haller",
+      "name_normalized": "sebastien haller",
+      "last_name_normalized": "haller",
+      "tier": "tier_1_star",
+      "reason": "AFCON 2024 winning striker (scored decisive goals knockout + final); primary centre-forward",
+      "current_club": "Leganés",
+      "replacement": {"name": "Jonathan Bamba", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Ivory Coast",
+      "name": "Yahia Fofana",
+      "name_normalized": "yahia fofana",
+      "last_name_normalized": "fofana",
+      "tier": "tier_1_keeper",
+      "reason": "Angers; first-choice GK at AFCON 2024 (CONFIDENCE FLAG: rotation with Konan/Sangaré documented)",
+      "current_club": "Angers",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}
+    }
+  ],
+  "Ghana": [
+    {
+      "team": "Ghana",
+      "name": "Mohammed Kudus",
+      "name_normalized": "mohammed kudus",
+      "last_name_normalized": "kudus",
+      "tier": "tier_1_star",
+      "reason": "Tottenham; primary attacking talisman; Ghana's most-watched current international",
+      "current_club": "Tottenham Hotspur",
+      "replacement": {"name": "Antoine Semenyo", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Ghana",
+      "name": "Thomas Partey",
+      "name_normalized": "thomas partey",
+      "last_name_normalized": "partey",
+      "tier": "tier_1_star",
+      "reason": "Villarreal; defensive midfield anchor; Ghana captain figure",
+      "current_club": "Villarreal",
+      "replacement": {"name": "Salis Abdul Samed", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Ghana",
+      "name": "Iñaki Williams",
+      "name_normalized": "inaki williams",
+      "last_name_normalized": "williams",
+      "tier": "tier_1_star",
+      "reason": "Athletic Bilbao; primary striker / wide forward; switched allegiance from Spain",
+      "current_club": "Athletic Bilbao",
+      "replacement": {"name": "Jordan Ayew", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "aliases": ["Inaki Williams", "I. Williams"]
+    }
+  ],
+  "Tunisia": [
+    {
+      "team": "Tunisia",
+      "name": "Hannibal Mejbri",
+      "name_normalized": "hannibal mejbri",
+      "last_name_normalized": "mejbri",
+      "tier": "tier_1_star",
+      "reason": "Burnley (on loan from Manchester United); primary creative midfielder; biggest-club Tunisian international",
+      "current_club": "Burnley (on loan from Manchester United)",
+      "replacement": {"name": "Aïssa Laïdouni", "tier": "tier_2_starter", "elo_equiv": -9.6},
+      "aliases": ["Hannibal", "H. Mejbri"]
+    },
+    {
+      "team": "Tunisia",
+      "name": "Ellyes Skhiri",
+      "name_normalized": "ellyes skhiri",
+      "last_name_normalized": "skhiri",
+      "tier": "tier_1_star",
+      "reason": "Eintracht Frankfurt; midfield engine; consistent Bundesliga starter",
+      "current_club": "Eintracht Frankfurt",
+      "replacement": {"name": "Mohamed Ali Ben Romdhane", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Tunisia",
+      "name": "Youssef Msakni",
+      "name_normalized": "youssef msakni",
+      "last_name_normalized": "msakni",
+      "tier": "tier_1_star",
+      "reason": "Captain; veteran talisman; primary attacking outlet across three WC cycles",
+      "current_club": "Al-Arabi (Qatar)",
+      "replacement": {"name": "Naïm Sliti", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    }
+  ],
+  "Australia": [
+    {
+      "team": "Australia",
+      "name": "Jackson Irvine",
+      "name_normalized": "jackson irvine",
+      "last_name_normalized": "irvine",
+      "tier": "tier_1_star",
+      "reason": "Captain; FC St. Pauli (Bundesliga); midfield leader and consistent goal threat",
+      "current_club": "FC St. Pauli",
+      "replacement": {"name": "Aiden O'Neill", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Australia",
+      "name": "Harry Souttar",
+      "name_normalized": "harry souttar",
+      "last_name_normalized": "souttar",
+      "tier": "tier_1_star",
+      "reason": "Sheffield United; primary centre-back; WC22 defensive standout",
+      "current_club": "Sheffield United",
+      "replacement": {"name": "Kye Rowles", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    },
+    {
+      "team": "Australia",
+      "name": "Riley McGree",
+      "name_normalized": "riley mcgree",
+      "last_name_normalized": "mcgree",
+      "tier": "tier_2_starter",
+      "reason": "Middlesbrough; attacking midfielder; recognised first-choice creative outlet for Socceroos",
+      "current_club": "Middlesbrough",
+      "replacement": {"name": "Connor Metcalfe", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    }
+  ],
+  "DR Congo": [
+    {
+      "team": "DR Congo",
+      "name": "Chancel Mbemba",
+      "name_normalized": "chancel mbemba",
+      "last_name_normalized": "mbemba",
+      "tier": "tier_1_star",
+      "reason": "Captain; primary centre-back; AFCON 2024 semi-finalist defensive leader",
+      "current_club": "Lille",
+      "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}
+    },
+    {
+      "team": "DR Congo",
+      "name": "Yoane Wissa",
+      "name_normalized": "yoane wissa",
+      "last_name_normalized": "wissa",
+      "tier": "tier_1_star",
+      "reason": "Newcastle United; AFCON 2024 top scorer for DRC; primary attacking outlet",
+      "current_club": "Newcastle United",
+      "replacement": {"name": "Cédric Bakambu", "tier": "tier_2_starter", "elo_equiv": -9.6}
+    }
+  ]
+}

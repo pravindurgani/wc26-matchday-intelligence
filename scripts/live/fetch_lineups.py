@@ -66,9 +66,18 @@ OUT_PATH = LIVE / "lineups_2026.json"
 APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 DEFAULT_HOURS_AHEAD = 4
 
+# Schema-drift watchdog: compares fresh /fixtures/lineups responses to the
+# captured baseline under data/live/_provider_schemas/. Soft-mode by default —
+# drift logs a WARNING, does NOT crash the tick.
+from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+_SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lineup_adjustments import (  # noqa: E402
     extract_starting_xi, compute_lineup_delta_elo,
+)
+from _knockout import (  # noqa: E402
+    is_placeholder_slot, load_knockout_fixtures,
 )
 
 
@@ -98,16 +107,31 @@ def _http_get_json(url: str, headers: dict, timeout: int = 15) -> dict:
 
 
 def _load_schedule() -> list[dict]:
-    """Load schedule and enrich each entry with `_tz` (IANA zone resolved
-    via venue_city_map + host_cities[].tz). Entries whose venue lacks a
-    tz field fall through to legacy local-as-UTC behavior in _kickoff_utc."""
+    """Load group + knockout schedule, enriching each entry with `_tz`
+    (IANA zone resolved via venue_city_map + host_cities[].tz). Entries
+    whose venue lacks a tz field fall through to legacy local-as-UTC
+    behavior in _kickoff_utc.
+
+    Round 6 R32-critical fix: pre-Round 6 this loaded ONLY
+    `group_stage_schedule`, so no knockout fixture ever entered the
+    lineup-poll window. Now we merge `knockout_bracket_2026.json` rows
+    too. Placeholder slot codes ("1A", "W74") stay in the schedule so
+    the kickoff window is contiguous; the per-fixture poll in main()
+    skips them via `is_placeholder_slot` until results land.
+    """
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    sched = cfg.get("group_stage_schedule", []) or []
+    sched = list(cfg.get("group_stage_schedule", []) or [])
+    sched.extend(load_knockout_fixtures(RAW / "knockout_bracket_2026.json"))
     venue_city_map = cfg.get("venue_city_map", {}) or {}
     city_to_tz = {hc["city"]: hc.get("tz")
                   for hc in (cfg.get("host_cities") or [])}
     for s in sched:
-        city = venue_city_map.get(s.get("venue", ""), s.get("venue", ""))
+        # Venue strings in the knockout bracket include state suffixes
+        # ("Inglewood, CA", "Foxborough, MA"). Strip the suffix before
+        # mapping suburbs to host-city anchors so the tz lookup hits.
+        venue_raw = s.get("venue", "") or ""
+        suburb = venue_raw.split(",")[0].strip()
+        city = venue_city_map.get(suburb, suburb)
         s["_tz"] = city_to_tz.get(city)
     return sched
 
@@ -194,6 +218,11 @@ def fetch_one_fixture(api_key: str, provider_fixture_id: str) -> list[dict]:
     url = f"{APIFOOTBALL_BASE}/fixtures/lineups?fixture={provider_fixture_id}"
     headers = {"x-apisports-key": api_key, "Accept": "application/json"}
     payload = _http_get_json(url, headers)
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. Lets the lineups feed keep flowing while flagging the
+    # operator that the provider changed something.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures_lineups.shape.json")
     if payload.get("errors") and any((payload.get("errors") or {}).values()):
         raise RuntimeError(f"API errors: {payload['errors']}")
     return payload.get("response") or []
@@ -283,6 +312,12 @@ def _replay_local_fixtures(fixture_dir: Path, schedule: list[dict],
         sched = next((s for s in schedule if s["m"] == mid), None)
         if sched is None:
             continue
+        # Round 6: skip unresolved KO slots — see main() for rationale.
+        if (is_placeholder_slot(sched.get("home"))
+                or is_placeholder_slot(sched.get("away"))):
+            warnings.append({"type": "unresolved_slot",
+                             "match_id": sched.get("m")})
+            continue
         response = json.loads(f.read_text()).get("response") or []
         entries.append(build_lineup_entry(sched, response, prior_xis))
     return entries, warnings
@@ -318,6 +353,18 @@ def main() -> int:
                              "message": "API_FOOTBALL_KEY not in env"})
         prior_xis = _load_prior_lineups()
         for sched in upcoming:
+            # Round 6: a knockout fixture whose home/away are still slot
+            # codes (e.g. "1A", "W74") can't have a meaningful lineup poll
+            # — we don't know which national team will fill the slot.
+            # Skip until results lock in; the cron re-runs and will pick
+            # it up once the bracket is resolved.
+            if (is_placeholder_slot(sched.get("home"))
+                    or is_placeholder_slot(sched.get("away"))):
+                warnings.append({"type": "unresolved_slot",
+                                 "match_id": sched.get("m"),
+                                 "home": sched.get("home"),
+                                 "away": sched.get("away")})
+                continue
             pfid = fixture_map.get(int(sched["m"]))
             if not pfid:
                 warnings.append({"type": "unmapped_match",

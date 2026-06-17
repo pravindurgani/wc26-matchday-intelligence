@@ -1,0 +1,40 @@
+{
+  "captured": "2026-06-17",
+  "hash": "5f004b96ffae402e",
+  "shape_tree": {
+    "_comment": "str",
+    "errors": "list<empty>",
+    "get": "str",
+    "paging": {
+      "current": "int",
+      "total": "int"
+    },
+    "parameters": {
+      "fixture": "str"
+    },
+    "response": [
+      {
+        "assist": {
+          "id": "int",
+          "name": "str"
+        },
+        "comments": "null",
+        "detail": "str",
+        "player": {
+          "id": "int",
+          "name": "str"
+        },
+        "team": {
+          "id": "int",
+          "name": "str"
+        },
+        "time": {
+          "elapsed": "int",
+          "extra": "null"
+        },
+        "type": "str"
+      }
+    ],
+    "results": "int"
+  }
+}

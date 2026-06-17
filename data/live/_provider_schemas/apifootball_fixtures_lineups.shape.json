@@ -1,0 +1,66 @@
+{
+  "captured": "2026-06-16",
+  "hash": "35d9cf7c3bc6acb0",
+  "shape_tree": {
+    "_comment": "str",
+    "errors": "list<empty>",
+    "get": "str",
+    "paging": {
+      "current": "int",
+      "total": "int"
+    },
+    "parameters": {
+      "fixture": "str"
+    },
+    "response": [
+      {
+        "coach": {
+          "id": "int",
+          "name": "str",
+          "photo": "str"
+        },
+        "formation": "str",
+        "startXI": [
+          {
+            "player": {
+              "grid": "str",
+              "id": "int",
+              "name": "str",
+              "number": "int",
+              "pos": "str"
+            }
+          }
+        ],
+        "substitutes": [
+          {
+            "player": {
+              "grid": "null",
+              "id": "int",
+              "name": "str",
+              "number": "int",
+              "pos": "str"
+            }
+          }
+        ],
+        "team": {
+          "colors": {
+            "goalkeeper": {
+              "border": "str",
+              "number": "str",
+              "primary": "str"
+            },
+            "player": {
+              "border": "str",
+              "number": "str",
+              "primary": "str"
+            }
+          },
+          "id": "int",
+          "logo": "str",
+          "name": "str"
+        }
+      }
+    ],
+    "results": "int"
+  }
+}

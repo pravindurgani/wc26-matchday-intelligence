@@ -54,6 +54,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+# Round 5: graceful per-record / per-subsystem degradation. Math layer
+# raises loudly on bad inputs (ValueError on NaN xG, TypeError on
+# non-str names, etc.) — the orchestrator catches so a single bad
+# record / subsystem doesn't abort the whole tick.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _degrade import degrade_record, degrade_subsystem  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
 RAW = ROOT / "data" / "raw"
@@ -66,8 +73,10 @@ INJURY_CAP_NORMAL = 25.0
 INJURY_CAP_EXTREME = 35.0
 LINEUP_CAP = 20.0
 WEATHER_CAP = 15.0
+REFEREE_CAP = 8.0
+SUSPENSION_CAP = 8.0
 STATS_CAP_PER_MATCH = 8.0
-STATS_CAP_GROUP_TOTAL = 20.0
+STATS_CAP_TOURNAMENT_TOTAL = 20.0  # Tournament-wide stats-proxy cap (formerly tournament_total under a group-only name; value unchanged).
 AGGREGATE_MATCHDAY_CAP = 35.0   # injuries + lineups + weather + stats proxy
 GRAND_TOTAL_CAP = 45.0          # + live_team_state delta
 
@@ -100,12 +109,234 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+# ── Freshness guard (Wave-2 S1) ─────────────────────────────────────────
+# Why 6h: matchday-intel-slow.yml runs every 3h; anything older than
+# 2 ticks is genuinely stale (one missed tick is recoverable, two means
+# the producer or upstream API is down). Reference clock = results_2026.json
+# mtime — the fast workflow refreshes it every 10 min, so it's the freshest
+# pipeline input. We compare against that rather than wall-clock so an
+# offline replay against a frozen snapshot doesn't false-alarm.
+#
+# The guard is LOUD-DEGRADE-WARN, not crash-the-tick: missing/stale files
+# still flow through `_read_json(default={})` to neutral zero-adjustment,
+# but a `subsystem_stale` warning lands in `degradation_warnings` so the
+# dashboard can render the pill and operators see WHY adjustments dropped
+# to zero. Round 5's loud-degrade-warn precedent (see _degrade.py) applies.
+STALENESS_MAX_AGE_HOURS = 6.0  # 2 slow-cron ticks (cron = every 3h)
+
+
+def _check_freshness(
+    input_path: Path,
+    reference_path: Path,
+    max_age_hours: float,
+    subsystem: str,
+    warnings_acc: list,
+) -> bool:
+    """Return True if `input_path` is fresh, False if missing or stale.
+
+    Stale = older than `reference_path` by MORE than `max_age_hours`.
+    Missing = file does not exist. Either case appends a structured
+    `subsystem_stale` warning (matches `_degrade._make_warning` shape:
+    {subsystem, scope, record_id, exception_class, message, ts}) so the
+    consolidated state surfaces the degradation alongside per-record /
+    per-subsystem skips.
+
+    Does NOT raise — the caller still reads the file with default={} so
+    the subsystem degrades to neutral rather than crashing the tick.
+    """
+    now_iso = _now_iso()
+    if not input_path.exists():
+        warnings_acc.append({
+            "subsystem": subsystem,
+            "scope": "freshness",
+            "record_id": f"file={input_path.name}",
+            "exception_class": "Stale",
+            "message": (
+                f"{subsystem} input missing: {input_path.name} not present — "
+                "producer never ran on this CI host or output is unpublished. "
+                "Subsystem degrades to neutral zero adjustment this tick."
+            ),
+            "ts": now_iso,
+        })
+        return False
+    if not reference_path.exists():
+        # No reference clock — can't compute delta; treat as fresh so we
+        # don't false-alarm on bootstrap tests / replays.
+        return True
+    try:
+        input_mtime = input_path.stat().st_mtime
+        ref_mtime = reference_path.stat().st_mtime
+    except OSError as e:
+        # stat() failure is itself a degradation signal; surface it but
+        # don't block reading.
+        warnings_acc.append({
+            "subsystem": subsystem,
+            "scope": "freshness",
+            "record_id": f"file={input_path.name}",
+            "exception_class": "Stale",
+            "message": f"stat() failed on {input_path.name}: {e}",
+            "ts": now_iso,
+        })
+        return False
+    age_delta_seconds = ref_mtime - input_mtime
+    if age_delta_seconds <= max_age_hours * 3600.0:
+        return True
+    age_hours = age_delta_seconds / 3600.0
+    warnings_acc.append({
+        "subsystem": subsystem,
+        "scope": "freshness",
+        "record_id": f"file={input_path.name}",
+        "exception_class": "Stale",
+        "message": (
+            f"{subsystem} input {input_path.name} is "
+            f"{age_hours:.1f}h older than {reference_path.name} "
+            f"(threshold {max_age_hours:.1f}h = 2 slow-cron ticks). "
+            "Subsystem degrades to neutral zero adjustment this tick."
+        ),
+        "ts": now_iso,
+    })
+    return False
+
+
+# ── Wave R2 P1c: fast-path freshness propagation ─────────────────────────
+# Why this exists:
+#   The fast path is run_live_update.py → 03_simulate.py → get_team_elo_
+#   adjustment(). It reads matchday-adjusted Elo from cached subsystem
+#   state but never surfaces freshness warnings — get_team_elo_adjustment
+#   returns a float, no warning channel. If the slow workflow (every 3h)
+#   stalls and the consolidated matchday_intelligence.json goes stale, the
+#   fast tick silently applies stale matchday adjustments as if fresh.
+#
+#   This helper closes the gap: run_live_update calls it before
+#   write_live_state and merges the returned warnings into the
+#   live_state.json `warnings` array, so the dashboard's freshness pill
+#   reflects matchday staleness too — not just results-feed staleness.
+#
+# Contract:
+#   - Returns a list of {type, message} dicts ready to merge into
+#     live_state.warnings — empty list when everything is fresh
+#   - Never raises; an OSError/JSONDecodeError here would silently swallow
+#     the freshness signal we're trying to surface, so we degrade to a
+#     diagnostic warning of our own.
+#   - The reference clock is results_2026.json mtime (matches the rest of
+#     the freshness guard at _check_freshness above) — keeps the policy
+#     consistent and avoids wall-clock false-alarms on replays.
+def get_matchday_freshness_warnings() -> list[dict]:
+    """Return live_state-shaped warnings describing matchday freshness.
+
+    Surfaces three failure modes from the slow path to the fast path's
+    live_state.json:
+
+      1. `matchday_consolidated_missing` — dashboard/matchday_intelligence.json
+         absent (slow workflow never ran on this host).
+      2. `matchday_consolidated_stale` — consolidated file's mtime is more
+         than STALENESS_MAX_AGE_HOURS older than results_2026.json's mtime
+         (slow workflow stalled at least 2 ticks).
+      3. `matchday_subsystem_stale` — consolidated file is fresh ITSELF
+         but contains one or more `subsystem_stale` / freshness warnings
+         from its producers (e.g. referee_2026.json missing → loud
+         subsystem-stale warning embedded in the consolidated state).
+
+    Type (3) is the most subtle: matchday_intelligence.json IS up-to-date
+    (slow workflow ran on time) but ONE producer underneath it failed
+    upstream. That signal previously stayed in the slow-path dashboard
+    file and never reached live_state.json.
+    """
+    out: list[dict] = []
+    # OUT_PATH is module-level (DASH / "matchday_intelligence.json").
+    # results_2026.json (the reference clock) lives in LIVE — same dir
+    # convention as the per-subsystem freshness reference at L115.
+    results_path = LIVE / "results_2026.json"
+    if not OUT_PATH.exists():
+        out.append({
+            "type": "matchday_consolidated_missing",
+            "message": (
+                f"Consolidated matchday state missing: "
+                f"{OUT_PATH.name} not present. "
+                "Slow workflow (matchday-intel-slow.yml) has not run on "
+                "this host — fast-tick adjustments are zero."
+            ),
+        })
+        return out
+
+    # Stale check vs results_2026.json mtime — same reference clock as
+    # _check_freshness above.
+    try:
+        out_mtime = OUT_PATH.stat().st_mtime
+    except OSError as e:
+        out.append({
+            "type": "matchday_consolidated_unreadable",
+            "message": (
+                f"stat() failed on {OUT_PATH.name}: {type(e).__name__}: {e}"
+            ),
+        })
+        return out
+
+    if results_path.exists():
+        try:
+            ref_mtime = results_path.stat().st_mtime
+        except OSError:
+            ref_mtime = out_mtime  # no reference → don't false-alarm
+        age_seconds = ref_mtime - out_mtime
+        if age_seconds > STALENESS_MAX_AGE_HOURS * 3600.0:
+            age_hours = age_seconds / 3600.0
+            out.append({
+                "type": "matchday_consolidated_stale",
+                "message": (
+                    f"{OUT_PATH.name} is {age_hours:.1f}h older than "
+                    f"{results_path.name} (threshold "
+                    f"{STALENESS_MAX_AGE_HOURS:.1f}h = 2 slow-cron ticks). "
+                    "Slow workflow has stalled; fast-tick is applying "
+                    "stale matchday adjustments."
+                ),
+            })
+
+    # Type (3): consolidated file fresh, but one of its producers is stale
+    # (subsystem_stale warning embedded by _check_freshness above).
+    try:
+        consolidated = json.loads(OUT_PATH.read_text())
+    except (OSError, json.JSONDecodeError) as e:
+        out.append({
+            "type": "matchday_consolidated_unparseable",
+            "message": (
+                f"Could not parse {OUT_PATH.name}: "
+                f"{type(e).__name__}: {e}"
+            ),
+        })
+        return out
+
+    deg = consolidated.get("degradation_warnings") or []
+    stale_subs: list[str] = []
+    for w in deg:
+        if not isinstance(w, dict):
+            continue
+        if w.get("scope") == "freshness" or w.get("exception_class") == "Stale":
+            sub = w.get("subsystem")
+            if sub and sub not in stale_subs:
+                stale_subs.append(sub)
+    if stale_subs:
+        out.append({
+            "type": "matchday_subsystem_stale",
+            "message": (
+                "Consolidated matchday state is current but the following "
+                "subsystem inputs are stale and degraded to neutral: "
+                + ", ".join(stale_subs)
+                + ". Investigate the corresponding producer "
+                "(referee_adjustments / suspension_tracker / "
+                "fetch_player_stats) in matchday-intel-slow.yml."
+            ),
+            "subsystems": stale_subs,
+        })
+
+    return out
+
+
 # ── Per-layer adjustment loaders ────────────────────────────────────────
 # Each loader returns {(team, match_id_or_None): component_dict}. The
 # match_id key is None for layers that apply tournament-wide (e.g. a
 # team-level injury covering multiple matches).
 
-def _load_injury_components(now_iso: str) -> dict:
+def _load_injury_components(now_iso: str, warnings_acc: list | None = None) -> dict:
     """B.3: read API-sourced injuries_2026.json and merge with the legacy
     manual overlay in team_adjustments.json.
 
@@ -127,76 +358,153 @@ def _load_injury_components(now_iso: str) -> dict:
       - Halves `adjustment_elo` for status == "doubtful" (legacy 0.5x)
     """
     out: dict[tuple[str, int | None], list[dict]] = {}
+    warnings_acc = warnings_acc if warnings_acc is not None else []
 
     # Per-team API totals (tournament-wide, not match-scoped).
     api_path = LIVE / "injuries_2026.json"
     api_data = _read_json(api_path, default={}) or {}
     for team, blob in (api_data.get("teams") or {}).items():
-        raw = float(blob.get("total_elo_adjustment", 0.0) or 0.0)
-        # API source uses the "normal" injury cap (manual overlay can push
-        # toward "extreme" — see overlay block below).
-        capped = max(-INJURY_CAP_NORMAL, min(INJURY_CAP_NORMAL, raw))
-        if capped == 0.0:
+        # Per-record degradation: a single bad team blob (NaN total,
+        # missing field surfacing as KeyError) must not abort injury
+        # loading for the other 47 WC2026 squads.
+        def _build_api_record(team=team, blob=blob):
+            raw = float(blob.get("total_elo_adjustment", 0.0) or 0.0)
+            # API source uses the "normal" injury cap (manual overlay can push
+            # toward "extreme" — see overlay block below).
+            capped = max(-INJURY_CAP_NORMAL, min(INJURY_CAP_NORMAL, raw))
+            if capped == 0.0:
+                return None
+            n_players = len(blob.get("players") or [])
+            return {
+                "type": "injury",
+                "subtype": "api_aggregate",
+                "raw_elo": raw,
+                "capped_elo": capped,
+                "cap_used": INJURY_CAP_NORMAL,
+                "n_players": n_players,
+                "source": "api_football",
+            }
+        record = degrade_record(
+            "injury", f"team={team} src=api", _build_api_record, warnings_acc)
+        if record is None:
             continue
-        n_players = len(blob.get("players") or [])
-        out.setdefault((team, None), []).append({
-            "type": "injury",
-            "subtype": "api_aggregate",
-            "raw_elo": raw,
-            "capped_elo": capped,
-            "cap_used": INJURY_CAP_NORMAL,
-            "n_players": n_players,
-            "source": "api_football",
-        })
+        out.setdefault((team, None), []).append(record)
 
     # Manual overlay (operator-curated tier_1 / suspensions / notes).
+    # Per-player tracking is required so the orchestrator can dedup against
+    # suspensions (a player can't be both injured AND suspended for the same
+    # fixture — suspension wins as it's the more-certain signal). See
+    # build_adjustments_state for the dedup application.
     overlay_path = LIVE / "team_adjustments.json"
     overlay = _read_json(overlay_path, default={}) or {}
     overlay_by_team: dict[str, float] = {}
     overlay_reasons: dict[str, list[str]] = {}
-    for adj in overlay.get("adjustments", []) or []:
-        # Legacy semantics: approved defaults True, doubtful → 0.5x, expired skipped.
-        if not adj.get("approved", True):
-            continue
-        exp = adj.get("expires_at")
-        if exp:
-            try:
-                # Tolerate both "Z" and offset-suffixed timestamps.
+    overlay_players_by_team: dict[str, list[dict]] = {}
+    for adj_idx, adj in enumerate(overlay.get("adjustments", []) or []):
+        def _accumulate_overlay(adj=adj, adj_idx=adj_idx):
+            # Legacy semantics: approved defaults True, doubtful → 0.5x, expired skipped.
+            if not adj.get("approved", True):
+                return None
+            exp = adj.get("expires_at")
+            if exp:
+                # Wave-4 fix: previously this block was `try: exp.replace(...);
+                # if exp_iso < now_iso: return None; except Exception: pass`.
+                # That swallowed every malformed-timestamp case (None, int,
+                # dict, bad-format string) and silently kept the overlay
+                # ACTIVE — an operator typo in expires_at could leave an
+                # "expired" entry contributing Elo forever. Now we coerce to
+                # str and surface a `bad_expires_at` warning so the
+                # degradation log shows the bad row instead of hiding it.
+                if not isinstance(exp, str):
+                    warnings_acc.append({
+                        "subsystem": "injury",
+                        "scope": "overlay",
+                        "record_id": f"overlay_idx={adj_idx} team={adj.get('team')}",
+                        "exception_class": "TypeError",
+                        "message": (
+                            f"bad expires_at on overlay idx={adj_idx}: "
+                            f"expected ISO-8601 str, got {type(exp).__name__} "
+                            f"({exp!r}); treating as expired (entry skipped)"
+                        ),
+                        "ts": _now_iso(),
+                    })
+                    return None
+                # Tolerate both "Z" and offset-suffixed timestamps. The
+                # string comparison is correct ONLY for canonical ISO-8601
+                # forms; validate by attempting to parse before relying on it.
                 exp_iso = exp.replace("Z", "+00:00")
+                try:
+                    datetime.fromisoformat(exp_iso)
+                except (TypeError, ValueError) as e:
+                    warnings_acc.append({
+                        "subsystem": "injury",
+                        "scope": "overlay",
+                        "record_id": f"overlay_idx={adj_idx} team={adj.get('team')}",
+                        "exception_class": type(e).__name__,
+                        "message": (
+                            f"bad expires_at on overlay idx={adj_idx}: "
+                            f"{exp!r} is not ISO-8601 ({e}); treating as "
+                            "expired (entry skipped)"
+                        ),
+                        "ts": _now_iso(),
+                    })
+                    return None
                 if exp_iso < now_iso:
-                    continue
-            except Exception:
-                pass
-        amount = float(adj.get("adjustment_elo", 0) or 0)
-        if adj.get("status") == "doubtful":
-            amount *= 0.5
-        team = adj.get("team")
-        if not team:
-            continue
-        overlay_by_team[team] = overlay_by_team.get(team, 0.0) + amount
-        overlay_reasons.setdefault(team, []).append(
-            adj.get("reason") or adj.get("player") or adj.get("status") or "manual"
+                    return None
+            amount = float(adj.get("adjustment_elo", 0) or 0)
+            if adj.get("status") == "doubtful":
+                amount *= 0.5
+            team = adj.get("team")
+            if not team:
+                return None
+            overlay_by_team[team] = overlay_by_team.get(team, 0.0) + amount
+            overlay_reasons.setdefault(team, []).append(
+                adj.get("reason") or adj.get("player") or adj.get("status") or "manual"
+            )
+            # Per-player breakdown for cross-subsystem dedup. Only entries
+            # with an explicit `player` name participate in dedup; team-level
+            # entries (no `player` set) flow through aggregate-only.
+            player_name = adj.get("player")
+            if player_name:
+                overlay_players_by_team.setdefault(team, []).append({
+                    "player": player_name,
+                    "amount": amount,
+                })
+            return True
+        degrade_record(
+            "injury",
+            f"overlay_idx={adj_idx} team={adj.get('team') if isinstance(adj, dict) else '?'}",
+            _accumulate_overlay,
+            warnings_acc,
         )
     for team, raw in overlay_by_team.items():
-        # Overlay may exceed the "normal" cap if the operator flagged extreme
-        # circumstances (multiple tier_1 players out) — use extreme cap here.
-        capped = max(-INJURY_CAP_EXTREME, min(INJURY_CAP_EXTREME, raw))
-        if capped == 0.0:
+        def _build_overlay_record(team=team, raw=raw):
+            # Overlay may exceed the "normal" cap if the operator flagged extreme
+            # circumstances (multiple tier_1 players out) — use extreme cap here.
+            capped = max(-INJURY_CAP_EXTREME, min(INJURY_CAP_EXTREME, raw))
+            if capped == 0.0:
+                return None
+            return {
+                "type": "injury",
+                "subtype": "manual_overlay",
+                "raw_elo": raw,
+                "capped_elo": capped,
+                "cap_used": INJURY_CAP_EXTREME,
+                "reasons": overlay_reasons.get(team, []),
+                "players": overlay_players_by_team.get(team, []),
+                "source": "team_adjustments_manual",
+            }
+        record = degrade_record(
+            "injury", f"team={team} src=overlay",
+            _build_overlay_record, warnings_acc)
+        if record is None:
             continue
-        out.setdefault((team, None), []).append({
-            "type": "injury",
-            "subtype": "manual_overlay",
-            "raw_elo": raw,
-            "capped_elo": capped,
-            "cap_used": INJURY_CAP_EXTREME,
-            "reasons": overlay_reasons.get(team, []),
-            "source": "team_adjustments_manual",
-        })
+        out.setdefault((team, None), []).append(record)
 
     return out
 
 
-def _load_weather_components() -> dict:
+def _load_weather_components(warnings_acc: list | None = None) -> dict:
     """Read weather_2026.json. Schema written by B.2 fetch_weather.
 
     Each entry: {match_id, home_team_adjustment_elo, away_team_adjustment_elo,
@@ -205,8 +513,9 @@ def _load_weather_components() -> dict:
     data = _read_json(LIVE / "weather_2026.json", default={}) or {}
     entries = data.get("weather") or []
     out: dict[tuple[str, int | None], list[dict]] = {}
+    warnings_acc = warnings_acc if warnings_acc is not None else []
     for w in entries:
-        m_id = w.get("match_id")
+        m_id = w.get("match_id") if isinstance(w, dict) else None
         if m_id is None:
             continue
         bucket = w.get("weather_bucket")
@@ -216,23 +525,153 @@ def _load_weather_components() -> dict:
             team = w.get(f"{side}_team")
             if not team:
                 continue
-            raw = float(w.get(f"{side}_team_adjustment_elo", 0.0) or 0.0)
-            capped = max(-WEATHER_CAP, min(WEATHER_CAP, raw))
-            if capped == 0.0:
+            def _build_side(w=w, side=side, team=team, m_id=m_id,
+                            bucket=bucket, confidence=confidence):
+                raw = float(w.get(f"{side}_team_adjustment_elo", 0.0) or 0.0)
+                capped = max(-WEATHER_CAP, min(WEATHER_CAP, raw))
+                if capped == 0.0:
+                    return None
+                return {
+                    "type": "weather",
+                    "weather_bucket": bucket,
+                    "raw_elo": raw,
+                    "capped_elo": capped,
+                    "cap_used": WEATHER_CAP,
+                    "confidence": confidence,
+                    "source": "open_meteo",
+                }
+            record = degrade_record(
+                "weather", f"m={m_id} side={side} team={team}",
+                _build_side, warnings_acc)
+            if record is None:
                 continue
-            out.setdefault((team, m_id), []).append({
-                "type": "weather",
-                "weather_bucket": bucket,
-                "raw_elo": raw,
-                "capped_elo": capped,
-                "cap_used": WEATHER_CAP,
-                "confidence": confidence,
-                "source": "open_meteo",
-            })
+            out.setdefault((team, m_id), []).append(record)
     return out
 
 
-def _load_lineup_components() -> dict:
+def _load_referee_components(warnings_acc: list | None = None) -> dict:
+    """Read referee_2026.json. Schema written by Phase 2 referee_adjustments.
+
+    Each entry: {match_id, home_team, away_team, referee_name,
+                 home_team_adjustment_elo, away_team_adjustment_elo, ...}.
+    Wave-A model is one-sided: only the home side carries a bonus; away is
+    always 0.0. Skipping the away side keeps the components list lean.
+    """
+    warnings_acc = warnings_acc if warnings_acc is not None else []
+    # Wave-2 S1: freshness guard — emit `subsystem_stale` if the producer
+    # never ran on this host or the snapshot is older than 2 slow-cron ticks.
+    # Reads still proceed via _read_json(default={}) so the subsystem
+    # degrades to neutral instead of crashing.
+    _check_freshness(
+        LIVE / "referee_2026.json", LIVE / "results_2026.json",
+        STALENESS_MAX_AGE_HOURS, "referee", warnings_acc,
+    )
+    data = _read_json(LIVE / "referee_2026.json", default={}) or {}
+    entries = data.get("referee") or []
+    out: dict[tuple[str, int | None], list[dict]] = {}
+    for r in entries:
+        m_id = r.get("match_id") if isinstance(r, dict) else None
+        if m_id is None:
+            continue
+        team = r.get("home_team")
+        if not team:
+            continue
+        def _build_ref_record(r=r, m_id=m_id, team=team):
+            raw = float(r.get("home_team_adjustment_elo", 0.0) or 0.0)
+            capped = max(-REFEREE_CAP, min(REFEREE_CAP, raw))
+            if capped == 0.0:
+                return None
+            return {
+                "type": "referee",
+                "raw_elo": raw,
+                "capped_elo": capped,
+                "cap_used": REFEREE_CAP,
+                "referee_name": r.get("referee_name"),
+                "n_matches": r.get("n_matches"),
+                "confidence": r.get("confidence"),
+                "reason": r.get("reason"),
+                "source": "wave_a_proposal",
+            }
+        record = degrade_record(
+            "referee", f"m={m_id} team={team}",
+            _build_ref_record, warnings_acc)
+        if record is None:
+            continue
+        out.setdefault((team, m_id), []).append(record)
+    return out
+
+
+def _load_suspension_components(warnings_acc: list | None = None) -> dict:
+    """Read suspensions_2026.json. Schema written by Phase 4 suspension_tracker.
+
+    Each entry: {match_id, team, player, reason, team_adjustment_elo, ...}.
+    One-sided by construction — only the suspended player's team carries
+    the penalty. Multiple suspensions for the same (team, match) stack and
+    are re-clamped at the per-match cap (defense-in-depth alongside the
+    tracker's per-row clamp).
+    """
+    warnings_acc = warnings_acc if warnings_acc is not None else []
+    # Wave-2 S1: freshness guard — see _check_freshness docstring. Stale
+    # suspensions are particularly dangerous: a player banned for tomorrow's
+    # match silently drops to neutral if the tracker hasn't refreshed since
+    # yesterday's red card.
+    _check_freshness(
+        LIVE / "suspensions_2026.json", LIVE / "results_2026.json",
+        STALENESS_MAX_AGE_HOURS, "suspension", warnings_acc,
+    )
+    data = _read_json(LIVE / "suspensions_2026.json", default={}) or {}
+    entries = data.get("suspensions") or []
+    by_key: dict[tuple[str, int | None], list[dict]] = {}
+    for s in entries:
+        m_id = s.get("match_id") if isinstance(s, dict) else None
+        team = s.get("team") if isinstance(s, dict) else None
+        if m_id is None or not team:
+            continue
+        def _build_susp_record(s=s, m_id=m_id, team=team):
+            raw = float(s.get("team_adjustment_elo", 0.0) or 0.0)
+            if raw == 0.0:
+                return None
+            return {
+                "type": "suspension",
+                "raw_elo": raw,
+                "per_player_capped_elo": raw,
+                "cap_used": SUSPENSION_CAP,
+                "player": s.get("player"),
+                "reason": s.get("reason"),
+                "evidence_match_ids": s.get("evidence_match_ids") or [],
+                "confidence": s.get("confidence", "high"),
+                "source": s.get("source", "fetch_results_events"),
+            }
+        record = degrade_record(
+            "suspension",
+            f"m={m_id} team={team} player={s.get('player') if isinstance(s, dict) else '?'}",
+            _build_susp_record, warnings_acc)
+        if record is None:
+            continue
+        by_key.setdefault((team, m_id), []).append(record)
+    # Re-clamp the per-(team, match) sum at SUSPENSION_CAP so multiple
+    # suspensions don't quietly bypass the cap before the aggregate layer.
+    out: dict[tuple[str, int | None], list[dict]] = {}
+    for key, comps in by_key.items():
+        running = 0.0
+        for c in comps:
+            remaining = SUSPENSION_CAP - abs(running)
+            sign = 1.0 if c["per_player_capped_elo"] >= 0 else -1.0
+            allowed = sign * min(abs(c["per_player_capped_elo"]), max(0.0, remaining))
+            c["capped_elo"] = allowed
+            c["cap_reason"] = (
+                "suspension_total"
+                if abs(allowed) < abs(c["per_player_capped_elo"])
+                else "per_player"
+            )
+            running += allowed
+            if allowed == 0.0:
+                continue
+            out.setdefault(key, []).append(c)
+    return out
+
+
+def _load_lineup_components(warnings_acc: list | None = None) -> dict:
     """Read lineups_2026.json. Schema written by B.4 fetch_lineups.
 
     Each entry: {match_id, home_team_adjustment_elo, away_team_adjustment_elo,
@@ -243,31 +682,39 @@ def _load_lineup_components() -> dict:
     data = _read_json(LIVE / "lineups_2026.json", default={}) or {}
     entries = data.get("lineups") or []
     out: dict[tuple[str, int | None], list[dict]] = {}
+    warnings_acc = warnings_acc if warnings_acc is not None else []
     for ln in entries:
-        m_id = ln.get("match_id")
+        m_id = ln.get("match_id") if isinstance(ln, dict) else None
         if m_id is None:
             continue
         for side in ("home", "away"):
             team = ln.get(side)
             if not team:
                 continue
-            raw = float(ln.get(f"{side}_team_adjustment_elo", 0.0) or 0.0)
-            capped = max(-LINEUP_CAP, min(LINEUP_CAP, raw))
-            if capped == 0.0:
+            def _build_lineup_side(ln=ln, side=side, team=team, m_id=m_id):
+                raw = float(ln.get(f"{side}_team_adjustment_elo", 0.0) or 0.0)
+                capped = max(-LINEUP_CAP, min(LINEUP_CAP, raw))
+                if capped == 0.0:
+                    return None
+                return {
+                    "type": "lineup",
+                    "raw_elo": raw,
+                    "capped_elo": capped,
+                    "cap_used": LINEUP_CAP,
+                    "reason": ln.get(f"{side}_adjustment_reason"),
+                    "baseline_source": ln.get("baseline_source", "unknown"),
+                    "source": "api_football",
+                }
+            record = degrade_record(
+                "lineup", f"m={m_id} side={side} team={team}",
+                _build_lineup_side, warnings_acc)
+            if record is None:
                 continue
-            out.setdefault((team, m_id), []).append({
-                "type": "lineup",
-                "raw_elo": raw,
-                "capped_elo": capped,
-                "cap_used": LINEUP_CAP,
-                "reason": ln.get(f"{side}_adjustment_reason"),
-                "baseline_source": ln.get("baseline_source", "unknown"),
-                "source": "api_football",
-            })
+            out.setdefault((team, m_id), []).append(record)
     return out
 
 
-def _load_stats_components() -> dict:
+def _load_stats_components(warnings_acc: list | None = None) -> dict:
     """Read match_stats_2026.json. Schema written by B.5 fetch_match_stats.
 
     Post-match only. Each entry adjusts the TEAM's live form (not a specific
@@ -302,32 +749,43 @@ def _load_stats_components() -> dict:
     # Aggregate per team across all matches, applying both per-match and
     # group-stage caps.
     per_team_total: dict[str, list[dict]] = {}
+    warnings_acc = warnings_acc if warnings_acc is not None else []
     for s in entries:
-        if s.get("status") != "FT":
+        if not isinstance(s, dict) or s.get("status") != "FT":
             continue
         for side in ("home", "away"):
             team = s.get(side)
             if not team:
                 continue
-            raw = float(s.get(f"{side}_form_adjustment_elo", 0.0) or 0.0)
-            # H7: 0.5× discount when live_team_state already reflects form.
-            downweighted = False
-            if _live_state_active(team):
-                raw = raw * 0.5
-                downweighted = True
-            capped = max(-STATS_CAP_PER_MATCH, min(STATS_CAP_PER_MATCH, raw))
-            if capped == 0.0:
+            def _build_stats_side(s=s, side=side, team=team):
+                raw = float(s.get(f"{side}_form_adjustment_elo", 0.0) or 0.0)
+                # H7: 0.5× discount when live_team_state already reflects form.
+                downweighted = False
+                if _live_state_active(team):
+                    raw = raw * 0.5
+                    downweighted = True
+                capped = max(-STATS_CAP_PER_MATCH, min(STATS_CAP_PER_MATCH, raw))
+                if capped == 0.0:
+                    return None
+                return {
+                    "type": "stats_proxy",
+                    "match_id": s.get("match_id"),
+                    "raw_elo": raw,
+                    "capped_elo_per_match": capped,
+                    "cap_per_match": STATS_CAP_PER_MATCH,
+                    "true_xg_available": s.get("true_xg_available", False),
+                    "xg_attempted": s.get("xg_attempted", False),
+                    "xg_found": s.get("xg_found", False),
+                    "downweighted_for_live_team_state": downweighted,
+                    "source": "api_football",
+                }
+            record = degrade_record(
+                "stats_proxy",
+                f"m={s.get('match_id')} side={side} team={team}",
+                _build_stats_side, warnings_acc)
+            if record is None:
                 continue
-            per_team_total.setdefault(team, []).append({
-                "type": "stats_proxy",
-                "match_id": s.get("match_id"),
-                "raw_elo": raw,
-                "capped_elo_per_match": capped,
-                "cap_per_match": STATS_CAP_PER_MATCH,
-                "true_xg_available": s.get("true_xg_available", False),
-                "downweighted_for_live_team_state": downweighted,
-                "source": "api_football",
-            })
+            per_team_total.setdefault(team, []).append(record)
     # Apply group-stage total cap per team.
     out: dict[tuple[str, int | None], list[dict]] = {}
     for team, components in per_team_total.items():
@@ -335,11 +793,11 @@ def _load_stats_components() -> dict:
         for c in components:
             # If adding this component would exceed the group total cap,
             # truncate this component's contribution.
-            remaining_budget = STATS_CAP_GROUP_TOTAL - abs(running_sum)
+            remaining_budget = STATS_CAP_TOURNAMENT_TOTAL - abs(running_sum)
             sign = 1.0 if c["capped_elo_per_match"] >= 0 else -1.0
             allowed = sign * min(abs(c["capped_elo_per_match"]), max(0.0, remaining_budget))
             c["capped_elo"] = allowed
-            c["cap_used"] = STATS_CAP_GROUP_TOTAL
+            c["cap_used"] = STATS_CAP_TOURNAMENT_TOTAL
             c["cap_reason"] = (
                 "group_total" if abs(allowed) < abs(c["capped_elo_per_match"]) else "per_match"
             )
@@ -348,6 +806,102 @@ def _load_stats_components() -> dict:
                 continue
             out.setdefault((team, None), []).append(c)
     return out
+
+
+# ── Cross-subsystem dedup helper ────────────────────────────────────────
+def _apply_injury_suspension_dedup(
+    inj: dict[tuple[str, int | None], list[dict]],
+    sus: dict[tuple[str, int | None], list[dict]],
+    warnings_acc: list,
+) -> None:
+    """Mutates `inj` in place to add per-match positive credits that
+    cancel the injury overlay contribution of any player who is ALSO
+    suspended for that match.
+
+    Suspension wins (hard rule — player can't play; injury is a
+    probability the player can't play). Dedup is per-
+    (team, match_id, player_name): a player suspended for m=73 and
+    injured tournament-wide keeps the injury penalty for m=74 etc. —
+    only m=73 is deduplicated.
+
+    Mechanism: the injury overlay is bucketed at (team, None) as a single
+    aggregated record with a `players` list of {player, amount} entries.
+    For each suspended player whose name appears in their team's overlay
+    `players` list, we emit a credit record at (team, match_id) with
+    capped_elo = -player_overlay_amount (positive when amount is negative)
+    so the sum cancels for that one match without disturbing other matches.
+
+    Every dedup decision is appended to `warnings_acc` as a structured
+    `injury_suspension_dedup` warning so the dashboard / audit log can
+    surface why a team's match total differs from naive injury+suspension.
+    """
+    # Build per-team player→overlay-amount index from the injury overlay
+    # records (tournament-wide bucket only — API aggregates have no
+    # per-player breakdown to dedup against).
+    overlay_player_amount: dict[tuple[str, str], float] = {}
+    for (team, m_id), comps in inj.items():
+        if m_id is not None:
+            continue
+        for c in comps:
+            if c.get("subtype") != "manual_overlay":
+                continue
+            for p in c.get("players") or []:
+                name = p.get("player")
+                amt = p.get("amount")
+                if not name or amt is None:
+                    continue
+                # Sum across multiple overlay entries for the same player
+                # (e.g. two operator notes for one tier-1 star).
+                overlay_player_amount[(team, name)] = (
+                    overlay_player_amount.get((team, name), 0.0) + float(amt)
+                )
+
+    if not overlay_player_amount:
+        return
+
+    # For each suspension record, check if the player has an overlay
+    # contribution to credit back at THAT match_id.
+    for (team, m_id), comps in list(sus.items()):
+        if m_id is None:
+            continue
+        for c in comps:
+            player_name = c.get("player")
+            if not player_name:
+                continue
+            key = (team, player_name)
+            overlay_amt = overlay_player_amount.get(key)
+            if overlay_amt is None or overlay_amt == 0.0:
+                continue
+            # Credit = -overlay_amt (cancels the tournament-wide injury
+            # contribution for THIS match only). If overlay_amt is -25
+            # (player injured, -25 Elo), credit is +25 here so the sum at
+            # m=m_id collapses to just the suspension.
+            credit = -float(overlay_amt)
+            inj.setdefault((team, m_id), []).append({
+                "type": "injury",
+                "subtype": "suspension_dedup_credit",
+                "raw_elo": credit,
+                "capped_elo": credit,
+                "cap_used": INJURY_CAP_EXTREME,
+                "player": player_name,
+                "reasons": [
+                    f"dedup: {player_name} also suspended for m={m_id}; "
+                    f"injury overlay deferred to suspension (suspension wins)"
+                ],
+                "source": "cross_subsystem_dedup",
+            })
+            warnings_acc.append({
+                "subsystem": "injury",
+                "scope": "dedup",
+                "record_id": f"team={team} m={m_id} player={player_name}",
+                "type": "injury_suspension_dedup",
+                "message": (
+                    f"{player_name} appears in both injury overlay and "
+                    f"suspension for {team} m={m_id}; injury contribution "
+                    f"({overlay_amt:+.1f}) credited back — suspension wins"
+                ),
+                "ts": _now_iso(),
+            })
 
 
 # ── Core aggregation ────────────────────────────────────────────────────
@@ -359,14 +913,62 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
     file reads — no writes here, the caller decides.
     """
     now_iso = now_iso or _now_iso()
-    inj = _load_injury_components(now_iso)
-    wx = _load_weather_components()
-    ln = _load_lineup_components()
-    stats = _load_stats_components()
+    # Round 5: each subsystem call is wrapped both at the per-record level
+    # (inside _load_*_components — see degrade_record) AND at the
+    # per-subsystem level here. Per-record catches bad data inside an
+    # otherwise-healthy feed; per-subsystem catches unexpected failures
+    # in the loader itself (e.g. a corrupted top-level key) so other
+    # subsystems still produce output.
+    degradation_warnings: list[dict] = []
+    # Wave-2 S1: player_stats freshness — this file is consumed by
+    # auto_tier (today in shadow mode, AUTO_TIER_ACTIVE=False) via
+    # injury_adjustments. The orchestrator doesn't load it directly, but
+    # we still surface staleness here so the dashboard sees the producer
+    # gap before the auto-tier flip lands. Referee + suspension freshness
+    # checks live inside their respective loaders.
+    _check_freshness(
+        LIVE / "player_stats_2026.json", LIVE / "results_2026.json",
+        STALENESS_MAX_AGE_HOURS, "player_stats", degradation_warnings,
+    )
+    inj = degrade_subsystem(
+        "injury", lambda: _load_injury_components(now_iso, degradation_warnings),
+        degradation_warnings)
+    wx = degrade_subsystem(
+        "weather", lambda: _load_weather_components(degradation_warnings),
+        degradation_warnings)
+    ln = degrade_subsystem(
+        "lineup", lambda: _load_lineup_components(degradation_warnings),
+        degradation_warnings)
+    stats = degrade_subsystem(
+        "stats_proxy", lambda: _load_stats_components(degradation_warnings),
+        degradation_warnings)
+    ref = degrade_subsystem(
+        "referee", lambda: _load_referee_components(degradation_warnings),
+        degradation_warnings)
+    sus = degrade_subsystem(
+        "suspension", lambda: _load_suspension_components(degradation_warnings),
+        degradation_warnings)
+
+    # ── Cross-subsystem dedup: injury + suspension same player ──────────
+    # Rule (see ARCHITECTURE / Round 6 §dedup): a suspended player is
+    # already unavailable for the affected match — the team's roster
+    # contribution is the unavailability, not the cause. Stacking injury
+    # AND suspension for the same player is double-counting. Convention:
+    # SUSPENSION WINS (hard rule — player cannot play; injury is a
+    # probabilistic signal).
+    #
+    # Dedup-key set schema: {(team: str, match_id: int, player_name: str)}.
+    # The injury overlay is tournament-wide (bucketed at (team, None)), so
+    # for each suspended player we emit a per-match POSITIVE credit at
+    # (team, match_id) that cancels the suspended player's overlay
+    # contribution for THAT match only. Tournament-wide injury still
+    # applies for every OTHER match (per-(team,match) dedup, not
+    # per-(team,player)).
+    _apply_injury_suspension_dedup(inj, sus, degradation_warnings)
 
     # Merge component lists by (team, match_id).
     components_by_key: dict[tuple[str, int | None], list[dict]] = {}
-    for src in (inj, wx, ln, stats):
+    for src in (inj, wx, ln, stats, ref, sus):
         for key, comps in src.items():
             components_by_key.setdefault(key, []).extend(comps)
 
@@ -395,8 +997,10 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
             "injury_extreme": INJURY_CAP_EXTREME,
             "lineup": LINEUP_CAP,
             "weather": WEATHER_CAP,
+            "referee": REFEREE_CAP,
+            "suspension": SUSPENSION_CAP,
             "stats_per_match": STATS_CAP_PER_MATCH,
-            "stats_group_total": STATS_CAP_GROUP_TOTAL,
+            "stats_group_total": STATS_CAP_TOURNAMENT_TOTAL,
             "aggregate_matchday": AGGREGATE_MATCHDAY_CAP,
             "grand_total_with_live_form": GRAND_TOTAL_CAP,
         },
@@ -417,15 +1021,55 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
             ),
             "injuries_handled_by_this_module": True,
             "weather": (LIVE / "weather_2026.json").exists(),
+            "referee": (LIVE / "referee_2026.json").exists(),
+            "suspensions": (LIVE / "suspensions_2026.json").exists(),
             "lineups": (LIVE / "lineups_2026.json").exists(),
             "stats_proxy": (LIVE / "match_stats_2026.json").exists(),
         },
         "warnings": [],
+        # Round 5: every per-record skip + per-subsystem fallover is
+        # surfaced here so the dashboard can render an operator alert
+        # and downstream consumers can see WHY a tick produced fewer
+        # adjustments than expected. Empty list = clean tick.
+        "degradation_warnings": degradation_warnings,
     }
+
+    # Surface a top-level `subsystem_degraded` warning for any subsystem
+    # whose entire loader raised — operators need a single pill not
+    # buried record-level entries.
+    _degraded_subsystems = sorted({
+        w["subsystem"] for w in degradation_warnings
+        if w.get("scope") == "subsystem"
+    })
+    for subsys in _degraded_subsystems:
+        state["warnings"].append({
+            "type": "subsystem_degraded",
+            "subsystem": subsys,
+            "message": (
+                f"{subsys} subsystem returned no output this tick — see "
+                f"degradation_warnings for the underlying exception"
+            ),
+        })
+
+    # Catastrophic fail: ALL six subsystems degraded => no layer
+    # contributed any signal. The orchestrator still writes the snapshot
+    # (so the dashboard sees the warning) but the CLI exits non-zero.
+    _ALL_SUBSYSTEMS = {"injury", "weather", "lineup", "stats_proxy", "referee", "suspension"}
+    if set(_degraded_subsystems) >= _ALL_SUBSYSTEMS:
+        state["warnings"].append({
+            "type": "pipeline_unhealthy",
+            "message": (
+                "all matchday subsystems degraded this tick — no live "
+                "adjustments applied; investigate upstream feeds"
+            ),
+        })
+        state["pipeline_unhealthy"] = True
+    else:
+        state["pipeline_unhealthy"] = False
 
     # Surface a friendly warning when a feed THIS MODULE consumes is absent.
     # As of B.3, injuries are owned here (API-Football primary + manual overlay).
-    _FEEDS_THIS_MODULE_CONSUMES = {"injuries", "weather", "lineups", "stats_proxy"}
+    _FEEDS_THIS_MODULE_CONSUMES = {"injuries", "weather", "referee", "suspensions", "lineups", "stats_proxy"}
     for feed, present in state["feeds_available"].items():
         if feed not in _FEEDS_THIS_MODULE_CONSUMES:
             continue
@@ -446,6 +1090,8 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
     _UPSTREAM_FEEDS_WITH_WARNINGS = [
         ("injuries", LIVE / "injuries_2026.json"),
         ("weather",  LIVE / "weather_2026.json"),
+        ("referee",  LIVE / "referee_2026.json"),
+        ("suspensions", LIVE / "suspensions_2026.json"),
         ("lineups",  LIVE / "lineups_2026.json"),
         ("stats_proxy", LIVE / "match_stats_2026.json"),
     ]
@@ -459,6 +1105,11 @@ def build_adjustments_state(now_iso: str | None = None) -> dict:
         # only in the matchday-intel detail block, not the alert pill, so a
         # genuinely quiet feed doesn't trigger a false alarm.
         "no_records_returned",
+        # Phase 4 §4 fallback: suspension_tracker surfaces this when the
+        # snapshot has completed matches but no enriched `events` lists.
+        # Propagating prevents the silent "zero suspensions = confirmed"
+        # failure mode the §4 spec exists to prevent.
+        "no_events_in_snapshot",
     }
     # Types we KNOW are benign info-only and deliberately don't propagate
     # to the consolidated state. Listed explicitly so the
@@ -533,6 +1184,10 @@ def append_audit_log(state: dict, workflow_run_id: str | None = None) -> None:
         "summary": state["summary"],
         "feeds_available": state["feeds_available"],
         "warnings": state["warnings"],
+        # Round 5: pin per-tick degradation count + types in the replay
+        # log so an operator scanning matchday_intelligence_log.jsonl can
+        # spot a creeping bad-feed pattern without diff'ing snapshots.
+        "degradation_warnings": state.get("degradation_warnings", []),
         # Compact representation of every non-zero adjustment for replay.
         "active_adjustments": [
             {
@@ -593,15 +1248,55 @@ def write_state_and_log(dry_run: bool = False) -> dict:
     Called by run_live_update.py on every tick (after fetchers run).
     Always safe to re-run: pure read on inputs, atomic write on output,
     append-only log.
+
+    Round 5: a failure to write the dashboard JSON (disk full, perms)
+    is itself a catastrophic event — flagged via `pipeline_unhealthy`
+    so the CLI can exit non-zero. The audit log append is best-effort.
     """
     state = build_adjustments_state()
     if dry_run:
-        print("[matchday] dry-run — would write to "
-              f"{OUT_PATH.relative_to(ROOT)} and append to "
-              f"{LOG_PATH.relative_to(ROOT)}")
+        # `relative_to` raises ValueError if OUT_PATH is outside ROOT
+        # (e.g. when tests monkeypatch OUT_PATH into a tempfs); fall back
+        # to the absolute string in that case so dry-run never crashes.
+        try:
+            out_rel = OUT_PATH.relative_to(ROOT)
+            log_rel = LOG_PATH.relative_to(ROOT)
+        except ValueError:
+            out_rel = OUT_PATH
+            log_rel = LOG_PATH
+        print(
+            f"[matchday] dry-run — would write to {out_rel} and append to "
+            f"{log_rel}"
+        )
         return state
-    _atomic_write_json(OUT_PATH, state)
-    append_audit_log(state)
+    try:
+        _atomic_write_json(OUT_PATH, state)
+    except (OSError, ValueError, TypeError) as e:
+        # The dashboard JSON couldn't land — escalate to catastrophic so
+        # the CLI exits non-zero, but DON'T re-raise so the caller still
+        # gets a state dict back (callers like run_live_update.py shouldn't
+        # crash mid-tick over a transient FS error).
+        state.setdefault("warnings", []).append({
+            "type": "pipeline_unhealthy",
+            "message": f"failed to write dashboard JSON: "
+                       f"{type(e).__name__}: {e}",
+        })
+        state["pipeline_unhealthy"] = True
+        print(
+            f"[matchday] ERROR: failed to write {OUT_PATH}: "
+            f"{type(e).__name__}: {e}",
+            file=sys.stderr,
+        )
+    try:
+        append_audit_log(state)
+    except OSError as e:
+        # Audit log failure is loud but non-fatal — the snapshot still
+        # made it to disk above, so the dashboard recovers next tick.
+        print(
+            f"[matchday] WARN: failed to append audit log: "
+            f"{type(e).__name__}: {e}",
+            file=sys.stderr,
+        )
     return state
 
 
@@ -621,10 +1316,37 @@ def main() -> int:
     if state["warnings"]:
         print(f"[matchday] warnings: {len(state['warnings'])}")
         for w in state["warnings"][:3]:
-            print(f"  - {w['type']}: {w['message']}")
+            print(f"  - {w.get('type', 'unknown')}: {w.get('message', '')}")
+    deg = state.get("degradation_warnings") or []
+    if deg:
+        print(f"[matchday] degradation warnings: {len(deg)}")
+        for w in deg[:3]:
+            print(
+                f"  - {w.get('subsystem')}/{w.get('scope')} "
+                f"{w.get('record_id')}: {w.get('exception_class')}"
+            )
     if not args.dry_run:
-        print(f"[matchday] wrote {OUT_PATH.relative_to(ROOT)}")
-        print(f"[matchday] appended audit log {LOG_PATH.relative_to(ROOT)}")
+        try:
+            out_rel = OUT_PATH.relative_to(ROOT)
+            log_rel = LOG_PATH.relative_to(ROOT)
+        except ValueError:
+            out_rel = OUT_PATH
+            log_rel = LOG_PATH
+        print(f"[matchday] wrote {out_rel}")
+        print(f"[matchday] appended audit log {log_rel}")
+    # Round 5 exit-code policy:
+    #   per-record skip       → exit 0, warnings non-empty
+    #   per-subsystem degraded → exit 0 if at least one other subsystem
+    #                            produced output (the per-subsystem
+    #                            `subsystem_degraded` warning is loud)
+    #   catastrophic (all subsystems failed OR snapshot write failed)
+    #                          → exit 1, pipeline_unhealthy=True
+    if state.get("pipeline_unhealthy"):
+        print(
+            "[matchday] ERROR: pipeline_unhealthy — exiting non-zero",
+            file=sys.stderr,
+        )
+        return 1
     return 0
 
 

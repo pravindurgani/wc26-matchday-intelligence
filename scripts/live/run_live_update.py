@@ -41,6 +41,15 @@ DASH = ROOT / "dashboard"
 CB_PATH = LIVE / "circuit_breaker_state.json"
 CB_THRESHOLD = 3  # consecutive sim failures before tripping the breaker
 
+# Wave R2 P1c: sys.path injection so the matchday freshness helper is
+# importable whether run_live_update is invoked as a script
+# (`python scripts/live/run_live_update.py`) or as a module
+# (`python -m scripts.live.run_live_update`). Matches the same pattern
+# scripts/live/export_ko_advance.py uses at L63-64.
+_LIVE_DIR = str(ROOT / "scripts" / "live")
+if _LIVE_DIR not in sys.path:
+    sys.path.insert(0, _LIVE_DIR)
+
 # C1: required artifacts for --live sim. Missing any of these crashes the sim
 # silently behind the circuit breaker; we fail loud BEFORE invoking 03_simulate.
 REQUIRED_ARTIFACTS = [
@@ -61,6 +70,36 @@ def check_required_artifacts() -> list[Path]:
 def run(cmd: list[str]) -> int:
     print(f"  → {' '.join(cmd)}")
     return subprocess.run(cmd, cwd=str(ROOT)).returncode
+
+
+def _matchday_freshness_warnings_safe() -> list[dict]:
+    """Wave R2 P1c: probe matchday freshness without ever crashing the tick.
+
+    The underlying `get_matchday_freshness_warnings()` in
+    `apply_matchday_adjustments` returns live_state-shaped {type, message}
+    dicts describing the three failure modes that the fast path was
+    previously blind to:
+      - matchday_consolidated_missing  (slow workflow never ran here)
+      - matchday_consolidated_stale    (slow workflow stalled >6h)
+      - matchday_subsystem_stale       (a producer underneath stalled)
+
+    Any unexpected exception is captured into a diagnostic warning rather
+    than propagated — losing a tick because of a freshness probe would
+    defeat the entire point of the probe.
+    """
+    try:
+        from apply_matchday_adjustments import (  # noqa: PLC0415
+            get_matchday_freshness_warnings,
+        )
+        return get_matchday_freshness_warnings()
+    except Exception as e:
+        return [{
+            "type": "matchday_freshness_check_error",
+            "message": (
+                f"matchday freshness probe failed: "
+                f"{type(e).__name__}: {e}"
+            ),
+        }]
 
 
 def atomic_write_json(path: Path, payload: dict):
@@ -386,6 +425,14 @@ def main() -> int:
 
     print("== Live update tick ==" + (" [dry-run]" if args.dry_run else ""))
 
+    # Wave R2 P1c: probe matchday freshness ONCE at the top so EVERY
+    # write_live_state path — including the three early-exit guards
+    # below (circuit breaker, fetch failure, input corruption) — carries
+    # the signal. The helper is exception-safe (see
+    # `_matchday_freshness_warnings_safe`); it returns [] on a clean tick
+    # so the early-exit warning arrays stay minimal in the happy case.
+    mf_warnings = _matchday_freshness_warnings_safe()
+
     failures = read_circuit_breaker()
     if failures >= CB_THRESHOLD:
         msg = f"Circuit breaker tripped after {failures} consecutive failures. " \
@@ -393,7 +440,8 @@ def main() -> int:
         print(f"[run_live_update] {msg}")
         # Still emit live_state so the dashboard reflects the situation
         write_live_state("live", get_completed_count(), sim_rerun=False,
-                         warnings=[{"type": "circuit_breaker", "message": msg}])
+                         warnings=[{"type": "circuit_breaker", "message": msg}]
+                                  + mf_warnings)
         return 2
 
     # Step 1: fetch results (pass --dry-run through)
@@ -407,7 +455,8 @@ def main() -> int:
                          get_completed_count(), sim_rerun=False,
                          warnings=[{"type": "fetch_failure",
                                     "message": "Live result fetcher exited non-zero; "
-                                               "previous predictions retained."}])
+                                               "previous predictions retained."}]
+                                  + mf_warnings)
         return 0  # don't trip CB for fetch failure — that's transient
 
     # H2: refuse to feed a truncated / corrupt results_2026.json into the
@@ -419,12 +468,20 @@ def main() -> int:
         write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
                          get_completed_count(), sim_rerun=False,
                          warnings=[{"type": "input_corruption",
-                                    "message": reason}])
+                                    "message": reason}]
+                                  + mf_warnings)
         # Don't trip CB — this is a data-integrity issue, not a sim regression.
         return 2
 
     new_count = get_completed_count()
     warns = get_results_warnings()
+    # Wave R2 P1c: matchday freshness probed once at the top of main()
+    # (`mf_warnings`) — fold it in here so every downstream
+    # write_live_state path carries the signal (unchanged-inputs early
+    # exit, dry-run, missing-artifacts, sim-fail, success). The CB /
+    # fetch-failure / input-corruption guards above already merged it
+    # into their isolated warning arrays.
+    warns = warns + mf_warnings
     last_synced = get_live_predictions_locked_count()
 
     # H1: hash-based change detection. Catches score corrections AND
@@ -512,6 +569,26 @@ def main() -> int:
 
     # Success: reset breaker
     write_circuit_breaker(0)
+
+    # Step 4b (Wave-4 wiring): KO advance-prob post-processor (S7).
+    # Reads data/processed/predictions_live.json + knockout_bracket +
+    # results + config, then writes `match_predictions_ko` back into
+    # predictions_live.json (atomic). This is what surfaces the
+    # `p_advance_match = p_home_win + 0.5 * p_draw` field consumed by the
+    # outright KO-market sheet. Without this hook the module exists on
+    # disk but never produces output — the S0 "looks wired, isn't
+    # flowing" class of bug.
+    # Non-fatal on failure: a Σ-gate or bracket-resolution problem leaves
+    # the predictions_live.json from the sim intact (export writes
+    # atomically) and a warning lands on the dashboard via live_state.
+    rc_ko = run([sys.executable, "-m", "scripts.live.export_ko_advance"])
+    if rc_ko != 0:
+        print(f"[run_live_update] export_ko_advance exited {rc_ko}; "
+              "predictions_live.json from sim retained (no p_advance_match "
+              "this tick)")
+        warns = warns + [{"type": "export_ko_advance_failure",
+                          "message": f"export_ko_advance exited {rc_ko}; "
+                                     "p_advance_match not emitted this tick"}]
 
     # Step 5: live delta — only meaningful once matches are locked
     if new_count > 0:

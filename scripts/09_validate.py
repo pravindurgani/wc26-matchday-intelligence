@@ -23,6 +23,14 @@ ROOT = Path(__file__).resolve().parents[1]
 DASH = ROOT / "dashboard"
 PROC = ROOT / "data" / "processed"
 
+# Strict Σ-invariant module — additive to the loose check at lines 76-79.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_invariants import (  # noqa: E402
+    DEFAULT_PATH as STRICT_PREDICTIONS_PATH,
+    InvariantError,
+    check_invariants as _check_strict_invariants,
+)
+
 
 def check(name, ok, detail=""):
     status = "✓" if ok else "✗"
@@ -90,6 +98,25 @@ def main():
                                 f"misses={pred.get('annex_c_misses')}")
     total += 1; passed += check("48 teams present",
                                 len(teams) == 48, f"got {len(teams)}")
+
+    # 2b. Strict Σ invariant on predictions_live.json. Additive to the
+    # loose 1e-2 check above; this one enforces 1e-6 against the canonical
+    # post-simulation blob (see scripts/check_invariants.py).
+    try:
+        _check_strict_invariants(STRICT_PREDICTIONS_PATH)
+        total += 1; passed += check(
+            "Σ invariant (strict, 1e-6)", True,
+            f"{STRICT_PREDICTIONS_PATH.name}",
+        )
+    except InvariantError as _e:
+        total += 1; passed += check(
+            "Σ invariant (strict, 1e-6)", False,
+            f"{type(_e).__name__}: {_e}",
+        )
+    except FileNotFoundError as _e:
+        total += 1; passed += check(
+            "Σ invariant (strict, 1e-6)", False, f"file missing: {_e}",
+        )
     # P1-D: match_predictions is now group + knockout fixtures (104). Filter
     # to stage=='group' for the 72-fixture invariant; total should be 104.
     _mps = pred["match_predictions"]
