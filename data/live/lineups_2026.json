@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-17T15:33:46.923557+00:00",
+  "generated_at": "2026-06-17T20:14:36.584160+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 22,
+      "home": "England",
+      "away": "Croatia",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 2932,
+          "name": "Jordan Pickford",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 19545,
+          "name": "Reece James",
+          "number": 24,
+          "pos": "D"
+        },
+        {
+          "id": 19354,
+          "name": "Ezri Konsa",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 626,
+          "name": "John Stones",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 307123,
+          "name": "Nico O'Reilly",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 138908,
+          "name": "Elliot Anderson",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 2937,
+          "name": "Declan Rice",
+          "number": 4,
+          "pos": "M"
+        },
+        {
+          "id": 136723,
+          "name": "Noni Madueke",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 129718,
+          "name": "Jude Bellingham",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 138787,
+          "name": "Anthony Gordon",
+          "number": 18,
+          "pos": "M"
+        },
+        {
+          "id": 184,
+          "name": "Harry Kane",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 1305,
+          "name": "Dominik Livaković",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 14701,
+          "name": "Josip Šutalo",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 387521,
+          "name": "Luka Vušković",
+          "number": 22,
+          "pos": "D"
+        },
+        {
+          "id": 129033,
+          "name": "Joško Gvardiol",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 125171,
+          "name": "Josip Stanišić",
+          "number": 2,
+          "pos": "M"
+        },
+        {
+          "id": 754,
+          "name": "Luka Modrić",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 348205,
+          "name": "Petar Sučić",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 207,
+          "name": "Ivan Perišić",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 2763,
+          "name": "Mario Pašalić",
+          "number": 15,
+          "pos": "F"
+        },
+        {
+          "id": 295026,
+          "name": "Martin Baturina",
+          "number": 16,
+          "pos": "F"
+        },
+        {
+          "id": 66055,
+          "name": "Petar Musa",
+          "number": 26,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-17T20:14:36.466230+00:00"
+    }
+  ],
   "warnings": []
 }
