@@ -1,11 +1,22 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-17T01:09:24.092485+00:00",
+  "last_updated_utc": "2026-06-17T01:19:26.478640+00:00",
   "completed_matches_count": 18,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 19,
+      "home": "Argentina",
+      "away": "Algeria",
+      "home_score": 0,
+      "away_score": 1,
+      "elapsed": 9,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 1,
   "warnings": []
 }
