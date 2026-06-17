@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WC26 Model Improvements — This Week</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:       #0a0c10;
+    --s1:       #11141c;
+    --s2:       #181c27;
+    --border:   #1f2535;
+    --gold:     #e8a830;
+    --gold-d:   #8a5e14;
+    --blue:     #4a9eff;
+    --green:    #22c55e;
+    --red:      #ef4444;
+    --orange:   #f97316;
+    --purple:   #a78bfa;
+    --teal:     #2dd4bf;
+    --text:     #dde4f0;
+    --muted:    #58647a;
+    --code:     #0d1017;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; display: flex; min-height: 100vh; }
+
+  /* NAV */
+  nav { width: 230px; min-width: 230px; background: var(--s1); border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 0; flex-shrink: 0; }
+  .nb { padding: 0 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+  .nb .eyebrow { font-size: 9.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 4px; }
+  .nb h2 { font-size: 14px; font-weight: 800; color: #fff; line-height: 1.3; }
+  .nb .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .ns { font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 14px 18px 3px; font-weight: 700; }
+  nav a { display: block; padding: 6px 18px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 450; transition: all .15s; border-left: 2px solid transparent; }
+  nav a:hover { color: var(--text); background: var(--s2); }
+  nav a.phase { color: var(--gold); font-weight: 600; }
+  nav a.phase:hover { background: var(--s2); }
+
+  /* MAIN */
+  main { flex: 1; max-width: 940px; padding: 36px 44px 80px; }
+  section { margin-bottom: 52px; scroll-margin-top: 16px; }
+  section > h2 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 3px; letter-spacing: -.01em; }
+  .sh { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  /* HEADER */
+  .ph { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .pe { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+  .ph h1 { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 10px; }
+  .ph p { color: var(--muted); font-size: 13.5px; max-width: 640px; }
+
+  /* STATUS ROW */
+  .status-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .status-pill { font-size: 11px; padding: 3px 10px; border-radius: 100px; font-weight: 600; border: 1px solid; }
+  .sp-green { color: var(--green); border-color: #15803d; background: rgba(34,197,94,.08); }
+  .sp-red   { color: var(--red);   border-color: #991b1b; background: rgba(239,68,68,.08); }
+  .sp-amber { color: var(--gold);  border-color: var(--gold-d); background: rgba(232,168,48,.08); }
+  .sp-blue  { color: var(--blue);  border-color: #1e4d8c; background: rgba(74,158,255,.08); }
+
+  /* CARDS */
+  .card { background: var(--s1); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; margin-bottom: 10px; }
+  .card h3 { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .card p, .card li { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .card ul { padding-left: 17px; margin-top: 6px; }
+  .card ul li { margin-bottom: 3px; }
+  .ch { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+
+  /* BADGES */
+  .b { font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; border: 1px solid; }
+  .b-crit { background: rgba(239,68,68,.12); color: var(--red); border-color: rgba(239,68,68,.3); }
+  .b-high { background: rgba(249,115,22,.12); color: var(--orange); border-color: rgba(249,115,22,.3); }
+  .b-med  { background: rgba(74,158,255,.12); color: var(--blue); border-color: rgba(74,158,255,.3); }
+  .b-ok   { background: rgba(34,197,94,.12); color: var(--green); border-color: rgba(34,197,94,.3); }
+  .b-done { background: rgba(90,100,128,.18); color: var(--muted); border-color: var(--border); }
+
+  /* CALLOUTS */
+  .callout { border-radius: 8px; padding: 12px 16px; margin: 14px 0; font-size: 13px; border-left: 3px solid; line-height: 1.6; }
+  .ca { background: rgba(232,168,48,.07); border-color: var(--gold); color: #b8841e; }
+  .cr { background: rgba(239,68,68,.07); border-color: var(--red); color: #dc2626; }
+  .cg { background: rgba(34,197,94,.07); border-color: var(--green); color: #16a34a; }
+  .cb { background: rgba(74,158,255,.07); border-color: var(--blue); color: #3b82f6; }
+  .callout strong { color: #fff; }
+
+  /* CODE */
+  pre, code { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+  pre { background: var(--code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; margin: 10px 0; color: #8da0c0; line-height: 1.6; }
+  code { background: var(--code); border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; color: var(--blue); font-size: 11px; }
+  .k { color: var(--purple); } .fn { color: var(--gold); } .cm { color: #3d4d66; font-style: italic; } .st { color: var(--green); } .nm { color: var(--orange); }
+
+  /* TABLES */
+  .tw { overflow-x: auto; margin: 14px 0; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { background: var(--s2); color: var(--muted); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; padding: 9px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.015); }
+
+  /* PHASE BLOCKS */
+  .phase-block { border-radius: 10px; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); }
+  .phase-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: var(--s2); border-bottom: 1px solid var(--border); }
+  .phase-num { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+  .p-body { padding: 16px 20px; }
+  .p-body p { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .p-body h4 { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin: 12px 0 5px; }
+
+  /* STEP LIST */
+  .steps { counter-reset: s; list-style: none; }
+  .steps li { counter-increment: s; display: flex; gap: 12px; margin-bottom: 10px; font-size: 13px; color: var(--muted); }
+  .steps li::before { content: counter(s); min-width: 22px; height: 22px; background: var(--s2); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+
+  /* GRID */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  /* VERDICT BAND */
+  .verdict { background: linear-gradient(135deg, rgba(232,168,48,.07) 0%, rgba(74,158,255,.04) 100%); border: 1px solid rgba(232,168,48,.2); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  .verdict h3 { color: var(--gold); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+
+  /* COWORK */
+  .cw-box { background: linear-gradient(135deg, rgba(232,168,48,.05) 0%, rgba(74,158,255,.03) 100%); border: 1px solid rgba(232,168,48,.2); border-radius: 10px; padding: 20px 22px; }
+  .cw-box h3 { color: var(--gold); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 12px; }
+  .cw-box pre { background: rgba(0,0,0,.4); border-color: rgba(232,168,48,.15); color: #a89050; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+  strong, b { color: var(--text); font-weight: 600; }
+
+  @media (max-width: 880px) { nav { display: none; } main { padding: 20px; } .g2,.g3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nb">
+    <div class="eyebrow">WC26 Improvement Plan</div>
+    <h2>This Week's<br>Model Upgrades</h2>
+    <div class="sub">Claude Code execution ready</div>
+  </div>
+
+  <div class="ns">Audit</div>
+  <a href="#audit">What already works</a>
+  <a href="#gaps">Exact gaps found</a>
+  <a href="#verdict">Feature verdicts</a>
+
+  <div class="ns">Phases</div>
+  <a href="#p1" class="phase">P1 · Key Players + Replacement</a>
+  <a href="#p2" class="phase">P2 · Referee Intelligence</a>
+  <a href="#p3" class="phase">P3 · Real xG from WC Matches</a>
+  <a href="#p4" class="phase">P4 · Suspensions + Lineup Quality</a>
+  <a href="#p5" class="phase">P5 · Spreadsheet Knockout</a>
+
+  <div class="ns">Setup</div>
+  <a href="#cowork">Cowork Instructions</a>
+  <a href="#files">Files to Add</a>
+</nav>
+
+<main>
+
+  <div class="ph">
+    <div class="pe">WC26 Matchday Intelligence — Improvement Plan</div>
+    <h1>What to improve right now.<br>Specific, verifiable, this week.</h1>
+    <p>Based on reading the actual source — every file, every function, every data gap. No guesses. This plan feeds directly into Claude Code and covers only what's applicable to WC26 specifically.</p>
+    <div class="status-row">
+      <span class="status-pill sp-green">Tournament: In progress (R32 in ~12 days)</span>
+      <span class="status-pill sp-amber">28/48 teams covered in key_players.json</span>
+      <span class="status-pill sp-red">No referee data in entire repo</span>
+      <span class="status-pill sp-red">No replacement player tracking</span>
+      <span class="status-pill sp-red">No knockout rows in spreadsheet</span>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════ AUDIT ═══════════════ -->
+  <section id="audit">
+    <h2>What's Already There — Don't Rebuild</h2>
+    <div class="sh">Read directly from the source. These are correct, working, and should not be touched.</div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><h3>Exponential form decay</h3><span class="b b-done">Exists</span></div>
+        <p>180-day half-life across team history. <code>decayed_form()</code> in <code>02_goal_model.py</code>. Already right for international football pace.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>In-tournament Elo updates</h3><span class="b b-done">Exists</span></div>
+        <p><code>live_team_state.json</code> tracks deltas since tournament start. K=60, capped at ±30 group, ±15 knockout. 16 matches processed so far.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Stats proxy form signal</h3><span class="b b-done">Exists</span></div>
+        <p>Shots-on-target + possession + corners → form delta ±8 per match. In <code>stats_proxy_adjustments.py</code>. Limitation: not real xG (see P3).</p>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Altitude / heat / travel</h3><span class="b b-done">Exists</span></div>
+        <p>Haversine travel penalty, altitude adaptation sets, HEAT_ADAPTED set, short-rest penalty. All wired in <code>03_simulate.py</code>.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Weather adjustments</h3><span class="b b-done">Exists</span></div>
+        <p>Open-Meteo feed with <code>forecast</code> confidence override of <code>static_climate</code> penalty. Properly wired and verified.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Grand total cap ±45</h3><span class="b b-done">Exists</span></div>
+        <p>Live-state delta + matchday intel clamped at ±45 Elo total. <code>GRAND_TOTAL_CAP = 45.0</code> in <code>apply_matchday_adjustments.py</code>. Audited and passing.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Injury tier table</h3><span class="b b-done">Exists, gaps below</span></div>
+        <p>tier_1_star (−30), tier_1_keeper (−25), tier_2_starter (−12), tier_3_squad (−4). The <em>structure</em> is correct. The <em>coverage</em> has gaps — see next section.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Lineup deviation detection</h3><span class="b b-done">Exists</span></div>
+        <p>GK swap → −8 Elo. 3+ outfield changes → −3 Elo. Confirmed lineup vs previous baseline. Works but position-unaware (see P4).</p>
+      </div>
+    </div>
+
+    <div class="callout cg">
+      <strong>Squad values:</strong> <code>squad_values_2026.json</code> already covers ALL 48 teams (France €1,530M → Jordan €20M). This is usable immediately as a weight for replacement quality estimation without any new data fetching.
+    </div>
+  </section>
+
+
+  <!-- ═══════════════ GAPS ═══════════════ -->
+  <section id="gaps">
+    <h2>Exact Gaps Found in the Source</h2>
+    <div class="sh">These are things that are missing or broken — verified by reading the files, not assumed.</div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>Gap</th><th>Exact finding</th><th>Impact</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>key_players_2026.json — 20 teams uncovered</strong></td>
+            <td>Covers 28/48 teams. Missing: DR Congo, Iraq, Qatar, Jordan, Cape Verde, Haiti, New Zealand, Panama, Curacao, South Africa, Iran, Uzbekistan, Tunisia, Scotland, Bosnia, Paraguay, Australia, Ghana, Ivory Coast, and more. Every injured player at these teams gets the conservative <code>tier_2_starter</code> default (−12 Elo) regardless of who they are.</td>
+            <td>Wrong injury penalties for 20 teams. A DR Congo or Ivory Coast key player injury shows as −12 when it should be −30.</td>
+            <td><span class="b b-crit">Critical</span></td>
+          </tr>
+          <tr>
+            <td><strong>No replacement player data anywhere</strong></td>
+            <td>Injury system records who is OUT and their tier penalty. It never asks who comes IN and how good they are. The net adjustment is always the full out-player penalty, ignoring replacement quality completely.</td>
+            <td>Overestimates injury impact whenever a strong squad has a quality replacement. Mbappé out = −30; Mbappé out with Dembélé replacing = −30 instead of ~−14.</td>
+            <td><span class="b b-crit">Critical</span></td>
+          </tr>
+          <tr>
+            <td><strong>No referee data in the repo</strong></td>
+            <td>API-Football <code>/fixtures</code> response includes a <code>referee</code> field on every match. The live pipeline reads this endpoint but <em>discards</em> the referee field entirely. No <code>referee_stats.json</code>, no adjustment, no file.</td>
+            <td>Misses a quantifiable edge for knockout rounds where refs make material differences (card rates, penalty rates, home-team bias). Free signal, not used.</td>
+            <td><span class="b b-high">High</span></td>
+          </tr>
+          <tr>
+            <td><strong>Stats proxy doesn't use real xG</strong></td>
+            <td><code>stats_proxy_adjustments.py</code> docstring explicitly says <em>"Deliberately NOT labelled or modelled as xG."</em> It uses shots-on-target, possession, corners. API-Football's <code>/fixtures/statistics</code> response <em>does</em> include an <code>xG</code> field for many competitions — not consumed.</td>
+            <td>Misses shot quality. A team can put up 8 shots-on-target from outside the box (low xG) and get the same form credit as 4 shots-on-target inside the six-yard box.</td>
+            <td><span class="b b-high">High</span></td>
+          </tr>
+          <tr>
+            <td><strong>No suspension tracking</strong></td>
+            <td>The injury feed marks players as <code>Suspended</code> once confirmed. But it doesn't proactively track yellow card accumulation — a player on 1 yellow card going into a decisive group match is a major uncertainty the model ignores until the suspension is confirmed.</td>
+            <td>Model never "sees" that Bellingham has 1 yellow before the England decider. If he gets another, England lose their midfield engine and the model has no prior on this.</td>
+            <td><span class="b b-high">High</span></td>
+          </tr>
+          <tr>
+            <td><strong>Lineup heuristic is position-blind</strong></td>
+            <td><code>lineup_adjustments.py</code> applies −3 Elo for any 3+ outfield changes. It doesn't distinguish: 3 defensive changes (lower impact) vs 3 attacking changes (higher impact) vs striker rotation (severe) vs fullback rotation (mild).</td>
+            <td>Over-penalises defensive rotations, under-penalises attacking rotations. A manager resting both forwards scores the same as resting two fullbacks.</td>
+            <td><span class="b b-med">Medium</span></td>
+          </tr>
+          <tr>
+            <td><strong>Model feature columns have no xG, referee, suspension features</strong></td>
+            <td><code>models/feature_cols_v2.json</code>: <code>['elo_home', 'elo_away', 'elo_diff', 'att_form_home', 'att_form_away', 'def_form_home', 'def_form_away', 'pts_form_home', 'pts_form_away', 'rest_home', 'rest_away', 'is_neutral', 'importance']</code>. 13 features. No xG, no ref, no suspension, no squad_value_ratio.</td>
+            <td>The base model can't learn from xG signal or referee tendencies at training time. These have to come in as matchday adjustments instead (which is fine — that's what the live layer is for).</td>
+            <td><span class="b b-med">Medium</span></td>
+          </tr>
+          <tr>
+            <td><strong>Spreadsheet: no knockout rows (rows 74-105)</strong></td>
+            <td>The Bets tab stops at row 73 (72 group matches). The Round of 32 starts ~June 28. Currently zero infrastructure for knockout betting signals, knockout match cards, or outright CLV tracking for tournament winner markets.</td>
+            <td>Entire knockout stage — where the biggest markets are — produces no engine signals. You're flying blind from R32 onwards.</td>
+            <td><span class="b b-crit">Critical</span></td>
+          </tr>
+          <tr>
+            <td><strong>No Goal Grid engine (O/U, BTTS)</strong></td>
+            <td>Deferred from v2.4. The model's λ outputs (expected goals per side) are already well-calibrated for WC matches. The Dixon-Coles τ correction is already in <code>03_simulate.py</code>. Building the goal grid is mechanical work on top of existing outputs — not new research.</td>
+            <td>Missing the goals markets which are less sharply priced than 1X2, especially in the knockout stage. This is where the model's xG edge is most usable.</td>
+            <td><span class="b b-high">High</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════ FEATURE VERDICTS ═══════════════ -->
+  <section id="verdict">
+    <h2>Feature Verdicts — WC26 Only</h2>
+    <div class="sh">Should you implement this for the World Cup context? Honest answers.</div>
+
+    <div class="verdict">
+      <h3>Quick decision matrix</h3>
+      <p style="color:var(--muted);font-size:13px">For each feature Prav asked about — does it apply to WC26 specifically, and is it worth building this week?</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>Feature</th><th>WC26 verdict</th><th>Why</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Injury modeling (expand coverage + replacement)</strong></td>
+            <td><span class="b b-crit">Build now</span></td>
+            <td>28/48 teams uncovered. Replacement quality not modeled anywhere. Highest-impact improvement this week.</td>
+            <td>Phase 1</td>
+          </tr>
+          <tr>
+            <td><strong>Referee features</strong></td>
+            <td><span class="b b-high">Build now</span></td>
+            <td>FIFA publishes refs per match. Free signal already in the fixture object but discarded. Knockout rounds especially — small card-rate differences compound in knockout pressure.</td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td><strong>Real xG from WC matches</strong></td>
+            <td><span class="b b-high">Build now</span></td>
+            <td>API-Football already returns xG in statistics endpoint. Replacing the proxy's shots/corners formula with actual xG is a direct accuracy gain. 16 matches already have this data.</td>
+            <td>Phase 3</td>
+          </tr>
+          <tr>
+            <td><strong>Suspension tracking</strong></td>
+            <td><span class="b b-high">Build now</span></td>
+            <td>Yellow card accumulation is WC-specific (2 yellows = banned for next group match; different thresholds in knockouts). Model currently has no view on this until the ban is confirmed.</td>
+            <td>Phase 4</td>
+          </tr>
+          <tr>
+            <td><strong>Recency decay tightening</strong></td>
+            <td><span class="b b-med">Minor tweak only</span></td>
+            <td>Already in the model (180-day half-life). For WC context, the in-tournament Elo updates (live_team_state) already handle the "recent form is more important now" piece. Don't retrain the model mid-tournament — risk is too high for marginal gain.</td>
+            <td>Don't retrain; live_team_state already handles this</td>
+          </tr>
+          <tr>
+            <td><strong>Players' recent club performance</strong></td>
+            <td><span class="b b-med">Lightweight version only</span></td>
+            <td>Relevant, but the club season ended in May. The in-tournament stats proxy (WC match stats) is already capturing current form. Club xG from last 3 months can be a one-time pre-tournament baseline for teams without WC matches yet — useful for the remaining group matches.</td>
+            <td>Phase 3 (lightweight addition to stats proxy)</td>
+          </tr>
+          <tr>
+            <td><strong>Squad rotation modeling</strong></td>
+            <td><span class="b b-med">Lightweight only</span></td>
+            <td>WC teams don't rotate competitions. The only rotation scenario: teams already qualified rotating for the 3rd group game. The lineup heuristic already catches this (confirmed XI deviation). No separate model needed.</td>
+            <td>Phase 4 (improve lineup position-awareness instead)</td>
+          </tr>
+          <tr>
+            <td><strong>Manager / tactics</strong></td>
+            <td><span class="b b-done">Skip for now</span></td>
+            <td>Each team has 3–4 WC matches maximum. Too few data points per manager for tournament-specific tactical signal. Formation tendencies are already partially captured in historical Elo. Not worth the implementation cost this week.</td>
+            <td>Defer to club project (Catenaccio)</td>
+          </tr>
+          <tr>
+            <td><strong>Retrain base model on xG</strong></td>
+            <td><span class="b b-done">Do NOT do mid-tournament</span></td>
+            <td>The model retrains nightly via daily-baseline.yml. Switching the training target from goals to xG mid-tournament would invalidate all existing calibration benchmarks and introduce unknown drift. International xG data only goes back to 2014 anyway — much less than the 49k matches the model currently trains on. Apply xG as a matchday adjustment signal instead.</td>
+            <td>Defer to Catenaccio project</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════ PHASE 1 ═══════════════ -->
+  <section id="p1">
+    <h2>Phase 1 — Expand Key Players + Replacement Modeling</h2>
+    <div class="sh">The single highest-impact improvement. 20 teams currently get wrong injury penalties. Replacement quality is ignored everywhere.</div>
+
+    <div class="callout cr">
+      <strong>Current state from reading the files:</strong> <code>key_players_2026.json</code> has 73 tier-1 entries across 28 teams. The remaining 20 teams fall through to the <code>DEFAULT_TIER = "tier_2_starter"</code> (−12 Elo) for ALL injured players regardless of importance. A Mbappé-equivalent at DR Congo shows as −12 instead of −30. And no file anywhere records who the replacement is.
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(239,68,68,.15);color:var(--red)">1A</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Expand key_players_2026.json — add all 20 missing teams + replacement data</div>
+          <div style="color:var(--muted);font-size:12px">File: <code>data/raw/key_players_2026.json</code></div>
+        </div>
+        <span class="b b-crit">Do first</span>
+      </div>
+      <div class="p-body">
+        <p>Ask Claude Code to research and add tier-1 players for all 20 missing teams. The source is a combination of API-Football squad data + squad_values_2026.json (already complete for all 48 teams) as a weighting signal.</p>
+        <h4>Schema change — add replacement field to each player entry</h4>
+<pre>{
+  <span class="st">"team"</span>: <span class="st">"Ivory Coast"</span>,
+  <span class="st">"name"</span>: <span class="st">"Serhou Guirassy"</span>,
+  <span class="st">"tier"</span>: <span class="st">"tier_1_star"</span>,
+  <span class="st">"reason"</span>: <span class="st">"Borussia Dortmund striker, Ivory Coast's primary goal threat"</span>,
+  <span class="st">"replacement"</span>: {           <span class="cm">← NEW FIELD — must add for all tier_1 players</span>
+    <span class="st">"name"</span>: <span class="st">"Sébastien Haller"</span>,
+    <span class="st">"tier"</span>: <span class="st">"tier_2_starter"</span>,
+    <span class="st">"elo_equiv"</span>: -<span class="nm">10.0</span>        <span class="cm">← replacement's quality in Elo terms</span>
+  }
+}</pre>
+        <p>Replacement <code>elo_equiv</code> sources: for top teams, look at squad_value ratio (Replacement market value ÷ Starting market value × tier penalty). For unknown subs, default to <code>-5.0</code> (minimal quality impact assumption).</p>
+
+        <h4>Missing teams to fill (all 20)</h4>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);line-height:1.8">DR Congo · Iraq · Qatar · Jordan · Cape Verde · Haiti · New Zealand · Panama · Curacao · South Africa · Iran · Uzbekistan · Tunisia · Scotland · Bosnia &amp; Herzegovina · Paraguay · Australia · Ghana · Ivory Coast · Ecuador</p>
+        <p><em>Note: Ecuador and Ghana are already in the config as WC26 participants — verify if their key players are actually missing from the JSON.</em></p>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(239,68,68,.15);color:var(--red)">1B</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Net delta injury calculation in injury_adjustments.py</div>
+          <div style="color:var(--muted);font-size:12px">File: <code>scripts/live/injury_adjustments.py</code>, <code>scripts/live/apply_matchday_adjustments.py</code></div>
+        </div>
+        <span class="b b-crit">Do second</span>
+      </div>
+      <div class="p-body">
+        <p>Change the calculation from <em>"full penalty for the player who's out"</em> to <em>"penalty = player_out.elo − replacement.elo"</em>. The existing <code>discounted_elo()</code> function returns the out-player's contribution. Add a second lookup for the replacement.</p>
+<pre><span class="k">def</span> <span class="fn">net_injury_elo</span>(
+    tier_out: str,
+    status: str,
+    replacement: dict | None,
+) -> float:
+    <span class="cm">"""
+    Net Elo impact = out-player cost + replacement quality.
+    
+    Example: Mbappe (tier_1_star=-30) replaced by Dembele (tier_2_starter=-12)
+    → net = discounted(-30) + replacement_elo(-12) = -30 + (-(-12)) = -18
+    
+    If no replacement data: conservative assumption = 0 (neutral replacement).
+    If replacement is unknown youth: use squad_value ratio * tier penalty.
+    """</span>
+    out_elo = <span class="fn">discounted_elo</span>(tier_out, status)     <span class="cm"># existing function, unchanged</span>
+    
+    <span class="k">if</span> replacement <span class="k">is None</span>:
+        replacement_elo = <span class="nm">0.0</span>                        <span class="cm"># conservative: neutral replacement</span>
+    <span class="k">else</span>:
+        replacement_elo = replacement.get(<span class="st">"elo_equiv"</span>, -<span class="nm">5.0</span>)
+    
+    <span class="cm"># Net = what we lose from star - what we gain from replacement</span>
+    <span class="cm"># Both are negative; we SUBTRACT replacement (reducing the penalty)</span>
+    net = out_elo - replacement_elo
+    <span class="k">return</span> net   <span class="cm"># still negative, but smaller than raw out_elo</span></pre>
+
+        <h4>Where to integrate</h4>
+        <p>In <code>apply_matchday_adjustments.py → _load_injury_components()</code>, after looking up the player's tier, call <code>net_injury_elo(tier, status, player.get("replacement"))</code> instead of <code>discounted_elo(tier, status)</code>. The replacement field comes from the expanded <code>key_players_2026.json</code> lookup in <code>classify_tier()</code>.</p>
+
+        <h4>Acceptance test</h4>
+<pre><span class="cm"># With replacement data:</span>
+tier_out=<span class="st">"tier_1_star"</span>, status=<span class="st">"confirmed_out"</span>, replacement={<span class="st">"elo_equiv"</span>: -<span class="nm">12.0</span>}
+→ net_injury_elo() = -<span class="nm">30</span> - (-<span class="nm">12</span>) = -<span class="nm">18.0</span>   <span class="cm"># ✓ smaller than raw -30</span>
+
+<span class="cm"># Without replacement data:</span>
+tier_out=<span class="st">"tier_1_star"</span>, status=<span class="st">"confirmed_out"</span>, replacement=None
+→ net_injury_elo() = -<span class="nm">30</span> - <span class="nm">0.0</span> = -<span class="nm">30.0</span>       <span class="cm"># ✓ conservative default unchanged</span></pre>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════ PHASE 2 ═══════════════ -->
+  <section id="p2">
+    <h2>Phase 2 — Referee Intelligence</h2>
+    <div class="sh">Free signal. FIFA publishes referee assignments per match. The API already returns it. It's just never consumed.</div>
+
+    <div class="callout ca">
+      <strong>Why this matters for knockouts especially:</strong> In group stage matches between mismatched teams, referee variance is low — the stronger team wins regardless. In knockout matches (QF, SF, F), the gap between teams is smaller and referee tendencies have a measurable effect on outcomes. A referee who gives 30% more penalties than average in close games is a real edge.
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(249,115,22,.15);color:var(--orange)">2A</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Build referee_wc2026.json — WC-appointed refs + historical stats</div>
+          <div style="color:var(--muted);font-size:12px">New file: <code>data/raw/referee_wc2026.json</code></div>
+        </div>
+        <span class="b b-high">High value</span>
+      </div>
+      <div class="p-body">
+        <p>FIFA publishes the official referee list for WC2026 (available on FIFA.com). Cross-reference each ref against Football-Data.org historical data (PL, UCL, international) for their card rates and home-team bias. Ask Claude Code to research and build this file.</p>
+<pre>{
+  <span class="st">"source"</span>: <span class="st">"FIFA WC2026 referee appointments + Football-Data.org historical"</span>,
+  <span class="st">"refs"</span>: {
+    <span class="st">"Szymon Marciniak"</span>: {              <span class="cm">← WC22 Final ref, likely appointed for WC26 knockouts</span>
+      <span class="st">"nationality"</span>: <span class="st">"Poland"</span>,
+      <span class="st">"home_elo_bonus"</span>: <span class="nm">3.2</span>,           <span class="cm">← how much home team benefits vs average ref</span>
+      <span class="st">"cards_per_game"</span>: <span class="nm">3.1</span>,           <span class="cm">← average yellow+red cards per match</span>
+      <span class="st">"pen_rate_per_match"</span>: <span class="nm">0.22</span>,      <span class="cm">← penalties awarded per match (avg 0.25)</span>
+      <span class="st">"n_matches"</span>: <span class="nm">87</span>,               <span class="cm">← sample size (reliability check)</span>
+      <span class="st">"notes"</span>: <span class="st">"WC22 Final. Generally even-handed."</span>
+    }
+  }
+}</pre>
+        <h4>Fields and their meaning</h4>
+        <ul style="color:var(--muted);font-size:13px;padding-left:17px">
+          <li><code>home_elo_bonus</code>: how much extra Elo the home team gets (above average ~4.5) when this ref is officiating. Sources: per-referee home win% from Football-Data.org, converted to Elo delta.</li>
+          <li><code>cards_per_game</code>: affects uncertainty (high-card refs → more disruption events → higher variance in close knockout matches)</li>
+          <li><code>pen_rate_per_match</code>: directly affects xG; a high-pen ref in a match between an aggressive pressing team and a physical defender is a material signal</li>
+        </ul>
+        <p><strong>Minimum sample: require n_matches ≥ 20</strong> before including a referee entry. Below 20 matches, default to 0 adjustment.</p>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(249,115,22,.15);color:var(--orange)">2B</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">referee_adjustments.py — parse + apply per-match Elo delta</div>
+          <div style="color:var(--muted);font-size:12px">New file: <code>scripts/live/referee_adjustments.py</code>; integrate into <code>apply_matchday_adjustments.py</code></div>
+        </div>
+        <span class="b b-high">High value</span>
+      </div>
+      <div class="p-body">
+        <p>The referee name comes from the API-Football fixture object. <code>fetch_results.py</code> already reads the fixtures endpoint — the referee field just needs to be extracted and passed through.</p>
+<pre><span class="cm"># In fetch_results.py — extract referee from fixture object</span>
+referee = fixture.get(<span class="st">"fixture"</span>, {}).get(<span class="st">"referee"</span>)  <span class="cm">← already in the response, just unused</span>
+
+<span class="cm"># New: write it into results_2026.json per match</span>
+match_entry[<span class="st">"referee"</span>] = referee  <span class="cm">← add this one field</span></pre>
+
+<pre><span class="cm"># referee_adjustments.py</span>
+<span class="k">def</span> <span class="fn">get_referee_elo_delta</span>(referee_name: str, side: str) -> float:
+    <span class="cm">"""
+    Returns Elo adjustment for home or away team based on referee tendencies.
+    side = 'home' | 'away'
+    """</span>
+    ref_data = REF_STATS.get(<span class="fn">normalize_name</span>(referee_name), {})
+    <span class="k">if not</span> ref_data:
+        <span class="k">return</span> <span class="nm">0.0</span>
+    home_bonus = ref_data.get(<span class="st">"home_elo_bonus"</span>, <span class="nm">0.0</span>)  <span class="cm"># vs average referee</span>
+    <span class="k">return</span> home_bonus <span class="k">if</span> side == <span class="st">"home"</span> <span class="k">else</span> -home_bonus</pre>
+
+        <h4>Integration in apply_matchday_adjustments.py</h4>
+        <p>Add a new cap: <code>REFEREE_CAP = 8.0</code> (referee effect can't exceed ±8 Elo — keeps it proportionate). Apply as a match-scoped adjustment, same pattern as weather and lineup adjustments. Wire into <code>_matchday_intel(team, match_id)</code>.</p>
+        <p>Announcement timing: referee published with the match schedule (days in advance for WC). The slow intel workflow (3h cadence) is the right place to apply this — not the 10-min live tick.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════ PHASE 3 ═══════════════ -->
+  <section id="p3">
+    <h2>Phase 3 — Real xG from WC Matches</h2>
+    <div class="sh">The stats proxy is explicitly documented as "not xG." API-Football returns actual xG in the statistics endpoint. 16 matches of WC xG data are sitting unused.</div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(74,158,255,.15);color:var(--blue)">3A</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Upgrade stats_proxy: use xG if available, fall back to proxy formula</div>
+          <div style="color:var(--muted);font-size:12px">File: <code>scripts/live/fetch_match_stats.py</code>, <code>scripts/live/stats_proxy_adjustments.py</code></div>
+        </div>
+        <span class="b b-high">High value</span>
+      </div>
+      <div class="p-body">
+        <p>API-Football's <code>/fixtures/statistics</code> response includes an <code>"Expected Goals"</code> entry in the stats array for many matches. The <code>stats_to_dict()</code> function in <code>stats_proxy_adjustments.py</code> already flattens the stats array to a dict — the xG value is in there, just ignored.</p>
+<pre><span class="cm"># stats_proxy_adjustments.py — upgrade compute_form_delta()</span>
+
+<span class="k">def</span> <span class="fn">compute_form_delta</span>(own: dict, opp: dict) -> float:
+    <span class="st">"""v2 formula: use real xG when available, fall back to shots/corners proxy."""</span>
+    own_xg = own.get(<span class="st">"Expected Goals"</span>)    <span class="cm">← try real xG first (API field name)</span>
+    opp_xg = opp.get(<span class="st">"Expected Goals"</span>)
+    
+    <span class="k">if</span> own_xg <span class="k">is not None and</span> opp_xg <span class="k">is not None</span>:
+        <span class="cm"># Real xG available — much more accurate than proxy</span>
+        xg_delta = (<span class="fn">float</span>(own_xg) - <span class="fn">float</span>(opp_xg)) * <span class="nm">8.0</span>  <span class="cm">← scale to Elo points</span>
+        <span class="k">return</span> <span class="fn">max</span>(-STATS_PROXY_RAW_CAP, <span class="fn">min</span>(STATS_PROXY_RAW_CAP, xg_delta))
+    
+    <span class="cm"># Fallback: v1 proxy formula (shots + possession + corners) — unchanged</span>
+    own_sot = own.get(<span class="st">"Shots on Goal"</span>) <span class="k">or</span> <span class="nm">0</span>
+    <span class="cm"># ... existing formula unchanged ...</span></pre>
+        <p>Add a <code>true_xg_available</code> field to each match record in <code>match_stats_2026.json</code> — currently it's hardcoded to <code>false</code> by spec. With this change, it becomes an actual runtime check. The validator and dashboard can surface this.</p>
+
+        <h4>The xG-to-Elo scale factor</h4>
+        <p>A 1.0 xG delta (team dominated by 1.0 expected goals) should map to approximately <strong>8–10 Elo points</strong>. The model's λ predictions show that a 10-Elo difference shifts the expected goal difference by ~0.12. So 1.0 xG ÷ 0.12 = ~8.3 Elo per xG unit. Use <code>8.0</code> as the scalar, still clamped at <code>±STATS_PROXY_RAW_CAP (12.0)</code>.</p>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(74,158,255,.15);color:var(--blue)">3B</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Pre-tournament club xG baseline for remaining group matches</div>
+          <div style="color:var(--muted);font-size:12px">New file: <code>data/raw/pre_tournament_form_2026.json</code></div>
+        </div>
+        <span class="b b-med">Medium — worth doing if teams have 0 WC matches yet</span>
+      </div>
+      <div class="p-body">
+        <p>Some teams entering their first WC match have zero WC stats data for the proxy to work with. Pre-tournament club xG from the last 3 months (March–May 2026) provides a form baseline. Source: Understat API (free, no key required).</p>
+
+<pre><span class="cm"># data/raw/pre_tournament_form_2026.json — one-time file</span>
+{
+  <span class="st">"generated_at"</span>: <span class="st">"2026-06-10"</span>,
+  <span class="st">"source"</span>: <span class="st">"Understat / FBref — last 10 club matches per squad key player (Mar-May 2026)"</span>,
+  <span class="st">"note"</span>: <span class="st">"Used only as initial form baseline. Superseded by WC match stats after ≥2 matches."</span>,
+  <span class="st">"teams"</span>: {
+    <span class="st">"Argentina"</span>: { <span class="st">"avg_xg_for"</span>: <span class="nm">1.82</span>, <span class="st">"avg_xg_against"</span>: <span class="nm">0.94</span>, <span class="st">"n_club_matches"</span>: <span class="nm">10</span> },
+    <span class="st">"England"</span>:   { <span class="st">"avg_xg_for"</span>: <span class="nm">1.65</span>, <span class="st">"avg_xg_against"</span>: <span class="nm">0.88</span>, <span class="st">"n_club_matches"</span>: <span class="nm">10</span> }
+    <span class="cm">// ... all 48 teams ...</span>
+  }
+}</pre>
+        <p><strong>Application rule:</strong> only use club xG baseline if the team has played <strong>fewer than 2 WC matches</strong>. After 2 WC matches, the WC stats carry enough signal. Apply as a mild form modifier (half the weight of a WC match stats entry) in the stats proxy loading function.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════ PHASE 4 ═══════════════ -->
+  <section id="p4">
+    <h2>Phase 4 — Suspension Tracking + Lineup Quality</h2>
+    <div class="sh">Yellow card accumulation is WC-specific. The lineup heuristic doesn't know what position rotated out. Both are fixable without retraining the model.</div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(34,197,94,.15);color:var(--green)">4A</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">suspension_tracker.py — proactive yellow card monitoring</div>
+          <div style="color:var(--muted);font-size:12px">New file: <code>scripts/live/suspension_tracker.py</code></div>
+        </div>
+        <span class="b b-high">High value for knockouts</span>
+      </div>
+      <div class="p-body">
+        <p>API-Football's event data includes card events per match with player IDs. The <code>fetch_results.py</code> pipeline already reads match events — it just doesn't aggregate yellow cards per player across matches.</p>
+        <h4>WC2026 suspension thresholds</h4>
+        <ul style="color:var(--muted);font-size:13px;padding-left:17px">
+          <li><strong>Group stage:</strong> 2 yellows across first 3 group matches = 1-match ban for Round of 32</li>
+          <li><strong>Knockout rounds:</strong> Yellow card accumulation resets at QF. 1 yellow in R32 or R16 = ban for next round if player already had 1 from groups</li>
+          <li><strong>Red card:</strong> Automatic 1-match ban regardless of stage</li>
+        </ul>
+<pre><span class="cm"># suspension_tracker.py output — consumed by injury pipeline</span>
+{
+  <span class="st">"generated_at"</span>: <span class="st">"..."</span>,
+  <span class="st">"players"</span>: {
+    <span class="st">"England"</span>: [
+      {
+        <span class="st">"name"</span>: <span class="st">"Jude Bellingham"</span>,
+        <span class="st">"yellows_this_stage"</span>: <span class="nm">1</span>,
+        <span class="st">"suspension_risk"</span>: <span class="st">"high"</span>,        <span class="cm">← 1 yellow, one more = ban</span>
+        <span class="st">"next_match_id"</span>: <span class="nm">25</span>,
+        <span class="st">"auto_suspended"</span>: <span class="k">false</span>
+      },
+      {
+        <span class="st">"name"</span>: <span class="st">"Declan Rice"</span>,
+        <span class="st">"yellows_this_stage"</span>: <span class="nm">2</span>,
+        <span class="st">"suspension_risk"</span>: <span class="st">"confirmed_suspended"</span>,  <span class="cm">← ban confirmed</span>
+        <span class="st">"next_match_id"</span>: <span class="nm">25</span>,
+        <span class="st">"auto_suspended"</span>: <span class="k">true</span>
+      }
+    ]
+  }
+}</pre>
+        <h4>Integration</h4>
+        <p>Feed <code>auto_suspended: true</code> players into the injury pipeline with status <code>"confirmed_out"</code> and tier from <code>key_players_2026.json</code>. Feed <code>suspension_risk: "high"</code> players as <code>"doubtful"</code> (0.5× tier penalty) — the risk that they'll be rested to avoid the ban. Run <code>suspension_tracker.py</code> in the slow intel workflow after each set of matches.</p>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(34,197,94,.15);color:var(--green)">4B</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Position-aware lineup adjustment</div>
+          <div style="color:var(--muted);font-size:12px">File: <code>scripts/live/lineup_adjustments.py</code></div>
+        </div>
+        <span class="b b-med">Medium value</span>
+      </div>
+      <div class="p-body">
+        <p>Current heuristic: 3+ outfield changes = −3 Elo (flat, position-blind). Upgrade to position-weighted: losing attacking players matters more than losing defensive ones because attacking quality drives expected goals more directly.</p>
+<pre><span class="cm"># Updated compute_lineup_delta_elo() — add position weighting</span>
+POSITION_WEIGHTS = {
+    <span class="st">"F"</span>: <span class="nm">1.0</span>,   <span class="cm"># Forward rotation: full weight</span>
+    <span class="st">"M"</span>: <span class="nm">0.7</span>,   <span class="cm"># Midfielder rotation: 70% weight</span>
+    <span class="st">"D"</span>: <span class="nm">0.4</span>,   <span class="cm"># Defender rotation: 40% weight</span>
+    <span class="st">"G"</span>: <span class="nm">0.0</span>,   <span class="cm"># GK handled by existing GK_SWAP_ELO separately</span>
+}
+
+<span class="k">def</span> <span class="fn">compute_weighted_rotation_penalty</span>(prior_xi, current_xi) -> float:
+    outfield_changes = <span class="fn">_outfield_diff</span>(prior_xi, current_xi)
+    total_weight = <span class="fn">sum</span>(POSITION_WEIGHTS.get(p.get(<span class="st">"pos"</span>), <span class="nm">0.7</span>)
+                      <span class="k">for</span> p <span class="k">in</span> outfield_changes)
+    <span class="k">if</span> total_weight < <span class="nm">2.0</span>: <span class="k">return</span> <span class="nm">0.0</span>           <span class="cm"># light rotation: no penalty</span>
+    <span class="k">return</span> <span class="fn">max</span>(-<span class="nm">8.0</span>, -total_weight * <span class="nm">0.8</span>)        <span class="cm"># cap at -8 (existing LINEUP_CAP allows to -20)</span></pre>
+        <p>This means: 3 defenders rotated out = ~−0.96 Elo (small). 3 attackers rotated out = ~−2.4 Elo. GK swap + 3 attackers = −8 + −2.4 = −10.4 Elo (major rotation detected).</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════ PHASE 5 ═══════════════ -->
+  <section id="p5">
+    <h2>Phase 5 — Spreadsheet: Knockout Extension + Goal Grid</h2>
+    <div class="sh">The Round of 32 starts ~June 28. The spreadsheet has no infrastructure for it. This is the betting-critical delivery this week.</div>
+
+    <div class="callout cr">
+      <strong>Urgency check:</strong> If Phase 5 isn't done before June 28, you have no engine signals for the entire knockout stage — which is where the highest-stakes markets are and where your model's calibration is best (fewer upsets, cleaner probabilities, tighter Elo spreads).
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(239,68,68,.15);color:var(--red)">5A</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Auto-extend Bets to rows 74-105 (knockout matches)</div>
+          <div style="color:var(--muted);font-size:12px">File: <code>WC26_Engine_AppsScript_v2.3.1.gs</code> — new function <code>extendToKnockouts()</code></div>
+        </div>
+        <span class="b b-crit">Most urgent</span>
+      </div>
+      <div class="p-body">
+        <p>The spreadsheet currently has 72 rows in Bets (one per group match). Rows 74–105 need to be created for knockout matches (16 R32 + 8 R16 + 4 QF + 2 SF + 1 3rd + 1 Final = 32). The model already exports these in <code>predictions_live.json</code> (match_predictions now returns 104 entries). The spreadsheet just doesn't consume them.</p>
+        <h4>Implementation</h4>
+        <ol class="steps">
+          <li>Add <code>extendToKnockouts()</code> function to the Apps Script. It appends rows 74–105 to Bets with the same formula structure as rows 2–73. Uses placeholder team labels until the match is resolved (e.g. "Winner M74 vs Winner M75").</li>
+          <li>Modify <code>refreshModel()</code> to fetch match_predictions for stage ≠ 'group' and populate knockout rows.</li>
+          <li>Add to the WC26 Engine menu: "Extend to knockout stage (run once before R32)"</li>
+          <li>The <code>SNAPSHOT_ON_PLACE</code> logic in onEdit already works row-agnostically — it will cover new rows without changes.</li>
+          <li>Add a stage column (col A or col D suffix) so the WHY column context is knockout-aware ("R32 · Inglewood, CA" rather than "GRP A")</li>
+        </ol>
+        <h4>Knockout-specific BET formula change</h4>
+        <p>In knockout matches, edge threshold should be slightly tighter. Markets are sharper for knockouts. Consider adjusting <code>Method!B7</code> (edge threshold) to +3.5% for knockouts (vs 2.5% for group stage). Add a separate <code>Method!B82</code> cell: <code>KNOCKOUT EDGE THRESHOLD</code> that the Bets formula reads for rows 74+.</p>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(239,68,68,.15);color:var(--red)">5B</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">Goal Grid Engine (O/U 2.5, BTTS, Correct Score, Asian Handicap)</div>
+          <div style="color:var(--muted);font-size:12px">New sheet: <code>GoalGrid</code> in spreadsheet; new function <code>GOAL_GRID()</code> in Apps Script</div>
+        </div>
+        <span class="b b-high">High commercial value</span>
+      </div>
+      <div class="p-body">
+        <p>The model already outputs λ_home and λ_away (expected goals per side) for every match in predictions_live.json. The Dixon-Coles τ correction is already applied in <code>03_simulate.py</code>. Building the Goal Grid is mechanical: use the NB-dispersion parameters (already in the model) to compute the full score matrix and derive market probabilities.</p>
+        <h4>The GOAL_GRID custom function</h4>
+<pre><span class="cm">/**
+ * GOAL_GRID(lam_h, lam_a, market) — compute fair probability for goals markets
+ * @param lam_h  Expected goals for home team (from predictions_live.json λ fields)
+ * @param lam_a  Expected goals for away team
+ * @param market "ou25" | "btts" | "ou15" | "ou35" | "ah0" | "cs{X}{Y}"
+ * @returns Fair probability (0-1) before de-vig
+ */</span>
+<span class="k">function</span> <span class="fn">GOAL_GRID</span>(lam_h, lam_a, market) {
+  <span class="cm">// Build score matrix P(h_goals, a_goals) using Poisson + Dixon-Coles τ=0.10</span>
+  <span class="k">const</span> MAX_GOALS = <span class="nm">8</span>;
+  <span class="k">const</span> TAU = <span class="nm">0.10</span>;     <span class="cm">// from 03_simulate.py dc_correction()</span>
+  <span class="k">const</span> matrix = <span class="fn">buildScoreMatrix</span>(lam_h, lam_a, MAX_GOALS, TAU);
+  
+  <span class="k">if</span> (market === <span class="st">"ou25"</span>) <span class="k">return</span> <span class="fn">sumMatrix</span>(matrix, (h,a) => h+a > <span class="nm">2.5</span>);  <span class="cm">// Over 2.5</span>
+  <span class="k">if</span> (market === <span class="st">"btts"</span>) <span class="k">return</span> <span class="fn">sumMatrix</span>(matrix, (h,a) => h > <span class="nm">0</span> && a > <span class="nm">0</span>);
+  <span class="k">if</span> (market === <span class="st">"ou15"</span>) <span class="k">return</span> <span class="fn">sumMatrix</span>(matrix, (h,a) => h+a > <span class="nm">1.5</span>);
+  <span class="k">if</span> (market === <span class="st">"ou35"</span>) <span class="k">return</span> <span class="fn">sumMatrix</span>(matrix, (h,a) => h+a > <span class="nm">3.5</span>);
+  <span class="cm">// AH -0.5 (home wins outright)</span>
+  <span class="k">if</span> (market === <span class="st">"ah0"</span>)  <span class="k">return</span> <span class="fn">sumMatrix</span>(matrix, (h,a) => h > a);
+  <span class="k">return</span> <span class="nm">0</span>;
+}</pre>
+        <h4>GoalGrid sheet structure</h4>
+        <div class="tw" style="margin-top:10px">
+          <table>
+            <thead><tr><th>Col</th><th>Content</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td>A–D</td><td>Match / Date / Home / Away</td><td>From Bets tab (VLOOKUP)</td></tr>
+              <tr><td>E–F</td><td>λ_home / λ_away</td><td>refreshGoalGrid() from predictions_live.json lambda fields</td></tr>
+              <tr><td>G</td><td>Fair P(O/U 2.5)</td><td>=GOAL_GRID(E2,F2,"ou25")</td></tr>
+              <tr><td>H</td><td>Fair P(BTTS)</td><td>=GOAL_GRID(E2,F2,"btts")</td></tr>
+              <tr><td>I</td><td>Fair P(O/U 1.5)</td><td>=GOAL_GRID(E2,F2,"ou15")</td></tr>
+              <tr><td>J</td><td>Fair P(O/U 3.5)</td><td>=GOAL_GRID(E2,F2,"ou35")</td></tr>
+              <tr><td>K–M</td><td>Book odds 1 / X / 2 (for goals market)</td><td>Yellow — you type</td></tr>
+              <tr><td>N</td><td>Book implied P (SHIN de-vig)</td><td>=SHIN(K2) or =POWER_DEVIG(K2,L2,M2)</td></tr>
+              <tr><td>O</td><td>Edge = fair − implied</td><td>=G2−N2</td></tr>
+              <tr><td>P</td><td>BET? / PASS</td><td>=IF(O2>Method!$B$7,"BET","PASS") + PAUSE check</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num" style="background:rgba(167,139,250,.15);color:var(--purple)">5C</div>
+        <div>
+          <div style="color:#fff;font-size:13.5px;font-weight:700">CLV / margin dashboard + knockout outright odds</div>
+          <div style="color:var(--muted);font-size:12px">New sheet: <code>CLV</code> in spreadsheet; extend <code>Outrights</code> with current fair odds per stage</div>
+        </div>
+        <span class="b b-med">Medium — do after 5A and 5B</span>
+      </div>
+      <div class="p-body">
+        <p>The v2.4 backlog included CLV/margin tracking and knockout-slot outright fair odds. Both are now achievable:</p>
+        <ol class="steps">
+          <li><strong>CLV Sheet:</strong> Pull all Placed bets from Bets!AW:AY. For each, add a column for "closing odds" (you enter these after the market closes) → compute CLV = model_odds − closing_odds. Rolling 20-bet CLV average = your edge signal. If CLV &gt; 0 consistently, you're beating the close.</li>
+          <li><strong>Knockout outright fair odds:</strong> <code>predictions_live.json</code> already has <code>p_R16, p_QF, p_SF, p_Final, p_champion</code> per team. In the Outrights sheet, add columns: "Model fair odds to reach R16/QF/SF/Final" = 1/p_{stage}. Compare to bookmaker's "to qualify" market odds. This is a tighter-margin market than 1X2.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════ COWORK ═══════════════ -->
+  <section id="cowork">
+    <h2>Cowork Project Instructions</h2>
+    <div class="sh">Paste this verbatim into the Instructions box when creating the project in Claude Desktop Cowork.</div>
+
+    <div class="cw-box">
+      <h3>📋 Instructions — paste verbatim</h3>
+      <pre>
+You are working on the WC26 Matchday Intelligence model:
+https://wc26-matchday-intelligence.vercel.app/
+
+This is an active World Cup 2026 prediction system. The tournament
+is IN PROGRESS. The Round of 32 starts ~June 28. Work must be safe
+to deploy immediately — do NOT retrain the base model mid-tournament.
+
+TECH STACK:
+- Python pipeline in scripts/ (01-10 + live/)
+- XGBoost Poisson goal models (home + away λ)
+- Dixon-Coles τ correction, Negative Binomial dispersion
+- Monte Carlo 25,000 runs per sim
+- GitHub Actions crons → commit JSON → Vercel auto-deploy
+- API-Football Pro key for live data (in .env)
+
+LIVE PIPELINE (scripts/live/):
+- fetch_injuries.py → injuries_2026.json
+- fetch_lineups.py  → lineups_2026.json
+- fetch_match_stats.py → match_stats_2026.json
+- apply_matchday_adjustments.py → aggregate adjustments
+- run_live_update.py → orchestrator (DO NOT change cap values)
+- Grand total cap: ±45 Elo (GRAND_TOTAL_CAP — never exceed this)
+
+WHAT'S ALREADY WORKING (DO NOT REBUILD):
+- Injury tier system (tier_1_star=-30, tier_1_keeper=-25, etc.)
+- Lineup deviation detection (GK swap -8, rotation -3)
+- Stats proxy (shots/possession/corners → form delta ±8)
+- Weather adjustments
+- Travel/altitude/heat penalties
+- In-tournament Elo updates (live_team_state.json, K=60)
+
+KNOWN GAPS TO FIX (in this order):
+P1: key_players_2026.json — add 20 missing teams + replacement field
+P1: injury_adjustments.py — net delta calculation (out - replacement)
+P2: referee_wc2026.json — new file; referee_adjustments.py — new
+P3: stats_proxy — use "Expected Goals" field if present in API response
+P4: suspension_tracker.py — new file; yellow card accumulation
+P4: lineup_adjustments.py — position-weighted rotation penalty
+P5: Spreadsheet — extendToKnockouts(), GOAL_GRID() function, CLV sheet
+
+QUALITY GATES (run before any push):
+- python3 scripts/09_validate.py       → must say 37/37
+- python3 scripts/pre_flight.py        → must say READY TO DEPLOY
+- python3 -m pytest tests/ -q          → must pass all
+- python3 -c "import json; d=json.load(open('dashboard/predictions_live.json')); print(abs(sum(t['p_champion'] for t in d['team_predictions']) - 1.0) < 0.001)"  → must print True
+
+CAPS AND LIMITS (NEVER change these):
+- GRAND_TOTAL_CAP = 45.0 (apply_matchday_adjustments.py)
+- INJURY_CAP_NORMAL = 25.0
+- INJURY_CAP_EXTREME = 35.0
+- LINEUP_CAP = 20.0
+- WEATHER_CAP = 15.0
+- STATS_CAP_PER_MATCH = 8.0
+
+When I ask you to implement a phase, read the existing file first,
+follow its patterns exactly, add docstrings explaining what changed
+and why, and run the quality gate at the end.
+</pre>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FILES ═══════════════ -->
+  <section id="files">
+    <h2>Files to Add to the Cowork Project</h2>
+    <div class="sh">What to upload when creating the project. Priority order.</div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>File</th><th>Why it's needed</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>wc26-matchday-intelligence-main.zip</code></td>
+            <td>The complete source. Claude reads actual code patterns and doesn't reinvent them. Without this, Claude writes generic code that won't match your existing schemas, cap values, or naming conventions.</td>
+            <td><span class="b b-crit">Essential</span></td>
+          </tr>
+          <tr>
+            <td><code>WC26_Engine_AppsScript_v2.3.1.gs</code></td>
+            <td>The exact Apps Script source. Required for Phase 5 — Claude needs to add GOAL_GRID(), extendToKnockouts(), and the CLV sheet matching the existing function style, protection patterns, and menu structure.</td>
+            <td><span class="b b-crit">Essential</span></td>
+          </tr>
+          <tr>
+            <td><code>WC26_v2.3.1_PATCH_NOTES.md</code></td>
+            <td>Every bug that was already fixed. Prevents Claude from reintroducing the stale-feed kill switch bug, the quota bomb, and the hardcoded row limits when extending the spreadsheet.</td>
+            <td><span class="b b-high">Important</span></td>
+          </tr>
+          <tr>
+            <td><strong>This HTML file</strong> (wc26-improvements-plan.html)</td>
+            <td>The full spec. When you ask Claude to "implement Phase 2," it reads this file to get the exact schema, field names, cap values, and acceptance criteria rather than you re-explaining each time.</td>
+            <td><span class="b b-crit">Essential</span></td>
+          </tr>
+          <tr>
+            <td><strong>Sample API-Football fixture response</strong> (JSON)</td>
+            <td>Call <code>curl -H "x-apisports-key: YOUR_KEY" "https://v3.football.api-sports.io/fixtures?id=YOUR_FIXTURE_ID"</code> and save the JSON. Claude needs the exact field structure to know where the <code>referee</code> field lives and what the <code>Expected Goals</code> statistics key looks like.</td>
+            <td><span class="b b-high">Important for P2 and P3</span></td>
+          </tr>
+          <tr>
+            <td><strong>Sample /fixtures/statistics response</strong> (JSON)</td>
+            <td>Call the statistics endpoint for one completed WC26 match. Shows Claude whether <code>"Expected Goals"</code> is actually present in the stats array for WC matches (it may not be for all providers). Required before writing Phase 3.</td>
+            <td><span class="b b-high">Important for P3</span></td>
+          </tr>
+          <tr>
+            <td><code>WC26_Value_Betting_Engine_AUTOMATED_v2.3.1.xlsx</code></td>
+            <td>The spreadsheet schema. Claude needs to see the existing GoalGrid sheet's column layout (or lack thereof) and the Bets tab structure before adding rows 74–105 and the GoalGrid sheet.</td>
+            <td><span class="b b-high">Important for P5</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout cb" style="margin-top:16px">
+      <strong>How to get the API-Football sample responses:</strong> Run these two commands in your terminal (with your API key set) and save the outputs as JSON files to add to the project:
+      <pre style="margin-top:8px">curl -H "x-apisports-key: $API_FOOTBALL_KEY" \
+  "https://v3.football.api-sports.io/fixtures?league=1&season=2026&last=1" \
+  -o sample_fixture.json
+
+curl -H "x-apisports-key: $API_FOOTBALL_KEY" \
+  "https://v3.football.api-sports.io/fixtures/statistics?fixture=YOUR_COMPLETED_FIXTURE_ID" \
+  -o sample_statistics.json</pre>
+    </div>
+
+    <hr>
+
+    <div class="card">
+      <h3 style="margin-bottom:8px">Execution order for Claude Code this week</h3>
+      <ol class="steps" style="margin-top:8px">
+        <li><strong>P1A</strong> — Expand key_players_2026.json (all 48 teams + replacement field)</li>
+        <li><strong>P1B</strong> — net_injury_elo() in injury_adjustments.py + integrate</li>
+        <li><strong>P5A</strong> — extendToKnockouts() in Apps Script [urgent — R32 June 28]</li>
+        <li><strong>P2A</strong> — Build referee_wc2026.json (research + file)</li>
+        <li><strong>P2B</strong> — referee_adjustments.py + integrate into pipeline</li>
+        <li><strong>P3A</strong> — Upgrade stats_proxy to use real xG when available</li>
+        <li><strong>P4A</strong> — suspension_tracker.py</li>
+        <li><strong>P5B</strong> — GOAL_GRID() function + GoalGrid sheet</li>
+        <li><strong>P4B</strong> — Position-aware lineup penalty</li>
+        <li><strong>P3B</strong> — Pre-tournament club xG baseline file</li>
+        <li><strong>P5C</strong> — CLV sheet + knockout outright odds in Outrights</li>
+        <li><strong>Run all gates</strong> — 09_validate.py (37/37), pre_flight.py (READY), pytest (all pass)</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const secs = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('nav a');
+  const obs = new IntersectionObserver(e => {
+    e.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.color = '');
+        const a = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (a) a.style.color = 'var(--gold)';
+      }
+    });
+  }, { threshold: 0.25, rootMargin: '-50px 0px -70% 0px' });
+  secs.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

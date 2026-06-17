@@ -90,6 +90,77 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
+      # ── Phase 2/4 prerequisites ───────────────────────────────────────
+      # The slow workflow OWNS these three producers — origin/main never
+      # writes them otherwise (see Wave-2 S1 finding). Order matters:
+      #   1) fetch_results --with-events  → results_2026.json + per-match
+      #      `events` lists. suspension_tracker walks those events; without
+      #      this step it would emit empty + `no_events_in_snapshot`.
+      #   2) fetch_player_stats  → player_stats_2026.json (auto_tier baseline).
+      #   3) referee_adjustments → referee_2026.json (reads results).
+      #   4) suspension_tracker  → suspensions_2026.json (reads results+events).
+      # All three are wrapped in `set +e ... exit 0` so one failing producer
+      # cannot block the rest of the tick — the orchestrator's freshness
+      # guard will emit a `subsystem_stale` warning if the snapshot is
+      # missing or older than 6h (= 2 slow-cron ticks).
+      - name: Fetch results with events (refresh for referee + suspensions)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
+          WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/fetch_results.py --dry-run --with-events
+          else
+            python scripts/live/fetch_results.py --with-events
+          fi
+          exit 0
+
+      - name: Fetch player stats (API-Football /players)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
+          WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          API_FOOTBALL_LEAGUE_ID: ${{ vars.API_FOOTBALL_LEAGUE_ID || '1' }}
+          API_FOOTBALL_SEASON: ${{ vars.API_FOOTBALL_SEASON || '2026' }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/fetch_player_stats.py --dry-run
+          else
+            python scripts/live/fetch_player_stats.py
+          fi
+          exit 0
+
+      - name: Build referee adjustments (Wave-A baseline join)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/referee_adjustments.py --dry-run
+          else
+            python scripts/live/referee_adjustments.py
+          fi
+          exit 0
+
+      - name: Build suspension tracker (reads results + events)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/suspension_tracker.py --dry-run
+          else
+            python scripts/live/suspension_tracker.py
+          fi
+          exit 0
+
       - name: Fetch injuries (API-Football /injuries)
         if: steps.gate.outputs.skip != 'true' && github.event.inputs.skip_injuries != 'true'
         env:
@@ -185,10 +256,16 @@ jobs:
           # JSON + audit log. The simulator is NOT re-run here; the fast
           # workflow (live-matchday.yml) reads these files on its next tick
           # via the apply_matchday_adjustments integration point in 03_simulate.py.
+          # Wave-2 S1: include the Phase 2/4/6 producer outputs so the
+          # orchestrator's freshness guard sees real on-origin data instead
+          # of silently degrading on every scheduled tick.
           git add data/live/injuries_2026.json \
                   data/live/weather_2026.json \
                   data/live/lineups_2026.json \
                   data/live/match_stats_2026.json \
+                  data/live/player_stats_2026.json \
+                  data/live/referee_2026.json \
+                  data/live/suspensions_2026.json \
                   data/live/matchday_intelligence_log.jsonl \
                   dashboard/matchday_intelligence.json 2>/dev/null
           if git diff --quiet --cached; then
