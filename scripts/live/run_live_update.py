@@ -641,12 +641,31 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"[run_live_update] FATAL {type(e).__name__}: {e}")
         traceback.print_exc()
-        # Best-effort: write a warning to live_state so the dashboard knows
+        # Best-effort: write a warning to live_state so the dashboard knows.
+        # Audit H2 (R2 round 3): re-probe matchday freshness here too. The
+        # `mf_warnings` computed in main() went out of scope when main()
+        # raised, so we have to recompute. The helper is exception-safe by
+        # construction (`_matchday_freshness_warnings_safe`), so a follow-on
+        # failure inside it degrades to a single freshness_check_error
+        # warning rather than masking the orchestrator crash itself.
         try:
-            write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
-                             get_completed_count(), sim_rerun=False,
-                             warnings=[{"type": "orchestrator_crash",
-                                        "message": f"{type(e).__name__}: {e}"[:200]}])
+            crash_warnings: list = [{
+                "type": "orchestrator_crash",
+                "message": f"{type(e).__name__}: {e}"[:200],
+            }]
+            try:
+                crash_warnings.extend(_matchday_freshness_warnings_safe())
+            except Exception:
+                # Truly belt-and-braces — the safe wrapper itself shouldn't
+                # raise, but if it somehow does, drop the freshness signal
+                # rather than mask the orchestrator-crash signal we need
+                # the operator to see.
+                pass
+            write_live_state(
+                "live" if get_completed_count() > 0 else "pre_tournament",
+                get_completed_count(), sim_rerun=False,
+                warnings=crash_warnings,
+            )
         except Exception:
             pass
         sys.exit(1)

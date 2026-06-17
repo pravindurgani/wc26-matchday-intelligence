@@ -363,3 +363,62 @@ def test_input_corruption_exit_merges_mf_warnings() -> None:
         "input_corruption exit drops mf_warnings — matchday-staleness "
         "signal lost when results_2026.json is malformed"
     )
+
+
+# ─────────────────────────────────── H2 (R2 round 3): crash-handler propagation
+# Audit found that the outermost `except Exception` at the module
+# entrypoint used isolated warnings (orchestrator_crash only) — the
+# `mf_warnings` variable computed inside main() was out of scope when
+# main() raised, so the crash handler silently dropped freshness. Fix
+# was to RE-PROBE freshness inside the crash handler via the safe wrapper.
+def test_h2_crash_handler_probes_freshness_via_safe_wrapper() -> None:
+    """The outermost try/except in `if __name__ == '__main__':` must call
+    `_matchday_freshness_warnings_safe()` (the safe wrapper, not the raw
+    helper) so that even when main() crashes, the freshness signal lands
+    on live_state.json alongside the orchestrator_crash warning.
+    """
+    src = _read_source()
+    # Locate the orchestrator-crash block: everything from the FATAL
+    # marker to sys.exit(1) at file end.
+    crash_idx = src.find("[run_live_update] FATAL")
+    assert crash_idx > 0, "orchestrator-crash handler missing"
+    crash_block = src[crash_idx:]
+    assert "_matchday_freshness_warnings_safe()" in crash_block, (
+        "crash handler does NOT probe matchday freshness — when main() "
+        "raises, the freshness signal is silently dropped (audit H2). "
+        "Add `_matchday_freshness_warnings_safe()` to the warning array "
+        "BEFORE write_live_state."
+    )
+
+
+def test_h2_crash_handler_appends_freshness_to_crash_warning() -> None:
+    """In the crash handler, the `crash_warnings` list must include BOTH
+    the orchestrator_crash entry AND the matchday freshness entries —
+    not one or the other. A regression that overwrites instead of
+    appending would silently drop one signal.
+    """
+    src = _read_source()
+    crash_idx = src.find("[run_live_update] FATAL")
+    crash_block = src[crash_idx:]
+    # The crash_warnings list must be appended to (`.extend(`), not
+    # overwritten. We assert the contract by checking that BOTH the
+    # crash dict literal and `_matchday_freshness_warnings_safe()` appear,
+    # AND the freshness call follows the crash literal (so a later append
+    # adds to the same list).
+    crash_dict_idx = crash_block.find('"type": "orchestrator_crash"')
+    freshness_idx = crash_block.find("_matchday_freshness_warnings_safe()")
+    assert crash_dict_idx > 0
+    assert freshness_idx > 0
+    assert freshness_idx > crash_dict_idx, (
+        "freshness probe must come AFTER the crash-warning literal so it "
+        "extends the same crash_warnings list (not replaces it)."
+    )
+    # And the call to write_live_state inside the crash block must pass
+    # `crash_warnings` as the warnings argument — not a one-shot literal
+    # that drops the freshness signal. A simple substring scan is enough
+    # since the variable name is unique in that scope.
+    assert "warnings=crash_warnings" in crash_block, (
+        f"crash handler's write_live_state must use warnings=crash_warnings "
+        f"so the merged list (crash entry + freshness entries) reaches "
+        f"live_state.json. Crash block:\n{crash_block[:600]}"
+    )

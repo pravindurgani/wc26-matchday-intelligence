@@ -1,10 +1,12 @@
-# R32 Readiness Checklist — Post Pressure-Test R2
+# R32 Readiness Checklist — Post Pressure-Test R3
 
 **Date**: 2026-06-17 (T-11 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1059 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Suite**: **1086 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
 **Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
+**Round 3 closure**: all 4 HIGH-severity audit findings closed
+(H1 launchd plist, H2 crash-path freshness, H3 HTTP retries, H4 rate limiter) — see `PRESSURE_TEST_R3.md`
 
 ---
 
@@ -49,6 +51,10 @@
 | 35 | Zero TODO/FIXME/XXX/HACK in `scripts/` and `scripts/live/` | ✓ | `grep -rn "TODO\|FIXME\|XXX\|HACK" scripts/` returns nothing | (manual probe) |
 | 36 | Zero `xfail` in the suite | ✓ | `pytest --tb=no -q` reports 0 xfailed | (suite-wide) |
 | 37 | Zero threshold/cap value changes (NB_ALPHA=5.0, DC_RHO=-0.13, MAX_G=10, STALENESS_MAX_AGE_HOURS=6.0 all unchanged) | ✓ | `test_ko_matrix_equality.py::test_export_constants_match_production` | + value-pinning tests |
+| 38 | **R3 (H1):** launchd plist portable via `__REPO_ROOT__` template + install.sh sed substitution; pre-flight refuses unmarked / unresolved plists | ✓ | `scripts/launchd/com.prav.wc26-preview.plist` + `scripts/launchd/install.sh:60-76` | `test_launchd_path.py` (+5 H1 tests: template markers, sed substitution, installer refusal) |
+| 39 | **R3 (H2):** orchestrator-crash handler re-probes matchday freshness via `_matchday_freshness_warnings_safe()` (mf_warnings out of scope after main() raises) | ✓ | `scripts/live/run_live_update.py:646-680` | `test_fast_path_freshness.py` (+2 H2 tests pinning the crash-handler freshness probe + crash_warnings list contract) |
+| 40 | **R3 (H3):** shared HTTP retry helper across all 5 fetchers (3 attempts, exponential backoff on 5xx/URLError/TimeoutError/ConnectionError; no retry on 4xx) | ✓ | `scripts/live/_http_client.py:60-101` + 4 fetcher shims | `test_http_client.py` (+13 H3 tests incl. 4xx-no-retry parametrized + 4-fetcher delegation pin) |
+| 41 | **R3 (H4):** `fetch_player_stats` per-team fan-out rate-limited via shared `RateLimiter(0.15s)` — global throttle, not per-team | ✓ | `scripts/live/_http_client.py:103-140` + `scripts/live/fetch_player_stats.py:302-403` | `test_http_client.py` (+7 H4 tests: RateLimiter semantics + acquire-per-page + shared-limiter pinning) |
 
 ---
 

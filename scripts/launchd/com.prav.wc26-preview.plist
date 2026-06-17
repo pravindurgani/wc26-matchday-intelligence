@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  TEMPLATE — DO NOT install this file directly.
+
+  scripts/launchd/install.sh substitutes the `__REPO_ROOT__` token with the
+  actual repository path before copying to ~/Library/LaunchAgents/. The
+  source plist stays portable across machines and forks.
+
+  Why a template (audit H1 / R2 round 3):
+    Prior to this change the plist hardcoded
+    /Users/prav/Desktop/personal-projects/fifa-wc-26-prediction/... which
+    was the original deploy location. The R2 round 2 fix to the wrapper
+    (run_if_tournament.sh) made the script portable but the plist still
+    pointed at the wrong tree — so launchd loaded but every tick failed
+    silently. This template + install.sh substitution closes the gap so
+    the agent works from any checkout location.
+-->
 <plist version="1.0">
 <dict>
   <key>Label</key>
@@ -10,11 +26,11 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>/Users/prav/Desktop/personal-projects/fifa-wc-26-prediction/scripts/launchd/run_if_tournament.sh</string>
+    <string>__REPO_ROOT__/scripts/launchd/run_if_tournament.sh</string>
   </array>
 
   <key>WorkingDirectory</key>
-  <string>/Users/prav/Desktop/personal-projects/fifa-wc-26-prediction</string>
+  <string>__REPO_ROOT__</string>
 
   <!-- Fire every 15 minutes, 24/7. Wrapper exits in &lt;1s outside the
        tournament + match windows, so the wake-up cost is negligible. -->
@@ -33,9 +49,9 @@
 
   <!-- Capture launchd-side stdout/stderr (wrapper's own log is separate). -->
   <key>StandardOutPath</key>
-  <string>/Users/prav/Desktop/personal-projects/fifa-wc-26-prediction/logs/launchd-stdout.log</string>
+  <string>__REPO_ROOT__/logs/launchd-stdout.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/prav/Desktop/personal-projects/fifa-wc-26-prediction/logs/launchd-stderr.log</string>
+  <string>__REPO_ROOT__/logs/launchd-stderr.log</string>
 
   <!-- Don't relaunch on early-exit (wrapper's "skip" path returns 0). -->
   <key>RunAtLoad</key>

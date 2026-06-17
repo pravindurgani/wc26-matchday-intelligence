@@ -227,9 +227,13 @@ def to_stats(team_payload: dict, player_name: str) -> PlayerStats | None:
 
 
 def _http_get_json(url: str, headers: dict, timeout: int = 20) -> dict:
-    req = urllib.request.Request(url, headers=headers, method="GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode("utf-8"))
+    """Thin shim — delegates to `_http_client.http_get_json` so a 5xx /
+    URLError / TimeoutError gets retried (3 attempts, exponential
+    backoff) instead of escalating straight to subsystem_stale.
+    Audit H3 (R2 round 3).
+    """
+    from _http_client import http_get_json  # noqa: PLC0415
+    return http_get_json(url, headers, timeout=timeout)
 
 
 def _resolve_league_season() -> tuple[str, str]:
@@ -296,12 +300,21 @@ def fetch_team_ids(api_key: str, league_id: str, season: str,
 
 
 def fetch_team_players(api_key: str, team_id: int, season: str,
+                       rate_limiter=None,
                        ) -> tuple[list[dict], list[dict]]:
     """Paginated GET /players?team={id}&season={year}.
 
     API-Football returns `paging: {current, total}` — loop until exhausted.
     Empty `response` is NOT an error here: some smaller federations have no
     seasonal stats yet, especially mid-cycle.
+
+    Audit H4 (R2 round 3): when `rate_limiter` is provided, `acquire()` is
+    called BEFORE each HTTP request — both the first page AND every
+    subsequent paginated request. With ~48 teams * 2-3 pages each, the
+    producer was previously bursting at network speed; passing a shared
+    `RateLimiter(0.15)` from `fetch_apifootball_player_stats` throttles the
+    sweep to roughly 5-7 req/sec, well under API-Football's paid-tier
+    300/min ceiling and recoverable on free-tier with degradation.
     """
     headers = {"x-apisports-key": api_key, "Accept": "application/json"}
     records: list[dict] = []
@@ -311,6 +324,8 @@ def fetch_team_players(api_key: str, team_id: int, season: str,
         url = (f"{APIFOOTBALL_BASE}/players?team={team_id}"
                f"&season={season}&page={page}")
         try:
+            if rate_limiter is not None:
+                rate_limiter.acquire()
             payload = _http_get_json(url, headers)
             # Schema-drift watchdog: soft mode — logs a WARNING on shape drift
             # but never raises. Lets the /players feed keep flowing while
@@ -349,12 +364,24 @@ def fetch_team_players(api_key: str, team_id: int, season: str,
 
 
 def fetch_apifootball_player_stats(api_key: str, wc_teams: set[str],
+                                   sleep_between: float = 0.15,
                                    ) -> tuple[dict[str, list[dict]], list[dict]]:
     """Fan-out across the 48 WC2026 squads. Returns ({team_name: raw_records}, warnings).
 
     Mirrors fetch_apifootball_injuries' contract — fail-closed, structured
     warnings, no exceptions escape.
+
+    Audit H4 (R2 round 3): a single `RateLimiter(sleep_between)` is
+    created here and shared across BOTH the per-team loop AND each team's
+    pagination loop. Default `0.15s` ≈ 6.7 req/sec mirrors the polite
+    spacer in `scripts/live/fetch_results.py:enrich_matches_with_events`
+    (L406, L454-455). With 48 teams * 2-3 pages each the worst-case
+    burst is now ~14-22 seconds of evenly-spaced calls instead of a
+    100 req/sec spike that risks API-Football 429 cascades.
+
+    Pass `sleep_between=0` to disable throttling (replay tests).
     """
+    from _http_client import RateLimiter  # noqa: PLC0415
     league_id, season = _resolve_league_season()
     team_ids, warns = fetch_team_ids(api_key, league_id, season)
     out: dict[str, list[dict]] = {}
@@ -370,9 +397,11 @@ def fetch_apifootball_player_stats(api_key: str, wc_teams: set[str],
                         f"/teams?league={league_id}&season={season}"),
         })
     targets = sorted((t for t in team_ids if not wc_teams or t in wc_teams))
+    rate_limiter = RateLimiter(sleep_between) if sleep_between > 0 else None
     for team in targets:
         tid = team_ids[team]
-        recs, team_warns = fetch_team_players(api_key, tid, season)
+        recs, team_warns = fetch_team_players(api_key, tid, season,
+                                              rate_limiter=rate_limiter)
         out[team] = recs
         warns.extend(team_warns)
         print(f"[fetch_player_stats] {team:30s} team_id={tid} players={len(recs)}")

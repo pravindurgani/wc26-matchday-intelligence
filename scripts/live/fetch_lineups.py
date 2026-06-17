@@ -101,9 +101,13 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
 
 
 def _http_get_json(url: str, headers: dict, timeout: int = 15) -> dict:
-    req = urllib.request.Request(url, headers=headers, method="GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode("utf-8"))
+    """Thin shim — delegates to `_http_client.http_get_json` so a 5xx /
+    URLError / TimeoutError gets retried (3 attempts, exponential
+    backoff) instead of escalating straight to subsystem_stale.
+    Audit H3 (R2 round 3).
+    """
+    from _http_client import http_get_json  # noqa: PLC0415
+    return http_get_json(url, headers, timeout=timeout)
 
 
 def _load_schedule() -> list[dict]:
