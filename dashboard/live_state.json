@@ -1,22 +1,11 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-17T21:59:11.420180+00:00",
-  "completed_matches_count": 21,
+  "last_updated_utc": "2026-06-17T22:06:50.944723+00:00",
+  "completed_matches_count": 22,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [
-    {
-      "m": 22,
-      "home": "England",
-      "away": "Croatia",
-      "home_score": 4,
-      "away_score": 2,
-      "elapsed": 88,
-      "status": "LIVE",
-      "status_long": "Second Half"
-    }
-  ],
-  "in_play_count": 1,
+  "in_play": [],
+  "in_play_count": 0,
   "warnings": []
 }
