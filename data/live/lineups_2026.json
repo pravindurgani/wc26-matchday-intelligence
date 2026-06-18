@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-18T20:28:12.849390+00:00",
+  "generated_at": "2026-06-18T22:58:43.273046+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 26,
-      "home": "Switzerland",
-      "away": "Bosnia and Herzegovina",
+      "match_id": 27,
+      "home": "Canada",
+      "away": "Qatar",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 25282,
-          "name": "Gregor Kobel",
-          "number": 1,
+          "id": 51274,
+          "name": "Maxime Crépeau",
+          "number": 16,
           "pos": "G"
         },
         {
-          "id": 48378,
-          "name": "Silvan Widmer",
-          "number": 3,
+          "id": 78547,
+          "name": "Alistair Johnston",
+          "number": 2,
           "pos": "D"
         },
         {
-          "id": 2803,
-          "name": "Nico Elvedi",
+          "id": 327738,
+          "name": "Luc De Fougerolles",
           "number": 4,
           "pos": "D"
         },
         {
-          "id": 5,
-          "name": "Manuel Akanji",
-          "number": 5,
-          "pos": "D"
-        },
-        {
-          "id": 1631,
-          "name": "Ricardo Rodríguez",
+          "id": 51295,
+          "name": "Derek Cornelius",
           "number": 13,
           "pos": "D"
         },
         {
-          "id": 951,
-          "name": "Michel Aebischer",
-          "number": 20,
+          "id": 50816,
+          "name": "Richie Laryea",
+          "number": 22,
+          "pos": "D"
+        },
+        {
+          "id": 51016,
+          "name": "Tajon Buchanan",
+          "number": 17,
           "pos": "M"
         },
         {
-          "id": 1464,
-          "name": "Granit Xhaka",
-          "number": 10,
-          "pos": "M"
-        },
-        {
-          "id": 2807,
-          "name": "Remo Freuler",
+          "id": 328046,
+          "name": "Ismael Koné",
           "number": 8,
           "pos": "M"
         },
         {
-          "id": 163032,
-          "name": "Fabian Rieder",
-          "number": 22,
-          "pos": "F"
-        },
-        {
-          "id": 421,
-          "name": "Breel Embolo",
+          "id": 35570,
+          "name": "Stephen Eustaquio",
           "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 362145,
+          "name": "Ali Ahmed",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 8489,
+          "name": "Jonathan David",
+          "number": 10,
           "pos": "F"
         },
         {
-          "id": 48648,
-          "name": "Dan Ndoye",
-          "number": 11,
+          "id": 2001,
+          "name": "Cyle Larin",
+          "number": 9,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 9026,
-          "name": "Nikola Vasilj",
+          "id": 42207,
+          "name": "Mahmud Abunada",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 7318,
-          "name": "Amar Dedić",
-          "number": 7,
+          "id": 377930,
+          "name": "Ayoub Al Oui",
+          "number": 13,
           "pos": "D"
         },
         {
-          "id": 1741,
-          "name": "Nikola Katić",
-          "number": 18,
+          "id": 2530,
+          "name": "Pedro Miguel",
+          "number": 2,
           "pos": "D"
         },
         {
-          "id": 271350,
-          "name": "Tarik Muharemović",
-          "number": 4,
+          "id": 2532,
+          "name": "Boualem Khoukhi",
+          "number": 16,
           "pos": "D"
         },
         {
-          "id": 1442,
-          "name": "Sead Kolašinac",
-          "number": 5,
-          "pos": "D"
-        },
-        {
-          "id": 322101,
-          "name": "Amar Memić",
-          "number": 15,
-          "pos": "M"
-        },
-        {
-          "id": 264094,
-          "name": "Benjamin Tahirović",
-          "number": 6,
-          "pos": "M"
-        },
-        {
-          "id": 1324,
-          "name": "Ivan Šunjić",
+          "id": 175439,
+          "name": "Homam Al-Amin",
           "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 200981,
+          "name": "Jassem Gaber Abdulsallam",
+          "number": 5,
           "pos": "M"
         },
         {
-          "id": 395559,
-          "name": "Kerim Alajbegović",
-          "number": 19,
+          "id": 2535,
+          "name": "Assim Madibo",
+          "number": 23,
           "pos": "M"
         },
         {
-          "id": 46930,
-          "name": "Ermedin Demirović",
-          "number": 10,
+          "id": 366516,
+          "name": "Issa Laye",
+          "number": 4,
+          "pos": "M"
+        },
+        {
+          "id": 42075,
+          "name": "Edmilson Junior",
+          "number": 8,
           "pos": "F"
         },
         {
-          "id": 790,
-          "name": "Edin Džeko",
+          "id": 542541,
+          "name": "Yusuf Abdurisag",
+          "number": 15,
+          "pos": "F"
+        },
+        {
+          "id": 2544,
+          "name": "Akram Afif",
           "number": 11,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-18T20:28:12.849371+00:00"
+      "captured_at": "2026-06-18T22:58:43.273030+00:00"
     }
   ],
   "warnings": []
