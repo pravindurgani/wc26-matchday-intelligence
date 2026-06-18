@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-18T10:23:18.628458+00:00",
+  "generated_at": "2026-06-18T15:27:08.705091+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 25,
+      "home": "Czechia",
+      "away": "South Africa",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 138804,
+          "name": "Matěj Kovář",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 2252,
+          "name": "Tomáš Holeš",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 162964,
+          "name": "Robin Hranáč",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 66407,
+          "name": "Ladislav Krejčí",
+          "number": 7,
+          "pos": "D"
+        },
+        {
+          "id": 1231,
+          "name": "Vladimír Coufal",
+          "number": 5,
+          "pos": "M"
+        },
+        {
+          "id": 241,
+          "name": "Michal Sadílek",
+          "number": 18,
+          "pos": "M"
+        },
+        {
+          "id": 162194,
+          "name": "Lukáš Červ",
+          "number": 12,
+          "pos": "M"
+        },
+        {
+          "id": 386837,
+          "name": "Alexandr Sojka",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 66019,
+          "name": "Adam Hložek",
+          "number": 9,
+          "pos": "F"
+        },
+        {
+          "id": 25348,
+          "name": "Vladimír Darida",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 794,
+          "name": "Patrik Schick",
+          "number": 10,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 3275,
+          "name": "Ronwen Williams",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 46601,
+          "name": "Khuliso Mudau",
+          "number": 20,
+          "pos": "D"
+        },
+        {
+          "id": 406752,
+          "name": "Ime Okon",
+          "number": 21,
+          "pos": "D"
+        },
+        {
+          "id": 510799,
+          "name": "Mbekezeli Mbokazi",
+          "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 46334,
+          "name": "Aubrey Modiba",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 194430,
+          "name": "Thalente Mbatha",
+          "number": 5,
+          "pos": "M"
+        },
+        {
+          "id": 3287,
+          "name": "Teboho Mokoena",
+          "number": 4,
+          "pos": "M"
+        },
+        {
+          "id": 179893,
+          "name": "Oswin Appollis",
+          "number": 7,
+          "pos": "F"
+        },
+        {
+          "id": 268710,
+          "name": "Jayden Adams",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 354831,
+          "name": "Thapelo Maseko",
+          "number": 12,
+          "pos": "F"
+        },
+        {
+          "id": 127429,
+          "name": "Iqraam Rayners",
+          "number": 15,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-18T15:27:08.705073+00:00"
+    }
+  ],
   "warnings": []
 }
