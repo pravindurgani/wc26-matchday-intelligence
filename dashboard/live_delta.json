@@ -1,166 +1,166 @@
 {
-  "generated_at": "2026-06-18T10:28:37.656811+00:00",
+  "generated_at": "2026-06-18T10:38:56.324988+00:00",
   "min_pp_threshold": 0.3,
   "top_movers_up": [
     {
       "team": "Argentina",
       "static": 0.19563999999999998,
-      "live": 0.21976,
-      "delta_pp": 2.412000000000003
+      "live": 0.22232,
+      "delta_pp": 2.668000000000001
     },
     {
       "team": "Colombia",
       "static": 0.05004000000000001,
-      "live": 0.06484,
-      "delta_pp": 1.4799999999999986
-    },
-    {
-      "team": "England",
-      "static": 0.06768,
-      "live": 0.08168,
-      "delta_pp": 1.4
+      "live": 0.06768,
+      "delta_pp": 1.7639999999999996
     },
     {
       "team": "Germany",
       "static": 0.03228,
-      "live": 0.04376,
-      "delta_pp": 1.1479999999999997
+      "live": 0.04204,
+      "delta_pp": 0.9759999999999998
     },
     {
       "team": "Norway",
       "static": 0.01756,
-      "live": 0.026439999999999998,
-      "delta_pp": 0.8879999999999999
+      "live": 0.0262,
+      "delta_pp": 0.8640000000000002
     },
     {
-      "team": "South Korea",
-      "static": 0.0032800000000000004,
-      "live": 0.00668,
-      "delta_pp": 0.33999999999999997
+      "team": "England",
+      "static": 0.06768,
+      "live": 0.07468,
+      "delta_pp": 0.6999999999999993
     }
   ],
   "top_movers_down": [
     {
       "team": "Spain",
       "static": 0.23912,
-      "live": 0.20244,
-      "delta_pp": -3.6679999999999993
+      "live": 0.20352,
+      "delta_pp": -3.559999999999999
     },
     {
       "team": "Portugal",
       "static": 0.04168000000000001,
-      "live": 0.030319999999999996,
-      "delta_pp": -1.1360000000000012
+      "live": 0.0332,
+      "delta_pp": -0.8480000000000009
     },
     {
       "team": "Ecuador",
       "static": 0.02364,
-      "live": 0.015960000000000002,
-      "delta_pp": -0.7679999999999999
-    },
-    {
-      "team": "Croatia",
-      "static": 0.01416,
-      "live": 0.008159999999999999,
-      "delta_pp": -0.6000000000000002
-    },
-    {
-      "team": "Turkey",
-      "static": 0.01132,
-      "live": 0.00544,
-      "delta_pp": -0.588
-    },
-    {
-      "team": "Switzerland",
-      "static": 0.01492,
-      "live": 0.0098,
-      "delta_pp": -0.512
+      "live": 0.016,
+      "delta_pp": -0.7640000000000001
     },
     {
       "team": "Uruguay",
       "static": 0.013680000000000001,
-      "live": 0.009559999999999999,
-      "delta_pp": -0.4120000000000002
+      "live": 0.00776,
+      "delta_pp": -0.5920000000000001
+    },
+    {
+      "team": "Switzerland",
+      "static": 0.01492,
+      "live": 0.00936,
+      "delta_pp": -0.5559999999999999
+    },
+    {
+      "team": "Turkey",
+      "static": 0.01132,
+      "live": 0.0061600000000000005,
+      "delta_pp": -0.516
+    },
+    {
+      "team": "Croatia",
+      "static": 0.01416,
+      "live": 0.009080000000000001,
+      "delta_pp": -0.5079999999999999
+    },
+    {
+      "team": "Belgium",
+      "static": 0.014599999999999998,
+      "live": 0.01092,
+      "delta_pp": -0.36799999999999994
     }
   ],
   "all_movers": [
     {
       "team": "Spain",
       "static": 0.23912,
-      "live": 0.20244,
-      "delta_pp": -3.6679999999999993
+      "live": 0.20352,
+      "delta_pp": -3.559999999999999
     },
     {
       "team": "Argentina",
       "static": 0.19563999999999998,
-      "live": 0.21976,
-      "delta_pp": 2.412000000000003
+      "live": 0.22232,
+      "delta_pp": 2.668000000000001
     },
     {
       "team": "Colombia",
       "static": 0.05004000000000001,
-      "live": 0.06484,
-      "delta_pp": 1.4799999999999986
-    },
-    {
-      "team": "England",
-      "static": 0.06768,
-      "live": 0.08168,
-      "delta_pp": 1.4
+      "live": 0.06768,
+      "delta_pp": 1.7639999999999996
     },
     {
       "team": "Germany",
       "static": 0.03228,
-      "live": 0.04376,
-      "delta_pp": 1.1479999999999997
-    },
-    {
-      "team": "Portugal",
-      "static": 0.04168000000000001,
-      "live": 0.030319999999999996,
-      "delta_pp": -1.1360000000000012
+      "live": 0.04204,
+      "delta_pp": 0.9759999999999998
     },
     {
       "team": "Norway",
       "static": 0.01756,
-      "live": 0.026439999999999998,
-      "delta_pp": 0.8879999999999999
+      "live": 0.0262,
+      "delta_pp": 0.8640000000000002
+    },
+    {
+      "team": "Portugal",
+      "static": 0.04168000000000001,
+      "live": 0.0332,
+      "delta_pp": -0.8480000000000009
     },
     {
       "team": "Ecuador",
       "static": 0.02364,
-      "live": 0.015960000000000002,
-      "delta_pp": -0.7679999999999999
+      "live": 0.016,
+      "delta_pp": -0.7640000000000001
     },
     {
-      "team": "Croatia",
-      "static": 0.01416,
-      "live": 0.008159999999999999,
-      "delta_pp": -0.6000000000000002
-    },
-    {
-      "team": "Turkey",
-      "static": 0.01132,
-      "live": 0.00544,
-      "delta_pp": -0.588
-    },
-    {
-      "team": "Switzerland",
-      "static": 0.01492,
-      "live": 0.0098,
-      "delta_pp": -0.512
+      "team": "England",
+      "static": 0.06768,
+      "live": 0.07468,
+      "delta_pp": 0.6999999999999993
     },
     {
       "team": "Uruguay",
       "static": 0.013680000000000001,
-      "live": 0.009559999999999999,
-      "delta_pp": -0.4120000000000002
+      "live": 0.00776,
+      "delta_pp": -0.5920000000000001
     },
     {
-      "team": "South Korea",
-      "static": 0.0032800000000000004,
-      "live": 0.00668,
-      "delta_pp": 0.33999999999999997
+      "team": "Switzerland",
+      "static": 0.01492,
+      "live": 0.00936,
+      "delta_pp": -0.5559999999999999
+    },
+    {
+      "team": "Turkey",
+      "static": 0.01132,
+      "live": 0.0061600000000000005,
+      "delta_pp": -0.516
+    },
+    {
+      "team": "Croatia",
+      "static": 0.01416,
+      "live": 0.009080000000000001,
+      "delta_pp": -0.5079999999999999
+    },
+    {
+      "team": "Belgium",
+      "static": 0.014599999999999998,
+      "live": 0.01092,
+      "delta_pp": -0.36799999999999994
     }
   ]
 }
