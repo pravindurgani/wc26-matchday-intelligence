@@ -292,6 +292,59 @@ def detect_provider_source() -> tuple[str, str]:
     return "manual/mock", "manual"
 
 
+def _provider_fallback_warnings() -> list[dict]:
+    """R6 M2: surface a structured warning when the operator requested a
+    real provider but the corresponding key is missing — the live update
+    silently falls back to manual/mock mode and serves the last-committed
+    snapshot. Pre-R6 there was no signal on `live_state.json:warnings[]`
+    so the dashboard read source="manual/mock" and the operator could
+    miss the rotated/expired secret entirely. Now: if the requested
+    provider is non-mock AND its key is absent, emit a
+    `provider_key_missing` warning that flows into every write_live_state
+    call alongside mf_warnings.
+
+    Returns [] on the happy path (no env override OR key present) so the
+    warning array stays empty on a clean tick. Exception-safe by design;
+    a key-detection bug never propagates upward."""
+    try:
+        provider = (os.environ.get("FOOTBALL_PROVIDER")
+                    or os.environ.get("WC_RESULTS_SOURCE")
+                    or "mock").strip().lower().replace("-", "_")
+        if provider in ("mock", ""):
+            return []  # explicit mock — no warning, user opted in
+        apifootball_key = (os.environ.get("API_FOOTBALL_KEY")
+                           or os.environ.get("WC_APIFOOTBALL_KEY"))
+        football_data_token = (os.environ.get("FOOTBALL_DATA_TOKEN")
+                               or os.environ.get("WC_FOOTBALL_DATA_TOKEN"))
+        sportmonks_token = (os.environ.get("SPORTMONKS_TOKEN")
+                            or os.environ.get("WC_SPORTMONKS_TOKEN"))
+        missing = None
+        if provider in ("api_football", "apifootball") and not apifootball_key:
+            missing = "API_FOOTBALL_KEY"
+        elif provider in ("football_data", "footballdata") and not football_data_token:
+            missing = "FOOTBALL_DATA_TOKEN"
+        elif provider == "sportmonks" and not sportmonks_token:
+            missing = "SPORTMONKS_TOKEN"
+        if missing is None:
+            return []
+        return [{
+            "type": "provider_key_missing",
+            "message": (
+                f"Provider '{provider}' was requested via FOOTBALL_PROVIDER but "
+                f"required env var '{missing}' is unset/empty. Falling back to "
+                f"manual/mock mode; dashboard serves the last committed snapshot. "
+                f"Check secret rotation in the workflow."
+            ),
+            "requested_provider": provider,
+            "missing_env_var": missing,
+        }]
+    except Exception as e:
+        return [{
+            "type": "provider_fallback_check_error",
+            "message": f"{type(e).__name__}: {e}",
+        }]
+
+
 def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
                      warnings: list | None = None, source: str | None = None,
                      provider_mode: str | None = None,
@@ -431,7 +484,18 @@ def main() -> int:
     # the signal. The helper is exception-safe (see
     # `_matchday_freshness_warnings_safe`); it returns [] on a clean tick
     # so the early-exit warning arrays stay minimal in the happy case.
-    mf_warnings = _matchday_freshness_warnings_safe()
+    #
+    # R6 M2: also fold provider-fallback warnings into the same array.
+    # If the operator requested api_football/sportmonks/football_data
+    # but the corresponding key is missing, detect_provider_source()
+    # silently returns ("manual/mock", "manual"); without this merge the
+    # dashboard would see `source="manual/mock"` with no warning
+    # explaining WHY (rotated secret, deleted env var, etc.). The helper
+    # is exception-safe — a check bug never blocks the tick.
+    mf_warnings = (
+        _matchday_freshness_warnings_safe()
+        + _provider_fallback_warnings()
+    )
 
     failures = read_circuit_breaker()
     if failures >= CB_THRESHOLD:
@@ -670,6 +734,16 @@ if __name__ == "__main__":
                 # raise, but if it somehow does, drop the freshness signal
                 # rather than mask the orchestrator-crash signal we need
                 # the operator to see.
+                pass
+            # R6 M2: also fold in provider-fallback warnings on the crash
+            # path so an orchestrator_crash + missing-provider-key combo
+            # surfaces BOTH signals (the crash hints at what failed; the
+            # provider-key signal hints at WHY data was stale heading
+            # into the crash). The helper is internally exception-safe;
+            # outer try/except is belt-and-braces.
+            try:
+                crash_warnings.extend(_provider_fallback_warnings())
+            except Exception:
                 pass
             write_live_state(
                 "live" if get_completed_count() > 0 else "pre_tournament",

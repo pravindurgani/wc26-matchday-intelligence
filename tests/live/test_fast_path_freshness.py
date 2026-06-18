@@ -317,7 +317,11 @@ def test_mf_warnings_probed_at_top_of_main() -> None:
     src = _read_source()
     # Probe call appears before the circuit-breaker guard.
     cb_idx = src.find("Circuit breaker tripped")
-    probe_idx = src.find("mf_warnings = _matchday_freshness_warnings_safe()")
+    # R6 M2: the mf_warnings assignment now folds in _provider_fallback_warnings()
+    # alongside _matchday_freshness_warnings_safe(), so the line may be split
+    # across multiple lines. Assert on the function call presence + ordering
+    # rather than on a one-line assignment literal.
+    probe_idx = src.find("_matchday_freshness_warnings_safe()")
     assert probe_idx > 0, "freshness probe call missing"
     assert probe_idx < cb_idx, (
         "freshness probe must precede the circuit-breaker guard so "
@@ -565,4 +569,166 @@ def test_r5_c1_provider_returned_nothing_warning_pinned_in_source() -> None:
         "preservation branch must atomic_write_json the preserved file "
         "with the new warning + updated_at; otherwise the warning never "
         "lands on disk and freshness guards never re-probe."
+    )
+
+
+# ────────────────────────────────────── R6 M3: warning dedup on preserve
+# Audit found that R5 C1's append-on-every-tick pattern grew warnings[]
+# unboundedly during sustained provider silent-fails (a 3h outage = 18
+# fast ticks = 18 duplicate `provider_returned_nothing` entries).
+# Fix: bump count + last_seen_utc on an EXISTING entry; only append a
+# fresh entry on the FIRST silent-empty tick.
+def test_r6_m3_provider_returned_nothing_dedup_pinned_in_source() -> None:
+    """Static pin: the preservation branch must use a dedup-by-type pattern
+    (look for existing 'provider_returned_nothing' entry, bump count if
+    present, append once otherwise). A revert to unconditional append
+    re-introduces the unbounded-growth defect."""
+    src = (ROOT / "scripts" / "live" / "fetch_results.py").read_text()
+    branch_idx = src.find("if not valid and not warnings_list and out_path.exists():")
+    assert branch_idx > 0
+    branch_end = src.find("\n    # ", branch_idx + 1)
+    body = src[branch_idx:branch_end]
+    # The dedup pattern must explicitly look up an existing warning by type
+    # before appending. The `next(... if w.get("type") == ...)` form is the
+    # canonical idiom; any equivalent (e.g. for-loop with break) would also
+    # work but we pin THIS pattern to keep the audit trail tight.
+    assert 'w.get("type") == "provider_returned_nothing"' in body, (
+        "preservation branch missing dedup check — R6 audit M3. Each silent-"
+        "empty tick over a 3h outage previously appended a duplicate entry; "
+        "fix is a lookup-and-bump pattern."
+    )
+    # And the bump path must increment a count + refresh last_seen_utc.
+    assert "count" in body and "last_seen_utc" in body, (
+        "dedup bump must update both count and last_seen_utc so the "
+        "single warning entry carries duration + occurrence information."
+    )
+
+
+# ────────────────────────────────────── R6 M2: provider fallback warning
+# Audit found that when the operator requests a real provider (e.g.
+# FOOTBALL_PROVIDER=api_football) but the corresponding key is unset or
+# empty, detect_provider_source() silently returns ("manual/mock",
+# "manual"). The dashboard sees `source="manual/mock"` but no warning
+# explains WHY the fallback fired — operators miss rotated/expired
+# secrets. Fix: a new _provider_fallback_warnings() helper emits a
+# structured `provider_key_missing` warning that flows into every
+# write_live_state path alongside mf_warnings.
+def test_r6_m2_provider_fallback_helper_exists() -> None:
+    """The `_provider_fallback_warnings()` helper must exist in
+    run_live_update.py and emit a `provider_key_missing` warning when
+    the requested provider's key is missing."""
+    src = _read_source()
+    assert "def _provider_fallback_warnings" in src, (
+        "_provider_fallback_warnings helper missing — R6 audit M2. "
+        "Silent provider-key fallback re-introduces the dashboard-blind "
+        "failure mode where operators miss rotated/expired secrets."
+    )
+    assert '"provider_key_missing"' in src, (
+        "_provider_fallback_warnings must emit the canonical "
+        "`provider_key_missing` warning type so the dashboard can "
+        "surface it as a distinct pill."
+    )
+
+
+def test_r6_m2_provider_fallback_merged_into_mf_warnings() -> None:
+    """The fallback helper must be folded into the mf_warnings probe at
+    the top of main() so EVERY write_live_state path (including the
+    three early-exit guards) carries the signal. Pinning the merge
+    keeps a refactor from silently dropping the fold."""
+    src = _read_source()
+    # Locate the mf_warnings assignment block.
+    mf_idx = src.find("mf_warnings = (")
+    if mf_idx < 0:
+        # tolerate the inline form too
+        mf_idx = src.find("mf_warnings =")
+    assert mf_idx > 0, "mf_warnings assignment not found"
+    # Take a window large enough to span a multi-line assignment.
+    window = src[mf_idx:mf_idx + 500]
+    assert "_matchday_freshness_warnings_safe()" in window
+    assert "_provider_fallback_warnings()" in window, (
+        "mf_warnings assignment does not include _provider_fallback_warnings() "
+        "— provider-key fallback warnings won't reach live_state.json on "
+        "any tick. R6 audit M2."
+    )
+
+
+@pytest.fixture
+def env_isolated(monkeypatch: pytest.MonkeyPatch):
+    """Isolate provider/key env vars so each test owns its own state."""
+    for var in (
+        "FOOTBALL_PROVIDER", "WC_RESULTS_SOURCE",
+        "API_FOOTBALL_KEY", "WC_APIFOOTBALL_KEY",
+        "FOOTBALL_DATA_TOKEN", "WC_FOOTBALL_DATA_TOKEN",
+        "SPORTMONKS_TOKEN", "WC_SPORTMONKS_TOKEN",
+    ):
+        monkeypatch.delenv(var, raising=False)
+    return monkeypatch
+
+
+def test_r6_m2_fallback_warning_emitted_when_api_football_key_missing(env_isolated) -> None:
+    """Functional: FOOTBALL_PROVIDER=api_football + no API_FOOTBALL_KEY
+    → _provider_fallback_warnings() returns a non-empty list with the
+    correct type + missing_env_var fields."""
+    env_isolated.setenv("FOOTBALL_PROVIDER", "api_football")
+    import run_live_update as rlu
+    warnings = rlu._provider_fallback_warnings()
+    assert len(warnings) == 1
+    w = warnings[0]
+    assert w["type"] == "provider_key_missing"
+    assert w["requested_provider"] == "api_football"
+    assert w["missing_env_var"] == "API_FOOTBALL_KEY"
+
+
+def test_r6_m2_no_warning_when_provider_mock(env_isolated) -> None:
+    """Negative: FOOTBALL_PROVIDER unset (defaults to mock) → no warning.
+    Pins the contract that mock mode is OPTED INTO, not a regression."""
+    import run_live_update as rlu
+    assert rlu._provider_fallback_warnings() == []
+
+
+def test_r6_m2_no_warning_when_key_present(env_isolated) -> None:
+    """Negative: FOOTBALL_PROVIDER=api_football + API_FOOTBALL_KEY set →
+    no warning. Pins the happy path."""
+    env_isolated.setenv("FOOTBALL_PROVIDER", "api_football")
+    env_isolated.setenv("API_FOOTBALL_KEY", "sk-test-value")
+    import run_live_update as rlu
+    assert rlu._provider_fallback_warnings() == []
+
+
+def test_r6_m2_legacy_alias_satisfies_key_check(env_isolated) -> None:
+    """The legacy WC_APIFOOTBALL_KEY alias must also satisfy the key
+    check — operators with the old env var name shouldn't see a spurious
+    `provider_key_missing` warning."""
+    env_isolated.setenv("FOOTBALL_PROVIDER", "api_football")
+    env_isolated.setenv("WC_APIFOOTBALL_KEY", "sk-legacy-alias-value")
+    import run_live_update as rlu
+    assert rlu._provider_fallback_warnings() == []
+
+
+def test_r6_m2_sportmonks_provider_missing_key(env_isolated) -> None:
+    """The fallback check must cover all three real providers — not just
+    api_football."""
+    env_isolated.setenv("FOOTBALL_PROVIDER", "sportmonks")
+    import run_live_update as rlu
+    warnings = rlu._provider_fallback_warnings()
+    assert len(warnings) == 1
+    assert warnings[0]["missing_env_var"] == "SPORTMONKS_TOKEN"
+
+
+def test_r6_m2_crash_handler_carries_provider_fallback_warning() -> None:
+    """An orchestrator_crash + missing-provider-key combo must surface
+    BOTH signals on live_state.json: the crash entry hints WHAT failed,
+    the provider-fallback entry hints WHY (stale data heading into the
+    crash). Pre-fix the crash handler only re-probed freshness, omitting
+    the provider-fallback signal — operators investigating a crash would
+    miss the rotated secret context."""
+    src = _read_source()
+    # Locate the orchestrator-crash block.
+    crash_idx = src.find("[run_live_update] FATAL")
+    assert crash_idx > 0, "orchestrator-crash handler missing"
+    crash_block = src[crash_idx:]
+    assert "_provider_fallback_warnings()" in crash_block, (
+        "crash handler does NOT call _provider_fallback_warnings() — a "
+        "crash that occurs while the provider key is missing will surface "
+        "the crash but hide the WHY signal. R6 audit M2 follow-up."
     )

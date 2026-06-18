@@ -994,15 +994,36 @@ def main() -> int:
             existing = json.loads(out_path.read_text())
             if existing.get("completed_matches"):
                 print("[fetch_results] adapter returned nothing useful; preserving existing locked matches")
-                existing.setdefault("warnings", []).append({
-                    "type": "provider_returned_nothing",
-                    "message": (
-                        f"Provider '{src}' returned 0 matches with no warnings; "
-                        f"existing locked matches preserved. Investigate the "
-                        f"adapter / provider token if this persists across ticks."
-                    ),
-                })
-                existing["updated_at"] = datetime.now(timezone.utc).isoformat()
+                # R6 M3: dedup the provider_returned_nothing warning across
+                # consecutive preservation ticks. A 3h sustained provider
+                # outage = ~18 fast ticks, each previously appending a
+                # duplicate entry → warnings[] grew linearly and
+                # results_2026.json bloated. Now: if the warning already
+                # exists, bump a count + last_seen_utc instead of appending;
+                # if not, append once with count=1 + first_seen_utc.
+                now_iso = datetime.now(timezone.utc).isoformat()
+                warnings = existing.setdefault("warnings", [])
+                existing_warning = next(
+                    (w for w in warnings
+                     if isinstance(w, dict) and w.get("type") == "provider_returned_nothing"),
+                    None,
+                )
+                if existing_warning is not None:
+                    existing_warning["count"] = int(existing_warning.get("count", 1)) + 1
+                    existing_warning["last_seen_utc"] = now_iso
+                else:
+                    warnings.append({
+                        "type": "provider_returned_nothing",
+                        "message": (
+                            f"Provider '{src}' returned 0 matches with no warnings; "
+                            f"existing locked matches preserved. Investigate the "
+                            f"adapter / provider token if this persists across ticks."
+                        ),
+                        "count": 1,
+                        "first_seen_utc": now_iso,
+                        "last_seen_utc": now_iso,
+                    })
+                existing["updated_at"] = now_iso
                 existing["source"] = src
                 atomic_write_json(out_path, existing)
                 return 0
