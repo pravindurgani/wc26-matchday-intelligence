@@ -185,6 +185,25 @@ def dc_tau(h, a, lam_h, lam_a, rho):
 
 def build_score_matrix(lam_h, lam_a, cfg, use_dispersion=True, max_g=10):
     """Joint distribution P[h, a]. Uses Negative Binomial marginals + DC τ correction."""
+    # R11 A2: runtime cfg["dc_rho"] guard. The module-load assert at
+    # scripts/03_simulate.py:115 only validates DEFAULTS["dc_rho"]. A tuner /
+    # sensitivity sweep / external caller that overrides cfg["dc_rho"]
+    # would silently skip the DC-τ boundary check, push lam_h*lam_a*rho >= 1
+    # and emit negative τ values that get clipped to 1e-12, systematically
+    # collapsing low-score cells without any signal. The Σ-gate would still
+    # pass (renormalization preserves Σ=1) but the score distribution shape
+    # silently corrupts. Runtime fast-fail catches the tuner case.
+    rho = cfg["dc_rho"]
+    if LAMBDA_CLIP_MAX * abs(rho) >= 1.0:
+        raise ValueError(
+            f"Dixon-Coles τ boundary violated at runtime: λ_max "
+            f"({LAMBDA_CLIP_MAX}) × |ρ_runtime| ({abs(rho)}) = "
+            f"{LAMBDA_CLIP_MAX * abs(rho):.3f} >= 1.0. "
+            f"cfg['dc_rho']={rho} pushes τ(0,1)/τ(1,0) negative for "
+            f"high-λ matches and silently collapses low-score cells. "
+            f"Either reduce LAMBDA_CLIP_MAX below {1/abs(rho):.2f} or "
+            f"move dc_rho closer to zero."
+        )
     if use_dispersion:
         a_disp = cfg["nb_dispersion"]
         p_h = a_disp / (a_disp + lam_h)
@@ -198,7 +217,6 @@ def build_score_matrix(lam_h, lam_a, cfg, use_dispersion=True, max_g=10):
     mat = np.outer(ph, pa)
 
     # Dixon-Coles τ correction for low-score outcomes
-    rho = cfg["dc_rho"]
     for h in (0, 1):
         for a in (0, 1):
             mat[h, a] *= dc_tau(h, a, lam_h, lam_a, rho)
@@ -596,6 +614,53 @@ def run_single_seed(seed, cfg, n_sims, ctx):
         "champion": {t: champion_count[t] for t in all_teams},
         "third_place": {t: third_place_winners[t] for t in all_teams},
     }
+
+
+def validate_venue_distance_indirection(cfg_data, distance_matrix) -> list[str]:
+    """R11 D3-old: assert every venue in group + KO schedule maps to a city
+    that exists as a key in distance_matrix. Pre-R11 the indirection
+    venue → venue_city_map → distance_matrix had no startup validator;
+    a drifted venue name (new stadium added to schedule but not to
+    venue_city_map) silently fell back to `venue_city_map.get(name, name)`
+    → KeyError in distance_matrix lookup → caught at
+    compute_travel_penalties:649 → km=0 → silent zero-penalty for the
+    entire team-pair-day. Returns a list of issue strings (empty when
+    the indirection is internally consistent).
+
+    Called at simulator startup before precompute_context. Travel data
+    that fails validation is non-fatal — startup logs the issues and the
+    simulator proceeds with the silent-fallback behavior preserved. The
+    operator is alerted via the issues list (caller decides whether to
+    print or raise).
+    """
+    if not distance_matrix:
+        return []  # travel disabled / matrix unavailable; nothing to check
+    try:
+        # Lazy-import to avoid hard dependency on _knockout in non-live runs.
+        sys.path.insert(0, str(Path(__file__).resolve().parent / "live"))
+        from _knockout import load_knockout_fixtures  # type: ignore
+        ko = load_knockout_fixtures()
+    except Exception:
+        ko = []
+    venue_city_map = cfg_data.get("venue_city_map", {})
+    dm_cities = set((distance_matrix.get("distance_km") or {}).keys())
+    issues: list[str] = []
+    seen: set[str] = set()
+    for source, fxs in (("group", cfg_data.get("group_stage_schedule", [])),
+                        ("knockout", ko)):
+        for f in fxs:
+            v = f.get("venue")
+            if not v or v in seen:
+                continue
+            seen.add(v)
+            mapped = venue_city_map.get(v, v)
+            if mapped not in dm_cities:
+                issues.append(
+                    f"[{source}] venue {v!r} maps to city {mapped!r} which "
+                    f"is not a key in host_city_distance_matrix.json — "
+                    f"compute_travel_penalties would silently km=0."
+                )
+    return issues
 
 
 def compute_travel_penalties(cfg_data, distance_matrix, cfg):
@@ -1124,6 +1189,15 @@ def main():
     # Live-mode artifacts
     distance_matrix_path = RAW / "host_city_distance_matrix.json"
     distance_matrix = json.loads(distance_matrix_path.read_text()) if distance_matrix_path.exists() else None
+    # R11 D3-old: validate venue → city → distance indirection at startup.
+    # See validate_venue_distance_indirection docstring. Issues are warned
+    # to stderr (non-fatal) so the operator notices drift without blocking
+    # the tick (compute_travel_penalties still falls back to km=0 on
+    # KeyError for safety, but the warning surfaces the gap).
+    travel_indirection_issues = validate_venue_distance_indirection(
+        cfg_data, distance_matrix)
+    for issue in travel_indirection_issues:
+        print(f"[03_simulate] WARN travel-indirection: {issue}", file=sys.stderr)
     injury_adjustments = load_injury_adjustments(ROOT / "data" / "live" / "team_adjustments.json") \
         if cfg["use_adjustments"] else {}
     completed_matches = load_completed_matches(ROOT / "data" / "live" / "results_2026.json") \

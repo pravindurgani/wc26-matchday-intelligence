@@ -148,19 +148,13 @@ jobs:
           fi
           exit 0
 
-      - name: Build suspension tracker (reads results + events)
-        if: steps.gate.outputs.skip != 'true'
-        env:
-          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
-        run: |
-          set +e
-          if [ "$INPUT_DRY_RUN" = "true" ]; then
-            python scripts/live/suspension_tracker.py --dry-run
-          else
-            python scripts/live/suspension_tracker.py
-          fi
-          exit 0
-
+      # R11 C3-old: fetch_injuries now runs BEFORE suspension_tracker. Pre-R11
+      # the suspension tracker ran first; suspension_tracker.py does NOT read
+      # injuries today (grep confirms zero refs), so this was a LATENT
+      # ordering bug — but any future addition of "use injury data to
+      # estimate which suspended player's replacement would be available"
+      # logic in suspension_tracker would have silently read yesterday's
+      # injuries snapshot. Defense-in-depth swap closes the footgun.
       - name: Fetch injuries (API-Football /injuries)
         if: steps.gate.outputs.skip != 'true' && github.event.inputs.skip_injuries != 'true'
         env:
@@ -180,6 +174,19 @@ jobs:
             python scripts/live/fetch_injuries.py --dry-run
           else
             python scripts/live/fetch_injuries.py
+          fi
+          exit 0
+
+      - name: Build suspension tracker (reads results + events)
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set +e
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            python scripts/live/suspension_tracker.py --dry-run
+          else
+            python scripts/live/suspension_tracker.py
           fi
           exit 0
 

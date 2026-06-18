@@ -387,9 +387,22 @@ function renderLastUpdated(data, liveState, fetchFailures = 0, matchdayIntel = n
   // they previously sat collapsed-by-default below the fold). Only lift
   // alert-grade types — benign info (`feed_missing`, `filter_non_wc`)
   // would noise-up the pill every tick.
+  // R11 B2 extension: add apply_matchday alert-grade types that previously
+  // sat collapsed in matchdayIntel.warnings without ever lifting to the
+  // pill. Pre-R11 a `no_records_returned` from fetch_results or a
+  // `matchday_consolidated_stale` from apply_matchday silently lived
+  // below the fold; operator had to scroll + expand <details> to see.
   const INTEL_TOP_BAR_TYPES = new Set([
     'ambiguous_classification', 'http_error', 'fetch_error',
     'api_error', 'missing_key',
+    'subsystem_degraded', 'pipeline_unhealthy',
+    'matchday_consolidated_stale', 'matchday_consolidated_missing',
+    'matchday_consolidated_unparseable', 'matchday_consolidated_unreadable',
+    'matchday_record_degradation',
+    'no_records_returned', 'provider_returned_nothing',
+    'no_events_in_snapshot',
+    'side_match_unrecognized', 'lineup_side_unrecognized',
+    'sigma_gate_failed',
   ]);
   const intelWarningsRaw = Array.isArray(matchdayIntel?.warnings) ? matchdayIntel.warnings : [];
   const intelWarnings = intelWarningsRaw
@@ -703,6 +716,20 @@ function renderMovers(data, liveState, liveDelta) {
 function renderContenders(data, liveDelta, travel) {
   const tbody = document.querySelector('#contenders-table tbody');
   const all = data.team_predictions;
+  // R11 B3: empty-state guard. Pre-R11 `all[0].p_champion` raised
+  // TypeError on missing/empty team_predictions; safe() at app.js:138-141
+  // swallowed it into a console.warn and the whole contenders section
+  // disappeared with no operator-visible signal that the data was bad.
+  // Render an explicit placeholder row so an operator can tell "no data"
+  // from "render broke".
+  if (!Array.isArray(all) || all.length === 0) {
+    if (tbody) tbody.innerHTML =
+      '<tr><td colspan="99" class="muted small" style="padding:1rem;">' +
+      'No team predictions available — predictions_live.json is missing ' +
+      'team_predictions or returned an empty array. Check live_state.json ' +
+      'for a sim_failure or sigma_gate_failed warning.</td></tr>';
+    return;
+  }
   const maxP = all[0].p_champion;
   const countEl = document.getElementById('contenders-count');
   const groupSel = document.getElementById('team-group');
@@ -1222,7 +1249,7 @@ function renderMatches(data, liveState) {
       return `<div class="card match" id="match-${m.m}">
         <div class="match-head">
           <span class="pill">${headLabel}</span>
-          <span>${escapeHtml(m.date)}${m.time ? ' ' + escapeHtml(m.time) : ''} · ${escapeHtml(m.venue)}</span>
+          <span>${escapeHtml(m.date)}${m.time ? ' ' + escapeHtml(m.time) + ' (local)' : ''} · ${escapeHtml(m.venue)}</span>
         </div>
         ${tags.length ? `<div class="venue-tags">${tags.join('')}</div>` : ''}
         <div class="match-teams">

@@ -400,13 +400,35 @@ def fetch_apifootball_player_stats(api_key: str, wc_teams: set[str],
         })
     targets = sorted((t for t in team_ids if not wc_teams or t in wc_teams))
     rate_limiter = RateLimiter(sleep_between) if sleep_between > 0 else None
+    # R11 C2: track per-team failures so we can emit an aggregate warning
+    # when too many teams fail. Pre-R11 individual http_error / fetch_error
+    # warnings were appended per team but operator had no top-level signal
+    # that (e.g.) 14 of 48 teams ended up with empty rosters. A single
+    # quiet team in the noise is normal; >5 means provider-wide degradation
+    # or token-tier downgrade. Threshold tuned to ~10% of the 48 squads.
+    empty_teams: list[str] = []
     for team in targets:
         tid = team_ids[team]
         recs, team_warns = fetch_team_players(api_key, tid, season,
                                               rate_limiter=rate_limiter)
         out[team] = recs
         warns.extend(team_warns)
+        if not recs:
+            empty_teams.append(team)
         print(f"[fetch_player_stats] {team:30s} team_id={tid} players={len(recs)}")
+    if len(empty_teams) > 5:
+        warns.append({
+            "type": "player_stats_partial",
+            "endpoint": "/players",
+            "count": len(empty_teams),
+            "teams": empty_teams,
+            "message": (
+                f"{len(empty_teams)} of {len(targets)} teams returned empty "
+                f"player rosters this run — likely provider-wide degradation "
+                f"or token-tier downgrade. Pre-R11 these silently zeroed each "
+                f"team's auto_tier signal with no aggregate operator surface."
+            ),
+        })
     return out, warns
 
 

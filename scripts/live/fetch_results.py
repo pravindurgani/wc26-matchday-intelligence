@@ -377,7 +377,13 @@ def fetch_apifootball_events_for_fixture(
     headers = {"x-apisports-key": api_key, "Accept": "application/json"}
     url = f"{APIFOOTBALL_BASE}/fixtures/events?fixture={fixture_id}"
     try:
-        payload = http_get_json(url, headers, timeout=timeout, retries=2)
+        # R11 C3: retries=3 (was 2). R32 burst of 8 KO matches in 24h hits
+        # /fixtures/events back-to-back; a single 5xx with retries=2 means
+        # one attempt + 1s sleep + one attempt → suspension data missed for
+        # that match → no penalty for the player's next match. retries=3
+        # adds a second retry (1+2=3s extra) and pairs with the R11 C1
+        # Retry-After honoring in _http_client.http_get_json.
+        payload = http_get_json(url, headers, timeout=timeout, retries=3)
     except urllib.error.HTTPError as e:
         body = ""
         try: body = e.read().decode("utf-8", errors="replace")[:200]
@@ -865,7 +871,18 @@ def fetch_sportmonks(token: str, dry_run: bool = False) -> list[dict]:
 
 # ─── VALIDATION ────────────────────────────────────────────────────────────
 def validate_match(m: dict, schedule: list) -> tuple[bool, str]:
-    """Schema + cross-reference validation."""
+    """Schema + cross-reference validation.
+
+    R11 E1: schedule must include BOTH group_stage_schedule and the KO
+    bracket rows from load_knockout_fixtures() — pre-R11 main() loaded
+    only groups, so every KO result (m>=73) was silently rejected from
+    2026-06-28 onward. KO bracket rows carry slot codes ("1A", "W74")
+    in home/away until results resolve them, but the API-Football
+    adapter substitutes resolved team names for m>=73 at fetch time
+    (fetch_results.py:661-667). The home/away string cross-check is
+    therefore skipped for KO matches — comparing resolved team names
+    to bracket slot codes would reject every KO result forever.
+    """
     required = ["m", "home_score", "away_score"]
     for k in required:
         if k not in m:
@@ -881,6 +898,9 @@ def validate_match(m: dict, schedule: list) -> tuple[bool, str]:
     fixture = next((f for f in schedule if f["m"] == m["m"]), None)
     if not fixture:
         return False, f"match {m['m']} not in WC2026 schedule"
+    # KO matches: skip home/away string check (see docstring).
+    if m["m"] >= 73:
+        return True, "ok"
     if m.get("home") and m["home"] != fixture["home"]:
         return False, f"home mismatch: expected {fixture['home']}, got {m['home']}"
     if m.get("away") and m["away"] != fixture["away"]:
@@ -910,7 +930,13 @@ def main() -> int:
     except Exception as e:
         print(f"[fetch_results] FATAL: cannot read wc2026_config.json — {e}")
         return 1
-    schedule = cfg.get("group_stage_schedule", [])
+    # R11 E1 (R32-blocker): extend schedule with KO bracket so validate_match
+    # accepts m>=73 records. Pre-R11 main() loaded only group_stage_schedule;
+    # from 2026-06-28 every R32/R16/QF/SF/3rd/Final result emitted by both
+    # adapters was rejected at the validation gate with reason
+    # "match N not in WC2026 schedule" — dashboard would freeze at end of
+    # groups and suspensions would never resolve from KO events.
+    schedule = cfg.get("group_stage_schedule", []) + load_knockout_fixtures()
     if not schedule:
         print("[fetch_results] FATAL: empty group_stage_schedule in config")
         return 1

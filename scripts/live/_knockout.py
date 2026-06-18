@@ -108,6 +108,18 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
         ("qf_bracket", "qf"),
         ("sf_bracket", "sf"),
     )
+    # R11 D2-old: normalize venue suffix at load time. Pre-R11 KO venues
+    # carried a state suffix ("Inglewood, CA") while group_stage_schedule
+    # carried bare city names ("Inglewood"). When travel logic is extended
+    # to KO (compute_travel_penalties at scripts/03_simulate.py:601-645
+    # currently iterates only group_stage_schedule), the venue_city_map
+    # lookup would fall back to the literal venue string → distance_matrix
+    # KeyError → silent km=0 zero-penalty. Strip the suffix here so the
+    # downstream lookup is symmetrical with group venues.
+    def _normalize_venue(v: str | None) -> str | None:
+        if not isinstance(v, str):
+            return v
+        return v.split(",")[0].strip() or v
     for section_key, stage in section_to_stage:
         for s in bracket.get(section_key, []) or []:
             if s.get("time") in (None, ""):
@@ -116,7 +128,7 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
                 "m": s["match_num"],
                 "date": s.get("date"),
                 "time": s.get("time") or "20:00",
-                "venue": s.get("venue"),
+                "venue": _normalize_venue(s.get("venue")),
                 "home": s.get("slot_a"),
                 "away": s.get("slot_b"),
                 "stage": stage,
@@ -130,7 +142,7 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
             "m": tp["match_num"],
             "date": tp.get("date"),
             "time": tp.get("time") or "20:00",
-            "venue": tp.get("venue"),
+            "venue": _normalize_venue(tp.get("venue")),
             "home": tp.get("slot_a"),
             "away": tp.get("slot_b"),
             "stage": "3rd",
@@ -143,7 +155,7 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
             "m": fn["match_num"],
             "date": fn.get("date"),
             "time": fn.get("time") or "20:00",
-            "venue": fn.get("venue"),
+            "venue": _normalize_venue(fn.get("venue")),
             "home": fn.get("slot_a"),
             "away": fn.get("slot_b"),
             "stage": "final",

@@ -244,6 +244,13 @@ nav.top-nav a:hover { color: var(--text); background: var(--surface); }
   font-size: 11px; color: var(--text-3);
   font-family: var(--font-mono); font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  /* R11 B4: bound the warning pill text width so a long warning type +
+     "+N more" suffix can't blow the header on narrow viewports. The
+     `el.title` carries the full message for tooltip-hover; truncation
+     here is purely visual. */
+  max-width: 60ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 /* H4: staleness signal. Picked up by renderLastUpdated when the timestamp
    on screen is older than the expected refresh cadence for the current mode

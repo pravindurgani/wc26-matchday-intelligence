@@ -1,8 +1,8 @@
-# R32 Readiness Checklist — Post Pressure-Test R10
+# R32 Readiness Checklist — Post Pressure-Test R11
 
 **Date**: 2026-06-18 (T-10 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1150 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Suite**: **1206 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
 **Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
 **Round 3 closure**: all 4 HIGH-severity audit findings closed
@@ -75,6 +75,42 @@ config gaps deferred) documented in `PRESSURE_TEST_R10.md`. **Σ-gate
 now runs against BOTH `data/processed/predictions_live.json` AND
 `dashboard/predictions_live.json` — the shipped artifact is now under
 strict 1e-6 invariants for the first time.**
+**Round 11 closure**: 5-agent orthogonal sweep (R10 fix regressions +
+R10 deferral clean-up, security/secrets hygiene, network/HTTP edge
+cases, observability/logging coverage, data validation/schema
+enforcement) + 2 independent monitor agents verified. NEW user
+instruction: **"DONT DEFER ANYTHING"** — so R11 closed all 12
+R10-deferred items in the same commit alongside the new sweep
+findings. Closures: E1 (**R32-BLOCKER**) fetch_results.main()
+loaded groups-only schedule — every R32/R16/QF/SF/3rd/Final result
+from 2026-06-28 would be rejected by validate_match → dashboard
+freezes at end-of-groups, suspensions never resolve from KO events,
+sim re-samples completed KOs 25,000× per tick; E3/E4 silent
+home/away side-swap on every API-Football fixture where provider
+returned [away, home] order — stats and lineups Elo deltas sign-
+flipped; D1 circuit_breaker_state.json gitignored + missing from
+commit allow-list → CB_THRESHOLD=3 escalation never crossed a tick;
+D2 Vercel daily-baseline deploy `set +e ... exit 0` silently
+masked revoked tokens / deploy failures; D3 `09_validate.py` return
+code discarded in run_live_update → corrupt predictions_live.json
+published with no warning surface; D4 four loaders
+(weather/lineup/injury/stats) missing `_check_freshness` → stale
+snapshots silently ingested; D5 update_team_state non-atomic
+write + missing `last_updated` → partial-write race + hash gate
+blind to stalled writer; C3 events fetch retries=2 → R32 burst
+risks suspension data loss; C1 _http_client Retry-After header
+ignored on 429 → producer hammers rate limit; C2 fetch_player_stats
+fan-out had no aggregate-failure detector → silent team-level
+zeros. Plus R10 deferrals: A2 LAMBDA_CLIP_MAX runtime cfg
+guard, A4 corrupt-JSON distinguished from OSError, B2 INTEL_TOP_BAR
+whitelist extended, B3 renderContenders empty-array guard, B4
+warning pill width bounded, B5 match time TZ label, C3-old workflow
+ordering defense-in-depth (fetch_injuries before suspension_tracker),
+D2-old KO venue suffix normalized at load, D3-old venue→city→matrix
+indirection validator at startup, E2-old annex_c_misses pinned in
+check_invariants (auto-applies to dashboard mirror via R10 Q3 wiring),
+E10 per-stage Σ (8/4/2) + INV1 stacking invariant pinned. Documented
+in `PRESSURE_TEST_R11.md`.
 
 ---
 

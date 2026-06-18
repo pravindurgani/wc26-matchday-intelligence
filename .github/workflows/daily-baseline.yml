@@ -144,11 +144,27 @@ jobs:
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
-          set +e
+          # R11 D2: capture rc from vercel deploy. Pre-R11 this step had `set +e`
+          # + trailing `exit 0` after the deploy commands, so a revoked token,
+          # build error, network blip, or project-moved error would mark the
+          # daily baseline GREEN while the dashboard silently stopped getting
+          # redeployed. Mirror the R4 G1 / R10 Q5 ::error:: + exit 1 pattern.
+          # The missing-token skip stays explicit (legitimate skip path).
           if [ -z "${VERCEL_TOKEN:-}" ]; then
             echo "VERCEL_TOKEN not configured — skipping deploy."
             exit 0
           fi
+          set +e
           npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+          pull_rc=$?
+          if [ "$pull_rc" -ne 0 ]; then
+            echo "::error::vercel pull failed (rc=$pull_rc) — token / project config may be broken. Dashboard not refreshed today."
+            exit 1
+          fi
           npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN" --no-clipboard
+          deploy_rc=$?
+          if [ "$deploy_rc" -ne 0 ]; then
+            echo "::error::vercel deploy failed (rc=$deploy_rc) — dashboard not refreshed today; investigate Vercel project + token."
+            exit 1
+          fi
           exit 0

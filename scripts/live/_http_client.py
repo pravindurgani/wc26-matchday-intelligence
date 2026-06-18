@@ -79,25 +79,54 @@ def http_get_json(
     pinned identical via `tests/live/test_http_client.py`.
     """
     last_err: Exception | None = None
+    # R11 C1: cap honored Retry-After at 60s so a misbehaving provider
+    # can't make a single producer block beyond the slow-cron step budget
+    # (~300s). 429s with absurdly large Retry-After fall back to the
+    # exponential backoff and let the next tick try again.
+    _retry_after_cap = 60.0
     for attempt in range(retries):
         try:
             req = urllib.request.Request(url, headers=headers, method="GET")
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
-            if 400 <= e.code < 500:
-                raise  # client error — don't retry
+            if 400 <= e.code < 500 and e.code != 429:
+                raise  # client error — don't retry (429 IS retried below)
             last_err = e
         except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
             last_err = e
         # Backoff between attempts. Skip the sleep on the final attempt
         # (no further retry would benefit from it).
         if attempt < retries - 1:
-            time.sleep(2 ** attempt)
+            # R11 C1: honor Retry-After (RFC 7231 §7.1.3). Some providers
+            # send 429 with a number-of-seconds-string ("60"); others use
+            # an HTTP-date format. We accept the seconds form here — the
+            # HTTP-date form is rare in API contexts and falls through to
+            # the default exponential backoff. Pre-R11 a 429 with a
+            # Retry-After:60 would just trigger 2^attempt = 1-2-4s
+            # backoff, then we'd hammer again and get rate-limited again.
+            sleep_seconds = _backoff_seconds(attempt, last_err, _retry_after_cap)
+            time.sleep(sleep_seconds)
     # All retries exhausted — re-raise the last captured failure.
     raise last_err if last_err else RuntimeError(
         f"http_get_json failed: {url}"
     )
+
+
+def _backoff_seconds(attempt: int, last_err: Exception | None,
+                     retry_after_cap: float) -> float:
+    """Compute backoff: honor Retry-After if present + numeric, else
+    fall back to exponential 2 ** attempt. Cap honored Retry-After at
+    retry_after_cap to keep a single producer step under its time budget.
+    """
+    if isinstance(last_err, urllib.error.HTTPError):
+        try:
+            ra = last_err.headers.get("Retry-After") if last_err.headers else None
+            if ra is not None and str(ra).strip().isdigit():
+                return min(float(ra), retry_after_cap)
+        except Exception:
+            pass
+    return float(2 ** attempt)
 
 
 class RateLimiter:

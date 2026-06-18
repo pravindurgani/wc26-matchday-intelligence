@@ -733,8 +733,27 @@ def main() -> int:
                   f"source not a valid prediction file: {type(e).__name__}: {e}. "
                   f"Previous dashboard copy retained.")
 
-    # Step 8: validator
-    run([sys.executable, "scripts/09_validate.py"])
+    # Step 8: validator. R11 D3: capture rc. Pre-R11 the return code was
+    # discarded — if the R10 Q3 strict 1e-6 Σ-gate (canonical + dashboard
+    # mirror) failed on a LIVE tick, the corrupted predictions_live.json was
+    # already published in Step 7 above with ZERO operator signal: dashboard
+    # serves invariant-violating data; no warning lights up. We re-write
+    # live_state with a sigma_gate_failed warning so the operator's top pill
+    # surfaces the failure even though the bad publish already shipped (next
+    # tick re-runs validate against the next sim and converges).
+    validate_rc = run([sys.executable, "scripts/09_validate.py"])
+    if validate_rc != 0:
+        warns_with_gate = list(warns) + [{
+            "type": "sigma_gate_failed",
+            "message": (
+                f"scripts/09_validate.py exited rc={validate_rc} — "
+                f"predictions_live.json may violate Σ p_champion ≈ 1.0 or "
+                f"annex_c_misses == 0. See workflow logs for the specific "
+                f"failed gate. Next tick re-runs."
+            ),
+        }]
+        write_live_state(mode, new_count, sim_rerun=True,
+                         warnings=warns_with_gate)
 
     print(f"[run_live_update] DONE — locked {new_count} matches")
     if delta and delta.get("top_movers_up"):

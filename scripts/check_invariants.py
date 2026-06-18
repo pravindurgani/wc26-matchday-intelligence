@@ -190,6 +190,80 @@ def check_invariants(path: Union[str, Path, None] = None) -> None:
             f"≥ tol {TOLERANCE:.0e} (actual sum = {total!r})"
         )
 
+    # R11 E2-old: pin annex_c_misses == 0 on every blob, not just the
+    # pre-tournament canonical that 09_validate.py:96-97 already checks.
+    # The R10 Q3 strict-mirror call into _check_strict_invariants picks up
+    # this assertion automatically, so dashboard/predictions_live.json
+    # gets the same gate as the canonical artifact without an extra
+    # 09_validate.py line.
+    annex_misses = data.get("annex_c_misses")
+    if annex_misses is not None and annex_misses != 0:
+        raise MissingField(
+            f"annex_c_misses = {annex_misses!r} (expected 0). The Annex C "
+            f"third-place lookup table is incomplete or the table key "
+            f"computation drifted; downstream R32 third-place assignments "
+            f"will silently fall back to non-canonical permutations."
+        )
+
+    # R11 E10: pin per-stage round-survival Σ and per-team probability
+    # stacking. Pre-R11 only Σ p_champion was checked strictly. Single-
+    # elimination structure gives:
+    #   Σ p_advance_groups ≈ 32 (R32 = top-2 of 16 groups)
+    #   Σ p_reach_r16 ≈ 32 (same — R32 = R16 entry by definition)
+    #   Σ p_reach_qf ≈ 8 (16 → 8 winners)
+    #   Σ p_reach_sf ≈ 4 (8 → 4 winners)
+    #   Σ p_reach_final ≈ 2 (4 → 2 winners)
+    #   Σ p_champion ≈ 1 (2 → 1 winner)
+    # Tolerance same 1e-6 as Σ p_champion since the simulator emits these
+    # from the same 25k-trial empirical proportions. A drift in any of
+    # them would signal an off-by-one stage transition.
+    stage_expectations = (
+        ("p_reach_qf", 8.0),
+        ("p_reach_sf", 4.0),
+        ("p_reach_final", 2.0),
+    )
+    for field, expected in stage_expectations:
+        if not all(field in t for t in teams):
+            # Field not in this blob (pre-R11 or legacy) — skip silently.
+            continue
+        s = 0.0
+        for t in teams:
+            v = t[field]
+            if isinstance(v, bool) or not isinstance(v, (int, float)) \
+                    or not math.isfinite(v) or not (0.0 <= v <= 1.0):
+                raise SumOutOfTolerance(
+                    f"invalid {field} for team {t.get('team')!r}: {v!r}"
+                )
+            s += v
+        if abs(s - expected) >= TOLERANCE:
+            raise SumOutOfTolerance(
+                f"|Σ {field} − {expected:.1f}| = {abs(s - expected):.3e} "
+                f"≥ tol {TOLERANCE:.0e} (actual sum = {s!r})"
+            )
+
+    # Per-team stacking: p_champion ≤ p_reach_final ≤ p_reach_sf ≤
+    # p_reach_qf ≤ p_reach_r16. A violation means the simulator emitted a
+    # team that "reached the final" less often than it "won the cup" —
+    # an impossible event in a single-elim bracket. INV1 (probability-
+    # monotone) catches the class of bug R11 E10 was designed to pin.
+    # Allow a 1e-9 cushion for floating-point on the few "round-robin"
+    # teams whose deeper-stage probabilities round to the same value.
+    stack_order = ("p_reach_qf", "p_reach_sf", "p_reach_final", "p_champion")
+    stack_cushion = 1e-9
+    for t in teams:
+        if not all(f in t for f in stack_order):
+            continue
+        for i in range(len(stack_order) - 1):
+            broader, narrower = stack_order[i], stack_order[i + 1]
+            if t[narrower] - t[broader] > stack_cushion:
+                raise SumOutOfTolerance(
+                    f"INV1 stacking violated for team {t.get('team')!r}: "
+                    f"{narrower}={t[narrower]!r} > {broader}={t[broader]!r}. "
+                    f"A team cannot win the cup more often than it reaches "
+                    f"the final, or reach the final more often than the SF, "
+                    f"etc. The simulator's stage transitions are drifting."
+                )
+
 
 def _format_ok(path: Path) -> str:
     data = json.loads(path.read_text())

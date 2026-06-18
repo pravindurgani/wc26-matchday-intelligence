@@ -1077,12 +1077,19 @@ class TestFreshnessGuard(unittest.TestCase):
         self.assertIn("threshold 6.0h", stale[0]["message"])
 
     def test_all_three_fresh_emits_no_subsystem_stale(self):
-        """When all three files exist and are within 6h of results, no
-        `subsystem_stale` warning is emitted by the freshness guard."""
+        """When all freshness-checked files exist and are within 6h of
+        results, no `subsystem_stale` warning is emitted by the freshness
+        guard. R11 D4: extended from the original 3 (referee, suspension,
+        player_stats) to all 7 freshness-checked feeds (added injury,
+        weather, lineup, stats_proxy / match_stats)."""
         feeds = {
             "referee_2026.json": {"referee": []},
             "suspensions_2026.json": {"suspensions": []},
             "player_stats_2026.json": {"teams": {}},
+            "injuries_2026.json": {"teams": {}},
+            "weather_2026.json": {"weather": []},
+            "lineups_2026.json": {"lineups": []},
+            "match_stats_2026.json": {"matches": []},
         }
         with _TempFeeds(feeds) as tmp:
             self._make_results(tmp)

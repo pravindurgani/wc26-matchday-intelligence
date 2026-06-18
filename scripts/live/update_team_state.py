@@ -18,13 +18,36 @@ The simulator (--live) reads this and applies as an Elo bump before lambdas.
 """
 from __future__ import annotations
 import json
+import os
+import tempfile
 from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
 RAW = ROOT / "data" / "raw"
 PROC = ROOT / "data" / "processed"
+
+
+def _atomic_write_json(path: Path, payload: dict) -> None:
+    """R11 D5: atomic tempfile + os.replace. Pre-R11 this file used bare
+    .write_text(json.dumps(...)) — SIGKILL / OOM / disk-full mid-write
+    leaves a partial JSON on disk that the simulator parses with bare
+    json.loads at 03_simulate.py:698, raising mid-load and crashing the
+    tick. Mirrors the pattern in run_live_update.atomic_write_json."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=str(path.parent),
+        prefix=path.name + ".", suffix=".tmp", delete=False,
+    ) as tmp:
+        json.dump(payload, tmp, indent=2, allow_nan=False, default=str)
+        tmp_path = Path(tmp.name)
+    os.replace(tmp_path, path)
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 K_TOURNAMENT = 60
 MAX_PER_MATCH = 12.0
@@ -58,8 +81,14 @@ def main():
     completed = results.get("completed_matches", [])
     if not completed:
         out = {"schema": "soft Elo delta per team since tournament start",
-               "deltas": {}, "n_processed": 0}
-        (LIVE / "live_team_state.json").write_text(json.dumps(out, indent=2))
+               "deltas": {}, "n_processed": 0,
+               # R11 D5: last_updated read by compute_input_hash
+               # (run_live_update.py:278, 03_simulate.py:1171) — pre-R11
+               # the field was missing → hash always saw empty string →
+               # a stalled writer that re-emitted identical deltas
+               # forever was invisible to the hash gate.
+               "last_updated": _now_iso()}
+        _atomic_write_json(LIVE / "live_team_state.json", out)
         print("[update_team_state] no completed matches yet")
         return
 
@@ -105,8 +134,10 @@ def main():
                    "max_per_knockout": MAX_PER_KNOCKOUT},
         "n_processed": processed,
         "deltas": capped,
+        # R11 D5: timestamp for compute_input_hash freshness signal.
+        "last_updated": _now_iso(),
     }
-    (LIVE / "live_team_state.json").write_text(json.dumps(out, indent=2, default=str))
+    _atomic_write_json(LIVE / "live_team_state.json", out)
     print(f"[update_team_state] processed {processed} matches, {len(capped)} teams adjusted")
     for t, d in sorted(capped.items(), key=lambda kv: -abs(kv[1]))[:5]:
         print(f"  {t:<25s} {d:+.1f} Elo")

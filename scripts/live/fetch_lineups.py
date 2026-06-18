@@ -79,6 +79,8 @@ from lineup_adjustments import (  # noqa: E402
 from _knockout import (  # noqa: E402
     is_placeholder_slot, load_knockout_fixtures,
 )
+# R11 E4: name-aware side resolution. See build_lineup_entry docstring.
+from fetch_results import normalize_team  # noqa: E402
 
 
 def _now_utc() -> datetime:
@@ -250,20 +252,39 @@ def _summarise_xi(xi_block_raw: list[dict]) -> list[dict]:
 
 def build_lineup_entry(sched: dict, response_sides: list[dict],
                        prior_xis: dict[str, dict]) -> dict:
-    """Turn one fixture's /fixtures/lineups response into our schema entry."""
+    """Turn one fixture's /fixtures/lineups response into our schema entry.
+
+    R11 E4: name-based home/away assignment. Pre-R11 the assignment was
+    purely positional (first side = home, second = away). API-Football
+    has no documented ordering guarantee — whenever the provider returned
+    [away, home] order, the GK-swap detector compared away GK to home's
+    prior XI and the 11-position diff fired on every position, both
+    triggering false −8/−1*11 = −19 → cap-hit −20 Elo deltas per team
+    on every mis-ordered fixture. normalize_team applies the canonical
+    TEAM_ALIAS map so aliases ("Korea Republic" → "South Korea" etc.)
+    resolve to canonical names before comparison. side_match_warnings
+    list propagates ambiguous cases up to the caller.
+    """
     home_team_canonical = sched["home"]
     away_team_canonical = sched["away"]
     home_block: dict = {}
     away_block: dict = {}
+    side_match_warnings: list[str] = []
+    norm_home = normalize_team(home_team_canonical)
+    norm_away = normalize_team(away_team_canonical)
     for side_entry in response_sides:
-        team_name = (side_entry.get("team") or {}).get("name", "")
-        # Provider name may differ from canonical (e.g. Korea Republic) —
-        # take the first as home, second as away when provider order matches
-        # the fixture. Fall back to name-prefix heuristic otherwise.
-        if not home_block:
+        team_name_raw = (side_entry.get("team") or {}).get("name", "")
+        team_name = normalize_team(team_name_raw)
+        if team_name == norm_home and not home_block:
             home_block = side_entry
-        else:
+        elif team_name == norm_away and not away_block:
             away_block = side_entry
+        else:
+            side_match_warnings.append(
+                f"unrecognized lineup side '{team_name_raw}' for "
+                f"M{sched.get('m')} (expected {home_team_canonical!r} "
+                f"or {away_team_canonical!r})"
+            )
     home_xi = extract_starting_xi(home_block)
     away_xi = extract_starting_xi(away_block)
     home_delta, home_reason = compute_lineup_delta_elo(
@@ -287,6 +308,7 @@ def build_lineup_entry(sched: dict, response_sides: list[dict],
         "home_xi": _summarise_xi(home_block.get("startXI") or []),
         "away_xi": _summarise_xi(away_block.get("startXI") or []),
         "captured_at": _now_iso(),
+        "side_match_warnings": side_match_warnings,
     }
 
 
@@ -325,7 +347,11 @@ def _replay_local_fixtures(fixture_dir: Path, schedule: list[dict],
                              "match_id": sched.get("m")})
             continue
         response = json.loads(f.read_text()).get("response") or []
-        entries.append(build_lineup_entry(sched, response, prior_xis))
+        entry = build_lineup_entry(sched, response, prior_xis)
+        for note in entry.pop("side_match_warnings", []):
+            warnings.append({"type": "lineup_side_unrecognized",
+                             "match_id": sched.get("m"), "message": note})
+        entries.append(entry)
     return entries, warnings
 
 
@@ -392,7 +418,11 @@ def main() -> int:
             if not sides:
                 # Lineups not published yet — common at T-3h, rare at T-30min.
                 continue
-            entries.append(build_lineup_entry(sched, sides, prior_xis))
+            entry = build_lineup_entry(sched, sides, prior_xis)
+            for note in entry.pop("side_match_warnings", []):
+                warnings.append({"type": "lineup_side_unrecognized",
+                                 "match_id": sched.get("m"), "message": note})
+            entries.append(entry)
 
     snapshot = build_snapshot(entries, warnings, args.hours_ahead)
     print(f"[fetch_lineups] entries: {len(entries)} · warnings: {len(warnings)}")

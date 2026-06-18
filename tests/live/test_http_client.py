@@ -94,13 +94,14 @@ def test_h3a_5xx_then_recovery_succeeds(monkeypatch: pytest.MonkeyPatch) -> None
 
 
 # ─────────────────────────────────────────────────── H3b: no 4xx retry
-@pytest.mark.parametrize("code", [400, 401, 403, 404, 422, 429])
+# R11 C1: 429 is now retried (with Retry-After honoring) — separated out
+# from the non-retried 4xx codes so the retry-on-429 path is exercised
+# explicitly. 400/401/403/404/422 still raise immediately.
+@pytest.mark.parametrize("code", [400, 401, 403, 404, 422])
 def test_h3b_4xx_does_not_retry(code: int,
                                 monkeypatch: pytest.MonkeyPatch) -> None:
-    """4xx raises HTTPError immediately — no sleep, no retry. 429 is
-    technically a rate-limit signal but we let the producer's degrade
-    path own that rather than burn retry budget on a 1-minute backoff.
-    """
+    """Non-429 4xx raises HTTPError immediately — no sleep, no retry.
+    Auth / not-found / unprocessable errors don't go away on retry."""
     calls = {"n": 0}
 
     def fake_urlopen(*_args, **_kwargs):
@@ -118,6 +119,32 @@ def test_h3b_4xx_does_not_retry(code: int,
     assert exc_info.value.code == code
     assert calls["n"] == 1, f"expected 1 call (no retry on 4xx), observed {calls['n']}"
     assert sleep_calls == [], f"expected no sleeps on 4xx, observed {sleep_calls}"
+
+
+# R11 C1: 429 (rate-limit) DOES retry with backoff, honoring Retry-After
+# when present. Pre-R11 the test bundled 429 with 4xx non-retry — that
+# behavior was the bug: a 429 with Retry-After:1 should sleep 1s and
+# retry, not raise immediately and force the next slow-cron tick to do
+# the same retry.
+def test_h3b_429_does_retry_with_backoff(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    calls = {"n": 0}
+
+    def fake_urlopen(*_args, **_kwargs):
+        calls["n"] += 1
+        raise _make_http_error(429)
+
+    monkeypatch.setattr("_http_client.urllib.request.urlopen", fake_urlopen)
+    sleep_calls = []
+    monkeypatch.setattr("_http_client.time.sleep",
+                        lambda x: sleep_calls.append(x))
+
+    with pytest.raises(urllib.error.HTTPError) as exc_info:
+        http_get_json("http://test", {}, retries=3)
+    assert exc_info.value.code == 429
+    assert calls["n"] == 3, f"expected 3 attempts on 429, observed {calls['n']}"
+    # Two sleeps between three attempts (no sleep after the final attempt).
+    assert len(sleep_calls) == 2
 
 
 # ─────────────────────────────────────────────────── H3c: URLError exhausted

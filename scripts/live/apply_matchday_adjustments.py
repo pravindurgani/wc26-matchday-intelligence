@@ -152,28 +152,54 @@ _FRESHNESS_TIMESTAMP_KEYS = (
 
 
 def _freshness_timestamp_seconds(path: Path) -> tuple[float | None, str]:
-    """Return (epoch_seconds, source) where source ∈ {'content', 'mtime', 'error'}.
+    """Return (epoch_seconds, source) where source ∈
+    {'content', 'mtime', 'corrupt_fallback_mtime', 'error'}.
 
     R9 P5 B1: prefer the producer-written generated_at/updated_at over
     filesystem mtime. mtime is unreliable in CI (actions/checkout flattens
     it). Falls back to mtime if the JSON has no timestamp field — keeps
     backward compat for files predating the generated_at convention.
+
+    R11 A4: distinguish OSError (file missing / unreadable) from
+    JSONDecodeError (file present but corrupt). Pre-R11 both were caught
+    by the same `except (OSError, json.JSONDecodeError): pass`, then the
+    function fell back to `path.stat().st_mtime` — a corrupt JSON file
+    silently masqueraded as fresh content via its mtime. The new return
+    source `corrupt_fallback_mtime` makes the fallback visible so the
+    caller can emit a structured `freshness_unreadable` warning
+    (degradation visible in dashboard).
     """
     try:
-        d = json.loads(path.read_text())
-        for key in _FRESHNESS_TIMESTAMP_KEYS:
-            ts = d.get(key) if isinstance(d, dict) else None
-            if isinstance(ts, str) and ts:
-                try:
-                    # Handle both 'Z' and explicit +HH:MM offsets.
-                    dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-                    if dt.tzinfo is None:
-                        dt = dt.replace(tzinfo=timezone.utc)
-                    return (dt.timestamp(), "content")
-                except ValueError:
-                    continue
-    except (OSError, json.JSONDecodeError):
+        raw = path.read_text()
+    except OSError:
+        # File missing / unreadable — fall through to mtime probe and
+        # let it return error if even stat() fails.
         pass
+    else:
+        try:
+            d = json.loads(raw)
+            for key in _FRESHNESS_TIMESTAMP_KEYS:
+                ts = d.get(key) if isinstance(d, dict) else None
+                if isinstance(ts, str) and ts:
+                    try:
+                        # Handle both 'Z' and explicit +HH:MM offsets.
+                        dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                        if dt.tzinfo is None:
+                            dt = dt.replace(tzinfo=timezone.utc)
+                        return (dt.timestamp(), "content")
+                    except ValueError:
+                        continue
+        except json.JSONDecodeError:
+            # R11 A4: JSON corruption is a distinct failure mode — surface
+            # as a different source label so the caller's warning text
+            # can distinguish "stale" from "corrupt JSON masquerading as
+            # fresh via mtime". The file's mtime is still useful as a
+            # last-ditch freshness proxy (an actively-corrupting writer
+            # would have a recent mtime).
+            try:
+                return (path.stat().st_mtime, "corrupt_fallback_mtime")
+            except OSError:
+                return (None, "error")
     try:
         return (path.stat().st_mtime, "mtime")
     except OSError:
@@ -237,6 +263,24 @@ def _check_freshness(
             "ts": now_iso,
         })
         return False
+    # R11 A4: surface corrupt-JSON fallback as a distinct warning. Pre-R11
+    # the OSError + json.JSONDecodeError were both caught silently and the
+    # mtime fallback let a corrupt JSON pass freshness while downstream
+    # _read_json(default={}) silently zeroed the subsystem.
+    if input_src == "corrupt_fallback_mtime":
+        warnings_acc.append({
+            "subsystem": subsystem,
+            "scope": "freshness",
+            "record_id": f"file={input_path.name}",
+            "exception_class": "CorruptJSON",
+            "message": (
+                f"{subsystem} input {input_path.name} is unparseable JSON "
+                f"— using filesystem mtime as a fallback freshness proxy. "
+                f"Downstream _read_json(default={{}}) will neutralize the "
+                f"subsystem this tick. Investigate the producer."
+            ),
+            "ts": now_iso,
+        })
     age_delta_seconds = ref_ts - input_ts
     # R10 Q4 (A1): future-dated content timestamp guard. R9 P5 B1's
     # content-preferring read trusted whatever the JSON's `generated_at`
@@ -477,6 +521,14 @@ def _load_injury_components(now_iso: str, warnings_acc: list | None = None) -> d
     """
     out: dict[tuple[str, int | None], list[dict]] = {}
     warnings_acc = warnings_acc if warnings_acc is not None else []
+    # R11 D4: freshness guard on the API injury feed. See
+    # _load_weather_components for context. team_adjustments.json is the
+    # operator-curated overlay (not provider-derived) so freshness checks
+    # don't apply to it — operator edits expires_at directly.
+    _check_freshness(
+        LIVE / "injuries_2026.json", LIVE / "results_2026.json",
+        STALENESS_MAX_AGE_HOURS, "injury", warnings_acc,
+    )
 
     # Per-team API totals (tournament-wide, not match-scoped).
     api_path = LIVE / "injuries_2026.json"
@@ -628,10 +680,18 @@ def _load_weather_components(warnings_acc: list | None = None) -> dict:
     Each entry: {match_id, home_team_adjustment_elo, away_team_adjustment_elo,
                  lambda_adjustment, weather_bucket, ...}.
     """
+    warnings_acc = warnings_acc if warnings_acc is not None else []
+    # R11 D4: freshness guard. Pre-R11 only referee / suspension / player_stats
+    # called _check_freshness — a multi-day-stale weather snapshot was
+    # silently ingested with no `subsystem_stale` warning. Mirror the
+    # existing pattern at line 683 / 736 / 1047.
+    _check_freshness(
+        LIVE / "weather_2026.json", LIVE / "results_2026.json",
+        STALENESS_MAX_AGE_HOURS, "weather", warnings_acc,
+    )
     data = _read_json(LIVE / "weather_2026.json", default={}) or {}
     entries = data.get("weather") or []
     out: dict[tuple[str, int | None], list[dict]] = {}
-    warnings_acc = warnings_acc if warnings_acc is not None else []
     for w in entries:
         m_id = w.get("match_id") if isinstance(w, dict) else None
         if m_id is None:
@@ -797,10 +857,15 @@ def _load_lineup_components(warnings_acc: list | None = None) -> dict:
                  adjustment_elo == 0 — those still appear in the dashboard
                  JSON but contribute nothing to the Elo sum.
     """
+    warnings_acc = warnings_acc if warnings_acc is not None else []
+    # R11 D4: freshness guard. See _load_weather_components.
+    _check_freshness(
+        LIVE / "lineups_2026.json", LIVE / "results_2026.json",
+        STALENESS_MAX_AGE_HOURS, "lineup", warnings_acc,
+    )
     data = _read_json(LIVE / "lineups_2026.json", default={}) or {}
     entries = data.get("lineups") or []
     out: dict[tuple[str, int | None], list[dict]] = {}
-    warnings_acc = warnings_acc if warnings_acc is not None else []
     for ln in entries:
         m_id = ln.get("match_id") if isinstance(ln, dict) else None
         if m_id is None:
@@ -847,6 +912,13 @@ def _load_stats_components(warnings_acc: list | None = None) -> dict:
     own per-team form features. Halving stats_proxy when live_team_state is
     active keeps the two signals from doubling up on the same information.
     """
+    warnings_acc = warnings_acc if warnings_acc is not None else []
+    # R11 D4: freshness guard on the post-match stats feed. See
+    # _load_weather_components.
+    _check_freshness(
+        LIVE / "match_stats_2026.json", LIVE / "results_2026.json",
+        STALENESS_MAX_AGE_HOURS, "stats_proxy", warnings_acc,
+    )
     data = _read_json(LIVE / "match_stats_2026.json", default={}) or {}
     entries = data.get("matches") or []
     # Read live team state to detect "form already accounted for" teams.
@@ -867,7 +939,6 @@ def _load_stats_components(warnings_acc: list | None = None) -> dict:
     # Aggregate per team across all matches, applying both per-match and
     # group-stage caps.
     per_team_total: dict[str, list[dict]] = {}
-    warnings_acc = warnings_acc if warnings_acc is not None else []
     for s in entries:
         if not isinstance(s, dict) or s.get("status") != "FT":
             continue

@@ -70,6 +70,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from stats_proxy_adjustments import (  # noqa: E402
     stats_to_dict, compute_form_delta, compute_xg_form_delta,
 )
+# R11 E3: name-aware side resolution. Pre-R11 the positional
+# `len(response_sides) == 2` fallback at build_match_entry silently swapped
+# home/away stats whenever the provider returned [away, home] order — API
+# Football has no documented response ordering — sign-flipping form_delta
+# Elo for that fixture. normalize_team applies the canonical TEAM_ALIAS map
+# from fetch_results so provider aliases ("USA" → "United States" etc.)
+# resolve correctly.
+from fetch_results import normalize_team  # noqa: E402
 
 # Real-xG path is dead by default. Flipping to True ALSO requires updating
 # the pre_flight.py:628-629 assertion that enforces true_xg_available=False.
@@ -169,19 +177,35 @@ def fetch_one_fixture(api_key: str, provider_fixture_id: str) -> list[dict]:
 def build_match_entry(match: dict, response_sides: list[dict],
                       fixture_id: str | None) -> dict:
     """Compose one entry. `response_sides` is the /fixtures/statistics array
-    (one item per team). Order isn't guaranteed — match by team name."""
+    (one item per team). Order isn't guaranteed — match by team name.
+
+    R11 E3: name-based assignment only. The pre-R11 positional fallback
+    (`or len(response_sides) == 2`) silently swapped home/away stats
+    whenever the provider returned [away, home] order, sign-flipping the
+    form-delta Elo for that fixture. We now require an exact normalized
+    name match on either side; an unrecognized name is logged via the
+    returned `side_match_warnings` list (caller decides whether to surface
+    it as a warning or fall back to per-side zero deltas).
+    """
     home_team = match["home"]
     away_team = match["away"]
     home_stats_raw: list[dict] = []
     away_stats_raw: list[dict] = []
+    side_match_warnings: list[str] = []
+    norm_home = normalize_team(home_team)
+    norm_away = normalize_team(away_team)
     for side in response_sides:
-        team_name = (side.get("team") or {}).get("name", "")
-        # Defensive: provider may use slightly different alias. Falling back
-        # to position (first/second) avoids dropping data if names diverge.
-        if not home_stats_raw and (team_name == home_team or len(response_sides) == 2):
+        team_name_raw = (side.get("team") or {}).get("name", "")
+        team_name = normalize_team(team_name_raw)
+        if team_name == norm_home and not home_stats_raw:
             home_stats_raw = side.get("statistics") or []
-        elif not away_stats_raw:
+        elif team_name == norm_away and not away_stats_raw:
             away_stats_raw = side.get("statistics") or []
+        else:
+            side_match_warnings.append(
+                f"unrecognized side '{team_name_raw}' for M{match.get('m')} "
+                f"(expected {home_team!r} or {away_team!r})"
+            )
     home_dict = stats_to_dict(home_stats_raw)
     away_dict = stats_to_dict(away_stats_raw)
 
@@ -216,6 +240,7 @@ def build_match_entry(match: dict, response_sides: list[dict],
         "away_stats": away_dict,
         "fixture_id": fixture_id,
         "captured_at": _now_iso(),
+        "side_match_warnings": side_match_warnings,
     }
 
 
@@ -233,7 +258,11 @@ def _replay_local(fixture_dir: Path, matches: list[dict],
                              "match_id": m["m"], "fixture_id": pfid})
             continue
         response = json.loads(f.read_text()).get("response") or []
-        entries.append(build_match_entry(m, response, pfid))
+        entry = build_match_entry(m, response, pfid)
+        for note in entry.pop("side_match_warnings", []):
+            warnings.append({"type": "side_match_unrecognized",
+                             "match_id": m["m"], "message": note})
+        entries.append(entry)
     return entries, warnings
 
 
@@ -298,7 +327,11 @@ def main() -> int:
                 continue
             if not response:
                 continue
-            entries.append(build_match_entry(m, response, pfid))
+            entry = build_match_entry(m, response, pfid)
+            for note in entry.pop("side_match_warnings", []):
+                warnings.append({"type": "side_match_unrecognized",
+                                 "match_id": m["m"], "message": note})
+            entries.append(entry)
 
     snap = build_snapshot(entries, warnings)
     print(f"[fetch_match_stats] entries: {len(entries)} · warnings: {len(warnings)}")
