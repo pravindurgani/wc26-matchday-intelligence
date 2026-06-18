@@ -604,6 +604,123 @@ def test_r6_m3_provider_returned_nothing_dedup_pinned_in_source() -> None:
     )
 
 
+# R7 N2: end-to-end functional pin of the R6 M3 dedup path. The static
+# pin above proves the LITERAL strings exist in the source; this test
+# actually drives main() twice with a silent-empty mock and asserts the
+# warnings[] never grows past 1 entry, count climbs, first_seen_utc is
+# preserved across ticks, and completed_matches remain locked.
+def test_r6_m3_dedup_two_ticks_bumps_count_not_appends(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import fetch_results  # type: ignore[import-not-found]
+
+    live_dir = tmp_path / "live"
+    live_dir.mkdir(parents=True)
+    out_path = live_dir / "results_2026.json"
+    # Pre-seed with a locked match so the preservation branch fires.
+    seeded = {
+        "updated_at": "2026-06-17T12:00:00+00:00",
+        "source": "api_football",
+        "completed_matches": [
+            {"m": 1, "home": "MEX", "away": "ESP", "home_score": 1,
+             "away_score": 2, "status": "FT"},
+        ],
+    }
+    out_path.write_text(json.dumps(seeded))
+
+    monkeypatch.setattr(fetch_results, "LIVE", live_dir)
+    # Force fetch_mock to return [] so (not valid and not warnings_list) is True.
+    monkeypatch.setattr(fetch_results, "fetch_mock", lambda: [])
+    monkeypatch.setattr(sys, "argv", ["fetch_results.py", "--provider", "mock"])
+
+    # First tick: should append fresh warning with count=1.
+    rc1 = fetch_results.main()
+    assert rc1 == 0
+    after_first = json.loads(out_path.read_text())
+    warns1 = [w for w in after_first.get("warnings", [])
+              if isinstance(w, dict) and w.get("type") == "provider_returned_nothing"]
+    assert len(warns1) == 1, f"first tick: expected 1 warning, got {warns1}"
+    w1 = warns1[0]
+    assert w1["count"] == 1
+    assert "first_seen_utc" in w1 and w1["first_seen_utc"]
+    assert "last_seen_utc" in w1 and w1["last_seen_utc"]
+    first_seen_after_t1 = w1["first_seen_utc"]
+    # Locked match preserved.
+    assert len(after_first["completed_matches"]) == 1
+    assert after_first["completed_matches"][0]["m"] == 1
+
+    # Second tick: bump count, preserve first_seen_utc, refresh last_seen_utc.
+    rc2 = fetch_results.main()
+    assert rc2 == 0
+    after_second = json.loads(out_path.read_text())
+    warns2 = [w for w in after_second.get("warnings", [])
+              if isinstance(w, dict) and w.get("type") == "provider_returned_nothing"]
+    assert len(warns2) == 1, (
+        f"second tick must NOT append a duplicate — got {len(warns2)} entries: {warns2}. "
+        "This is the unbounded-growth regression R6 M3 fixed."
+    )
+    w2 = warns2[0]
+    assert w2["count"] == 2, f"count must bump from 1 → 2, got {w2['count']}"
+    assert w2["first_seen_utc"] == first_seen_after_t1, (
+        "first_seen_utc must be preserved across ticks so the dashboard "
+        "can show outage onset, not most-recent-bump time."
+    )
+    # last_seen_utc must be ≥ previous (monotonic non-decreasing).
+    assert w2["last_seen_utc"] >= w1["last_seen_utc"]
+    # Completed matches still locked.
+    assert len(after_second["completed_matches"]) == 1
+
+
+# R7 N3: a pre-R6 warning entry written before the dedup fields existed
+# must still get first_seen_utc backfilled on the next bump, so the
+# dashboard never shows a missing-field surprise after a deploy that
+# catches an outage already in progress.
+def test_r7_n3_first_seen_utc_backfilled_on_legacy_warning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import fetch_results  # type: ignore[import-not-found]
+
+    live_dir = tmp_path / "live"
+    live_dir.mkdir(parents=True)
+    out_path = live_dir / "results_2026.json"
+    # Pre-seed with a legacy pre-R6 warning: no first_seen_utc / last_seen_utc / count.
+    seeded = {
+        "updated_at": "2026-06-17T12:00:00+00:00",
+        "source": "api_football",
+        "completed_matches": [
+            {"m": 1, "home": "MEX", "away": "ESP", "home_score": 1,
+             "away_score": 2, "status": "FT"},
+        ],
+        "warnings": [
+            {"type": "provider_returned_nothing",
+             "message": "old pre-R6 warning shape — no count, no first_seen_utc"},
+        ],
+    }
+    out_path.write_text(json.dumps(seeded))
+
+    monkeypatch.setattr(fetch_results, "LIVE", live_dir)
+    monkeypatch.setattr(fetch_results, "fetch_mock", lambda: [])
+    monkeypatch.setattr(sys, "argv", ["fetch_results.py", "--provider", "mock"])
+
+    rc = fetch_results.main()
+    assert rc == 0
+    bumped = json.loads(out_path.read_text())
+    warns = [w for w in bumped.get("warnings", [])
+             if isinstance(w, dict) and w.get("type") == "provider_returned_nothing"]
+    assert len(warns) == 1
+    w = warns[0]
+    # count starts from 1 (legacy entry assumed count=1) → bumps to 2.
+    assert w["count"] == 2
+    # last_seen_utc must be set (didn't exist on legacy entry).
+    assert "last_seen_utc" in w and w["last_seen_utc"]
+    # first_seen_utc must be backfilled even though it was missing on the
+    # legacy entry — without the R7 N3 setdefault the dashboard would
+    # show an undefined field after the first post-deploy bump.
+    assert "first_seen_utc" in w and w["first_seen_utc"], (
+        "first_seen_utc must be backfilled on legacy entries — R7 N3."
+    )
+
+
 # ────────────────────────────────────── R6 M2: provider fallback warning
 # Audit found that when the operator requests a real provider (e.g.
 # FOOTBALL_PROVIDER=api_football) but the corresponding key is unset or

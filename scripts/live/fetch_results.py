@@ -1011,6 +1011,12 @@ def main() -> int:
                 if existing_warning is not None:
                     existing_warning["count"] = int(existing_warning.get("count", 1)) + 1
                     existing_warning["last_seen_utc"] = now_iso
+                    # R7 N3: backfill first_seen_utc on any pre-R6 warning entry
+                    # that was written before the dedup fields existed. Without
+                    # this the duration of an in-progress outage that started on
+                    # an old build would appear to start at the first post-deploy
+                    # tick rather than at the actual onset.
+                    existing_warning.setdefault("first_seen_utc", now_iso)
                 else:
                     warnings.append({
                         "type": "provider_returned_nothing",

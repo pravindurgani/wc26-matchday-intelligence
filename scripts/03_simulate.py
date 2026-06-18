@@ -457,6 +457,18 @@ def run_single_seed(seed, cfg, n_sims, ctx):
                     if q["group"] in pool:
                         third_slot_map[slot] = q
                         unused.remove(q); break
+            # R7 N1: if the fallback cannot fill all 8 third-place slots (e.g.
+            # corrupted slot_pools yaml, a group with no eligible thirds), fail
+            # loudly with diagnostics instead of producing (None, None) tuples
+            # that crash deep inside knock_matrices[(ta, tb)] with an opaque
+            # KeyError. Pre-R7 behaviour silently produced None team identifiers.
+            if len(third_slot_map) < 8:
+                raise RuntimeError(
+                    f"annex_c miss + fallback exhausted: only assigned "
+                    f"{sorted(third_slot_map)} ({len(third_slot_map)}/8 slots); "
+                    f"unused thirds={[q['name'] for q in unused]}; "
+                    f"check data/raw/annex_c_thirds_map.json and slot_pools config"
+                )
 
         # --- Build R32 fixtures ---
         r32_fixtures = []

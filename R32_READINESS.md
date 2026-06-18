@@ -1,8 +1,8 @@
-# R32 Readiness Checklist — Post Pressure-Test R6
+# R32 Readiness Checklist — Post Pressure-Test R7
 
 **Date**: 2026-06-18 (T-10 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1099 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Suite**: **1105 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
 **Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
 **Round 3 closure**: all 4 HIGH-severity audit findings closed
@@ -19,6 +19,14 @@ silent provider preservation; C4 MEDIUM: per-record degradation rollup);
 M3: provider_returned_nothing dedup);
 ~10 reported-but-not-genuine findings (dual-key alias, constants duplication, AUTO_TIER force-push, etc.)
 documented in `PRESSURE_TEST_R6.md`
+**Round 7 closure**: 5-agent orthogonal sweep (R6 integration probe, numerical,
+failure composition, test suite, branch hygiene) + 1 monitor agent verified;
+three defensive improvements landed (N1: third-place fallback diagnostic
+assertion; N2: end-to-end functional test for R6 M3 dedup path; N3:
+first_seen_utc backfill for pre-R6 legacy warning entries during deploy
+windows); ~5 reported-but-not-genuine findings (PYTHONHASHSEED advisory,
+constants duplication re-flag, atomic-write race, etc.) documented in
+`PRESSURE_TEST_R7.md`
 
 ---
 
@@ -73,6 +81,9 @@ documented in `PRESSURE_TEST_R6.md`
 | 45 | **R5 (C4):** per-record degradations (scope='record' in matchday_intelligence.json's degradation_warnings[]) surface as a single `matchday_record_degradation` rollup warning with `count` + `by_subsystem` breakdown; sustained data-quality drops no longer silent | ✓ | `scripts/live/apply_matchday_adjustments.py:294-359` | `test_fast_path_freshness.py::test_r5_c4_per_record_degradation_rollup_emitted` + `test_r5_c4_zero_record_degradations_no_rollup` (positive + negative cases) |
 | 46 | **R6 (M2):** silent provider-key fallback emits a structured `provider_key_missing` warning; covers all 3 real providers + legacy alias env vars; folded into both the main mf_warnings probe AND the crash-handler so an `orchestrator_crash` + missing-key combo surfaces BOTH signals | ✓ | `scripts/live/run_live_update.py:295-355` (helper) + `:434-447` (main fold) + `:730-748` (crash-handler fold) | `test_fast_path_freshness.py::test_r6_m2_*` (8 tests: helper/merge/api-football/sportmonks/mock/key-present/legacy-alias/crash-handler) |
 | 47 | **R6 (M3):** `provider_returned_nothing` warning deduped by type with `count` + `first_seen_utc` + `last_seen_utc` fields; sustained provider outage no longer grows warnings[] linearly (was 18 duplicates over 3h, now 1 entry with count=18) | ✓ | `scripts/live/fetch_results.py:985-1032` | `test_fast_path_freshness.py::test_r6_m3_provider_returned_nothing_dedup_pinned_in_source` (pins type-keyed `next()` lookup + count/last_seen_utc fields) |
+| 48 | **R7 (N1):** if `annex_c` lookup misses AND the FIFA-rank fallback cannot fill all 8 third-place slots (corrupted slot_pools yaml, empty group eligibility), the sim raises a diagnostic `RuntimeError` naming `assigned slots`, `unused thirds`, and the config files to check — pre-R7 behaviour produced `None` team identifiers that crashed opaquely inside `knock_matrices[(None, None)]` ~25 lines later | ✓ | `scripts/03_simulate.py:447-470` | covered by full-simulation runs (any third-place lookup miss now fails fast at the assignment site rather than at the knockout fixture site) |
+| 49 | **R7 (N2):** end-to-end functional test for R6 M3 dedup path — drives `fetch_results.main()` twice with a silent-empty mock, asserts warnings[] never grows past 1 entry, count climbs 1→2, `first_seen_utc` is preserved across ticks, `last_seen_utc` is monotonic non-decreasing, `completed_matches` preserved. Complements the existing R6 static-pin which only proves the literals exist in source | ✓ | `tests/live/test_fast_path_freshness.py::test_r6_m3_dedup_two_ticks_bumps_count_not_appends` (functional) + `test_r6_m3_provider_returned_nothing_dedup_pinned_in_source` (static pin, R6) | both green |
+| 50 | **R7 (N3):** during the R6 dedup bump path, `first_seen_utc` is `setdefault`-backfilled on any pre-R6 legacy warning entry that was written before the dedup fields existed (e.g. an outage already in progress when R6 deployment lands); without the backfill, post-deploy ticks would bump count + last_seen_utc but leave `first_seen_utc` undefined, breaking dashboard onset-time display | ✓ | `scripts/live/fetch_results.py:1011-1019` | `tests/live/test_fast_path_freshness.py::test_r7_n3_first_seen_utc_backfilled_on_legacy_warning` (seeds legacy entry shape, drives bump, asserts backfill) |
 
 ---
 
