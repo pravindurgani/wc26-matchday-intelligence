@@ -202,8 +202,8 @@ fifa-wc-26-prediction/
 |---|---|---|
 | Holdout log-loss                | 0.869 | lower is better |
 | Holdout Brier                   | 0.511 | lower is better |
-| Holdout accuracy                | 60.2% | always-home ≈ 48% |
-| WC walk-forward avg log-loss    | 0.983 | mean across 2010/14/18/22 |
+| Holdout accuracy                | 60.3% | always-home ≈ 48% |
+| WC walk-forward avg log-loss    | 0.985 | mean across 2010/14/18/22 |
 | Annex C lookup misses           | 0     | target 0 / 25,000+ sims |
 <!-- AUTO:MODEL_METRICS:END -->
 
@@ -218,12 +218,12 @@ fifa-wc-26-prediction/
 
 | # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |
 |---|---|---|---|---|---|
-| 1 | Spain      | 26.1% | [25.6, 26.5] | 50.9% | 2209 |
-| 2 | Argentina  | 19.0% | [18.9, 19.1] | 44.4% | 2174 |
-| 3 | France     | 9.1% | [8.6, 9.5] | 29.4% | 2116 |
-| 4 | England    | 6.7% | [6.6, 7.0] | 22.6% | 2081 |
-| 5 | Brazil     | 5.0% | [4.4, 5.5] | 21.5% | 2054 |
-| 6 | Colombia   | 4.6% | [4.4, 4.7] | 18.2% | 2049 |
+| 1 | Spain      | 23.9% | [23.0, 24.6] | 48.4% | 2209 |
+| 2 | Argentina  | 19.6% | [19.0, 20.3] | 44.1% | 2174 |
+| 3 | France     | 9.5% | [9.1, 9.9] | 29.9% | 2116 |
+| 4 | England    | 6.8% | [6.6, 7.0] | 23.6% | 2081 |
+| 5 | Colombia   | 5.0% | [4.8, 5.1] | 18.8% | 2049 |
+| 6 | Brazil     | 4.5% | [4.1, 4.8] | 19.4% | 2054 |
 <!-- AUTO:TOP_CONTENDERS:END -->
 
 > "Model Elo" is the in-repo Elo (modified Glicko base + extra friendlies +
