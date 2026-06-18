@@ -118,7 +118,24 @@ jobs:
           git commit -m "baseline: refresh @ $(date -u +%Y-%m-%dT%H:%MZ)"
           BRANCH="main"
           git pull --rebase origin "$BRANCH" || echo "Rebase failed — pushing anyway."
-          git push origin "HEAD:$BRANCH" || echo "Push failed — next daily run will retry."
+          # R10 Q5 (C4): mirror the R4 G1 hardening from live-matchday.yml /
+          # matchday-intel-slow.yml — pre-R10 a push failure here was
+          # swallowed by `|| echo "Push failed"; exit 0`, marking the job
+          # GREEN while the re-trained model artifacts (home_goals_model.joblib,
+          # away_goals_model.joblib, feature_cols_v2.json, metrics_v2.json,
+          # walk_forward.json, ablation.json, sensitivity.json, evaluation.json
+          # plus dashboard/predictions.json and processed/predictions.json)
+          # silently failed to land. The next-day fast workflow then ran the
+          # OLD committed model with no operator signal that retraining was
+          # ineffective for N days — exactly the silent-model-drift class
+          # this hardening prevents. Recovery is automatic on next daily run
+          # (each run is independent — fetch-depth: 1) but the operator must
+          # see the failure to investigate provider-side issues (token
+          # expiry, branch protection rule, force-push race, etc.).
+          if ! git push origin "HEAD:$BRANCH"; then
+            echo "::error::git push to $BRANCH failed — baseline model artifacts not committed this run. Next scheduled daily run will retry; investigate token / branch protection if failures persist."
+            exit 1
+          fi
           exit 0
 
       - name: Deploy refreshed baseline to Vercel

@@ -238,6 +238,35 @@ def _check_freshness(
         })
         return False
     age_delta_seconds = ref_ts - input_ts
+    # R10 Q4 (A1): future-dated content timestamp guard. R9 P5 B1's
+    # content-preferring read trusted whatever the JSON's `generated_at`
+    # said. If a producer's clock is skewed into the future (Docker host
+    # with bad NTP, replay against a hard-coded future date, manual edit),
+    # `age_delta_seconds` goes NEGATIVE and the `<= max_age_hours*3600`
+    # check passes indefinitely — the subsystem could be stale forever
+    # without ever firing the warning. Emit a distinct `future_timestamp`
+    # signal when input is more than `max_age_hours` in the FUTURE
+    # relative to the reference clock; small forward skew (within the
+    # threshold band) tolerated to avoid false-positives from sub-second
+    # clock drift between fetches.
+    if -age_delta_seconds > max_age_hours * 3600.0:
+        future_hours = -age_delta_seconds / 3600.0
+        warnings_acc.append({
+            "subsystem": subsystem,
+            "scope": "freshness",
+            "record_id": f"file={input_path.name}",
+            "exception_class": "FutureTimestamp",
+            "message": (
+                f"{subsystem} input {input_path.name} has a content "
+                f"timestamp {future_hours:.1f}h IN THE FUTURE relative to "
+                f"{reference_path.name} — producer clock skew or replay "
+                f"against a hard-coded future date. Treating as degraded "
+                f"because the freshness check is meaningless on inverted "
+                f"timestamps. (input_src={input_src}, ref_src={ref_src})"
+            ),
+            "ts": now_iso,
+        })
+        return False
     if age_delta_seconds <= max_age_hours * 3600.0:
         return True
     age_hours = age_delta_seconds / 3600.0

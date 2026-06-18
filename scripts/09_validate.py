@@ -117,6 +117,35 @@ def main():
         total += 1; passed += check(
             "Σ invariant (strict, 1e-6)", False, f"file missing: {_e}",
         )
+
+    # 2c. R10 Q3 (E1): same strict Σ gate on the dashboard mirror — the
+    # actually-shipped artifact at dashboard/predictions_live.json. Pre-R10
+    # only the canonical at data/processed/predictions_live.json was gated;
+    # the workflow at .github/workflows/live-matchday.yml:247-253 commits
+    # the DASHBOARD copy to git (the canonical stays in working tree per
+    # the "load-bearing --autostash" comment at lines 270-279), so a copy-
+    # path corruption or accidental hand-edit of the dashboard mirror would
+    # publish invariant-violating numbers to Vercel without any check.
+    # run_live_update.py:720-734 copies raw bytes after parse-check, so
+    # the two files SHOULD agree byte-for-byte post-tick — but adding the
+    # check here means any divergence shows up in CI.
+    _dash_live = DASH / "predictions_live.json"
+    try:
+        _check_strict_invariants(_dash_live)
+        total += 1; passed += check(
+            "Σ invariant (strict, 1e-6) — dashboard mirror", True,
+            f"{_dash_live.name}",
+        )
+    except InvariantError as _e:
+        total += 1; passed += check(
+            "Σ invariant (strict, 1e-6) — dashboard mirror", False,
+            f"{type(_e).__name__}: {_e}",
+        )
+    except FileNotFoundError as _e:
+        total += 1; passed += check(
+            "Σ invariant (strict, 1e-6) — dashboard mirror", False,
+            f"file missing: {_e}",
+        )
     # P1-D: match_predictions is now group + knockout fixtures (104). Filter
     # to stage=='group' for the 72-fixture invariant; total should be 104.
     _mps = pred["match_predictions"]

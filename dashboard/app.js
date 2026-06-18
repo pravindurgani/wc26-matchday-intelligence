@@ -982,8 +982,26 @@ function renderInteresting(data) {
   if (!grid) return;
   // P1-D: knockout fixtures have no p_home_win/p_away_win pre-resolution.
   // The "interesting" picks are group-stage-only.
+  // R10 Q1 (B1): also exclude past group matches. Pre-R10 the filter only
+  // checked stage+typeof, so locked group matches (which retain their
+  // pre-tournament probabilities in the data file) continued to surface
+  // as "Closest match"/"Most likely draw"/"Biggest upset" cards through
+  // the entire KO phase — stale and contradictory to the played result
+  // operators could see one section below. todayIso uses UTC because the
+  // dataset's `date` field is calendar-date in tournament/UTC reference.
+  const todayIso = new Date().toISOString().slice(0, 10);
   const ms = (data.match_predictions || []).filter(
-    m => (m.stage || 'group') === 'group' && typeof m.p_home_win === 'number');
+    m => (m.stage || 'group') === 'group'
+         && typeof m.p_home_win === 'number'
+         && (m.date || '') >= todayIso);
+
+  // R10 Q1: once the group stage is over, ms is empty — guard the card
+  // builders below (which dereference closest.p_home_win etc.) and hide
+  // the section gracefully instead of TypeErroring the whole render.
+  if (ms.length === 0) {
+    grid.innerHTML = '<div class="interesting-empty" style="opacity:0.6;padding:1rem;">All group matches complete — see knockouts below.</div>';
+    return;
+  }
 
   // Pick categories
   const closest = ms.slice().sort((a,b) => {
