@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-18T15:27:08.705091+00:00",
+  "generated_at": "2026-06-18T20:28:12.849390+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 25,
-      "home": "Czechia",
-      "away": "South Africa",
+      "match_id": 26,
+      "home": "Switzerland",
+      "away": "Bosnia and Herzegovina",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 138804,
-          "name": "Matěj Kovář",
+          "id": 25282,
+          "name": "Gregor Kobel",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 2252,
-          "name": "Tomáš Holeš",
+          "id": 48378,
+          "name": "Silvan Widmer",
           "number": 3,
           "pos": "D"
         },
         {
-          "id": 162964,
-          "name": "Robin Hranáč",
+          "id": 2803,
+          "name": "Nico Elvedi",
           "number": 4,
           "pos": "D"
         },
         {
-          "id": 66407,
-          "name": "Ladislav Krejčí",
-          "number": 7,
+          "id": 5,
+          "name": "Manuel Akanji",
+          "number": 5,
           "pos": "D"
         },
         {
-          "id": 1231,
-          "name": "Vladimír Coufal",
-          "number": 5,
+          "id": 1631,
+          "name": "Ricardo Rodríguez",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 951,
+          "name": "Michel Aebischer",
+          "number": 20,
           "pos": "M"
         },
         {
-          "id": 241,
-          "name": "Michal Sadílek",
-          "number": 18,
+          "id": 1464,
+          "name": "Granit Xhaka",
+          "number": 10,
           "pos": "M"
         },
         {
-          "id": 162194,
-          "name": "Lukáš Červ",
-          "number": 12,
-          "pos": "M"
-        },
-        {
-          "id": 386837,
-          "name": "Alexandr Sojka",
-          "number": 24,
-          "pos": "M"
-        },
-        {
-          "id": 66019,
-          "name": "Adam Hložek",
-          "number": 9,
-          "pos": "F"
-        },
-        {
-          "id": 25348,
-          "name": "Vladimír Darida",
+          "id": 2807,
+          "name": "Remo Freuler",
           "number": 8,
           "pos": "M"
         },
         {
-          "id": 794,
-          "name": "Patrik Schick",
-          "number": 10,
+          "id": 163032,
+          "name": "Fabian Rieder",
+          "number": 22,
+          "pos": "F"
+        },
+        {
+          "id": 421,
+          "name": "Breel Embolo",
+          "number": 7,
+          "pos": "F"
+        },
+        {
+          "id": 48648,
+          "name": "Dan Ndoye",
+          "number": 11,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 3275,
-          "name": "Ronwen Williams",
+          "id": 9026,
+          "name": "Nikola Vasilj",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 46601,
-          "name": "Khuliso Mudau",
-          "number": 20,
-          "pos": "D"
-        },
-        {
-          "id": 406752,
-          "name": "Ime Okon",
-          "number": 21,
-          "pos": "D"
-        },
-        {
-          "id": 510799,
-          "name": "Mbekezeli Mbokazi",
-          "number": 14,
-          "pos": "D"
-        },
-        {
-          "id": 46334,
-          "name": "Aubrey Modiba",
-          "number": 6,
-          "pos": "D"
-        },
-        {
-          "id": 194430,
-          "name": "Thalente Mbatha",
-          "number": 5,
-          "pos": "M"
-        },
-        {
-          "id": 3287,
-          "name": "Teboho Mokoena",
-          "number": 4,
-          "pos": "M"
-        },
-        {
-          "id": 179893,
-          "name": "Oswin Appollis",
+          "id": 7318,
+          "name": "Amar Dedić",
           "number": 7,
-          "pos": "F"
+          "pos": "D"
         },
         {
-          "id": 268710,
-          "name": "Jayden Adams",
-          "number": 23,
+          "id": 1741,
+          "name": "Nikola Katić",
+          "number": 18,
+          "pos": "D"
+        },
+        {
+          "id": 271350,
+          "name": "Tarik Muharemović",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 1442,
+          "name": "Sead Kolašinac",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 322101,
+          "name": "Amar Memić",
+          "number": 15,
           "pos": "M"
         },
         {
-          "id": 354831,
-          "name": "Thapelo Maseko",
-          "number": 12,
+          "id": 264094,
+          "name": "Benjamin Tahirović",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 1324,
+          "name": "Ivan Šunjić",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 395559,
+          "name": "Kerim Alajbegović",
+          "number": 19,
+          "pos": "M"
+        },
+        {
+          "id": 46930,
+          "name": "Ermedin Demirović",
+          "number": 10,
           "pos": "F"
         },
         {
-          "id": 127429,
-          "name": "Iqraam Rayners",
-          "number": 15,
+          "id": 790,
+          "name": "Edin Džeko",
+          "number": 11,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-18T15:27:08.705073+00:00"
+      "captured_at": "2026-06-18T20:28:12.849371+00:00"
     }
   ],
   "warnings": []
