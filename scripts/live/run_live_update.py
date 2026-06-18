@@ -125,12 +125,16 @@ def _matchday_freshness_warnings_safe() -> list[dict]:
 
 
 def atomic_write_json(path: Path, payload: dict):
+    """R9 P3: allow_nan=False rejects NaN/Infinity at the boundary. This
+    writer covers dashboard/live_state.json and circuit_breaker_state.json;
+    a NaN warning count or non-finite timestamp would silently round-trip
+    and corrupt downstream consumers (dashboard, next-tick CB read)."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2)
+        json.dump(payload, tmp, indent=2, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 

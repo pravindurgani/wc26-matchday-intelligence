@@ -27,11 +27,18 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "data" / "raw"
 BRACKET_PATH = RAW / "knockout_bracket_2026.json"
+
+# R9 P4 A1: process-local set tracking which KO match numbers we've already
+# warned about missing kickoff times. Without this guard a single tick that
+# calls load_knockout_fixtures() repeatedly (or test runs that import the
+# module N times) would emit 32×N WARN lines on every invocation.
+_KO_DEFAULT_TIME_WARNED: set[int] = set()
 
 # Slot codes are short, alphanumeric, and never contain spaces. We treat
 # anything that looks like a slot code as a placeholder and refuse to
@@ -87,6 +94,14 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
     except (json.JSONDecodeError, OSError):
         return []
     out: list[dict] = []
+    # R9 P4 A1: collect KO matches that are using the "20:00" default so we
+    # can emit a single summary warning at the bottom (rather than 32 warns
+    # per call). Operator-visible: the dashboard pre-match window (lineups
+    # 4h pre-KO) and weather forecast hour both depend on `time`, so a wrong
+    # time silently degrades both subsystems for that KO match. Sourcing
+    # real FIFA kickoff times into data/raw/knockout_bracket_2026.json is
+    # the proper fix — this warning surfaces the gap to operators meanwhile.
+    missing_time: list[int] = []
     section_to_stage = (
         ("r32_slots", "r32"),
         ("r16_bracket", "r16"),
@@ -95,10 +110,12 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
     )
     for section_key, stage in section_to_stage:
         for s in bracket.get(section_key, []) or []:
+            if s.get("time") in (None, ""):
+                missing_time.append(s["match_num"])
             out.append({
                 "m": s["match_num"],
                 "date": s.get("date"),
-                "time": s.get("time", "20:00"),
+                "time": s.get("time") or "20:00",
                 "venue": s.get("venue"),
                 "home": s.get("slot_a"),
                 "away": s.get("slot_b"),
@@ -107,10 +124,12 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
     ft = bracket.get("final_and_third_place") or {}
     if "third_place" in ft:
         tp = ft["third_place"]
+        if tp.get("time") in (None, ""):
+            missing_time.append(tp["match_num"])
         out.append({
             "m": tp["match_num"],
             "date": tp.get("date"),
-            "time": tp.get("time", "20:00"),
+            "time": tp.get("time") or "20:00",
             "venue": tp.get("venue"),
             "home": tp.get("slot_a"),
             "away": tp.get("slot_b"),
@@ -118,13 +137,28 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
         })
     if "final" in ft:
         fn = ft["final"]
+        if fn.get("time") in (None, ""):
+            missing_time.append(fn["match_num"])
         out.append({
             "m": fn["match_num"],
             "date": fn.get("date"),
-            "time": fn.get("time", "20:00"),
+            "time": fn.get("time") or "20:00",
             "venue": fn.get("venue"),
             "home": fn.get("slot_a"),
             "away": fn.get("slot_b"),
             "stage": "final",
         })
+    # R9 P4 A1: single summary warning (dedup across calls per process).
+    new_missing = sorted(set(missing_time) - _KO_DEFAULT_TIME_WARNED)
+    if new_missing:
+        print(
+            f"[_knockout] WARN: {len(new_missing)} KO matches lack `time` in "
+            f"data/raw/knockout_bracket_2026.json and default to '20:00' local. "
+            f"Affected match_nums: {new_missing}. "
+            f"This silently shifts the dashboard's pre-KO lineup-fetch window "
+            f"and Open-Meteo weather forecast hour. Source FIFA's official "
+            f"kickoff times before R32 (2026-06-28) to close.",
+            file=sys.stderr,
+        )
+        _KO_DEFAULT_TIME_WARNED.update(new_missing)
     return out

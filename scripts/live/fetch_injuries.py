@@ -102,7 +102,9 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2, ensure_ascii=False)
+        # R9 P3: allow_nan=False at producer boundary — apply_matchday
+        # reads this file; pre-R9 only the matchday writer rejected NaN.
+        json.dump(payload, tmp, indent=2, ensure_ascii=False, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 

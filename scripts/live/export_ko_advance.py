@@ -449,7 +449,10 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2, default=str)
+        # R9 P3: allow_nan=False at producer boundary — the KO advance export
+        # carries p_advance probabilities directly; a NaN here would silently
+        # publish to dashboard.
+        json.dump(payload, tmp, indent=2, default=str, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 

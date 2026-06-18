@@ -217,13 +217,27 @@ def sample_from_matrix(mat, rng):
 def sample_score_with_noise(lam_h, lam_a, cfg, rng, max_g=10):
     """Per-match lambda noise via Gamma multipliers, then NB+τ matrix sample.
     Adds compound variance beyond just NB dispersion — captures the fact that
-    on any given day a 'strong' team plays at 70-130% of average strength."""
+    on any given day a 'strong' team plays at 70-130% of average strength.
+
+    R9 P2: the noise multiplier (Gamma α=12) has an unbounded right tail.
+    Pre-R9 only a floor (0.05) was applied to the noisy λ, so a noise draw
+    of e.g. 2.0× on a base λ of 7.0 produced effective λ=14, which exceeds
+    the DC-τ critical boundary 1/|ρ|=7.69. mat[0,1]/mat[1,0] then went
+    negative inside build_score_matrix and were silently clipped to 1e-12,
+    systematically collapsing low-score outcomes (0-1, 1-0) for blowout-
+    favorite matches. The module-load assert at scripts/03_simulate.py:115
+    guards LAMBDA_CLIP_MAX×|ρ|<1.0 — but only for the pre-noise clip; the
+    noise path bypassed it. Re-applying the same [CLIP_MIN, CLIP_MAX] clip
+    post-noise restores the boundary guarantee. Floats inside the band
+    are unchanged; only the ~33% of high-λ draws that breached it now
+    saturate at 7.0 instead of producing negative-then-clipped τ cells.
+    """
     if cfg.get("lambda_noise_per_match"):
         alpha = cfg["lambda_noise_alpha"]
         noise_h = rng.gamma(alpha, 1.0 / alpha)
         noise_a = rng.gamma(alpha, 1.0 / alpha)
-        lam_h = max(0.05, lam_h * noise_h)
-        lam_a = max(0.05, lam_a * noise_a)
+        lam_h = min(LAMBDA_CLIP_MAX, max(LAMBDA_CLIP_MIN, lam_h * noise_h))
+        lam_a = min(LAMBDA_CLIP_MAX, max(LAMBDA_CLIP_MIN, lam_a * noise_a))
     mat = build_score_matrix(lam_h, lam_a, cfg, use_dispersion=cfg["use_dispersion"], max_g=max_g)
     return sample_from_matrix(mat, rng)
 
@@ -358,7 +372,15 @@ def decide_knockout(team_a, team_b, m_num, locked, mat, lam_h, lam_a, e_h, e_a, 
 
 # ---------- Annex C lookup --------------------------------------------------
 def lookup_third_place_assignment(qualifying_thirds, annex_c_table):
-    """Given the 8 qualifying third-placers, look up their R32 slot assignment."""
+    """Given the 8 qualifying third-placers, look up their R32 slot assignment.
+
+    R9 P1: partial-key corruption (table key exists but is missing one of
+    the eight "3X" entries — e.g. truncated annex_c file, bad merge) must
+    return None so the R7 N1 fallback diagnostic fires, NOT raise an opaque
+    KeyError that tears down the seed mid-loop and bypasses the friendly
+    "annex_c miss + fallback exhausted: check data/raw/annex_c_thirds_map.json"
+    message R7 N1 provides.
+    """
     groups = sorted([t["group"] for t in qualifying_thirds])
     key = "".join(groups)
     if key not in annex_c_table:
@@ -367,7 +389,10 @@ def lookup_third_place_assignment(qualifying_thirds, annex_c_table):
     out = {}
     for q in qualifying_thirds:
         slot_key = f"3{q['group']}"
-        out[mapping[slot_key]] = q
+        slot = mapping.get(slot_key)
+        if slot is None:
+            return None  # R9 P1: partial corruption → trigger R7 N1 fallback
+        out[slot] = q
     return out
 
 
@@ -1304,7 +1329,12 @@ def main():
         mode="w", encoding="utf-8", dir=str(_out_path.parent),
         prefix=_out_path.name + ".", suffix=".tmp", delete=False,
     ) as _tmp:
-        json.dump(out, _tmp, indent=2, default=str)
+        # R9 P3: allow_nan=False on the FINAL predictions writer. If any
+        # numerical drift produced NaN in p_champion / p_advance, fail
+        # the write rather than publish silent NaN to dashboard. The
+        # Σ-gate would catch a missing-from-sum NaN at validation, but
+        # belt-and-braces — fail at the write boundary too.
+        json.dump(out, _tmp, indent=2, default=str, allow_nan=False)
         _tmp_path = Path(_tmp.name)
     os.replace(_tmp_path, _out_path)
     print(f"[OK] Wrote {_out_path}")

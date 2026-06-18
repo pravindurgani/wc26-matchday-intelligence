@@ -54,12 +54,22 @@ for p in (str(ROOT / "scripts"), str(ROOT / "scripts" / "live")):
         sys.path.insert(0, p)
 
 
-def _make_consolidated_blob(degradation_warnings=None) -> dict:
+def _now_utc() -> "datetime":
+    from datetime import datetime, timezone  # local import to keep top tidy
+    return datetime.now(timezone.utc)
+
+
+def _make_consolidated_blob(degradation_warnings=None, generated_at: str | None = None) -> dict:
     """Minimal matchday_intelligence.json shape — just enough for the
     helper's parser. Real schema has many more keys; the helper only
-    touches `degradation_warnings`."""
+    touches `degradation_warnings`.
+
+    R9 P5 B1 update: `generated_at` is now consulted by the freshness
+    helper (preferred over mtime). Default to now-ish so tests don't
+    appear "ancient" to the content-timestamp path; tests that need
+    a controlled age pass an explicit ISO string."""
     return {
-        "generated_at": "2026-06-17T12:00:00+00:00",
+        "generated_at": generated_at or _now_utc().isoformat(),
         "schema_version": 1,
         "active_adjustments": [],
         "summary": {},
@@ -69,18 +79,76 @@ def _make_consolidated_blob(degradation_warnings=None) -> dict:
 
 
 def _touch_age(path: Path, hours_old: float) -> None:
-    """Set the file's mtime to `hours_old` hours BEFORE now."""
+    """Set the file's mtime to `hours_old` hours BEFORE now. R9 P5 B1:
+    also rewrite the JSON content's `generated_at` (if present) to the
+    same age, so the content-preferring freshness helper sees a stale
+    file the same way the legacy mtime helper did."""
+    from datetime import timedelta
     now = os.path.getmtime(path)
     target = now - (hours_old * 3600.0)
     os.utime(path, (target, target))
+    # Also update content timestamp if file is JSON with a known ts field.
+    try:
+        d = json.loads(path.read_text())
+        if isinstance(d, dict):
+            new_ts = (_now_utc() - timedelta(hours=hours_old)).isoformat()
+            updated = False
+            for key in ("generated_at", "updated_at"):
+                if key in d:
+                    d[key] = new_ts
+                    updated = True
+            if updated:
+                path.write_text(json.dumps(d))
+                # Re-apply mtime since write_text resets it.
+                os.utime(path, (target, target))
+    except (json.JSONDecodeError, OSError):
+        pass
 
 
 def _set_relative_age(file_path: Path, ref_path: Path, hours_older: float) -> None:
-    """Set `file_path` mtime to be `hours_older` hours OLDER than `ref_path`'s
-    current mtime. Both files must already exist."""
-    ref_mtime = os.path.getmtime(ref_path)
-    target = ref_mtime - (hours_older * 3600.0)
-    os.utime(file_path, (target, target))
+    """Set `file_path` to be `hours_older` hours OLDER than `ref_path`.
+    R9 P5 B1: synchronises BOTH mtime AND the content `generated_at`/
+    `updated_at` field so the content-preferring freshness helper sees
+    the intended relative age. Both files must already exist."""
+    from datetime import datetime, timedelta, timezone
+    # Reference timestamp: prefer content updated_at/generated_at, fall
+    # back to mtime. This mirrors the new freshness-helper semantics.
+    ref_ts = None
+    try:
+        ref_d = json.loads(ref_path.read_text())
+        if isinstance(ref_d, dict):
+            for key in ("generated_at", "updated_at", "last_updated_utc", "last_updated"):
+                v = ref_d.get(key)
+                if isinstance(v, str) and v:
+                    try:
+                        dt = datetime.fromisoformat(v.replace("Z", "+00:00"))
+                        if dt.tzinfo is None:
+                            dt = dt.replace(tzinfo=timezone.utc)
+                        ref_ts = dt
+                        break
+                    except ValueError:
+                        continue
+    except (json.JSONDecodeError, OSError):
+        pass
+    if ref_ts is None:
+        ref_ts = datetime.fromtimestamp(os.path.getmtime(ref_path), tz=timezone.utc)
+    target_ts = ref_ts - timedelta(hours=hours_older)
+    target_epoch = target_ts.timestamp()
+    os.utime(file_path, (target_epoch, target_epoch))
+    # Update content `generated_at`/`updated_at` to the target time too.
+    try:
+        d = json.loads(file_path.read_text())
+        if isinstance(d, dict):
+            updated = False
+            for key in ("generated_at", "updated_at"):
+                if key in d:
+                    d[key] = target_ts.isoformat()
+                    updated = True
+            if updated:
+                file_path.write_text(json.dumps(d))
+                os.utime(file_path, (target_epoch, target_epoch))
+    except (json.JSONDecodeError, OSError):
+        pass
 
 
 @pytest.fixture

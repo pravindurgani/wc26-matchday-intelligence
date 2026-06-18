@@ -135,6 +135,51 @@ def _now_iso() -> str:
 STALENESS_MAX_AGE_HOURS = 6.0  # 2 slow-cron ticks (cron = every 3h)
 
 
+# R9 P5 B1: content-timestamp source for freshness comparison.
+# Pre-R9 `_check_freshness` used `path.stat().st_mtime` exclusively.
+# In CI, `actions/checkout@v6` resets every checked-out file's mtime to
+# checkout time (within microseconds), so age_delta_seconds ≈ 0 always
+# and the freshness guard was a no-op there. A subsystem could be stale
+# for DAYS without firing `subsystem_stale` — defeating the entire
+# Wave-2 S1 freshness defense. Producers all write a `generated_at` (or
+# `updated_at` for results_2026.json) field carrying their actual
+# generation time; reading that gives us real freshness regardless of
+# filesystem mtime semantics. Local dev / replays still work — they
+# carry honest content timestamps too.
+_FRESHNESS_TIMESTAMP_KEYS = (
+    "generated_at", "updated_at", "last_updated_utc", "last_updated",
+)
+
+
+def _freshness_timestamp_seconds(path: Path) -> tuple[float | None, str]:
+    """Return (epoch_seconds, source) where source ∈ {'content', 'mtime', 'error'}.
+
+    R9 P5 B1: prefer the producer-written generated_at/updated_at over
+    filesystem mtime. mtime is unreliable in CI (actions/checkout flattens
+    it). Falls back to mtime if the JSON has no timestamp field — keeps
+    backward compat for files predating the generated_at convention.
+    """
+    try:
+        d = json.loads(path.read_text())
+        for key in _FRESHNESS_TIMESTAMP_KEYS:
+            ts = d.get(key) if isinstance(d, dict) else None
+            if isinstance(ts, str) and ts:
+                try:
+                    # Handle both 'Z' and explicit +HH:MM offsets.
+                    dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    return (dt.timestamp(), "content")
+                except ValueError:
+                    continue
+    except (OSError, json.JSONDecodeError):
+        pass
+    try:
+        return (path.stat().st_mtime, "mtime")
+    except OSError:
+        return (None, "error")
+
+
 def _check_freshness(
     input_path: Path,
     reference_path: Path,
@@ -173,22 +218,26 @@ def _check_freshness(
         # No reference clock — can't compute delta; treat as fresh so we
         # don't false-alarm on bootstrap tests / replays.
         return True
-    try:
-        input_mtime = input_path.stat().st_mtime
-        ref_mtime = reference_path.stat().st_mtime
-    except OSError as e:
-        # stat() failure is itself a degradation signal; surface it but
-        # don't block reading.
+    # R9 P5 B1: use content-timestamp (generated_at) when available,
+    # fall back to mtime. Pre-R9 the mtime-only path was a no-op in CI
+    # (actions/checkout flattens mtimes), so a multi-day-stale producer
+    # silently passed the freshness guard.
+    input_ts, input_src = _freshness_timestamp_seconds(input_path)
+    ref_ts, ref_src = _freshness_timestamp_seconds(reference_path)
+    if input_ts is None or ref_ts is None:
         warnings_acc.append({
             "subsystem": subsystem,
             "scope": "freshness",
             "record_id": f"file={input_path.name}",
             "exception_class": "Stale",
-            "message": f"stat() failed on {input_path.name}: {e}",
+            "message": (
+                f"freshness timestamp unreadable on {input_path.name} "
+                f"(input_src={input_src}, ref_src={ref_src})"
+            ),
             "ts": now_iso,
         })
         return False
-    age_delta_seconds = ref_mtime - input_mtime
+    age_delta_seconds = ref_ts - input_ts
     if age_delta_seconds <= max_age_hours * 3600.0:
         return True
     age_hours = age_delta_seconds / 3600.0
@@ -269,25 +318,25 @@ def get_matchday_freshness_warnings() -> list[dict]:
         })
         return out
 
-    # Stale check vs results_2026.json mtime — same reference clock as
-    # _check_freshness above.
-    try:
-        out_mtime = OUT_PATH.stat().st_mtime
-    except OSError as e:
+    # R9 P5 B1: content-timestamp (generated_at) preferred over mtime —
+    # see comment on _freshness_timestamp_seconds above. Pre-R9 the
+    # mtime path silently no-op'd in CI.
+    out_ts, out_src = _freshness_timestamp_seconds(OUT_PATH)
+    if out_ts is None:
         out.append({
             "type": "matchday_consolidated_unreadable",
             "message": (
-                f"stat() failed on {OUT_PATH.name}: {type(e).__name__}: {e}"
+                f"freshness timestamp unreadable on {OUT_PATH.name} "
+                f"(source={out_src})"
             ),
         })
         return out
 
     if results_path.exists():
-        try:
-            ref_mtime = results_path.stat().st_mtime
-        except OSError:
-            ref_mtime = out_mtime  # no reference → don't false-alarm
-        age_seconds = ref_mtime - out_mtime
+        ref_ts, _ = _freshness_timestamp_seconds(results_path)
+        if ref_ts is None:
+            ref_ts = out_ts  # no reference → don't false-alarm
+        age_seconds = ref_ts - out_ts
         if age_seconds > STALENESS_MAX_AGE_HOURS * 3600.0:
             age_hours = age_seconds / 3600.0
             out.append({
@@ -1242,8 +1291,13 @@ def append_audit_log(state: dict, workflow_run_id: str | None = None) -> None:
         ],
     }
     # Atomic append: open in 'a' mode is atomic for small writes on POSIX.
+    # R9 P3: allow_nan=False on the audit log writer. Pre-R9 R8 O2 hardened
+    # the canonical matchday_intelligence.json writer at :101 but the
+    # adjustments_log.jsonl audit trail used at :1246 still emitted NaN
+    # silently — operators inspecting the log to triage degradation would
+    # see literal "NaN" tokens with no fail-loud signal.
     with LOG_PATH.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        f.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
 
 
 # ── Public API for 03_simulate.py ───────────────────────────────────────

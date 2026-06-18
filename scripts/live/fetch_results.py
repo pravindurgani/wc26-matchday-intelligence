@@ -58,6 +58,7 @@ RAW = ROOT / "data" / "raw"
 # captured baselines under data/live/_provider_schemas/. Soft-mode by default —
 # drift logs a WARNING, does NOT crash the tick.
 from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+from scripts.live._knockout import load_knockout_fixtures  # noqa: E402  # R9 P4
 _SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
 
 LOCKED_STATUSES = {"FT", "AET", "PEN"}
@@ -163,7 +164,13 @@ def atomic_write_json(path: Path, payload: dict):
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2)
+        # R9 P3: allow_nan=False — reject NaN/Infinity at producer boundary
+        # so downstream consumers (apply_matchday_adjustments aggregator,
+        # 03_simulate live re-run) never read poisoned floats. Pre-R9 R8 O2
+        # only hardened the matchday writer; results_2026.json is read into
+        # locked_score / events tallies. A NaN home_score would silently
+        # propagate into the sim and emerge as NaN p_champion at the very end.
+        json.dump(payload, tmp, indent=2, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 
@@ -558,7 +565,19 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
 
     # Load our schedule for fuzzy fallback + date validation
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    schedule = cfg["group_stage_schedule"]
+    # R9 P4 A2: extend with KO bracket so KO match IDs (m=73..104) can be
+    # mapped from provider_fixture_map.json. Pre-R9 only group_stage_schedule
+    # was loaded — any KO fixture_id that mapped to m_id ∈ [73,104] hit the
+    # `sched = schedule_by_id.get(m_id)` line at the previous loop iteration
+    # and got silently dropped to `unmapped` with reason="m not in schedule".
+    # Net effect pre-R9: entire knockout phase invisible to fetch_results;
+    # results_2026.json.completed_matches frozen at 72; predictions_live
+    # never updates for any KO outcome; dashboard locks at pre-R32 state.
+    # KO entries have slot codes ("1A", "W74") in home/away — for KO output
+    # rows we use the provider's normalised team names directly (handled at
+    # the result-emission step below).
+    ko_schedule = load_knockout_fixtures()
+    schedule = cfg["group_stage_schedule"] + ko_schedule
     schedule_by_id = {f["m"]: f for f in schedule}
 
     out = []
@@ -632,12 +651,20 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
         referee_raw = fx.get("referee")
         referee = referee_raw.strip() if isinstance(referee_raw, str) else None
 
+        # R9 P4 A2: for KO matches (m >= 73), sched["home"]/["away"] are
+        # bracket slot codes ("1A", "W74") that are placeholders until
+        # results resolve them — emitting those into results_2026.json
+        # would be wrong (the simulator's locked_score path doesn't read
+        # home/away strings, but dashboards and audit logs do). Use the
+        # provider's normalised team names for KO; sched values for group
+        # (where sched["home"] matches normalize_team(home_raw) by design).
+        is_ko_match = int(m_id) >= 73
         out.append({
             "m": int(m_id),
             "provider_fixture_id": provider_fixture_id,
             "date": sched["date"],
-            "home": sched["home"],
-            "away": sched["away"],
+            "home": home if is_ko_match else sched["home"],
+            "away": away if is_ko_match else sched["away"],
             "home_score": int(gh) if isinstance(gh, int) else None,
             "away_score": int(ga) if isinstance(ga, int) else None,
             "home_pens": home_pens,
@@ -656,6 +683,18 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
         print(f"[fetch_results] {len(unmapped)} unmapped provider fixtures (likely friendlies)")
         for u in unmapped[:3]:
             print(f"  ? {u}")
+        # R9 P4 A2: louder warning when an unmapped fixture has a date in the
+        # KO window. Pre-R9 those silently dropped; if R32 kickoff (2026-06-28)
+        # passes and a KO match still isn't in provider_fixture_map.json,
+        # operator MUST rebuild via scripts/live/build_provider_fixture_map.py
+        # or KO results never lock and the dashboard freezes at end-of-groups.
+        ko_unmapped = [u for u in unmapped if (u.get("date") or "") >= "2026-06-28"]
+        if ko_unmapped:
+            print(f"[fetch_results] CRITICAL: {len(ko_unmapped)} unmapped fixtures "
+                  f"in KO window (date>=2026-06-28). Rebuild provider_fixture_map.json "
+                  f"or KO results will not lock. Sample:", file=sys.stderr)
+            for u in ko_unmapped[:5]:
+                print(f"  KO-unmapped: {u}", file=sys.stderr)
 
     return out
 
@@ -706,7 +745,9 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
 
     fixture_map = load_fixture_map() or {}
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    schedule = cfg["group_stage_schedule"]
+    # R9 P4 A2: extend with KO bracket (same closure as fetch_apifootball above).
+    ko_schedule = load_knockout_fixtures()
+    schedule = cfg["group_stage_schedule"] + ko_schedule
     schedule_by_id = {f["m"]: f for f in schedule}
 
     out: list[dict] = []
@@ -778,12 +819,14 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
             print(f"[fetch_results] WARN: M{m_id} status=PEN but no winner field — skipping")
             continue
 
+        # R9 P4 A2: KO matches use provider team names (sched has slot codes).
+        is_ko_match = int(m_id) >= 73
         out.append({
             "m": int(m_id),
             "provider_fixture_id": provider_id,
             "date": sched["date"],
-            "home": sched["home"],
-            "away": sched["away"],
+            "home": home if is_ko_match else sched["home"],
+            "away": away if is_ko_match else sched["away"],
             "home_score": int(gh) if isinstance(gh, int) else None,
             "away_score": int(ga) if isinstance(ga, int) else None,
             "home_pens": home_pens,
@@ -801,6 +844,14 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
         print(f"[fetch_results] {len(unmapped)} unmapped football-data fixtures (likely friendlies)")
         for u in unmapped[:3]:
             print(f"  ? {u}")
+        # R9 P4 A2: same KO-window critical warning as fetch_apifootball.
+        ko_unmapped = [u for u in unmapped if (u.get("date") or "") >= "2026-06-28"]
+        if ko_unmapped:
+            print(f"[fetch_results] CRITICAL: {len(ko_unmapped)} unmapped fixtures "
+                  f"in KO window (date>=2026-06-28). Rebuild provider_fixture_map.json "
+                  f"or KO results will not lock.", file=sys.stderr)
+            for u in ko_unmapped[:5]:
+                print(f"  KO-unmapped: {u}", file=sys.stderr)
 
     return out
 
