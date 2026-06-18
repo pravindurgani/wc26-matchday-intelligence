@@ -275,6 +275,22 @@ jobs:
           git commit -m "matchday-intel: refresh @ $(date -u +%Y-%m-%dT%H:%MZ)"
           # Explicit refspec — main is production for this repo.
           BRANCH="main"
-          git pull --rebase origin "$BRANCH" || echo "Rebase failed — pushing anyway."
-          git push origin "HEAD:$BRANCH" || echo "Push failed — will retry next 3h tick."
+          # PUSH-RACE FIX: Mirrors the live-matchday.yml hardened pattern.
+          # `--autostash` is defensive-only here (slow workflow doesn't run
+          # the simulator so data/processed/ should stay clean), but matches
+          # the fast-workflow shape so the two stay symmetrical.
+          git pull --rebase --autostash origin "$BRANCH" || echo "Rebase failed — pushing anyway."
+          # R4: surface push failures instead of swallowing them with
+          # `|| echo ...; exit 0`. Previously the job went green even when
+          # the commit never reached origin, silently freezing the matchday
+          # intel files (injuries / weather / lineups / referee /
+          # suspensions). Recovery is still automatic — next tick re-runs
+          # all producers idempotently and re-stages the equivalent commit —
+          # but the failure is now visible in the Actions UI so a human
+          # watching can investigate a stuck push (auth / branch protection
+          # / non-fast-forward storm) instead of trusting a false-green.
+          if ! git push origin "HEAD:$BRANCH"; then
+            echo "::error::git push to $BRANCH failed — matchday intel not refreshed this tick. Next scheduled tick will retry."
+            exit 1
+          fi
           exit 0
