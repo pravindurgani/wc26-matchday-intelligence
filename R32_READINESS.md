@@ -1,14 +1,18 @@
-# R32 Readiness Checklist — Post Pressure-Test R4
+# R32 Readiness Checklist — Post Pressure-Test R5
 
-**Date**: 2026-06-17 (T-11 days from R32 first kickoff: 2026-06-28)
+**Date**: 2026-06-18 (T-10 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1086 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Suite**: **1090 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
 **Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
 **Round 3 closure**: all 4 HIGH-severity audit findings closed
 (H1 launchd plist, H2 crash-path freshness, H3 HTTP retries, H4 rate limiter) — see `PRESSURE_TEST_R3.md`
 **Round 4 closure**: 5-agent adversarial sweep + 1 monitor agent verified;
 single genuine HIGH (G1: slow-workflow push-failure observability) closed; 10 reported-but-not-genuine findings documented in `PRESSURE_TEST_R4.md`
+**Round 5 closure**: 5-agent orthogonal sweep + 1 monitor + 1 independent verifier;
+three genuine findings closed (C6 HIGH: fast-path event enrichment; C1 MEDIUM:
+silent provider preservation; C4 MEDIUM: per-record degradation rollup);
+~10 reported-but-not-genuine findings documented in `PRESSURE_TEST_R5.md`
 
 ---
 
@@ -58,6 +62,9 @@ single genuine HIGH (G1: slow-workflow push-failure observability) closed; 10 re
 | 40 | **R3 (H3):** shared HTTP retry helper across all 5 fetchers (3 attempts, exponential backoff on 5xx/URLError/TimeoutError/ConnectionError; no retry on 4xx) | ✓ | `scripts/live/_http_client.py:60-101` + 4 fetcher shims | `test_http_client.py` (+13 H3 tests incl. 4xx-no-retry parametrized + 4-fetcher delegation pin) |
 | 41 | **R3 (H4):** `fetch_player_stats` per-team fan-out rate-limited via shared `RateLimiter(0.15s)` — global throttle, not per-team | ✓ | `scripts/live/_http_client.py:103-140` + `scripts/live/fetch_player_stats.py:302-403` | `test_http_client.py` (+7 H4 tests: RateLimiter semantics + acquire-per-page + shared-limiter pinning) |
 | 42 | **R4 (G1):** slow-workflow push failures surface via `::error::` + `exit 1` (mirrors fast workflow); job no longer goes green when commit doesn't reach origin | ✓ | `.github/workflows/matchday-intel-slow.yml:278-296` | YAML-validated; pattern parity verified against `.github/workflows/live-matchday.yml:283-298` |
+| 43 | **R5 (C6):** fast-path `fetch_results` passes `--with-events`; card events from in-play matches that lock during a fast tick reach `suspension_tracker` on the SAME tick (not 3h later) | ✓ | `scripts/live/run_live_update.py:447-458` | `test_fast_path_freshness.py::test_r5_c6_fast_path_fetch_results_uses_with_events` (static-source pin) |
+| 44 | **R5 (C1):** silent provider preservation (HTTP 200 + empty body, no exception) emits `provider_returned_nothing` warning into preserved file's `warnings[]` and refreshes mtime; orchestrator's `get_results_warnings()` surfaces it to `live_state.json` | ✓ | `scripts/live/fetch_results.py:985-1010` | `test_fast_path_freshness.py::test_r5_c1_provider_returned_nothing_warning_pinned_in_source` (asserts literal + atomic_write_json call) |
+| 45 | **R5 (C4):** per-record degradations (scope='record' in matchday_intelligence.json's degradation_warnings[]) surface as a single `matchday_record_degradation` rollup warning with `count` + `by_subsystem` breakdown; sustained data-quality drops no longer silent | ✓ | `scripts/live/apply_matchday_adjustments.py:294-359` | `test_fast_path_freshness.py::test_r5_c4_per_record_degradation_rollup_emitted` + `test_r5_c4_zero_record_degradations_no_rollup` (positive + negative cases) |
 
 ---
 

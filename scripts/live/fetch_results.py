@@ -982,12 +982,29 @@ def main() -> int:
     if args.dry_run:
         print("[fetch_results] dry-run — no file written")
         return 0
-    # Preserve existing locked data if provider returned nothing useful
+    # Preserve existing locked data if provider returned nothing useful.
+    # R5 C1: emit an explicit `provider_returned_nothing` warning into the
+    # preserved file so the orchestrator's get_results_warnings() surfaces it
+    # to live_state.json. Without this the silent-failure mode (provider
+    # returns HTTP 200 + empty body with no parser-side warning — e.g.
+    # auth token silently expired, or API serving cached empty response)
+    # leaves results_2026.json untouched AND the dashboard unaware.
     if not valid and not warnings_list and out_path.exists():
         try:
             existing = json.loads(out_path.read_text())
             if existing.get("completed_matches"):
                 print("[fetch_results] adapter returned nothing useful; preserving existing locked matches")
+                existing.setdefault("warnings", []).append({
+                    "type": "provider_returned_nothing",
+                    "message": (
+                        f"Provider '{src}' returned 0 matches with no warnings; "
+                        f"existing locked matches preserved. Investigate the "
+                        f"adapter / provider token if this persists across ticks."
+                    ),
+                })
+                existing["updated_at"] = datetime.now(timezone.utc).isoformat()
+                existing["source"] = src
+                atomic_write_json(out_path, existing)
                 return 0
         except Exception:
             pass

@@ -307,6 +307,16 @@ def get_matchday_freshness_warnings() -> list[dict]:
 
     deg = consolidated.get("degradation_warnings") or []
     stale_subs: list[str] = []
+    # R5 C4: also track per-record degradations. The freshness/subsystem
+    # filter below catches subsystem-wide collapse, but a sustained stream
+    # of per-record failures (NaN xG on many players, malformed lineup
+    # entries from a provider schema drift, etc.) stays embedded in
+    # matchday_intelligence.json with no signal to the dashboard. The
+    # subsystem still degrades to neutral per-record, but the operator
+    # never knows the data quality dropped. Emit a single rollup warning
+    # so the dashboard surfaces "N per-record degradations" without
+    # spamming live_state.json with one entry per record.
+    record_degradations: dict[str, int] = {}
     for w in deg:
         if not isinstance(w, dict):
             continue
@@ -314,6 +324,9 @@ def get_matchday_freshness_warnings() -> list[dict]:
             sub = w.get("subsystem")
             if sub and sub not in stale_subs:
                 stale_subs.append(sub)
+        elif w.get("scope") == "record":
+            sub = w.get("subsystem") or "unknown"
+            record_degradations[sub] = record_degradations.get(sub, 0) + 1
     if stale_subs:
         out.append({
             "type": "matchday_subsystem_stale",
@@ -326,6 +339,23 @@ def get_matchday_freshness_warnings() -> list[dict]:
                 "fetch_player_stats) in matchday-intel-slow.yml."
             ),
             "subsystems": stale_subs,
+        })
+    if record_degradations:
+        total = sum(record_degradations.values())
+        breakdown = ", ".join(
+            f"{sub}={n}" for sub, n in sorted(record_degradations.items())
+        )
+        out.append({
+            "type": "matchday_record_degradation",
+            "message": (
+                f"Per-record degradations: {total} records skipped across "
+                f"subsystems ({breakdown}). Records were skipped per the "
+                f"_degrade.py allowlist; subsystem still produced neutral "
+                f"output for them. See matchday_intelligence.json:"
+                f"degradation_warnings for per-record details."
+            ),
+            "count": total,
+            "by_subsystem": record_degradations,
         })
 
     return out

@@ -422,3 +422,147 @@ def test_h2_crash_handler_appends_freshness_to_crash_warning() -> None:
         f"so the merged list (crash entry + freshness entries) reaches "
         f"live_state.json. Crash block:\n{crash_block[:600]}"
     )
+
+
+# ────────────────────────────────────── R5 C6: fast-path event enrichment
+# Audit found that the fast (10-min) workflow's fetch_results call did NOT
+# pass --with-events. Card events from in-play matches that lock during a
+# fast tick stayed null in results_2026.json until the next slow (3h) tick,
+# meaning suspension_tracker could not see them for up to 3h. With R32
+# starting 2026-06-28 the suspension data must be timely; a player who
+# picks up his 2nd yellow in a fast-tick-locked match must be in
+# suspensions_2026.json before the next opponent's win-prob calculation.
+def test_r5_c6_fast_path_fetch_results_uses_with_events() -> None:
+    """The orchestrator's fetch_results invocation at the top of main()
+    must pass --with-events so card events land in results_2026.json on
+    the SAME tick the match locks (not 3h later via the slow workflow)."""
+    src = _read_source()
+    # Locate the fetch_cmd construction.
+    fc_idx = src.find('fetch_cmd = [sys.executable, "scripts/live/fetch_results.py"')
+    assert fc_idx > 0, "fetch_cmd construction not found in run_live_update.main()"
+    # Take a small window after the assignment to inspect the literal.
+    fc_block = src[fc_idx:fc_idx + 200]
+    assert "--with-events" in fc_block, (
+        "fast-path fetch_cmd missing --with-events flag — card events from "
+        "matches that lock during a fast tick won't reach suspension_tracker "
+        "until the next slow (3h) tick. R5 audit C6."
+    )
+
+
+# ────────────────────────────────────── R5 C4: per-record degradation rollup
+# Audit found that per-record degradations (scope='record' in
+# matchday_intelligence.json's degradation_warnings[]) were silently
+# filtered out by get_matchday_freshness_warnings — only freshness/subsystem
+# scoped warnings propagated. A sustained stream of per-record failures
+# (e.g. provider schema drift breaking N injury parses) stayed embedded in
+# matchday_intelligence.json with no signal to the dashboard. The fix
+# emits a single rollup warning `matchday_record_degradation` so the
+# operator sees the data-quality drop without spamming live_state.json
+# with one entry per record.
+def test_r5_c4_per_record_degradation_rollup_emitted(isolated_paths) -> None:
+    """A non-empty stream of per-record degradations (scope='record') in
+    matchday_intelligence.json must surface as a single
+    `matchday_record_degradation` rollup warning, with a count and a
+    per-subsystem breakdown."""
+    mod, dash_dir, live_dir = isolated_paths
+    out_path = dash_dir / "matchday_intelligence.json"
+    embedded = [
+        {
+            "subsystem": "injury",
+            "scope": "record",
+            "record_id": "player=Pedri",
+            "exception_class": "KeyError",
+            "message": "injury record missing 'team'",
+            "ts": "2026-06-17T12:00:00+00:00",
+        },
+        {
+            "subsystem": "injury",
+            "scope": "record",
+            "record_id": "player=Lamine",
+            "exception_class": "ValueError",
+            "message": "NaN xG",
+            "ts": "2026-06-17T12:00:00+00:00",
+        },
+        {
+            "subsystem": "referee",
+            "scope": "record",
+            "record_id": "ref=Webb",
+            "exception_class": "TypeError",
+            "message": "expected float, got str",
+            "ts": "2026-06-17T12:00:00+00:00",
+        },
+    ]
+    out_path.write_text(json.dumps(_make_consolidated_blob(embedded)))
+    results_path = live_dir / "results_2026.json"
+    results_path.write_text(json.dumps({"completed_matches": []}))
+    _set_relative_age(out_path, results_path, hours_older=1.0)  # fresh
+    warnings = mod.get_matchday_freshness_warnings()
+    types = [w["type"] for w in warnings]
+    assert "matchday_record_degradation" in types, (
+        f"per-record degradations did NOT surface as rollup — types={types}"
+    )
+    # Rollup should NOT also fire matchday_subsystem_stale (per-record !=
+    # subsystem-wide collapse).
+    assert "matchday_subsystem_stale" not in types, (
+        "per-record degradations must NOT trigger matchday_subsystem_stale "
+        "(that's reserved for subsystem-wide collapse / freshness)"
+    )
+    rd = next(w for w in warnings if w["type"] == "matchday_record_degradation")
+    assert rd["count"] == 3, f"expected count=3, got {rd.get('count')!r}"
+    assert rd["by_subsystem"] == {"injury": 2, "referee": 1}, (
+        f"per-subsystem breakdown wrong: {rd.get('by_subsystem')!r}"
+    )
+
+
+def test_r5_c4_zero_record_degradations_no_rollup(isolated_paths) -> None:
+    """Negative case: a fresh tick with no per-record degradations must
+    NOT spuriously emit the rollup warning."""
+    mod, dash_dir, live_dir = isolated_paths
+    out_path = dash_dir / "matchday_intelligence.json"
+    out_path.write_text(json.dumps(_make_consolidated_blob()))
+    results_path = live_dir / "results_2026.json"
+    results_path.write_text(json.dumps({"completed_matches": []}))
+    _set_relative_age(out_path, results_path, hours_older=0.5)
+    warnings = mod.get_matchday_freshness_warnings()
+    types = [w["type"] for w in warnings]
+    assert "matchday_record_degradation" not in types
+
+
+# ────────────────────────────────────── R5 C1: provider_returned_nothing warning
+# Audit found that fetch_results.py's preservation branch (provider returned
+# zero matches AND no warnings, existing file present) would print to stdout
+# but emit NO structured warning. The orchestrator's get_results_warnings()
+# returned [] and live_state.json carried no signal. Most provider error
+# paths DO produce warnings, but a silent-empty case (e.g., auth token
+# expired returning HTTP 200 with empty body) escaped the freshness guard
+# entirely because the file mtime wasn't updated either. Fix: when the
+# preservation branch fires, write a structured `provider_returned_nothing`
+# warning into the preserved file's warnings array AND update the mtime so
+# get_results_warnings() surfaces it.
+def test_r5_c1_provider_returned_nothing_warning_pinned_in_source() -> None:
+    """Static pin: the preservation branch in fetch_results.py must emit
+    a `provider_returned_nothing` warning so the orchestrator's
+    get_results_warnings() can surface it to live_state.json. A revert
+    to print-only would mask silent provider failures (200/empty-body
+    cases like expired auth tokens that don't raise HTTPError)."""
+    src = (ROOT / "scripts" / "live" / "fetch_results.py").read_text()
+    # The preservation branch is gated on `if not valid and not warnings_list`.
+    branch_idx = src.find("if not valid and not warnings_list and out_path.exists():")
+    assert branch_idx > 0, "preservation branch missing in fetch_results.py"
+    # Inspect the branch body up to the next blank-line-separated block.
+    branch_end = src.find("\n    # ", branch_idx + 1)
+    assert branch_end > branch_idx, "could not locate branch end"
+    branch_body = src[branch_idx:branch_end]
+    assert '"provider_returned_nothing"' in branch_body, (
+        "preservation branch missing provider_returned_nothing warning — "
+        "a silent-empty provider response (HTTP 200 + empty body, no "
+        "exception) will preserve the file without ANY signal reaching "
+        "live_state.json. R5 audit C1."
+    )
+    # And it must actually WRITE the updated file (atomic_write_json),
+    # otherwise the warning lands nowhere and mtime stays stale.
+    assert "atomic_write_json(out_path, existing)" in branch_body, (
+        "preservation branch must atomic_write_json the preserved file "
+        "with the new warning + updated_at; otherwise the warning never "
+        "lands on disk and freshness guards never re-probe."
+    )

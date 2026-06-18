@@ -444,8 +444,18 @@ def main() -> int:
                                   + mf_warnings)
         return 2
 
-    # Step 1: fetch results (pass --dry-run through)
-    fetch_cmd = [sys.executable, "scripts/live/fetch_results.py"]
+    # Step 1: fetch results (pass --dry-run through). R5 C6: also enrich with
+    # `--with-events` so a newly-locked FT match's card events land in
+    # results_2026.json on the SAME tick. Without this flag the fast (10-min)
+    # path captures score+status only; events stay null until the slow (3h)
+    # tick re-runs fetch_results --with-events. That gap means
+    # suspension_tracker sees a stale events array for up to 3h, so a player
+    # who picks up his 2nd yellow in a fast-tick-locked match is NOT in
+    # suspensions_2026.json for the next R32 opponent's win-prob calculation.
+    # Cost is bounded: enrich_matches_with_events skips matches that already
+    # have events (existing_events_by_m cache), so worst case ≈ 1-2 extra
+    # /fixtures/events calls per fast tick (one per new FT match).
+    fetch_cmd = [sys.executable, "scripts/live/fetch_results.py", "--with-events"]
     if args.dry_run:
         fetch_cmd.append("--dry-run")
     rc = run(fetch_cmd)
