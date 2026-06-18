@@ -1114,6 +1114,52 @@ class TestFreshnessGuard(unittest.TestCase):
         self.assertEqual(amd.STALENESS_MAX_AGE_HOURS, 6.0)
 
 
+# R8 O2: matchday_intelligence.json writer rejects NaN / Infinity at the
+# producer side. Pre-R8, CPython json round-tripped Infinity silently
+# (json.loads("Infinity") → inf), so an upstream numerical bug could write
+# Inf and have it propagate into 03_simulate's base_intel_plus_state →
+# predict_lambdas → nbinom.pmf → NaN p_champion. Fail-loud on the write
+# now; clean runs unaffected.
+class TestR8O2AllowNanFalse(unittest.TestCase):
+    def test_atomic_write_rejects_infinity(self):
+        """A producer that accidentally emits Infinity must raise at the
+        write boundary, not silently round-trip through json and corrupt
+        downstream model lookups."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            target = Path(tmp_dir) / "matchday_intelligence.json"
+            payload = {
+                "generated_at": "2026-06-18T00:00:00+00:00",
+                "schema_version": 1,
+                "active_adjustments": [
+                    {"team": "MEX", "total_elo_adjustment": float("inf")},
+                ],
+            }
+            with self.assertRaises(ValueError):
+                amd._atomic_write_json(target, payload)
+            # And no .tmp file should be lingering committed in target.
+            self.assertFalse(target.exists(),
+                             "no atomically-replaced file should exist on rejected write")
+
+    def test_atomic_write_rejects_nan(self):
+        """Same fail-loud semantics for NaN — the silent-NaN-in,
+        silent-NaN-out pipeline is exactly what R8 O2 closes."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            target = Path(tmp_dir) / "matchday_intelligence.json"
+            payload = {"summary": {"net": float("nan")}}
+            with self.assertRaises(ValueError):
+                amd._atomic_write_json(target, payload)
+
+    def test_atomic_write_accepts_clean_finite_floats(self):
+        """Negative case: a clean payload round-trips. R8 O2 changes
+        nothing for any tick that doesn't carry NaN/Inf."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            target = Path(tmp_dir) / "matchday_intelligence.json"
+            payload = {"summary": {"net": 1.5, "ratio": 0.0, "min": -3.14}}
+            amd._atomic_write_json(target, payload)
+            self.assertTrue(target.exists())
+            self.assertEqual(json.loads(target.read_text())["summary"]["net"], 1.5)
+
+
 def _summary(result):
     print()
     print(f"  Ran {result.testsRun} tests")

@@ -849,3 +849,47 @@ def test_r6_m2_crash_handler_carries_provider_fallback_warning() -> None:
         "crash that occurs while the provider key is missing will surface "
         "the crash but hide the WHY signal. R6 audit M2 follow-up."
     )
+
+
+# R8 O1: sim subprocess stderr must flow into the operator-visible
+# sim_failure warning. Pre-R8 the R7 N1 RuntimeError diagnostic landed
+# only in CI logs — operators saw a generic pill with no hint about
+# annex_c miss / fallback exhaustion / config file to inspect.
+def test_r8_o1_run_capture_helper_exists_and_returns_rc_plus_stderr(
+    tmp_path: Path,
+) -> None:
+    """run_capture() returns (rc, stderr_text). Functional unit test:
+    invoke a child Python that writes to stderr and exits non-zero;
+    verify both fields come back."""
+    import run_live_update as rlu  # type: ignore[import-not-found]
+    rc, stderr = rlu.run_capture([
+        sys.executable, "-c",
+        "import sys; sys.stderr.write('R8 O1 marker\\n'); sys.exit(2)",
+    ])
+    assert rc == 2
+    assert "R8 O1 marker" in stderr
+
+
+def test_r8_o1_sim_failure_warning_includes_stderr_tail_pinned_in_source() -> None:
+    """Static pin: the sim subprocess invocation must use run_capture()
+    (not the plain run()), AND the constructed sim_failure warning must
+    fold stderr into the message. A revert to run() breaks the operator
+    observability path the R7 N1 diagnostic relies on."""
+    src = _read_source()
+    sim_idx = src.find("scripts/03_simulate.py")
+    assert sim_idx > 0, "sim invocation not found"
+    # The line immediately around the sim subprocess must be run_capture.
+    sim_block = src[max(0, sim_idx - 400):sim_idx + 600]
+    assert "run_capture(" in sim_block, (
+        "sim subprocess invocation must use run_capture() so stderr "
+        "can flow into the sim_failure warning. R8 audit O1."
+    )
+    # And the sim_failure warning must read stderr into its message.
+    sf_idx = src.find('"type": "sim_failure"')
+    assert sf_idx > 0
+    sf_block = src[max(0, sf_idx - 400):sf_idx + 400]
+    assert "stderr_tail" in sf_block or "sim_stderr" in sf_block, (
+        "sim_failure warning must fold captured stderr into the message; "
+        "otherwise the R7 N1 RuntimeError diagnostic is invisible to "
+        "operators (lands only in CI logs). R8 audit O1."
+    )

@@ -82,13 +82,23 @@ GRAND_TOTAL_CAP = 45.0          # + live_team_state delta
 
 
 def _atomic_write_json(path: Path, payload: dict) -> None:
-    """Same atomic write pattern as fetch_results / run_live_update."""
+    """Same atomic write pattern as fetch_results / run_live_update.
+
+    R8 O2: allow_nan=False rejects NaN / Infinity at the producer side. The
+    matchday_intelligence.json file feeds 03_simulate's `base_intel_plus_state`
+    lookup at predict_lambdas; pre-R8 a corrupted upstream that produced an
+    Infinity elo adjustment would silently round-trip through json (CPython
+    accepts/emits Infinity by default) and propagate NaN into nbinom.pmf and
+    onward to a NaN p_champion in the dashboard. Fail-loud on the WRITE
+    instead of fail-silent-NaN on the READ. Clean runs are unaffected; this
+    only fires when something upstream has already broken.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2, ensure_ascii=False)
+        json.dump(payload, tmp, indent=2, ensure_ascii=False, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 

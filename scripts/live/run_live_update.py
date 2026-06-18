@@ -72,6 +72,28 @@ def run(cmd: list[str]) -> int:
     return subprocess.run(cmd, cwd=str(ROOT)).returncode
 
 
+def run_capture(cmd: list[str]) -> tuple[int, str]:
+    """Like run() but captures stderr so failure context can flow into the
+    operator-visible sim_failure warning. Use ONLY when the captured stderr
+    is needed in the dashboard payload — for most subprocess calls plain
+    run() (which inherits stderr to CI logs) is sufficient.
+
+    R8 O1: pre-R8 the R7 N1 RuntimeError diagnostic (e.g. "annex_c miss +
+    fallback exhausted: ... unused thirds=... check ...") printed to stderr
+    but was lost between the simulator subprocess and the dashboard —
+    operators saw a generic "sim_failure" pill with no hint that the
+    underlying cause was a third-place fallback exhaustion. Capturing stderr
+    here lets the sim_failure warning carry the actual subprocess error
+    tail. Captured stderr is also tee'd to this process's stderr so CI
+    logs still see the full output.
+    """
+    print(f"  → {' '.join(cmd)}")
+    res = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True)
+    if res.stderr:
+        sys.stderr.write(res.stderr)
+    return res.returncode, (res.stderr or "")
+
+
 def _matchday_freshness_warnings_safe() -> list[dict]:
     """Wave R2 P1c: probe matchday freshness without ever crashing the tick.
 
@@ -626,18 +648,26 @@ def main() -> int:
     # fidelity here — fidelity drift is silent and erodes trust; cadence
     # drift is at most a freshness lag.
     print(f"[run_live_update] {new_count} matches completed, re-simulating…")
-    rc = run([sys.executable, "scripts/03_simulate.py",
-              "--live", "--seeds", "5", "--sims", "5000",
-              "--out", "predictions_live.json"])
+    # R8 O1: capture sim stderr so a typed RuntimeError (e.g. R7 N1 third-
+    # place fallback exhaustion) surfaces in the operator-visible warning,
+    # not just CI logs. The tail (last 500 chars) keeps the live_state.json
+    # payload bounded.
+    rc, sim_stderr = run_capture([sys.executable, "scripts/03_simulate.py",
+                                  "--live", "--seeds", "5", "--sims", "5000",
+                                  "--out", "predictions_live.json"])
     if rc != 0:
         new_failures = failures + 1
         write_circuit_breaker(new_failures)
+        sim_msg = (f"Live simulation failed ({new_failures}/{CB_THRESHOLD}); "
+                   "previous predictions_live.json retained.")
+        stderr_tail = (sim_stderr or "").strip()
+        if stderr_tail:
+            sim_msg += f" Last stderr: {stderr_tail[-500:]}"
         write_live_state("live" if new_count > 0 else "pre_tournament",
                          new_count, sim_rerun=False,
                          warnings=warns + [{
                              "type": "sim_failure",
-                             "message": f"Live simulation failed ({new_failures}/{CB_THRESHOLD}); "
-                                        "previous predictions_live.json retained.",
+                             "message": sim_msg,
                          }])
         return 1
 

@@ -1,8 +1,8 @@
-# R32 Readiness Checklist — Post Pressure-Test R7
+# R32 Readiness Checklist — Post Pressure-Test R8
 
 **Date**: 2026-06-18 (T-10 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1105 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Suite**: **1110 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
 **Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
 **Round 3 closure**: all 4 HIGH-severity audit findings closed
@@ -27,6 +27,18 @@ first_seen_utc backfill for pre-R6 legacy warning entries during deploy
 windows); ~5 reported-but-not-genuine findings (PYTHONHASHSEED advisory,
 constants duplication re-flag, atomic-write race, etc.) documented in
 `PRESSURE_TEST_R7.md`
+**Round 8 closure**: 5-agent orthogonal sweep (concurrency/atomicity,
+resource exhaustion, schema evolution, operator UX, R7 integration probe) +
+1 monitor agent verified; two genuine improvements landed (O1: sim
+subprocess stderr captured + folded into operator-visible sim_failure
+warning so R7 N1 diagnostics surface on dashboard, not just CI logs; O2:
+`allow_nan=False` on matchday_intelligence.json writer rejects NaN/Inf at
+producer side rather than silently round-tripping into model lookups);
+~12 reported-but-not-genuine findings (tempfile leak via .tmp,
+stat-fallback inversion, schema_version drift, warning UX redesign,
+naive datetime, etc.) documented in `PRESSURE_TEST_R8.md`; A4 warning
+severity/dedup/cap/ordering deferred to a planned UX iteration outside
+pressure-test scope
 
 ---
 
@@ -84,6 +96,8 @@ constants duplication re-flag, atomic-write race, etc.) documented in
 | 48 | **R7 (N1):** if `annex_c` lookup misses AND the FIFA-rank fallback cannot fill all 8 third-place slots (corrupted slot_pools yaml, empty group eligibility), the sim raises a diagnostic `RuntimeError` naming `assigned slots`, `unused thirds`, and the config files to check — pre-R7 behaviour produced `None` team identifiers that crashed opaquely inside `knock_matrices[(None, None)]` ~25 lines later | ✓ | `scripts/03_simulate.py:447-470` | covered by full-simulation runs (any third-place lookup miss now fails fast at the assignment site rather than at the knockout fixture site) |
 | 49 | **R7 (N2):** end-to-end functional test for R6 M3 dedup path — drives `fetch_results.main()` twice with a silent-empty mock, asserts warnings[] never grows past 1 entry, count climbs 1→2, `first_seen_utc` is preserved across ticks, `last_seen_utc` is monotonic non-decreasing, `completed_matches` preserved. Complements the existing R6 static-pin which only proves the literals exist in source | ✓ | `tests/live/test_fast_path_freshness.py::test_r6_m3_dedup_two_ticks_bumps_count_not_appends` (functional) + `test_r6_m3_provider_returned_nothing_dedup_pinned_in_source` (static pin, R6) | both green |
 | 50 | **R7 (N3):** during the R6 dedup bump path, `first_seen_utc` is `setdefault`-backfilled on any pre-R6 legacy warning entry that was written before the dedup fields existed (e.g. an outage already in progress when R6 deployment lands); without the backfill, post-deploy ticks would bump count + last_seen_utc but leave `first_seen_utc` undefined, breaking dashboard onset-time display | ✓ | `scripts/live/fetch_results.py:1011-1019` | `tests/live/test_fast_path_freshness.py::test_r7_n3_first_seen_utc_backfilled_on_legacy_warning` (seeds legacy entry shape, drives bump, asserts backfill) |
+| 51 | **R8 (O1):** sim subprocess stderr is captured via new `run_capture()` helper and the last 500 chars of stderr are folded into the operator-visible `sim_failure` warning message. Pre-R8 the R7 N1 RuntimeError diagnostic (annex_c miss + fallback exhausted + unused thirds + config files to check) printed to inherited stderr and landed only in CI logs; operators saw a generic "Live simulation failed (X/Y)" pill with no hint about the underlying cause. Now the diagnostic flows all the way to `live_state.json` | ✓ | `scripts/live/run_live_update.py:75-94` (helper) + `:633-651` (sim call + warning enrich) | `tests/live/test_fast_path_freshness.py::test_r8_o1_run_capture_helper_exists_and_returns_rc_plus_stderr` (functional) + `test_r8_o1_sim_failure_warning_includes_stderr_tail_pinned_in_source` (static pin on both `run_capture` use + stderr_tail fold) |
+| 52 | **R8 (O2):** `apply_matchday_adjustments._atomic_write_json` adds `allow_nan=False` to the json.dump call. CPython silently round-trips `Infinity`/`NaN` through json (`json.loads("Infinity")` → `inf`), so an upstream numerical edge case in any rollup (injuries/suspensions/referee/weather/stats-proxy) that produced NaN or Inf would silently corrupt matchday_intelligence.json and propagate via `base_intel_plus_state.get(h, 0.0)` (unguarded) into `predict_lambdas` → `nbinom.pmf` → NaN p_champion. Fail-loud on the WRITE side instead of fail-silent-NaN on the READ side; the R4 math.isfinite guard at injury_adjustments.py:481 only covers ONE input (per-team injury elo). Clean runs unaffected — allow_nan=False is a no-op on finite payloads | ✓ | `scripts/live/apply_matchday_adjustments.py:91` | `tests/live/test_apply_matchday_adjustments.py::TestR8O2AllowNanFalse` (3 tests: rejects Infinity, rejects NaN, accepts finite floats) |
 
 ---
 
