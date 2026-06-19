@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-19T19:52:52.644988+00:00",
+  "generated_at": "2026-06-19T22:05:42.882367+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
@@ -12,7 +12,7 @@
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
       "away_adjustment_reason": null,
-      "baseline_source": "none:first_recorded_xi",
+      "baseline_source": "lineups_2026.json:prior_match",
       "home_xi": [
         {
           "id": 50728,
@@ -39,10 +39,10 @@
           "pos": "D"
         },
         {
-          "id": 19549,
-          "name": "Antonee Robinson",
-          "number": 5,
-          "pos": "D"
+          "id": 38735,
+          "name": "Sergiño Dest",
+          "number": 2,
+          "pos": "M"
         },
         {
           "id": 415,
@@ -63,10 +63,10 @@
           "pos": "M"
         },
         {
-          "id": 38735,
-          "name": "Sergiño Dest",
-          "number": 2,
-          "pos": "F"
+          "id": 19549,
+          "name": "Antonee Robinson",
+          "number": 5,
+          "pos": "M"
         },
         {
           "id": 138835,
@@ -149,7 +149,154 @@
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-19T19:52:52.461886+00:00"
+      "captured_at": "2026-06-19T22:05:42.634984+00:00"
+    },
+    {
+      "match_id": 30,
+      "home": "Scotland",
+      "away": "Morocco",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 18933,
+          "name": "Angus Gunn",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 19066,
+          "name": "Grant Hanley",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 1111,
+          "name": "Jack Hendry",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 1117,
+          "name": "Kieran Tierney",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 138417,
+          "name": "Nathan Patterson",
+          "number": 22,
+          "pos": "M"
+        },
+        {
+          "id": 903,
+          "name": "Scott McTominay",
+          "number": 4,
+          "pos": "M"
+        },
+        {
+          "id": 44814,
+          "name": "Lewis Ferguson",
+          "number": 19,
+          "pos": "M"
+        },
+        {
+          "id": 289,
+          "name": "Andy Robertson",
+          "number": 3,
+          "pos": "M"
+        },
+        {
+          "id": 19191,
+          "name": "John McGinn",
+          "number": 7,
+          "pos": "F"
+        },
+        {
+          "id": 1125,
+          "name": "Ryan Christie",
+          "number": 11,
+          "pos": "F"
+        },
+        {
+          "id": 19524,
+          "name": "Che Adams",
+          "number": 10,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 2701,
+          "name": "Bono",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 9,
+          "name": "Achraf Hakimi",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 18814,
+          "name": "Issa Diop",
+          "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 278898,
+          "name": "Chadi Riad",
+          "number": 18,
+          "pos": "D"
+        },
+        {
+          "id": 545,
+          "name": "Noussair Mazraoui",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 277003,
+          "name": "Neil El Aynaoui",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 438688,
+          "name": "Ayyoub Bouaddi",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 744,
+          "name": "Brahim Díaz",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 129678,
+          "name": "Azzedine Ounahi",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 340573,
+          "name": "Bilal El Khannouss",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 161897,
+          "name": "Ismael Saibari",
+          "number": 11,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-19T22:05:42.759673+00:00"
     }
   ],
   "warnings": []
