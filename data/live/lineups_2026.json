@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-19T15:20:31.776976+00:00",
+  "generated_at": "2026-06-19T19:52:52.644988+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 29,
+      "home": "United States",
+      "away": "Australia",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 50728,
+          "name": "Matthew Freese",
+          "number": 24,
+          "pos": "G"
+        },
+        {
+          "id": 355994,
+          "name": "Alexander Freeman",
+          "number": 16,
+          "pos": "D"
+        },
+        {
+          "id": 126949,
+          "name": "Chris Richards",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 19023,
+          "name": "Tim Ream",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 19549,
+          "name": "Antonee Robinson",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 415,
+          "name": "Weston McKennie",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 1150,
+          "name": "Tyler Adams",
+          "number": 4,
+          "pos": "M"
+        },
+        {
+          "id": 162037,
+          "name": "Malik Tillman",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 38735,
+          "name": "Sergiño Dest",
+          "number": 2,
+          "pos": "F"
+        },
+        {
+          "id": 138835,
+          "name": "Folarin Balogun",
+          "number": 20,
+          "pos": "F"
+        },
+        {
+          "id": 73868,
+          "name": "Ricardo Pepi",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 353883,
+          "name": "Patrick Beach",
+          "number": 18,
+          "pos": "G"
+        },
+        {
+          "id": 6808,
+          "name": "Jacob Italiano",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 348568,
+          "name": "Alessandro Circati",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 20079,
+          "name": "Harry Souttar",
+          "number": 19,
+          "pos": "D"
+        },
+        {
+          "id": 20457,
+          "name": "Cameron Burgess",
+          "number": 21,
+          "pos": "D"
+        },
+        {
+          "id": 337587,
+          "name": "Jordan Bos",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 2751,
+          "name": "Mathew Leckie",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 7050,
+          "name": "Aiden O'Neill",
+          "number": 13,
+          "pos": "M"
+        },
+        {
+          "id": 441269,
+          "name": "Paul Okon-Engstler",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 312459,
+          "name": "Nishan Velupillay",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 198352,
+          "name": "Mohamed Touré",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-19T19:52:52.461886+00:00"
+    }
+  ],
   "warnings": []
 }
