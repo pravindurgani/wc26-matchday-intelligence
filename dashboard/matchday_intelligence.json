@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-19T04:23:21.820751+00:00",
+  "generated_at": "2026-06-19T10:30:04.683149+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -808,6 +808,25 @@
       ]
     },
     {
+      "team": "Netherlands",
+      "match_id": 33,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "New Zealand",
       "match_id": null,
       "total_elo_adjustment": 1.98,
@@ -942,25 +961,6 @@
       ]
     },
     {
-      "team": "Portugal",
-      "match_id": 69,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Qatar",
       "match_id": null,
       "total_elo_adjustment": -15.98,
@@ -1016,6 +1016,25 @@
           "capped_elo": -6.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
+      "team": "Saudi Arabia",
+      "match_id": 64,
+      "total_elo_adjustment": -2.0,
+      "raw_sum_before_aggregate_cap": -2.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -2.0,
+          "capped_elo": -2.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
         }
       ]
     },
@@ -1242,6 +1261,25 @@
     },
     {
       "team": "Sweden",
+      "match_id": 33,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Sweden",
       "match_id": 57,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
@@ -1450,9 +1488,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 68,
+    "total_active_components": 70,
     "teams_affected": 48,
-    "matches_affected": 9,
+    "matches_affected": 10,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
