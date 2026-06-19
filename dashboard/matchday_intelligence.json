@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-19T10:30:04.683149+00:00",
+  "generated_at": "2026-06-19T15:20:35.472248+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -961,6 +961,25 @@
       ]
     },
     {
+      "team": "Portugal",
+      "match_id": 69,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "Qatar",
       "match_id": null,
       "total_elo_adjustment": -15.98,
@@ -1488,9 +1507,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 70,
+    "total_active_components": 71,
     "teams_affected": 48,
-    "matches_affected": 10,
+    "matches_affected": 11,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
