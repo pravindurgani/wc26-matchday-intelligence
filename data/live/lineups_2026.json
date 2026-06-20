@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-20T16:20:52.145932+00:00",
+  "generated_at": "2026-06-20T19:29:19.069103+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 33,
-      "home": "Netherlands",
-      "away": "Sweden",
+      "match_id": 34,
+      "home": "Germany",
+      "away": "Ivory Coast",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 129058,
-          "name": "Bart Verbruggen",
+          "id": 497,
+          "name": "Manuel Neuer",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 226,
-          "name": "Denzel Dumfries",
-          "number": 22,
-          "pos": "D"
-        },
-        {
-          "id": 290,
-          "name": "Virgil van Dijk",
-          "number": 4,
-          "pos": "D"
-        },
-        {
-          "id": 38695,
-          "name": "Jan Paul van Hecke",
+          "id": 502,
+          "name": "Joshua Kimmich",
           "number": 6,
           "pos": "D"
         },
         {
-          "id": 152849,
-          "name": "Micky van de Ven",
+          "id": 972,
+          "name": "Jonathan Tah",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 26243,
+          "name": "Nico Schlotterbeck",
           "number": 15,
           "pos": "D"
         },
         {
-          "id": 542,
-          "name": "Ryan Gravenberch",
-          "number": 8,
-          "pos": "M"
-        },
-        {
-          "id": 538,
-          "name": "Frenkie de Jong",
-          "number": 21,
-          "pos": "M"
-        },
-        {
-          "id": 36902,
-          "name": "Tijjani Reijnders",
-          "number": 14,
-          "pos": "M"
-        },
-        {
-          "id": 249,
-          "name": "Donyell Malen",
+          "id": 280074,
+          "name": "Nathaniel Brown",
           "number": 18,
-          "pos": "F"
+          "pos": "D"
         },
         {
-          "id": 38750,
-          "name": "Brian Brobbey",
+          "id": 637,
+          "name": "Felix Nmecha",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 328033,
+          "name": "Aleksandar Pavlović",
+          "number": 5,
+          "pos": "M"
+        },
+        {
+          "id": 644,
+          "name": "Leroy Sané",
           "number": 19,
-          "pos": "F"
+          "pos": "M"
         },
         {
-          "id": 247,
-          "name": "Cody Gakpo",
-          "number": 11,
+          "id": 181812,
+          "name": "Jamal Musiala",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 203224,
+          "name": "Florian Wirtz",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 978,
+          "name": "Kai Havertz",
+          "number": 7,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 2851,
-          "name": "Kristoffer Nordfeldt",
-          "number": 23,
+          "id": 64190,
+          "name": "Yahia Fofana",
+          "number": 1,
           "pos": "G"
         },
         {
-          "id": 137721,
-          "name": "Gustaf Lagerbielke",
-          "number": 2,
+          "id": 30504,
+          "name": "Wilfried Singo",
+          "number": 5,
           "pos": "D"
         },
         {
-          "id": 137976,
-          "name": "Isak Hien",
-          "number": 4,
+          "id": 48119,
+          "name": "Odilon Kossounou",
+          "number": 7,
           "pos": "D"
         },
         {
-          "id": 889,
-          "name": "Victor Lindelöf",
+          "id": 135068,
+          "name": "Emmanuel Agbadou",
+          "number": 20,
+          "pos": "D"
+        },
+        {
+          "id": 22002,
+          "name": "Ghislain Konan",
           "number": 3,
           "pos": "D"
         },
         {
-          "id": 48047,
-          "name": "Jesper Karlström",
-          "number": 16,
+          "id": 157997,
+          "name": "Amad Diallo",
+          "number": 15,
           "pos": "M"
         },
         {
-          "id": 47696,
-          "name": "Alexander Bernhardsson",
-          "number": 21,
+          "id": 1642,
+          "name": "Franck Kessié",
+          "number": 8,
           "pos": "M"
         },
         {
-          "id": 48002,
-          "name": "Benjamin Nygren",
-          "number": 10,
-          "pos": "M"
-        },
-        {
-          "id": 265820,
-          "name": "Yasin Ayari",
+          "id": 22149,
+          "name": "Ibrahim Sangaré",
           "number": 18,
           "pos": "M"
         },
         {
-          "id": 47969,
-          "name": "Gabriel Gudmundsson",
-          "number": 5,
+          "id": 513776,
+          "name": "Yan Diomande",
+          "number": 11,
           "pos": "M"
         },
         {
-          "id": 18979,
-          "name": "Viktor Gyökeres",
-          "number": 17,
+          "id": 275651,
+          "name": "Ange-Yoan Bonny",
+          "number": 9,
           "pos": "F"
         },
         {
-          "id": 2864,
-          "name": "Alexander Isak",
-          "number": 9,
+          "id": 474591,
+          "name": "Christ Inao Oulaï",
+          "number": 26,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-20T16:20:52.020348+00:00"
+      "captured_at": "2026-06-20T19:29:19.069084+00:00"
     }
   ],
   "warnings": []

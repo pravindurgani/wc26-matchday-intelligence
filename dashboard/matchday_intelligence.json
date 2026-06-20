@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-20T16:20:56.175794+00:00",
+  "generated_at": "2026-06-20T19:29:25.647352+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -858,8 +858,8 @@
     {
       "team": "Netherlands",
       "match_id": null,
-      "total_elo_adjustment": 2.25,
-      "raw_sum_before_aggregate_cap": 2.25,
+      "total_elo_adjustment": 2.01,
+      "raw_sum_before_aggregate_cap": 2.01,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -873,6 +873,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 2.25,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 33,
+          "raw_elo": -0.24,
+          "capped_elo_per_match": -0.24,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -0.24,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1123,6 +1136,25 @@
       ]
     },
     {
+      "team": "Saudi Arabia",
+      "match_id": 64,
+      "total_elo_adjustment": -2.0,
+      "raw_sum_before_aggregate_cap": -2.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -2.0,
+          "capped_elo": -2.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "Scotland",
       "match_id": null,
       "total_elo_adjustment": -4.68,
@@ -1336,21 +1368,34 @@
     {
       "team": "Sweden",
       "match_id": null,
-      "total_elo_adjustment": 3.27,
-      "raw_sum_before_aggregate_cap": 3.27,
+      "total_elo_adjustment": 7.02,
+      "raw_sum_before_aggregate_cap": 7.02,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "stats_proxy",
           "match_id": 12,
-          "raw_elo": 3.27,
-          "capped_elo_per_match": 3.27,
+          "raw_elo": 6.54,
+          "capped_elo_per_match": 6.54,
           "cap_per_match": 8.0,
           "true_xg_available": false,
-          "downweighted_for_live_team_state": true,
+          "downweighted_for_live_team_state": false,
           "source": "api_football",
-          "capped_elo": 3.27,
+          "capped_elo": 6.54,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 33,
+          "raw_elo": 0.48,
+          "capped_elo_per_match": 0.48,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": false,
+          "source": "api_football",
+          "capped_elo": 0.48,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1630,9 +1675,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 80,
+    "total_active_components": 83,
     "teams_affected": 48,
-    "matches_affected": 12,
+    "matches_affected": 13,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
