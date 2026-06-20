@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-20T08:58:52.776442+00:00",
+  "generated_at": "2026-06-20T11:23:36.232904+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -879,6 +879,25 @@
       ]
     },
     {
+      "team": "Netherlands",
+      "match_id": 33,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "New Zealand",
       "match_id": null,
       "total_elo_adjustment": 1.98,
@@ -1415,6 +1434,25 @@
     },
     {
       "team": "Sweden",
+      "match_id": 33,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Sweden",
       "match_id": 57,
       "total_elo_adjustment": -4.0,
       "raw_sum_before_aggregate_cap": -4.0,
@@ -1649,9 +1687,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 81,
+    "total_active_components": 83,
     "teams_affected": 48,
-    "matches_affected": 13,
+    "matches_affected": 14,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
