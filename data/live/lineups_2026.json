@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-20T14:07:09.037115+00:00",
+  "generated_at": "2026-06-20T16:20:52.145932+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 33,
+      "home": "Netherlands",
+      "away": "Sweden",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 129058,
+          "name": "Bart Verbruggen",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 226,
+          "name": "Denzel Dumfries",
+          "number": 22,
+          "pos": "D"
+        },
+        {
+          "id": 290,
+          "name": "Virgil van Dijk",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 38695,
+          "name": "Jan Paul van Hecke",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 152849,
+          "name": "Micky van de Ven",
+          "number": 15,
+          "pos": "D"
+        },
+        {
+          "id": 542,
+          "name": "Ryan Gravenberch",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 538,
+          "name": "Frenkie de Jong",
+          "number": 21,
+          "pos": "M"
+        },
+        {
+          "id": 36902,
+          "name": "Tijjani Reijnders",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 249,
+          "name": "Donyell Malen",
+          "number": 18,
+          "pos": "F"
+        },
+        {
+          "id": 38750,
+          "name": "Brian Brobbey",
+          "number": 19,
+          "pos": "F"
+        },
+        {
+          "id": 247,
+          "name": "Cody Gakpo",
+          "number": 11,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 2851,
+          "name": "Kristoffer Nordfeldt",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 137721,
+          "name": "Gustaf Lagerbielke",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 137976,
+          "name": "Isak Hien",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 889,
+          "name": "Victor Lindelöf",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 48047,
+          "name": "Jesper Karlström",
+          "number": 16,
+          "pos": "M"
+        },
+        {
+          "id": 47696,
+          "name": "Alexander Bernhardsson",
+          "number": 21,
+          "pos": "M"
+        },
+        {
+          "id": 48002,
+          "name": "Benjamin Nygren",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 265820,
+          "name": "Yasin Ayari",
+          "number": 18,
+          "pos": "M"
+        },
+        {
+          "id": 47969,
+          "name": "Gabriel Gudmundsson",
+          "number": 5,
+          "pos": "M"
+        },
+        {
+          "id": 18979,
+          "name": "Viktor Gyökeres",
+          "number": 17,
+          "pos": "F"
+        },
+        {
+          "id": 2864,
+          "name": "Alexander Isak",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-20T16:20:52.020348+00:00"
+    }
+  ],
   "warnings": []
 }
