@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-20T11:23:36.232904+00:00",
+  "generated_at": "2026-06-20T14:07:14.354791+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -333,6 +333,25 @@
           "capped_elo": -4.56,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
+      "team": "Croatia",
+      "match_id": 68,
+      "total_elo_adjustment": -4.0,
+      "raw_sum_before_aggregate_cap": -4.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -4.0,
+          "capped_elo": -4.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
         }
       ]
     },
@@ -765,25 +784,6 @@
       ]
     },
     {
-      "team": "Jordan",
-      "match_id": 72,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Mexico",
       "match_id": null,
       "total_elo_adjustment": 2.49,
@@ -1125,25 +1125,6 @@
     {
       "team": "Saudi Arabia",
       "match_id": 37,
-      "total_elo_adjustment": -2.0,
-      "raw_sum_before_aggregate_cap": -2.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -2.0,
-          "capped_elo": -2.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
-      "team": "Saudi Arabia",
-      "match_id": 64,
       "total_elo_adjustment": -2.0,
       "raw_sum_before_aggregate_cap": -2.0,
       "aggregate_cap_applied": false,
@@ -1687,9 +1668,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 83,
+    "total_active_components": 82,
     "teams_affected": 48,
-    "matches_affected": 14,
+    "matches_affected": 13,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
