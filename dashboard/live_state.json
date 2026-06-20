@@ -1,22 +1,11 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-20T05:08:21.043725+00:00",
-  "completed_matches_count": 31,
+  "last_updated_utc": "2026-06-20T05:16:09.970057+00:00",
+  "completed_matches_count": 32,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [
-    {
-      "m": 32,
-      "home": "Turkey",
-      "away": "Paraguay",
-      "home_score": 0,
-      "away_score": 1,
-      "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
-    }
-  ],
-  "in_play_count": 1,
+  "in_play": [],
+  "in_play_count": 0,
   "warnings": []
 }
