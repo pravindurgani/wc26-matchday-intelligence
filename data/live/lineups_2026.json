@@ -1,160 +1,13 @@
 {
-  "generated_at": "2026-06-19T22:05:42.882367+00:00",
+  "generated_at": "2026-06-20T03:44:02.908089+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 29,
-      "home": "United States",
-      "away": "Australia",
-      "home_team_adjustment_elo": 0.0,
-      "away_team_adjustment_elo": 0.0,
-      "home_adjustment_reason": null,
-      "away_adjustment_reason": null,
-      "baseline_source": "lineups_2026.json:prior_match",
-      "home_xi": [
-        {
-          "id": 50728,
-          "name": "Matthew Freese",
-          "number": 24,
-          "pos": "G"
-        },
-        {
-          "id": 355994,
-          "name": "Alexander Freeman",
-          "number": 16,
-          "pos": "D"
-        },
-        {
-          "id": 126949,
-          "name": "Chris Richards",
-          "number": 3,
-          "pos": "D"
-        },
-        {
-          "id": 19023,
-          "name": "Tim Ream",
-          "number": 13,
-          "pos": "D"
-        },
-        {
-          "id": 38735,
-          "name": "Sergiño Dest",
-          "number": 2,
-          "pos": "M"
-        },
-        {
-          "id": 415,
-          "name": "Weston McKennie",
-          "number": 8,
-          "pos": "M"
-        },
-        {
-          "id": 1150,
-          "name": "Tyler Adams",
-          "number": 4,
-          "pos": "M"
-        },
-        {
-          "id": 162037,
-          "name": "Malik Tillman",
-          "number": 17,
-          "pos": "M"
-        },
-        {
-          "id": 19549,
-          "name": "Antonee Robinson",
-          "number": 5,
-          "pos": "M"
-        },
-        {
-          "id": 138835,
-          "name": "Folarin Balogun",
-          "number": 20,
-          "pos": "F"
-        },
-        {
-          "id": 73868,
-          "name": "Ricardo Pepi",
-          "number": 9,
-          "pos": "F"
-        }
-      ],
-      "away_xi": [
-        {
-          "id": 353883,
-          "name": "Patrick Beach",
-          "number": 18,
-          "pos": "G"
-        },
-        {
-          "id": 6808,
-          "name": "Jacob Italiano",
-          "number": 4,
-          "pos": "D"
-        },
-        {
-          "id": 348568,
-          "name": "Alessandro Circati",
-          "number": 3,
-          "pos": "D"
-        },
-        {
-          "id": 20079,
-          "name": "Harry Souttar",
-          "number": 19,
-          "pos": "D"
-        },
-        {
-          "id": 20457,
-          "name": "Cameron Burgess",
-          "number": 21,
-          "pos": "D"
-        },
-        {
-          "id": 337587,
-          "name": "Jordan Bos",
-          "number": 5,
-          "pos": "D"
-        },
-        {
-          "id": 2751,
-          "name": "Mathew Leckie",
-          "number": 7,
-          "pos": "M"
-        },
-        {
-          "id": 7050,
-          "name": "Aiden O'Neill",
-          "number": 13,
-          "pos": "M"
-        },
-        {
-          "id": 441269,
-          "name": "Paul Okon-Engstler",
-          "number": 24,
-          "pos": "M"
-        },
-        {
-          "id": 312459,
-          "name": "Nishan Velupillay",
-          "number": 23,
-          "pos": "M"
-        },
-        {
-          "id": 198352,
-          "name": "Mohamed Touré",
-          "number": 9,
-          "pos": "F"
-        }
-      ],
-      "captured_at": "2026-06-19T22:05:42.634984+00:00"
-    },
-    {
-      "match_id": 30,
-      "home": "Scotland",
-      "away": "Morocco",
+      "match_id": 32,
+      "home": "Turkey",
+      "away": "Paraguay",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -162,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 18933,
-          "name": "Angus Gunn",
-          "number": 1,
+          "id": 49866,
+          "name": "Uğurcan Çakır",
+          "number": 23,
           "pos": "G"
         },
         {
-          "id": 19066,
-          "name": "Grant Hanley",
-          "number": 5,
+          "id": 1719,
+          "name": "Mert Müldür",
+          "number": 18,
           "pos": "D"
         },
         {
-          "id": 1111,
-          "name": "Jack Hendry",
-          "number": 13,
+          "id": 30521,
+          "name": "Merih Demiral",
+          "number": 3,
           "pos": "D"
         },
         {
-          "id": 1117,
-          "name": "Kieran Tierney",
-          "number": 6,
+          "id": 61837,
+          "name": "Abdülkerim Bardakcı",
+          "number": 14,
           "pos": "D"
         },
         {
-          "id": 138417,
-          "name": "Nathan Patterson",
-          "number": 22,
+          "id": 1361,
+          "name": "Ferdi Kadıoğlu",
+          "number": 20,
+          "pos": "D"
+        },
+        {
+          "id": 214463,
+          "name": "İsmail Yüksek",
+          "number": 16,
           "pos": "M"
         },
         {
-          "id": 903,
-          "name": "Scott McTominay",
-          "number": 4,
+          "id": 1640,
+          "name": "Hakan Çalhanoğlu",
+          "number": 10,
           "pos": "M"
         },
         {
-          "id": 44814,
-          "name": "Lewis Ferguson",
+          "id": 454,
+          "name": "Yunus Akgün",
           "number": 19,
           "pos": "M"
         },
         {
-          "id": 289,
-          "name": "Andy Robertson",
-          "number": 3,
+          "id": 291964,
+          "name": "Arda Güler",
+          "number": 8,
           "pos": "M"
         },
         {
-          "id": 19191,
-          "name": "John McGinn",
-          "number": 7,
-          "pos": "F"
-        },
-        {
-          "id": 1125,
-          "name": "Ryan Christie",
+          "id": 339883,
+          "name": "Kenan Yıldız",
           "number": 11,
-          "pos": "F"
+          "pos": "M"
         },
         {
-          "id": 19524,
-          "name": "Che Adams",
-          "number": 10,
+          "id": 142959,
+          "name": "Kerem Aktürkoğlu",
+          "number": 7,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 2701,
-          "name": "Bono",
-          "number": 1,
+          "id": 70852,
+          "name": "Orlando Gill",
+          "number": 12,
           "pos": "G"
         },
         {
-          "id": 9,
-          "name": "Achraf Hakimi",
-          "number": 2,
+          "id": 195992,
+          "name": "Juan Cáceres",
+          "number": 4,
           "pos": "D"
         },
         {
-          "id": 18814,
-          "name": "Issa Diop",
-          "number": 14,
+          "id": 2502,
+          "name": "Gustavo Gómez",
+          "number": 15,
           "pos": "D"
         },
         {
-          "id": 278898,
-          "name": "Chadi Riad",
-          "number": 18,
-          "pos": "D"
-        },
-        {
-          "id": 545,
-          "name": "Noussair Mazraoui",
+          "id": 6168,
+          "name": "Omar Alderete",
           "number": 3,
           "pos": "D"
         },
         {
-          "id": 277003,
-          "name": "Neil El Aynaoui",
-          "number": 24,
-          "pos": "M"
-        },
-        {
-          "id": 438688,
-          "name": "Ayyoub Bouaddi",
+          "id": 2499,
+          "name": "Junior Alonso",
           "number": 6,
-          "pos": "M"
+          "pos": "D"
         },
         {
-          "id": 744,
-          "name": "Brahim Díaz",
+          "id": 2507,
+          "name": "Miguel Almirón",
           "number": 10,
           "pos": "M"
         },
         {
-          "id": 129678,
-          "name": "Azzedine Ounahi",
+          "id": 6236,
+          "name": "Andrés Cubas",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 278370,
+          "name": "Diego Gómez",
           "number": 8,
           "pos": "M"
         },
         {
-          "id": 340573,
-          "name": "Bilal El Khannouss",
+          "id": 305832,
+          "name": "Matías Galarza",
           "number": 23,
           "pos": "M"
         },
         {
-          "id": 161897,
-          "name": "Ismael Saibari",
-          "number": 11,
+          "id": 70670,
+          "name": "Isidro Pitta",
+          "number": 25,
+          "pos": "F"
+        },
+        {
+          "id": 70747,
+          "name": "Julio Enciso",
+          "number": 19,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-19T22:05:42.759673+00:00"
+      "captured_at": "2026-06-20T03:44:02.908069+00:00"
     }
   ],
   "warnings": []
