@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-20T19:29:25.647352+00:00",
+  "generated_at": "2026-06-20T22:09:04.448749+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -570,8 +570,8 @@
     {
       "team": "Germany",
       "match_id": null,
-      "total_elo_adjustment": 6.0,
-      "raw_sum_before_aggregate_cap": 6.0,
+      "total_elo_adjustment": 10.05,
+      "raw_sum_before_aggregate_cap": 10.05,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -585,6 +585,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 34,
+          "raw_elo": 4.05,
+          "capped_elo_per_match": 4.05,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 4.05,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -698,21 +711,34 @@
     {
       "team": "Ivory Coast",
       "match_id": null,
-      "total_elo_adjustment": 1.44,
-      "raw_sum_before_aggregate_cap": 1.44,
+      "total_elo_adjustment": -5.12,
+      "raw_sum_before_aggregate_cap": -5.12,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "stats_proxy",
           "match_id": 11,
-          "raw_elo": 1.44,
-          "capped_elo_per_match": 1.44,
+          "raw_elo": 2.88,
+          "capped_elo_per_match": 2.88,
           "cap_per_match": 8.0,
           "true_xg_available": false,
-          "downweighted_for_live_team_state": true,
+          "downweighted_for_live_team_state": false,
           "source": "api_football",
-          "capped_elo": 1.44,
+          "capped_elo": 2.88,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 34,
+          "raw_elo": -8.1,
+          "capped_elo_per_match": -8.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": false,
+          "source": "api_football",
+          "capped_elo": -8.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -858,8 +884,8 @@
     {
       "team": "Netherlands",
       "match_id": null,
-      "total_elo_adjustment": 2.01,
-      "raw_sum_before_aggregate_cap": 2.01,
+      "total_elo_adjustment": 1.23,
+      "raw_sum_before_aggregate_cap": 1.23,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -879,13 +905,13 @@
         {
           "type": "stats_proxy",
           "match_id": 33,
-          "raw_elo": -0.24,
-          "capped_elo_per_match": -0.24,
+          "raw_elo": -1.02,
+          "capped_elo_per_match": -1.02,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": -0.24,
+          "capped_elo": -1.02,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1368,8 +1394,8 @@
     {
       "team": "Sweden",
       "match_id": null,
-      "total_elo_adjustment": 7.02,
-      "raw_sum_before_aggregate_cap": 7.02,
+      "total_elo_adjustment": 8.58,
+      "raw_sum_before_aggregate_cap": 8.58,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1389,13 +1415,13 @@
         {
           "type": "stats_proxy",
           "match_id": 33,
-          "raw_elo": 0.48,
-          "capped_elo_per_match": 0.48,
+          "raw_elo": 2.04,
+          "capped_elo_per_match": 2.04,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": false,
           "source": "api_football",
-          "capped_elo": 0.48,
+          "capped_elo": 2.04,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1675,7 +1701,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 83,
+    "total_active_components": 85,
     "teams_affected": 48,
     "matches_affected": 13,
     "aggregate_caps_hit": 0
