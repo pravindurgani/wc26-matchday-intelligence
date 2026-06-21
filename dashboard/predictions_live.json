@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-21T16:44:07.250768+00:00",
+  "generated_at": "2026-06-21T16:55:07.462098+00:00",
   "n_simulations_per_seed": 5000,
   "n_seeds": 5,
   "n_simulations_total": 25000,
@@ -2429,8 +2429,8 @@
       "p_away_win": 0.08115580671581997,
       "elo_home": 2209.469317215935,
       "elo_away": 1693.7578745493086,
-      "effective_elo_home": 2202.808528377937,
-      "effective_elo_away": 1687.0881011666033,
+      "effective_elo_home": 2210.808528377937,
+      "effective_elo_away": 1689.0881011666033,
       "home_travel_km": 0,
       "away_travel_km": 955.1,
       "home_rest_days": 6,
@@ -4527,7 +4527,7 @@
     35,
     36
   ],
-  "input_hash": "0094286dd78242d8",
+  "input_hash": "59a0ea87fa3b21c9",
   "grand_cap_applied": {},
   "per_match_intel_meta": [
     {
@@ -4610,12 +4610,12 @@
     },
     {
       "match_id": 37,
-      "home_match_total_intel": -2.18,
-      "away_match_total_intel": -8.0,
-      "home_match_scoped_delta": -8.0,
-      "away_match_scoped_delta": -2.0,
-      "home_intel_bonus_applied": -8.0,
-      "away_intel_bonus_applied": -2.0,
+      "home_match_total_intel": 5.82,
+      "away_match_total_intel": -6.0,
+      "home_match_scoped_delta": 0.0,
+      "away_match_scoped_delta": 0.0,
+      "home_intel_bonus_applied": 0.0,
+      "away_intel_bonus_applied": 0.0,
       "home_grand_cap_hit": false,
       "away_grand_cap_hit": false,
       "climate_static_h_zeroed_by_forecast": true,
