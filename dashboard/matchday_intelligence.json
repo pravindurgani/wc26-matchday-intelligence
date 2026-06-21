@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-21T04:17:31.547067+00:00",
+  "generated_at": "2026-06-21T09:52:47.269874+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -333,25 +333,6 @@
           "capped_elo": -4.56,
           "cap_used": 20.0,
           "cap_reason": "per_match"
-        }
-      ]
-    },
-    {
-      "team": "Croatia",
-      "match_id": 68,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
         }
       ]
     },
@@ -773,8 +754,8 @@
     {
       "team": "Japan",
       "match_id": null,
-      "total_elo_adjustment": -2.25,
-      "raw_sum_before_aggregate_cap": -2.25,
+      "total_elo_adjustment": 1.41,
+      "raw_sum_before_aggregate_cap": 1.41,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -788,6 +769,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -2.25,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 36,
+          "raw_elo": 3.66,
+          "capped_elo_per_match": 3.66,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.66,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -874,8 +868,8 @@
     {
       "team": "Morocco",
       "match_id": null,
-      "total_elo_adjustment": 0.24,
-      "raw_sum_before_aggregate_cap": 0.24,
+      "total_elo_adjustment": 0.09,
+      "raw_sum_before_aggregate_cap": 0.09,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -895,13 +889,13 @@
         {
           "type": "stats_proxy",
           "match_id": 30,
-          "raw_elo": 2.07,
-          "capped_elo_per_match": 2.07,
+          "raw_elo": 1.92,
+          "capped_elo_per_match": 1.92,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 2.07,
+          "capped_elo": 1.92,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1190,8 +1184,8 @@
     {
       "team": "Scotland",
       "match_id": null,
-      "total_elo_adjustment": -4.68,
-      "raw_sum_before_aggregate_cap": -4.68,
+      "total_elo_adjustment": -4.38,
+      "raw_sum_before_aggregate_cap": -4.38,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1211,13 +1205,13 @@
         {
           "type": "stats_proxy",
           "match_id": 30,
-          "raw_elo": -4.14,
-          "capped_elo_per_match": -4.14,
+          "raw_elo": -3.84,
+          "capped_elo_per_match": -3.84,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": false,
           "source": "api_football",
-          "capped_elo": -4.14,
+          "capped_elo": -3.84,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1511,8 +1505,8 @@
     {
       "team": "Tunisia",
       "match_id": null,
-      "total_elo_adjustment": -3.27,
-      "raw_sum_before_aggregate_cap": -3.27,
+      "total_elo_adjustment": -6.93,
+      "raw_sum_before_aggregate_cap": -6.93,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1526,6 +1520,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.27,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 36,
+          "raw_elo": -3.66,
+          "capped_elo_per_match": -3.66,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.66,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1667,10 +1674,29 @@
           "source": "open_meteo"
         }
       ]
+    },
+    {
+      "team": "Uzbekistan",
+      "match_id": 70,
+      "total_elo_adjustment": -1.0,
+      "raw_sum_before_aggregate_cap": -1.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -1.0,
+          "capped_elo": -1.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
     }
   ],
   "summary": {
-    "total_active_components": 84,
+    "total_active_components": 86,
     "teams_affected": 48,
     "matches_affected": 11,
     "aggregate_caps_hit": 0
