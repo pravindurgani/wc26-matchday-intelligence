@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-21T14:13:41.358587+00:00",
+  "generated_at": "2026-06-21T16:48:03.610051+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1163,25 +1163,6 @@
       ]
     },
     {
-      "team": "Saudi Arabia",
-      "match_id": 37,
-      "total_elo_adjustment": -2.0,
-      "raw_sum_before_aggregate_cap": -2.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -2.0,
-          "capped_elo": -2.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Scotland",
       "match_id": null,
       "total_elo_adjustment": -4.38,
@@ -1389,25 +1370,6 @@
           "capped_elo": 5.82,
           "cap_used": 20.0,
           "cap_reason": "per_match"
-        }
-      ]
-    },
-    {
-      "team": "Spain",
-      "match_id": 37,
-      "total_elo_adjustment": -8.0,
-      "raw_sum_before_aggregate_cap": -8.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -8.0,
-          "capped_elo": -8.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
         }
       ]
     },
@@ -1715,9 +1677,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 87,
+    "total_active_components": 85,
     "teams_affected": 48,
-    "matches_affected": 11,
+    "matches_affected": 10,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
