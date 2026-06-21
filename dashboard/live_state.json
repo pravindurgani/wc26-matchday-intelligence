@@ -1,11 +1,22 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-21T18:45:04.568057+00:00",
+  "last_updated_utc": "2026-06-21T19:16:41.052214+00:00",
   "completed_matches_count": 37,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 38,
+      "home": "Belgium",
+      "away": "Iran",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 11,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 1,
   "warnings": []
 }
