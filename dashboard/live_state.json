@@ -1,22 +1,11 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-22T00:04:04.568315+00:00",
-  "completed_matches_count": 38,
+  "last_updated_utc": "2026-06-22T00:16:23.250539+00:00",
+  "completed_matches_count": 39,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [
-    {
-      "m": 39,
-      "home": "Uruguay",
-      "away": "Cape Verde",
-      "home_score": 2,
-      "away_score": 2,
-      "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
-    }
-  ],
-  "in_play_count": 1,
+  "in_play": [],
+  "in_play_count": 0,
   "warnings": []
 }
