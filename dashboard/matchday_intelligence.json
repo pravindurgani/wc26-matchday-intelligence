@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T11:58:22.431717+00:00",
+  "generated_at": "2026-06-22T17:02:55.954534+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -614,6 +614,25 @@
       ]
     },
     {
+      "team": "France",
+      "match_id": 42,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
       "team": "Germany",
       "match_id": null,
       "total_elo_adjustment": 10.05,
@@ -764,6 +783,25 @@
           "capped_elo": -3.18,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
+      "team": "Iraq",
+      "match_id": 42,
+      "total_elo_adjustment": -2.0,
+      "raw_sum_before_aggregate_cap": -2.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -2.0,
+          "capped_elo": -2.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
         }
       ]
     },
@@ -1800,9 +1838,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 94,
+    "total_active_components": 96,
     "teams_affected": 48,
-    "matches_affected": 11,
+    "matches_affected": 12,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {

@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-22T11:58:15.664160+00:00",
+  "generated_at": "2026-06-22T17:02:49.860863+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 41,
+      "home": "Argentina",
+      "away": "Austria",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 19599,
+          "name": "Emiliano Martínez",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 6503,
+          "name": "Nahuel Molina",
+          "number": 26,
+          "pos": "D"
+        },
+        {
+          "id": 30776,
+          "name": "Cristian Romero",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 2467,
+          "name": "Lisandro Martínez",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 6231,
+          "name": "Facundo Medina",
+          "number": 25,
+          "pos": "D"
+        },
+        {
+          "id": 2472,
+          "name": "Rodrigo De Paul",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 6716,
+          "name": "Alexis Mac Allister",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 5996,
+          "name": "Enzo Fernández",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 6067,
+          "name": "Thiago Almada",
+          "number": 16,
+          "pos": "M"
+        },
+        {
+          "id": 154,
+          "name": "Lionel Messi",
+          "number": 10,
+          "pos": "F"
+        },
+        {
+          "id": 217,
+          "name": "Lautaro Martínez",
+          "number": 22,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 7525,
+          "name": "Alexander Schlager",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 711,
+          "name": "Stefan Posch",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 25287,
+          "name": "Kevin Danso",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 505,
+          "name": "David Alaba",
+          "number": 8,
+          "pos": "D"
+        },
+        {
+          "id": 1157,
+          "name": "Konrad Laimer",
+          "number": 20,
+          "pos": "D"
+        },
+        {
+          "id": 7328,
+          "name": "Nicolas Seiwald",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 1095,
+          "name": "Xaver Schlager",
+          "number": 4,
+          "pos": "M"
+        },
+        {
+          "id": 7562,
+          "name": "Romano Schmid",
+          "number": 18,
+          "pos": "M"
+        },
+        {
+          "id": 327895,
+          "name": "Paul Wanner",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 1159,
+          "name": "Marcel Sabitzer",
+          "number": 9,
+          "pos": "M"
+        },
+        {
+          "id": 25297,
+          "name": "Michael Gregoritsch",
+          "number": 11,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-22T17:02:49.743647+00:00"
+    }
+  ],
   "warnings": []
 }
