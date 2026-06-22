@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T04:18:43.327386+00:00",
+  "generated_at": "2026-06-22T11:58:22.431717+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -114,6 +114,25 @@
           "capped_elo": 0.54,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
+      "team": "Austria",
+      "match_id": 41,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
         }
       ]
     },
@@ -597,8 +616,8 @@
     {
       "team": "Germany",
       "match_id": null,
-      "total_elo_adjustment": 10.02,
-      "raw_sum_before_aggregate_cap": 10.02,
+      "total_elo_adjustment": 10.05,
+      "raw_sum_before_aggregate_cap": 10.05,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -618,13 +637,13 @@
         {
           "type": "stats_proxy",
           "match_id": 34,
-          "raw_elo": 4.02,
-          "capped_elo_per_match": 4.02,
+          "raw_elo": 4.05,
+          "capped_elo_per_match": 4.05,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 4.02,
+          "capped_elo": 4.05,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -772,7 +791,7 @@
         {
           "type": "stats_proxy",
           "match_id": 34,
-          "raw_elo": -8.04,
+          "raw_elo": -8.1,
           "capped_elo_per_match": -8.0,
           "cap_per_match": 8.0,
           "true_xg_available": false,
@@ -1781,9 +1800,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 93,
+    "total_active_components": 94,
     "teams_affected": 48,
-    "matches_affected": 10,
+    "matches_affected": 11,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
