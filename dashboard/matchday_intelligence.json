@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-21T22:17:53.818947+00:00",
+  "generated_at": "2026-06-22T04:18:43.327386+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -264,8 +264,8 @@
     {
       "team": "Cape Verde",
       "match_id": null,
-      "total_elo_adjustment": -5.82,
-      "raw_sum_before_aggregate_cap": -5.82,
+      "total_elo_adjustment": -7.5,
+      "raw_sum_before_aggregate_cap": -7.5,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -279,6 +279,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -5.82,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 39,
+          "raw_elo": -1.68,
+          "capped_elo_per_match": -1.68,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.68,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -327,25 +340,6 @@
           "capped_elo": -4.56,
           "cap_used": 20.0,
           "cap_reason": "per_match"
-        }
-      ]
-    },
-    {
-      "team": "Croatia",
-      "match_id": 68,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
         }
       ]
     },
@@ -502,8 +496,8 @@
     {
       "team": "Egypt",
       "match_id": null,
-      "total_elo_adjustment": 0.63,
-      "raw_sum_before_aggregate_cap": 0.63,
+      "total_elo_adjustment": 1.86,
+      "raw_sum_before_aggregate_cap": 1.86,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -517,6 +511,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 0.63,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 40,
+          "raw_elo": 1.23,
+          "capped_elo_per_match": 1.23,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.23,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -815,6 +822,25 @@
     },
     {
       "team": "Japan",
+      "match_id": 36,
+      "total_elo_adjustment": -1.0,
+      "raw_sum_before_aggregate_cap": -1.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -1.0,
+          "capped_elo": -1.0,
+          "cap_used": 15.0,
+          "confidence": "static_fallback",
+          "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "Japan",
       "match_id": 57,
       "total_elo_adjustment": -1.0,
       "raw_sum_before_aggregate_cap": -1.0,
@@ -966,21 +992,34 @@
     {
       "team": "New Zealand",
       "match_id": null,
-      "total_elo_adjustment": 1.98,
-      "raw_sum_before_aggregate_cap": 1.98,
+      "total_elo_adjustment": 1.5,
+      "raw_sum_before_aggregate_cap": 1.5,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "stats_proxy",
           "match_id": 16,
-          "raw_elo": 1.98,
-          "capped_elo_per_match": 1.98,
+          "raw_elo": 3.96,
+          "capped_elo_per_match": 3.96,
           "cap_per_match": 8.0,
           "true_xg_available": false,
-          "downweighted_for_live_team_state": true,
+          "downweighted_for_live_team_state": false,
           "source": "api_football",
-          "capped_elo": 1.98,
+          "capped_elo": 3.96,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 40,
+          "raw_elo": -2.46,
+          "capped_elo_per_match": -2.46,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": false,
+          "source": "api_football",
+          "capped_elo": -2.46,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1646,8 +1685,8 @@
     {
       "team": "Uruguay",
       "match_id": null,
-      "total_elo_adjustment": 6.0,
-      "raw_sum_before_aggregate_cap": 6.0,
+      "total_elo_adjustment": 7.68,
+      "raw_sum_before_aggregate_cap": 7.68,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1661,6 +1700,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 39,
+          "raw_elo": 1.68,
+          "capped_elo_per_match": 1.68,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.68,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1707,12 +1759,31 @@
           "source": "open_meteo"
         }
       ]
+    },
+    {
+      "team": "Uzbekistan",
+      "match_id": 70,
+      "total_elo_adjustment": -1.0,
+      "raw_sum_before_aggregate_cap": -1.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -1.0,
+          "capped_elo": -1.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
     }
   ],
   "summary": {
-    "total_active_components": 88,
+    "total_active_components": 93,
     "teams_affected": 48,
-    "matches_affected": 9,
+    "matches_affected": 10,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {
