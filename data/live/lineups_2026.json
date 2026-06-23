@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-23T17:19:21.865936+00:00",
+  "generated_at": "2026-06-23T20:07:42.202948+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 45,
-      "home": "Portugal",
-      "away": "Uzbekistan",
+      "match_id": 46,
+      "home": "England",
+      "away": "Ghana",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 369,
-          "name": "Diogo Costa",
+          "id": 2932,
+          "name": "Jordan Pickford",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 855,
-          "name": "João Cancelo",
-          "number": 20,
+          "id": 19545,
+          "name": "Reece James",
+          "number": 24,
           "pos": "D"
         },
         {
-          "id": 567,
-          "name": "Rúben Dias",
-          "number": 3,
+          "id": 19354,
+          "name": "Ezri Konsa",
+          "number": 2,
           "pos": "D"
         },
         {
-          "id": 336671,
-          "name": "Renato Veiga",
-          "number": 13,
+          "id": 67971,
+          "name": "Marc Guéhi",
+          "number": 6,
           "pos": "D"
         },
         {
-          "id": 263482,
-          "name": "Nuno Mendes",
+          "id": 19235,
+          "name": "Djed Spence",
           "number": 25,
           "pos": "D"
         },
         {
-          "id": 335051,
-          "name": "João Neves",
-          "number": 15,
-          "pos": "M"
-        },
-        {
-          "id": 128384,
-          "name": "Vitinha",
-          "number": 23,
-          "pos": "M"
-        },
-        {
-          "id": 1864,
-          "name": "Pedro Neto",
-          "number": 18,
-          "pos": "M"
-        },
-        {
-          "id": 1485,
-          "name": "Bruno Fernandes",
+          "id": 138908,
+          "name": "Elliot Anderson",
           "number": 8,
           "pos": "M"
         },
         {
-          "id": 583,
-          "name": "João Félix",
-          "number": 11,
+          "id": 2937,
+          "name": "Declan Rice",
+          "number": 4,
           "pos": "M"
         },
         {
-          "id": 874,
-          "name": "Cristiano Ronaldo",
-          "number": 7,
+          "id": 136723,
+          "name": "Noni Madueke",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 129718,
+          "name": "Jude Bellingham",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 138787,
+          "name": "Anthony Gordon",
+          "number": 18,
+          "pos": "M"
+        },
+        {
+          "id": 184,
+          "name": "Harry Kane",
+          "number": 9,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 73507,
-          "name": "Abduvokhid Nematov",
-          "number": 12,
+          "id": 480108,
+          "name": "Benjamin Asare",
+          "number": 16,
           "pos": "G"
         },
         {
-          "id": 360114,
-          "name": "Abdukodir Khusanov",
-          "number": 2,
+          "id": 191240,
+          "name": "Marvin Senaya",
+          "number": 26,
           "pos": "D"
         },
         {
-          "id": 73418,
-          "name": "Abdulla Abdullaev",
+          "id": 369425,
+          "name": "Jonas Adjei Adjetey",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 137223,
+          "name": "Jerome Opoku",
           "number": 18,
           "pos": "D"
         },
         {
-          "id": 34121,
-          "name": "Rustam Ashurmatov",
-          "number": 5,
+          "id": 7578,
+          "name": "Gideon Mensah",
+          "number": 14,
           "pos": "D"
         },
         {
-          "id": 416964,
-          "name": "Bekhruz Karimov",
-          "number": 24,
+          "id": 475575,
+          "name": "Caleb Yirenkyi",
+          "number": 3,
           "pos": "M"
         },
         {
-          "id": 53835,
-          "name": "Odiljon Khamrobekov",
-          "number": 9,
+          "id": 49,
+          "name": "Thomas Partey",
+          "number": 5,
           "pos": "M"
         },
         {
-          "id": 50272,
-          "name": "Otabek Shukurov",
-          "number": 7,
+          "id": 3608,
+          "name": "Kwasi Sibo",
+          "number": 8,
           "pos": "M"
         },
         {
-          "id": 73514,
-          "name": "Sherzod Nasrullaev",
-          "number": 13,
-          "pos": "M"
-        },
-        {
-          "id": 263676,
-          "name": "Abbosbek Fayzullaev",
-          "number": 22,
-          "pos": "F"
-        },
-        {
-          "id": 73520,
-          "name": "Azizjon Ganiev",
+          "id": 47294,
+          "name": "Iñaki Williams",
           "number": 19,
           "pos": "F"
         },
         {
-          "id": 53535,
-          "name": "Eldor Shomurodov",
-          "number": 14,
+          "id": 3428,
+          "name": "Jordan Ayew",
+          "number": 9,
+          "pos": "F"
+        },
+        {
+          "id": 19281,
+          "name": "Antoine Semenyo",
+          "number": 11,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-23T17:19:21.751035+00:00"
+      "captured_at": "2026-06-23T20:07:42.078776+00:00"
     }
   ],
   "warnings": []

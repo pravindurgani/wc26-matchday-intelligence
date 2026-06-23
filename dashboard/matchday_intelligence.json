@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-23T17:19:27.187481+00:00",
+  "generated_at": "2026-06-23T20:07:48.039282+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1320,21 +1320,34 @@
     {
       "team": "Portugal",
       "match_id": null,
-      "total_elo_adjustment": 0.3,
-      "raw_sum_before_aggregate_cap": 0.3,
+      "total_elo_adjustment": 8.6,
+      "raw_sum_before_aggregate_cap": 8.6,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "stats_proxy",
           "match_id": 21,
-          "raw_elo": 0.3,
-          "capped_elo_per_match": 0.3,
+          "raw_elo": 0.6,
+          "capped_elo_per_match": 0.6,
           "cap_per_match": 8.0,
           "true_xg_available": false,
-          "downweighted_for_live_team_state": true,
+          "downweighted_for_live_team_state": false,
           "source": "api_football",
-          "capped_elo": 0.3,
+          "capped_elo": 0.6,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 45,
+          "raw_elo": 9.66,
+          "capped_elo_per_match": 8.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": false,
+          "source": "api_football",
+          "capped_elo": 8.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1511,6 +1524,25 @@
           "capped_elo": -3.84,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
+      "team": "Scotland",
+      "match_id": 51,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
         }
       ]
     },
@@ -1980,8 +2012,8 @@
     {
       "team": "Uzbekistan",
       "match_id": null,
-      "total_elo_adjustment": -1.68,
-      "raw_sum_before_aggregate_cap": -1.68,
+      "total_elo_adjustment": -6.51,
+      "raw_sum_before_aggregate_cap": -6.51,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1995,6 +2027,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -1.68,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 45,
+          "raw_elo": -4.83,
+          "capped_elo_per_match": -4.83,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -4.83,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -2040,9 +2085,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 116,
+    "total_active_components": 119,
     "teams_affected": 48,
-    "matches_affected": 11,
+    "matches_affected": 12,
     "aggregate_caps_hit": 1
   },
   "feeds_available": {
