@@ -1,18 +1,265 @@
 {
-  "generated_at": "2026-06-23T14:50:00.242732+00:00",
+  "generated_at": "2026-06-23T17:18:08.837839+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
-  "teams_with_injuries": 0,
-  "teams": {},
-  "warnings": [
-    {
-      "type": "no_records_returned",
-      "endpoint": "/injuries",
-      "league": "1",
-      "season": "2026",
-      "message": "API returned 0 injury records for league=1 season=2026 — could be a quiet day, or the league/season pair is wrong (check provider_fixture_map.json)."
+  "teams_with_injuries": 13,
+  "teams": {
+    "Belgium": {
+      "total_elo_adjustment": -48.0,
+      "players": [
+        {
+          "name": "Z. Debast",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Leg Injury",
+          "elo": -12.0,
+          "fixture_id": 1489377
+        },
+        {
+          "name": "Z. Debast",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Leg Injury",
+          "elo": -12.0,
+          "fixture_id": 1489395
+        },
+        {
+          "name": "J. Doku",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Illness",
+          "elo": -12.0,
+          "fixture_id": 1489415
+        },
+        {
+          "name": "N. Ngoy",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "fixture_id": 1489415
+        }
+      ]
+    },
+    "Brazil": {
+      "total_elo_adjustment": -90.0,
+      "players": [
+        {
+          "name": "Neymar",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_full",
+          "status": "confirmed_out",
+          "reason": "Calf Injury",
+          "elo": -30.0,
+          "fixture_id": 1489371
+        },
+        {
+          "name": "Neymar",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_full",
+          "status": "confirmed_out",
+          "reason": "Calf Injury",
+          "elo": -30.0,
+          "fixture_id": 1489389
+        },
+        {
+          "name": "Neymar",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_full",
+          "status": "confirmed_out",
+          "reason": "Calf Injury",
+          "elo": -30.0,
+          "fixture_id": 1489406
+        }
+      ]
+    },
+    "Uruguay": {
+      "total_elo_adjustment": -42.0,
+      "players": [
+        {
+          "name": "G. de Arrascaeta",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle bruise",
+          "elo": -12.0,
+          "fixture_id": 1489398
+        },
+        {
+          "name": "R. Araújo",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_last",
+          "status": "confirmed_out",
+          "reason": "Muscle bruise",
+          "elo": -30.0,
+          "fixture_id": 1489398
+        }
+      ]
+    },
+    "Japan": {
+      "total_elo_adjustment": -42.0,
+      "players": [
+        {
+          "name": "T. Kubo",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_last",
+          "status": "confirmed_out",
+          "reason": "Wound",
+          "elo": -30.0,
+          "fixture_id": 1489394
+        },
+        {
+          "name": "S. Machino",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Illness",
+          "elo": -12.0,
+          "fixture_id": 1539011
+        }
+      ]
+    },
+    "Czechia": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "D. Jurásek",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Thigh problems",
+          "elo": -12.0,
+          "fixture_id": 1539010
+        }
+      ]
+    },
+    "Bosnia and Herzegovina": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "T. Muharemović",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "fixture_id": 1539009
+        }
+      ]
+    },
+    "South Africa": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "T. Mokoena",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Yellow card suspension",
+          "elo": -12.0,
+          "fixture_id": 1489407
+        }
+      ]
+    },
+    "Algeria": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "M. Amoura",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring muscle injury",
+          "elo": -12.0,
+          "fixture_id": 1489418
+        }
+      ]
+    },
+    "Cape Verde": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "S. Lopes Cabral",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Yellow card suspension",
+          "elo": -12.0,
+          "fixture_id": 1489413
+        }
+      ]
+    },
+    "Qatar": {
+      "total_elo_adjustment": -24.0,
+      "players": [
+        {
+          "name": "Homam Ahmed",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "fixture_id": 1539009
+        },
+        {
+          "name": "Assim Madibo",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "fixture_id": 1539009
+        }
+      ]
+    },
+    "Paraguay": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "M. Almirón",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "fixture_id": 1489411
+        }
+      ]
+    },
+    "United States": {
+      "total_elo_adjustment": -30.0,
+      "players": [
+        {
+          "name": "C. Pulišić",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_last",
+          "status": "confirmed_out",
+          "reason": "Calf muscle strain",
+          "elo": -30.0,
+          "fixture_id": 1489391
+        }
+      ]
+    },
+    "Canada": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "I. Koné",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Fracture of lower leg",
+          "elo": -12.0,
+          "fixture_id": 1489408
+        }
+      ]
     }
-  ]
+  },
+  "warnings": []
 }

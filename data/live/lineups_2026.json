@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-23T14:52:08.552106+00:00",
+  "generated_at": "2026-06-23T17:19:21.865936+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 45,
+      "home": "Portugal",
+      "away": "Uzbekistan",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 369,
+          "name": "Diogo Costa",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 855,
+          "name": "João Cancelo",
+          "number": 20,
+          "pos": "D"
+        },
+        {
+          "id": 567,
+          "name": "Rúben Dias",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 336671,
+          "name": "Renato Veiga",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 263482,
+          "name": "Nuno Mendes",
+          "number": 25,
+          "pos": "D"
+        },
+        {
+          "id": 335051,
+          "name": "João Neves",
+          "number": 15,
+          "pos": "M"
+        },
+        {
+          "id": 128384,
+          "name": "Vitinha",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 1864,
+          "name": "Pedro Neto",
+          "number": 18,
+          "pos": "M"
+        },
+        {
+          "id": 1485,
+          "name": "Bruno Fernandes",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 583,
+          "name": "João Félix",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 874,
+          "name": "Cristiano Ronaldo",
+          "number": 7,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 73507,
+          "name": "Abduvokhid Nematov",
+          "number": 12,
+          "pos": "G"
+        },
+        {
+          "id": 360114,
+          "name": "Abdukodir Khusanov",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 73418,
+          "name": "Abdulla Abdullaev",
+          "number": 18,
+          "pos": "D"
+        },
+        {
+          "id": 34121,
+          "name": "Rustam Ashurmatov",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 416964,
+          "name": "Bekhruz Karimov",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 53835,
+          "name": "Odiljon Khamrobekov",
+          "number": 9,
+          "pos": "M"
+        },
+        {
+          "id": 50272,
+          "name": "Otabek Shukurov",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 73514,
+          "name": "Sherzod Nasrullaev",
+          "number": 13,
+          "pos": "M"
+        },
+        {
+          "id": 263676,
+          "name": "Abbosbek Fayzullaev",
+          "number": 22,
+          "pos": "F"
+        },
+        {
+          "id": 73520,
+          "name": "Azizjon Ganiev",
+          "number": 19,
+          "pos": "F"
+        },
+        {
+          "id": 53535,
+          "name": "Eldor Shomurodov",
+          "number": 14,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-23T17:19:21.751035+00:00"
+    }
+  ],
   "warnings": []
 }

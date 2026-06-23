@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-23T14:52:16.276346+00:00",
+  "generated_at": "2026-06-23T17:19:27.187481+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -15,11 +15,20 @@
     {
       "team": "Algeria",
       "match_id": null,
-      "total_elo_adjustment": 0.92,
-      "raw_sum_before_aggregate_cap": 0.92,
+      "total_elo_adjustment": -11.08,
+      "raw_sum_before_aggregate_cap": -11.08,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 19,
@@ -159,11 +168,20 @@
     {
       "team": "Belgium",
       "match_id": null,
-      "total_elo_adjustment": 2.67,
-      "raw_sum_before_aggregate_cap": 2.67,
+      "total_elo_adjustment": -22.33,
+      "raw_sum_before_aggregate_cap": -22.33,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -48.0,
+          "capped_elo": -25.0,
+          "cap_used": 25.0,
+          "n_players": 4,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 14,
@@ -195,11 +213,20 @@
     {
       "team": "Bosnia and Herzegovina",
       "match_id": null,
-      "total_elo_adjustment": -10.08,
-      "raw_sum_before_aggregate_cap": -10.08,
+      "total_elo_adjustment": -22.08,
+      "raw_sum_before_aggregate_cap": -22.08,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 3,
@@ -231,11 +258,20 @@
     {
       "team": "Brazil",
       "match_id": null,
-      "total_elo_adjustment": 3.24,
-      "raw_sum_before_aggregate_cap": 3.24,
+      "total_elo_adjustment": -21.76,
+      "raw_sum_before_aggregate_cap": -21.76,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -90.0,
+          "capped_elo": -25.0,
+          "cap_used": 25.0,
+          "n_players": 3,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 6,
@@ -267,11 +303,20 @@
     {
       "team": "Canada",
       "match_id": null,
-      "total_elo_adjustment": 11.36,
-      "raw_sum_before_aggregate_cap": 11.36,
+      "total_elo_adjustment": -0.64,
+      "raw_sum_before_aggregate_cap": -0.64,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 3,
@@ -303,11 +348,20 @@
     {
       "team": "Cape Verde",
       "match_id": null,
-      "total_elo_adjustment": -6.12,
-      "raw_sum_before_aggregate_cap": -6.12,
+      "total_elo_adjustment": -18.12,
+      "raw_sum_before_aggregate_cap": -18.12,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 13,
@@ -421,11 +475,20 @@
     {
       "team": "Czechia",
       "match_id": null,
-      "total_elo_adjustment": -2.37,
-      "raw_sum_before_aggregate_cap": -2.37,
+      "total_elo_adjustment": -14.37,
+      "raw_sum_before_aggregate_cap": -14.37,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 2,
@@ -890,11 +953,20 @@
     {
       "team": "Japan",
       "match_id": null,
-      "total_elo_adjustment": 1.41,
-      "raw_sum_before_aggregate_cap": 1.41,
+      "total_elo_adjustment": -23.59,
+      "raw_sum_before_aggregate_cap": -23.59,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -42.0,
+          "capped_elo": -25.0,
+          "cap_used": 25.0,
+          "n_players": 2,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 10,
@@ -1203,11 +1275,20 @@
     {
       "team": "Paraguay",
       "match_id": null,
-      "total_elo_adjustment": -15.5,
-      "raw_sum_before_aggregate_cap": -15.5,
+      "total_elo_adjustment": -27.5,
+      "raw_sum_before_aggregate_cap": -27.5,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 4,
@@ -1300,11 +1381,20 @@
     {
       "team": "Qatar",
       "match_id": null,
-      "total_elo_adjustment": -15.98,
-      "raw_sum_before_aggregate_cap": -15.98,
-      "aggregate_cap_applied": false,
+      "total_elo_adjustment": -35.0,
+      "raw_sum_before_aggregate_cap": -39.98,
+      "aggregate_cap_applied": true,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -24.0,
+          "capped_elo": -24.0,
+          "cap_used": 25.0,
+          "n_players": 2,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 5,
@@ -1463,11 +1553,20 @@
     {
       "team": "South Africa",
       "match_id": null,
-      "total_elo_adjustment": -0.87,
-      "raw_sum_before_aggregate_cap": -0.87,
+      "total_elo_adjustment": -12.87,
+      "raw_sum_before_aggregate_cap": -12.87,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 1,
@@ -1791,11 +1890,20 @@
     {
       "team": "United States",
       "match_id": null,
-      "total_elo_adjustment": 4.56,
-      "raw_sum_before_aggregate_cap": 4.56,
+      "total_elo_adjustment": -20.44,
+      "raw_sum_before_aggregate_cap": -20.44,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -30.0,
+          "capped_elo": -25.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 4,
@@ -1827,11 +1935,20 @@
     {
       "team": "Uruguay",
       "match_id": null,
-      "total_elo_adjustment": 6.3,
-      "raw_sum_before_aggregate_cap": 6.3,
+      "total_elo_adjustment": -18.7,
+      "raw_sum_before_aggregate_cap": -18.7,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -42.0,
+          "capped_elo": -25.0,
+          "cap_used": 25.0,
+          "n_players": 2,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 15,
@@ -1923,10 +2040,10 @@
     }
   ],
   "summary": {
-    "total_active_components": 103,
+    "total_active_components": 116,
     "teams_affected": 48,
     "matches_affected": 11,
-    "aggregate_caps_hit": 0
+    "aggregate_caps_hit": 1
   },
   "feeds_available": {
     "injuries": true,
@@ -1935,14 +2052,5 @@
     "lineups": true,
     "stats_proxy": true
   },
-  "warnings": [
-    {
-      "type": "no_records_returned",
-      "endpoint": "/injuries",
-      "league": "1",
-      "season": "2026",
-      "message": "API returned 0 injury records for league=1 season=2026 — could be a quiet day, or the league/season pair is wrong (check provider_fixture_map.json).",
-      "feed": "injuries"
-    }
-  ]
+  "warnings": []
 }
