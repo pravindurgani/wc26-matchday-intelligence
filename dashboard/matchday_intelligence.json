@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T22:49:43.942823+00:00",
+  "generated_at": "2026-06-23T03:37:49.947903+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -140,25 +140,6 @@
           "capped_elo": -4.44,
           "cap_used": 20.0,
           "cap_reason": "per_match"
-        }
-      ]
-    },
-    {
-      "team": "Austria",
-      "match_id": 41,
-      "total_elo_adjustment": -8.0,
-      "raw_sum_before_aggregate_cap": -8.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -8.0,
-          "capped_elo": -8.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
         }
       ]
     },
@@ -600,8 +581,8 @@
     {
       "team": "France",
       "match_id": null,
-      "total_elo_adjustment": 3.99,
-      "raw_sum_before_aggregate_cap": 3.99,
+      "total_elo_adjustment": 7.44,
+      "raw_sum_before_aggregate_cap": 7.44,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -615,6 +596,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 3.99,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 42,
+          "raw_elo": 3.45,
+          "capped_elo_per_match": 3.45,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.45,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -653,7 +647,7 @@
           "raw_elo": -4.0,
           "capped_elo": -4.0,
           "cap_used": 15.0,
-          "confidence": "forecast",
+          "confidence": "static_fallback",
           "source": "open_meteo"
         }
       ]
@@ -792,8 +786,8 @@
     {
       "team": "Iraq",
       "match_id": null,
-      "total_elo_adjustment": -3.18,
-      "raw_sum_before_aggregate_cap": -3.18,
+      "total_elo_adjustment": -6.63,
+      "raw_sum_before_aggregate_cap": -6.63,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -807,6 +801,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.18,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 42,
+          "raw_elo": -3.45,
+          "capped_elo_per_match": -3.45,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.45,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -826,7 +833,7 @@
           "raw_elo": -1.0,
           "capped_elo": -1.0,
           "cap_used": 15.0,
-          "confidence": "forecast",
+          "confidence": "static_fallback",
           "source": "open_meteo"
         }
       ]
@@ -1111,8 +1118,8 @@
     {
       "team": "Norway",
       "match_id": null,
-      "total_elo_adjustment": 3.18,
-      "raw_sum_before_aggregate_cap": 3.18,
+      "total_elo_adjustment": 4.89,
+      "raw_sum_before_aggregate_cap": 4.89,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1126,6 +1133,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 3.18,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 43,
+          "raw_elo": 1.71,
+          "capped_elo_per_match": 1.71,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.71,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1362,16 +1382,16 @@
     {
       "team": "Scotland",
       "match_id": 51,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
+      "total_elo_adjustment": -8.0,
+      "raw_sum_before_aggregate_cap": -8.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
+          "weather_bucket": "hot_humid",
+          "raw_elo": -8.0,
+          "capped_elo": -8.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -1381,8 +1401,8 @@
     {
       "team": "Senegal",
       "match_id": null,
-      "total_elo_adjustment": -3.99,
-      "raw_sum_before_aggregate_cap": -3.99,
+      "total_elo_adjustment": -5.7,
+      "raw_sum_before_aggregate_cap": -5.7,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1396,6 +1416,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.99,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 43,
+          "raw_elo": -1.71,
+          "capped_elo_per_match": -1.71,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.71,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1864,9 +1897,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 98,
+    "total_active_components": 101,
     "teams_affected": 48,
-    "matches_affected": 12,
+    "matches_affected": 11,
     "aggregate_caps_hit": 0
   },
   "feeds_available": {

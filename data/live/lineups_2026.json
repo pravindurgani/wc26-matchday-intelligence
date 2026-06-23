@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-06-22T22:49:38.909424+00:00",
+  "generated_at": "2026-06-23T03:37:44.930513+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 44,
+      "home": "Jordan",
+      "away": "Algeria",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 140607,
+          "name": "Yazeed Abu Laila",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 310835,
+          "name": "Abdallah Nasib",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 53900,
+          "name": "Yazan Al-Arab",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 543035,
+          "name": "Husam Ali Mohammad Abudahab",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 53902,
+          "name": "Ehsan Haddad",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 213980,
+          "name": "Nizar Al-Rashdan",
+          "number": 21,
+          "pos": "M"
+        },
+        {
+          "id": 140609,
+          "name": "Noor Al-Rawabdeh",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 310785,
+          "name": "Mohannad Abu Taha",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 164026,
+          "name": "Ali Olwan",
+          "number": 9,
+          "pos": "F"
+        },
+        {
+          "id": 123530,
+          "name": "Mahmoud Al-Mardi",
+          "number": 13,
+          "pos": "F"
+        },
+        {
+          "id": 15286,
+          "name": "Mousa Tamari",
+          "number": 10,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 732,
+          "name": "Luca Zidane",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 303362,
+          "name": "Rafik Belghali",
+          "number": 17,
+          "pos": "D"
+        },
+        {
+          "id": 1567,
+          "name": "Aïssa Mandi",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 2194,
+          "name": "Ramy Bensebaini",
+          "number": 21,
+          "pos": "D"
+        },
+        {
+          "id": 21138,
+          "name": "Rayan Aït-Nouri",
+          "number": 15,
+          "pos": "D"
+        },
+        {
+          "id": 4399,
+          "name": "Hicham Boudaoui",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 129047,
+          "name": "Ramiz Zerrouki",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 380587,
+          "name": "Ibrahim Maza",
+          "number": 22,
+          "pos": "M"
+        },
+        {
+          "id": 635,
+          "name": "Riyad Mahrez",
+          "number": 7,
+          "pos": "F"
+        },
+        {
+          "id": 85041,
+          "name": "Amine Gouiri",
+          "number": 9,
+          "pos": "F"
+        },
+        {
+          "id": 276670,
+          "name": "Farès Chaïbi",
+          "number": 10,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-23T03:37:44.930496+00:00"
+    }
+  ],
   "warnings": []
 }
