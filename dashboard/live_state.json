@@ -1,12 +1,23 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-22T23:56:07.356901+00:00",
+  "last_updated_utc": "2026-06-23T00:06:17.237602+00:00",
   "completed_matches_count": 41,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 43,
+      "home": "Norway",
+      "away": "Senegal",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 1,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 1,
   "warnings": [
     {
       "m": 42,
