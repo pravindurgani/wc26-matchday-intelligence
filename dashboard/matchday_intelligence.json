@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-23T03:37:49.947903+00:00",
+  "generated_at": "2026-06-23T09:41:37.865789+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -15,21 +15,34 @@
     {
       "team": "Algeria",
       "match_id": null,
-      "total_elo_adjustment": -3.54,
-      "raw_sum_before_aggregate_cap": -3.54,
+      "total_elo_adjustment": 0.92,
+      "raw_sum_before_aggregate_cap": 0.92,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "stats_proxy",
           "match_id": 19,
-          "raw_elo": -3.54,
-          "capped_elo_per_match": -3.54,
+          "raw_elo": -7.08,
+          "capped_elo_per_match": -7.08,
           "cap_per_match": 8.0,
           "true_xg_available": false,
-          "downweighted_for_live_team_state": true,
+          "downweighted_for_live_team_state": false,
           "source": "api_football",
-          "capped_elo": -3.54,
+          "capped_elo": -7.08,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 44,
+          "raw_elo": 8.82,
+          "capped_elo_per_match": 8.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": false,
+          "source": "api_football",
+          "capped_elo": 8.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -290,8 +303,8 @@
     {
       "team": "Cape Verde",
       "match_id": null,
-      "total_elo_adjustment": -7.5,
-      "raw_sum_before_aggregate_cap": -7.5,
+      "total_elo_adjustment": -6.12,
+      "raw_sum_before_aggregate_cap": -6.12,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -311,13 +324,13 @@
         {
           "type": "stats_proxy",
           "match_id": 39,
-          "raw_elo": -1.68,
-          "capped_elo_per_match": -1.68,
+          "raw_elo": -0.3,
+          "capped_elo_per_match": -0.3,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": -1.68,
+          "capped_elo": -0.3,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -581,8 +594,8 @@
     {
       "team": "France",
       "match_id": null,
-      "total_elo_adjustment": 7.44,
-      "raw_sum_before_aggregate_cap": 7.44,
+      "total_elo_adjustment": 7.47,
+      "raw_sum_before_aggregate_cap": 7.47,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -602,13 +615,13 @@
         {
           "type": "stats_proxy",
           "match_id": 42,
-          "raw_elo": 3.45,
-          "capped_elo_per_match": 3.45,
+          "raw_elo": 3.48,
+          "capped_elo_per_match": 3.48,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 3.45,
+          "capped_elo": 3.48,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -786,8 +799,8 @@
     {
       "team": "Iraq",
       "match_id": null,
-      "total_elo_adjustment": -6.63,
-      "raw_sum_before_aggregate_cap": -6.63,
+      "total_elo_adjustment": -6.66,
+      "raw_sum_before_aggregate_cap": -6.66,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -807,13 +820,13 @@
         {
           "type": "stats_proxy",
           "match_id": 42,
-          "raw_elo": -3.45,
-          "capped_elo_per_match": -3.45,
+          "raw_elo": -3.48,
+          "capped_elo_per_match": -3.48,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": -3.45,
+          "capped_elo": -3.48,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -951,8 +964,8 @@
     {
       "team": "Jordan",
       "match_id": null,
-      "total_elo_adjustment": -0.54,
-      "raw_sum_before_aggregate_cap": -0.54,
+      "total_elo_adjustment": -4.95,
+      "raw_sum_before_aggregate_cap": -4.95,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -966,6 +979,19 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -0.54,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 44,
+          "raw_elo": -4.41,
+          "capped_elo_per_match": -4.41,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -4.41,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1801,8 +1827,8 @@
     {
       "team": "Uruguay",
       "match_id": null,
-      "total_elo_adjustment": 7.68,
-      "raw_sum_before_aggregate_cap": 7.68,
+      "total_elo_adjustment": 6.3,
+      "raw_sum_before_aggregate_cap": 6.3,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1822,13 +1848,13 @@
         {
           "type": "stats_proxy",
           "match_id": 39,
-          "raw_elo": 1.68,
-          "capped_elo_per_match": 1.68,
+          "raw_elo": 0.3,
+          "capped_elo_per_match": 0.3,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 1.68,
+          "capped_elo": 0.3,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1897,7 +1923,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 101,
+    "total_active_components": 103,
     "teams_affected": 48,
     "matches_affected": 11,
     "aggregate_caps_hit": 0
