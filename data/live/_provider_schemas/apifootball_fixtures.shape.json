@@ -1,0 +1,43 @@
+{
+  "captured": "2026-06-17",
+  "hash": "d2300926d92b65eb",
+  "shape_tree": {
+    "_comment": "str",
+    "errors": "list<empty>",
+    "get": "str",
+    "paging": {
+      "current": "int",
+      "total": "int"
+    },
+    "parameters": {
+      "league": "str",
+      "season": "str"
+    },
+    "response": [
+      {
+        "fixture": {
+          "date": "str",
+          "id": "int",
+          "status": {
+            "elapsed": "int",
+            "long": "str",
+            "short": "str"
+          }
+        },
+        "goals": {
+          "away": "int",
+          "home": "int"
+        },
+        "teams": {
+          "away": {
+            "name": "str"
+          },
+          "home": {
+            "name": "str"
+          }
+        }
+      }
+    ],
+    "results": "int"
+  }
+}

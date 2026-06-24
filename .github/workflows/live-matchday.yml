@@ -243,14 +243,18 @@ jobs:
           set +e   # never let a non-zero exit here fail the whole tick
           git config user.name "wc26-bot"
           git config user.email "wc26-bot@users.noreply.github.com"
-          # Explicit allow-list — skip gitignored files (circuit_breaker_state.json, etc.)
+          # Explicit allow-list. R11 D1: include circuit_breaker_state.json so
+          # consecutive_failures persists across ticks (pre-R11 the file was in
+          # .gitignore + missing from this list, so CB_THRESHOLD=3 escalation
+          # never crossed a tick boundary — every cron-run started from 0).
           git add dashboard/predictions.json \
                   dashboard/predictions_live.json \
                   dashboard/live_state.json \
                   dashboard/live_delta.json \
                   data/live/results_2026.json \
                   data/live/live_team_state.json \
-                  data/live/provider_fixture_map.json 2>/dev/null
+                  data/live/provider_fixture_map.json \
+                  data/live/circuit_breaker_state.json 2>/dev/null
           if git diff --quiet --cached; then
             echo "No JSON changes to commit."
             exit 0

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-16T00:00:00+00:00",
+  "source": "manual_curation_wave_a4",
+  "notes": "Wave A4 proposals for 5 missing WC26 teams. Conservative by design — only consensus top-flight headline names. Teams with no real tier-1 international (Haiti, Curacao) intentionally omitted rather than fabricated. TIER_TO_ELO from scripts/live/injury_adjustments.py:38-43 — tier_1_star=-30.0, tier_1_keeper=-25.0, tier_2_starter=-12.0, tier_3_squad=-4.0. Unknown replacement → tier_3_squad with elo_equiv=-3.2 (i.e. -4.0*0.8). Squad-value top-20 cutoff (~Switzerland €334M) — none of these 5 teams qualify for tier_1_keeper.",
+  "Panama": [
+    {"team": "Panama",       "name": "Michael Amir Murillo",  "name_normalized": "michael amir murillo", "last_name_normalized": "murillo",    "tier": "tier_1_star",   "reason": "Beşiktaş right-back; nailed starter since Feb-2026 move from Marseille; primary defensive/attacking wide outlet",
+     "aliases": ["Michael Murillo", "Amir Murillo", "M. Murillo"],
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}},
+    {"team": "Panama",       "name": "Adalberto Carrasquilla", "name_normalized": "adalberto carrasquilla", "last_name_normalized": "carrasquilla", "tier": "tier_2_starter", "reason": "Pumas UNAM (Liga MX) playmaker; described as Panama's creative engine connecting defence and attack",
+     "aliases": ["A. Carrasquilla", "Coco Carrasquilla"],
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ],
+  "South Africa": [
+    {"team": "South Africa", "name": "Lyle Foster",           "name_normalized": "lyle foster",          "last_name_normalized": "foster",     "tier": "tier_1_star",   "reason": "Burnley striker (Premier League 25/26); only British-based player in squad; 10 goals in 29 caps as lead forward",
+     "aliases": ["L. Foster"],
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ],
+  "New Zealand": [
+    {"team": "New Zealand",  "name": "Chris Wood",            "name_normalized": "chris wood",           "last_name_normalized": "wood",       "tier": "tier_1_star",   "reason": "Nottingham Forest (Premier League) striker; captain; all-time NZ top scorer; only NZ player to feature at two WCs (with Tommy Smith)",
+     "aliases": ["C. Wood"],
+     "replacement": {"name": "Unknown", "tier": "tier_3_squad", "elo_equiv": -3.2}}
+  ]
+}

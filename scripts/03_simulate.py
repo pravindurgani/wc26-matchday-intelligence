@@ -183,8 +183,37 @@ def dc_tau(h, a, lam_h, lam_a, rho):
     return 1.0
 
 
-def build_score_matrix(lam_h, lam_a, cfg, use_dispersion=True, max_g=10):
-    """Joint distribution P[h, a]. Uses Negative Binomial marginals + DC τ correction."""
+def build_score_matrix(lam_h, lam_a, cfg, use_dispersion=True, max_g=15):
+    """Joint distribution P[h, a]. Uses Negative Binomial marginals + DC τ correction.
+
+    R12 MED: max_g raised 10 → 15. At λ=7.0 (clip max) Σ nbinom([0..10])
+    ≈ 0.819, so 18% of mass falls beyond 10 goals and the renormalize
+    line at the bottom of this fn redistributes that 18% over [0..10],
+    artificially inflating low/mid scores for high-λ matches. Σ=1
+    invariant preserved, but the JOINT shape is biased for blowout-
+    favorite fixtures. At max_g=15, Σ nbinom([0..15]) ≈ 0.997 at the
+    same λ — drift drops below 0.3% and the renorm has negligible
+    impact on shape. Runtime cost is small (16×16 matrix vs 11×11).
+    """
+    # R11 A2: runtime cfg["dc_rho"] guard. The module-load assert at
+    # scripts/03_simulate.py:115 only validates DEFAULTS["dc_rho"]. A tuner /
+    # sensitivity sweep / external caller that overrides cfg["dc_rho"]
+    # would silently skip the DC-τ boundary check, push lam_h*lam_a*rho >= 1
+    # and emit negative τ values that get clipped to 1e-12, systematically
+    # collapsing low-score cells without any signal. The Σ-gate would still
+    # pass (renormalization preserves Σ=1) but the score distribution shape
+    # silently corrupts. Runtime fast-fail catches the tuner case.
+    rho = cfg["dc_rho"]
+    if LAMBDA_CLIP_MAX * abs(rho) >= 1.0:
+        raise ValueError(
+            f"Dixon-Coles τ boundary violated at runtime: λ_max "
+            f"({LAMBDA_CLIP_MAX}) × |ρ_runtime| ({abs(rho)}) = "
+            f"{LAMBDA_CLIP_MAX * abs(rho):.3f} >= 1.0. "
+            f"cfg['dc_rho']={rho} pushes τ(0,1)/τ(1,0) negative for "
+            f"high-λ matches and silently collapses low-score cells. "
+            f"Either reduce LAMBDA_CLIP_MAX below {1/abs(rho):.2f} or "
+            f"move dc_rho closer to zero."
+        )
     if use_dispersion:
         a_disp = cfg["nb_dispersion"]
         p_h = a_disp / (a_disp + lam_h)
@@ -198,7 +227,6 @@ def build_score_matrix(lam_h, lam_a, cfg, use_dispersion=True, max_g=10):
     mat = np.outer(ph, pa)
 
     # Dixon-Coles τ correction for low-score outcomes
-    rho = cfg["dc_rho"]
     for h in (0, 1):
         for a in (0, 1):
             mat[h, a] *= dc_tau(h, a, lam_h, lam_a, rho)
@@ -214,16 +242,30 @@ def sample_from_matrix(mat, rng):
     return int(idx // mat.shape[1]), int(idx % mat.shape[1])
 
 
-def sample_score_with_noise(lam_h, lam_a, cfg, rng, max_g=10):
+def sample_score_with_noise(lam_h, lam_a, cfg, rng, max_g=15):
     """Per-match lambda noise via Gamma multipliers, then NB+τ matrix sample.
     Adds compound variance beyond just NB dispersion — captures the fact that
-    on any given day a 'strong' team plays at 70-130% of average strength."""
+    on any given day a 'strong' team plays at 70-130% of average strength.
+
+    R9 P2: the noise multiplier (Gamma α=12) has an unbounded right tail.
+    Pre-R9 only a floor (0.05) was applied to the noisy λ, so a noise draw
+    of e.g. 2.0× on a base λ of 7.0 produced effective λ=14, which exceeds
+    the DC-τ critical boundary 1/|ρ|=7.69. mat[0,1]/mat[1,0] then went
+    negative inside build_score_matrix and were silently clipped to 1e-12,
+    systematically collapsing low-score outcomes (0-1, 1-0) for blowout-
+    favorite matches. The module-load assert at scripts/03_simulate.py:115
+    guards LAMBDA_CLIP_MAX×|ρ|<1.0 — but only for the pre-noise clip; the
+    noise path bypassed it. Re-applying the same [CLIP_MIN, CLIP_MAX] clip
+    post-noise restores the boundary guarantee. Floats inside the band
+    are unchanged; only the ~33% of high-λ draws that breached it now
+    saturate at 7.0 instead of producing negative-then-clipped τ cells.
+    """
     if cfg.get("lambda_noise_per_match"):
         alpha = cfg["lambda_noise_alpha"]
         noise_h = rng.gamma(alpha, 1.0 / alpha)
         noise_a = rng.gamma(alpha, 1.0 / alpha)
-        lam_h = max(0.05, lam_h * noise_h)
-        lam_a = max(0.05, lam_a * noise_a)
+        lam_h = min(LAMBDA_CLIP_MAX, max(LAMBDA_CLIP_MIN, lam_h * noise_h))
+        lam_a = min(LAMBDA_CLIP_MAX, max(LAMBDA_CLIP_MIN, lam_a * noise_a))
     mat = build_score_matrix(lam_h, lam_a, cfg, use_dispersion=cfg["use_dispersion"], max_g=max_g)
     return sample_from_matrix(mat, rng)
 
@@ -340,15 +382,32 @@ def decide_knockout(team_a, team_b, m_num, locked, mat, lam_h, lam_a, e_h, e_a, 
             return h, a, team_a
         if w == "away":
             return h, a, team_b
-        # No winner field on a locked knockout — fall back to score comparison.
-        # In practice fetch_results refuses to lock a PEN match without a
-        # winner (see A.2), so this path triggers only for group-stage drafts
-        # accidentally indexed here.
-        # M6: log loud so this defensive branch never silently swallows a
-        # bad fixture record. Awarding team_b on a tie without a winner is a
-        # last-resort guess — the operator should see it.
-        print(f"[decide_knockout] WARN: locked knockout m={m_num} {team_a} vs {team_b} "
-              f"has no winner field; tie ({h}-{a}) defaults to {'team_a' if h > a else 'team_b'}",
+        # No winner field on a locked knockout.
+        # R12 MED: on a TIED locked KO (h==a) with no `winner` field, we
+        # used to silently default to team_b (since neither h > a nor
+        # h < a is true). For an operator-edited results_2026.json with
+        # a missing winner field, the awarded team was arbitrary — the
+        # one whose name happened to come second in the fixture record.
+        # This is RAISE-WORTHY: the simulator should not invent a winner
+        # for a hand-edited PEN match. Refuse and instruct the operator.
+        # For non-tied locked KO (h != a) score comparison is still
+        # mathematically sound — keep the loud-warn-and-proceed path.
+        if h == a:
+            raise RuntimeError(
+                f"[decide_knockout] locked knockout m={m_num} {team_a} vs "
+                f"{team_b} is tied ({h}-{a}) but has no `winner` field. "
+                f"This is unrecoverable — refusing to silently assign a "
+                f"winner. Edit data/live/results_2026.json to add "
+                f"'winner': 'home' or 'away' for this match. Fetch path "
+                f"normally populates this via API-Football "
+                f"teams.{{home,away}}.winner — verify the provider feed "
+                f"isn't dropping it."
+            )
+        # Non-tied locked KO without winner — score comparison is correct
+        # (FT/AET decided by goals). Loud-warn and proceed.
+        print(f"[decide_knockout] WARN: locked knockout m={m_num} {team_a} "
+              f"vs {team_b} has no `winner` field; decided by score "
+              f"comparison ({h}-{a}) → {'team_a' if h > a else 'team_b'}",
               file=sys.stderr)
         return h, a, (team_a if h > a else team_b)
     # Not locked — sample as before.
@@ -358,7 +417,15 @@ def decide_knockout(team_a, team_b, m_num, locked, mat, lam_h, lam_a, e_h, e_a, 
 
 # ---------- Annex C lookup --------------------------------------------------
 def lookup_third_place_assignment(qualifying_thirds, annex_c_table):
-    """Given the 8 qualifying third-placers, look up their R32 slot assignment."""
+    """Given the 8 qualifying third-placers, look up their R32 slot assignment.
+
+    R9 P1: partial-key corruption (table key exists but is missing one of
+    the eight "3X" entries — e.g. truncated annex_c file, bad merge) must
+    return None so the R7 N1 fallback diagnostic fires, NOT raise an opaque
+    KeyError that tears down the seed mid-loop and bypasses the friendly
+    "annex_c miss + fallback exhausted: check data/raw/annex_c_thirds_map.json"
+    message R7 N1 provides.
+    """
     groups = sorted([t["group"] for t in qualifying_thirds])
     key = "".join(groups)
     if key not in annex_c_table:
@@ -367,7 +434,10 @@ def lookup_third_place_assignment(qualifying_thirds, annex_c_table):
     out = {}
     for q in qualifying_thirds:
         slot_key = f"3{q['group']}"
-        out[mapping[slot_key]] = q
+        slot = mapping.get(slot_key)
+        if slot is None:
+            return None  # R9 P1: partial corruption → trigger R7 N1 fallback
+        out[slot] = q
     return out
 
 
@@ -457,6 +527,18 @@ def run_single_seed(seed, cfg, n_sims, ctx):
                     if q["group"] in pool:
                         third_slot_map[slot] = q
                         unused.remove(q); break
+            # R7 N1: if the fallback cannot fill all 8 third-place slots (e.g.
+            # corrupted slot_pools yaml, a group with no eligible thirds), fail
+            # loudly with diagnostics instead of producing (None, None) tuples
+            # that crash deep inside knock_matrices[(ta, tb)] with an opaque
+            # KeyError. Pre-R7 behaviour silently produced None team identifiers.
+            if len(third_slot_map) < 8:
+                raise RuntimeError(
+                    f"annex_c miss + fallback exhausted: only assigned "
+                    f"{sorted(third_slot_map)} ({len(third_slot_map)}/8 slots); "
+                    f"unused thirds={[q['name'] for q in unused]}; "
+                    f"check data/raw/annex_c_thirds_map.json and slot_pools config"
+                )
 
         # --- Build R32 fixtures ---
         r32_fixtures = []
@@ -559,6 +641,53 @@ def run_single_seed(seed, cfg, n_sims, ctx):
         "champion": {t: champion_count[t] for t in all_teams},
         "third_place": {t: third_place_winners[t] for t in all_teams},
     }
+
+
+def validate_venue_distance_indirection(cfg_data, distance_matrix) -> list[str]:
+    """R11 D3-old: assert every venue in group + KO schedule maps to a city
+    that exists as a key in distance_matrix. Pre-R11 the indirection
+    venue → venue_city_map → distance_matrix had no startup validator;
+    a drifted venue name (new stadium added to schedule but not to
+    venue_city_map) silently fell back to `venue_city_map.get(name, name)`
+    → KeyError in distance_matrix lookup → caught at
+    compute_travel_penalties:649 → km=0 → silent zero-penalty for the
+    entire team-pair-day. Returns a list of issue strings (empty when
+    the indirection is internally consistent).
+
+    Called at simulator startup before precompute_context. Travel data
+    that fails validation is non-fatal — startup logs the issues and the
+    simulator proceeds with the silent-fallback behavior preserved. The
+    operator is alerted via the issues list (caller decides whether to
+    print or raise).
+    """
+    if not distance_matrix:
+        return []  # travel disabled / matrix unavailable; nothing to check
+    try:
+        # Lazy-import to avoid hard dependency on _knockout in non-live runs.
+        sys.path.insert(0, str(Path(__file__).resolve().parent / "live"))
+        from _knockout import load_knockout_fixtures  # type: ignore
+        ko = load_knockout_fixtures()
+    except Exception:
+        ko = []
+    venue_city_map = cfg_data.get("venue_city_map", {})
+    dm_cities = set((distance_matrix.get("distance_km") or {}).keys())
+    issues: list[str] = []
+    seen: set[str] = set()
+    for source, fxs in (("group", cfg_data.get("group_stage_schedule", [])),
+                        ("knockout", ko)):
+        for f in fxs:
+            v = f.get("venue")
+            if not v or v in seen:
+                continue
+            seen.add(v)
+            mapped = venue_city_map.get(v, v)
+            if mapped not in dm_cities:
+                issues.append(
+                    f"[{source}] venue {v!r} maps to city {mapped!r} which "
+                    f"is not a key in host_city_distance_matrix.json — "
+                    f"compute_travel_penalties would silently km=0."
+                )
+    return issues
 
 
 def compute_travel_penalties(cfg_data, distance_matrix, cfg):
@@ -1087,6 +1216,15 @@ def main():
     # Live-mode artifacts
     distance_matrix_path = RAW / "host_city_distance_matrix.json"
     distance_matrix = json.loads(distance_matrix_path.read_text()) if distance_matrix_path.exists() else None
+    # R11 D3-old: validate venue → city → distance indirection at startup.
+    # See validate_venue_distance_indirection docstring. Issues are warned
+    # to stderr (non-fatal) so the operator notices drift without blocking
+    # the tick (compute_travel_penalties still falls back to km=0 on
+    # KeyError for safety, but the warning surfaces the gap).
+    travel_indirection_issues = validate_venue_distance_indirection(
+        cfg_data, distance_matrix)
+    for issue in travel_indirection_issues:
+        print(f"[03_simulate] WARN travel-indirection: {issue}", file=sys.stderr)
     injury_adjustments = load_injury_adjustments(ROOT / "data" / "live" / "team_adjustments.json") \
         if cfg["use_adjustments"] else {}
     completed_matches = load_completed_matches(ROOT / "data" / "live" / "results_2026.json") \
@@ -1265,6 +1403,23 @@ def main():
         or x.get("climate_static_h_zeroed_by_forecast")
         or x.get("climate_static_a_zeroed_by_forecast")
     ]
+    # S7 (Round 7): export symmetrized knockout λ table so the
+    # `scripts/live/export_ko_advance.py` post-processor can derive
+    # `p_advance_match = p_home_win + 0.5*p_draw` (90-min + 50/50 penalty
+    # shootout assumption) for KO fixtures (m ≥ 73) once both teams resolve.
+    # Purely additive: serialises ctx["knock_lambdas"] (already computed at
+    # :956-980 for every team-pair) — no sim behavior change. Pre-resolution
+    # post-processor writes nothing; once an R32 winner locks, the table is
+    # the source of truth for downstream advance-prob pricing on the sheet.
+    _knock_lambdas = ctx.get("knock_lambdas") or {}
+    out["knock_lambdas_table"] = [
+        {
+            "home": h, "away": a,
+            "lambda_home": float(lam_h), "lambda_away": float(lam_a),
+            "effective_elo_home": float(eff_h), "effective_elo_away": float(eff_a),
+        }
+        for (h, a), (lam_h, lam_a, eff_h, eff_a) in sorted(_knock_lambdas.items())
+    ]
     # Atomic write: a SIGKILL/OOM mid-write would otherwise leave the
     # canonical predictions file partially written and trip the downstream
     # publish guard (or worse, get copied through to dashboard/). tempfile
@@ -1275,7 +1430,12 @@ def main():
         mode="w", encoding="utf-8", dir=str(_out_path.parent),
         prefix=_out_path.name + ".", suffix=".tmp", delete=False,
     ) as _tmp:
-        json.dump(out, _tmp, indent=2, default=str)
+        # R9 P3: allow_nan=False on the FINAL predictions writer. If any
+        # numerical drift produced NaN in p_champion / p_advance, fail
+        # the write rather than publish silent NaN to dashboard. The
+        # Σ-gate would catch a missing-from-sum NaN at validation, but
+        # belt-and-braces — fail at the write boundary too.
+        json.dump(out, _tmp, indent=2, default=str, allow_nan=False)
         _tmp_path = Path(_tmp.name)
     os.replace(_tmp_path, _out_path)
     print(f"[OK] Wrote {_out_path}")

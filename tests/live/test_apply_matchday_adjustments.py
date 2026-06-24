@@ -80,14 +80,16 @@ class TestEmptyState(unittest.TestCase):
         self.assertEqual(state["summary"]["teams_affected"], 0)
 
     def test_no_feeds_emits_one_warning_per_real_feed(self):
-        """Four real feeds (injuries, weather, lineups, stats_proxy) → four warnings.
-        The meta-flag injuries_handled_by_this_module must NOT produce a warning."""
+        """Six real feeds (injuries, weather, referee, lineups, stats_proxy,
+        suspensions) → six warnings. The meta-flag
+        injuries_handled_by_this_module must NOT produce a warning."""
         with _TempFeeds({}):
             state = amd.build_adjustments_state()
         warning_feeds = sorted([w["feed"] for w in state["warnings"]])
         self.assertEqual(warning_feeds,
-                         ["injuries", "lineups", "stats_proxy", "weather"],
-                         "expected exactly 4 feed_missing warnings — not the "
+                         ["injuries", "lineups", "referee", "stats_proxy",
+                          "suspensions", "weather"],
+                         "expected exactly 6 feed_missing warnings — not the "
                          "meta-flag")
 
     def test_get_team_elo_adjustment_zero_when_empty(self):
@@ -520,15 +522,16 @@ class TestUpstreamWarningLift(unittest.TestCase):
         with _TempFeeds(feeds):
             state = amd.build_adjustments_state()
         # Should see exactly the locally-generated `feed_missing` items
-        # (weather, lineups, stats_proxy) — NOT an extra one re-lifted
-        # from the injuries file.
+        # (weather, lineups, stats_proxy, referee, suspensions) — NOT an
+        # extra one re-lifted from the injuries file.
         feed_missing = [w for w in state["warnings"]
                         if w.get("type") == "feed_missing"]
-        # injuries IS present here (we wrote it), so weather + lineups
-        # + stats_proxy should all generate their own feed_missing.
+        # injuries IS present here (we wrote it), so the remaining real
+        # feeds should all generate their own feed_missing.
         feeds_alerting = sorted(w["feed"] for w in feed_missing)
         self.assertEqual(feeds_alerting,
-                         ["lineups", "stats_proxy", "weather"])
+                         ["lineups", "referee", "stats_proxy",
+                          "suspensions", "weather"])
 
 
 class TestUnknownWarningTypeObservability(unittest.TestCase):
@@ -655,6 +658,513 @@ class TestMalformedUpstreamGuards(unittest.TestCase):
             state = amd.build_adjustments_state()
         self.assertNotIn("AttributeError",
                          repr(state))  # smoke check; if it raised we never got here
+
+
+class TestRound5DegradationPerRecord(unittest.TestCase):
+    """Round 5: a single bad per-record value (NaN, non-finite Elo, type
+    error inside a record builder) must be skipped, logged to
+    degradation_warnings, and NOT abort the rest of that subsystem's
+    loop. Verified via monkeypatch injection — the inner record builder
+    is patched to raise on a chosen team so other teams still produce
+    adjustments."""
+
+    def test_nan_xg_record_skipped_others_adjusted(self):
+        """Simulate a NaN xG / stats record by patching float() at the
+        per-record call site so the FIRST stats record raises
+        ValueError, the second sails through."""
+        feeds = {"match_stats_2026.json": {"matches": [
+            {"match_id": 1, "status": "FT", "home": "Spain", "away": "X",
+             "home_form_adjustment_elo": 6.0, "away_form_adjustment_elo": 0.0},
+            {"match_id": 2, "status": "FT", "home": "Italy", "away": "Y",
+             "home_form_adjustment_elo": 4.0, "away_form_adjustment_elo": 0.0},
+        ]}}
+        # Patch _load_stats_components to inject a ValueError on the Spain
+        # record only — mimics what compute_xg_form_delta does on NaN xg.
+        orig_loader = amd._load_stats_components
+
+        def patched_loader(warnings_acc=None):
+            warnings_acc = warnings_acc if warnings_acc is not None else []
+            # Re-implement the per-team loop but force a raise on Spain.
+            from _degrade import degrade_record  # type: ignore
+            out = {}
+            for team, raw in [("Spain", 6.0), ("Italy", 4.0)]:
+                def _build(team=team, raw=raw):
+                    if team == "Spain":
+                        raise ValueError("xg must be finite")
+                    return {
+                        "type": "stats_proxy",
+                        "match_id": 0,
+                        "raw_elo": raw,
+                        "capped_elo_per_match": raw,
+                        "cap_per_match": amd.STATS_CAP_PER_MATCH,
+                        "capped_elo": raw,
+                        "cap_used": amd.STATS_CAP_TOURNAMENT_TOTAL,
+                        "cap_reason": "per_match",
+                        "downweighted_for_live_team_state": False,
+                        "source": "api_football",
+                    }
+                rec = degrade_record(
+                    "stats_proxy", f"team={team}", _build, warnings_acc)
+                if rec is None:
+                    continue
+                out.setdefault((team, None), []).append(rec)
+            return out
+
+        with _TempFeeds(feeds), patch.object(
+                amd, "_load_stats_components", patched_loader):
+            state = amd.build_adjustments_state()
+            # Italy still got its adjustment (patch must still be active)
+            italy_elo = amd.get_team_elo_adjustment("Italy")
+            spain_elo = amd.get_team_elo_adjustment("Spain")
+        self.assertEqual(italy_elo, 4.0)
+        # Spain was skipped
+        self.assertEqual(spain_elo, 0.0)
+        # Warning recorded
+        deg = state["degradation_warnings"]
+        spain_warns = [w for w in deg if "Spain" in w.get("record_id", "")]
+        self.assertEqual(len(spain_warns), 1)
+        self.assertEqual(spain_warns[0]["subsystem"], "stats_proxy")
+        self.assertEqual(spain_warns[0]["scope"], "record")
+        self.assertEqual(spain_warns[0]["exception_class"], "ValueError")
+        self.assertIn("xg must be finite", spain_warns[0]["message"])
+        self.assertIn("ts", spain_warns[0])
+        # Pipeline still healthy — only one record skipped
+        self.assertFalse(state["pipeline_unhealthy"])
+
+    def test_nonfinite_elo_in_injury_record_skipped(self):
+        """Simulate injury_adjustments raising ValueError on a non-finite
+        elo for ONE team blob — other teams' injury totals must still
+        flow through."""
+        feeds = {"injuries_2026.json": {"teams": {
+            "France":  {"total_elo_adjustment": -18.0, "players": []},
+            "Senegal": {"total_elo_adjustment": -12.0, "players": []},
+        }}}
+        # We swap float() inside the orchestrator so the France record
+        # raises. Easier: monkeypatch the loader to inject a raise on
+        # the per-record block.
+        orig_loader = amd._load_injury_components
+
+        def patched_loader(now_iso, warnings_acc=None):
+            warnings_acc = warnings_acc if warnings_acc is not None else []
+            from _degrade import degrade_record  # type: ignore
+            out = {}
+            for team, total in [("France", -18.0), ("Senegal", -12.0)]:
+                def _build(team=team, total=total):
+                    if team == "France":
+                        raise ValueError("non-finite elo")
+                    return {
+                        "type": "injury",
+                        "subtype": "api_aggregate",
+                        "raw_elo": total,
+                        "capped_elo": total,
+                        "cap_used": amd.INJURY_CAP_NORMAL,
+                        "n_players": 0,
+                        "source": "api_football",
+                    }
+                rec = degrade_record(
+                    "injury", f"team={team} src=api", _build, warnings_acc)
+                if rec is None:
+                    continue
+                out.setdefault((team, None), []).append(rec)
+            return out
+
+        with _TempFeeds(feeds), patch.object(
+                amd, "_load_injury_components", patched_loader):
+            state = amd.build_adjustments_state()
+            senegal = amd.get_team_elo_adjustment("Senegal")
+            france = amd.get_team_elo_adjustment("France")
+        self.assertEqual(senegal, -12.0)
+        self.assertEqual(france, 0.0)
+        deg = state["degradation_warnings"]
+        france_warns = [w for w in deg if "France" in w.get("record_id", "")]
+        self.assertEqual(len(france_warns), 1)
+        self.assertEqual(france_warns[0]["subsystem"], "injury")
+        self.assertEqual(france_warns[0]["exception_class"], "ValueError")
+        self.assertFalse(state["pipeline_unhealthy"])
+
+
+class TestRound5DegradationPerSubsystem(unittest.TestCase):
+    """A whole subsystem loader raising must NOT abort the others.
+    Surfaced as a top-level `subsystem_degraded` warning plus a
+    structured entry in `degradation_warnings`."""
+
+    def test_one_subsystem_total_fail_others_continue(self):
+        """Stats_proxy loader explodes (e.g., compute_form_delta raises
+        before the per-record try/except can engage). Lineup data still
+        feeds through normally."""
+        feeds = {
+            "lineups_2026.json": {"lineups": [{
+                "match_id": 5, "home": "Brazil", "away": "Croatia",
+                "home_team_adjustment_elo": -15.0,
+                "away_team_adjustment_elo": 0.0,
+                "home_adjustment_reason": "second-choice GK",
+            }]},
+            "match_stats_2026.json": {"matches": [{
+                "match_id": 1, "status": "FT", "home": "Spain", "away": "X",
+                "home_form_adjustment_elo": 8.0,
+            }]},
+        }
+
+        def broken_stats(warnings_acc=None):
+            raise ValueError("compute_form_delta tripped on bad row")
+
+        with _TempFeeds(feeds), patch.object(
+                amd, "_load_stats_components", broken_stats):
+            state = amd.build_adjustments_state()
+            brazil = amd.get_team_elo_adjustment("Brazil", match_id=5)
+            spain = amd.get_team_elo_adjustment("Spain")
+        # Lineup adjustment still applied
+        self.assertEqual(brazil, -15.0)
+        # Spain got no stats adjustment (subsystem degraded)
+        self.assertEqual(spain, 0.0)
+        # subsystem_degraded warning is surfaced at top level
+        sd = [w for w in state["warnings"]
+              if w.get("type") == "subsystem_degraded"]
+        self.assertEqual(len(sd), 1)
+        self.assertEqual(sd[0]["subsystem"], "stats_proxy")
+        # And the structured degradation_warnings entry exists
+        deg = [w for w in state["degradation_warnings"]
+               if w.get("scope") == "subsystem"]
+        self.assertEqual(len(deg), 1)
+        self.assertEqual(deg[0]["subsystem"], "stats_proxy")
+        self.assertEqual(deg[0]["exception_class"], "ValueError")
+        # Pipeline still healthy — one subsystem down, others up
+        self.assertFalse(state["pipeline_unhealthy"])
+
+    def test_subsystem_degraded_warning_skipped_for_clean_loaders(self):
+        """No loader raises → zero subsystem_degraded warnings.
+
+        Note (Wave-2 S1): the freshness guard may LEGITIMATELY append
+        `scope=freshness` warnings when the Phase 2/4/6 producer outputs
+        aren't present in the temp dir. Those are not subsystem degradations —
+        scope this assertion to `scope in (record, subsystem)`."""
+        with _TempFeeds({}):
+            state = amd.build_adjustments_state()
+        sd = [w for w in state["warnings"]
+              if w.get("type") == "subsystem_degraded"]
+        self.assertEqual(sd, [])
+        non_freshness = [w for w in state["degradation_warnings"]
+                         if w.get("scope") != "freshness"]
+        self.assertEqual(non_freshness, [])
+
+
+class TestRound5CatastrophicFailure(unittest.TestCase):
+    """All six subsystems failing OR snapshot write failing → exit 1,
+    pipeline_unhealthy=True, plus a top-level `pipeline_unhealthy`
+    warning. The state dict is still produced so downstream consumers
+    can see the warning."""
+
+    def test_all_subsystems_degraded_marks_pipeline_unhealthy(self):
+        def boom(*args, **kwargs):
+            raise ValueError("upstream wedged")
+
+        patches = [
+            patch.object(amd, "_load_injury_components", boom),
+            patch.object(amd, "_load_weather_components", boom),
+            patch.object(amd, "_load_lineup_components", boom),
+            patch.object(amd, "_load_stats_components", boom),
+            patch.object(amd, "_load_referee_components", boom),
+            patch.object(amd, "_load_suspension_components", boom),
+        ]
+        with _TempFeeds({}):
+            for p in patches:
+                p.start()
+            try:
+                state = amd.build_adjustments_state()
+            finally:
+                for p in patches:
+                    p.stop()
+        self.assertTrue(state["pipeline_unhealthy"])
+        unh = [w for w in state["warnings"]
+               if w.get("type") == "pipeline_unhealthy"]
+        self.assertEqual(len(unh), 1)
+        # All six subsystems flagged as degraded
+        sd = sorted(w["subsystem"] for w in state["warnings"]
+                    if w.get("type") == "subsystem_degraded")
+        self.assertEqual(sd, ["injury", "lineup", "referee",
+                              "stats_proxy", "suspension", "weather"])
+
+    def test_main_returns_nonzero_when_pipeline_unhealthy(self):
+        def boom(*args, **kwargs):
+            raise ValueError("upstream wedged")
+
+        patches = [
+            patch.object(amd, "_load_injury_components", boom),
+            patch.object(amd, "_load_weather_components", boom),
+            patch.object(amd, "_load_lineup_components", boom),
+            patch.object(amd, "_load_stats_components", boom),
+            patch.object(amd, "_load_referee_components", boom),
+            patch.object(amd, "_load_suspension_components", boom),
+        ]
+        with _TempFeeds({}):
+            for p in patches:
+                p.start()
+            try:
+                # Use dry-run so we don't actually write
+                with patch.object(sys, "argv",
+                                  ["apply_matchday_adjustments.py", "--dry-run"]):
+                    rc = amd.main()
+            finally:
+                for p in patches:
+                    p.stop()
+        self.assertEqual(rc, 1)
+
+    def test_main_returns_zero_on_partial_degradation(self):
+        """ONE subsystem failing must NOT exit non-zero — other
+        subsystems still produced output, dashboard surfaces the
+        degraded pill, tick is still useful."""
+        def boom(warnings_acc=None):
+            raise ValueError("just stats wedged")
+        with _TempFeeds({}), patch.object(
+                amd, "_load_stats_components", boom):
+            with patch.object(sys, "argv",
+                              ["apply_matchday_adjustments.py", "--dry-run"]):
+                rc = amd.main()
+        self.assertEqual(rc, 0)
+
+    def test_snapshot_write_failure_marks_pipeline_unhealthy(self):
+        """OSError from _atomic_write_json must escalate to
+        pipeline_unhealthy but NOT crash — the function still returns
+        the state dict so callers (run_live_update.py) keep going."""
+        def boom_write(path, payload):
+            raise OSError(28, "No space left on device")
+        with _TempFeeds({}), patch.object(
+                amd, "_atomic_write_json", boom_write):
+            state = amd.write_state_and_log(dry_run=False)
+        self.assertTrue(state["pipeline_unhealthy"])
+        unh = [w for w in state["warnings"]
+               if w.get("type") == "pipeline_unhealthy"]
+        self.assertEqual(len(unh), 1)
+        self.assertIn("dashboard JSON", unh[0]["message"])
+
+
+class TestRound5DegradationSchema(unittest.TestCase):
+    """Pin the shape of degradation_warnings + audit-log enrichment so
+    downstream surfacing (dashboard pill, audit replay) doesn't break."""
+
+    def test_degradation_warnings_field_present_on_clean_tick(self):
+        with _TempFeeds({}):
+            state = amd.build_adjustments_state()
+        self.assertIn("degradation_warnings", state)
+        self.assertIsInstance(state["degradation_warnings"], list)
+
+    def test_degradation_warning_record_shape(self):
+        def boom(warnings_acc=None):
+            raise ValueError("synthetic boom")
+        with _TempFeeds({}), patch.object(
+                amd, "_load_stats_components", boom):
+            state = amd.build_adjustments_state()
+        deg = state["degradation_warnings"]
+        self.assertGreaterEqual(len(deg), 1)
+        # Filter to the synthetic stats_proxy subsystem failure — freshness
+        # warnings from missing producer outputs (Wave-2 S1) share the
+        # degradation_warnings channel but use scope='freshness'.
+        subsystem_entries = [
+            w for w in deg
+            if w.get("scope") == "subsystem"
+            and w.get("subsystem") == "stats_proxy"
+        ]
+        self.assertEqual(len(subsystem_entries), 1)
+        entry = subsystem_entries[0]
+        for k in ("subsystem", "scope", "record_id",
+                  "exception_class", "message", "ts"):
+            self.assertIn(k, entry)
+        self.assertEqual(entry["subsystem"], "stats_proxy")
+        self.assertEqual(entry["scope"], "subsystem")
+
+    def test_audit_log_includes_degradation_warnings(self):
+        def boom(warnings_acc=None):
+            raise ValueError("synthetic")
+        with _TempFeeds({}) as tmp, patch.object(
+                amd, "_load_stats_components", boom):
+            log_path = tmp / "matchday_intelligence_log.jsonl"
+            amd.write_state_and_log()
+            line = log_path.read_text().strip().splitlines()[-1]
+            rec = json.loads(line)
+        self.assertIn("degradation_warnings", rec)
+        self.assertGreaterEqual(len(rec["degradation_warnings"]), 1)
+
+
+class TestFreshnessGuard(unittest.TestCase):
+    """Wave-2 S1: producers for referee / suspension / player_stats are
+    invoked by matchday-intel-slow.yml. Origin/main has never seen these
+    files until the new workflow steps land. The orchestrator must:
+
+      1. Emit a `subsystem_stale` warning when the file is MISSING.
+      2. Emit one when the file is OLDER than results_2026.json by more
+         than STALENESS_MAX_AGE_HOURS (6h = 2 slow-cron ticks).
+      3. Stay silent when all three files are fresh.
+      4. Never raise — the subsystem still degrades to neutral via the
+         existing _read_json(default={}) path.
+
+    Threshold rationale: the slow workflow runs every 3h, so anything
+    older than 2 ticks is a missed-then-missed pattern (one transient
+    failure is recoverable; two consecutive means an upstream gap).
+    """
+
+    def _make_results(self, tmp_path: Path, mtime_offset_hours: float = 0.0):
+        """Write a minimal results_2026.json and set its mtime to
+        `now - mtime_offset_hours` for the staleness comparison.
+        Returns the file path."""
+        import os
+        path = tmp_path / "results_2026.json"
+        path.write_text(json.dumps({"completed_matches": []}))
+        if mtime_offset_hours:
+            mt = path.stat().st_mtime - mtime_offset_hours * 3600
+            os.utime(path, (mt, mt))
+        return path
+
+    def _set_mtime_hours_ago(self, path: Path, hours_ago: float) -> None:
+        import os
+        ref = path.stat().st_mtime - hours_ago * 3600
+        os.utime(path, (ref, ref))
+
+    def test_missing_referee_emits_subsystem_stale(self):
+        """No referee_2026.json on disk → `subsystem_stale` warning with
+        subsystem='referee' and exception_class='Stale'. Existing
+        `feed_missing` warning is also emitted (independent channel)."""
+        with _TempFeeds({}) as tmp:
+            self._make_results(tmp)
+            state = amd.build_adjustments_state()
+        stale = [w for w in state["degradation_warnings"]
+                 if w.get("subsystem") == "referee"
+                 and w.get("scope") == "freshness"]
+        self.assertEqual(len(stale), 1, msg=f"got: {state['degradation_warnings']}")
+        self.assertEqual(stale[0]["exception_class"], "Stale")
+        self.assertEqual(stale[0]["scope"], "freshness")
+        self.assertIn("referee_2026.json", stale[0]["message"])
+        self.assertIn("ts", stale[0])
+
+    def test_missing_suspensions_emits_subsystem_stale(self):
+        with _TempFeeds({}) as tmp:
+            self._make_results(tmp)
+            state = amd.build_adjustments_state()
+        stale = [w for w in state["degradation_warnings"]
+                 if w.get("subsystem") == "suspension"
+                 and w.get("scope") == "freshness"]
+        self.assertEqual(len(stale), 1)
+        self.assertIn("suspensions_2026.json", stale[0]["message"])
+
+    def test_missing_player_stats_emits_subsystem_stale(self):
+        with _TempFeeds({}) as tmp:
+            self._make_results(tmp)
+            state = amd.build_adjustments_state()
+        stale = [w for w in state["degradation_warnings"]
+                 if w.get("subsystem") == "player_stats"
+                 and w.get("scope") == "freshness"]
+        self.assertEqual(len(stale), 1)
+        self.assertIn("player_stats_2026.json", stale[0]["message"])
+
+    def test_suspensions_seven_hours_older_than_results_emits_stale(self):
+        """suspensions_2026.json exists but is 7h older than results
+        (> 6h threshold) → `subsystem_stale` with the delta surfaced."""
+        feeds = {"suspensions_2026.json": {"suspensions": []}}
+        with _TempFeeds(feeds) as tmp:
+            results = self._make_results(tmp)
+            # Make suspensions file 7h older than results.
+            self._set_mtime_hours_ago(tmp / "suspensions_2026.json", 7.0)
+            # Ensure results mtime is "now" — set explicitly
+            import os
+            now = results.stat().st_mtime
+            os.utime(results, (now, now))
+            state = amd.build_adjustments_state()
+        stale = [w for w in state["degradation_warnings"]
+                 if w.get("subsystem") == "suspension"
+                 and w.get("scope") == "freshness"]
+        self.assertEqual(len(stale), 1, msg=f"got: {state['degradation_warnings']}")
+        # Message should mention the age (>6h).
+        self.assertRegex(stale[0]["message"], r"[67]\.[0-9]h older")
+        self.assertIn("threshold 6.0h", stale[0]["message"])
+
+    def test_all_three_fresh_emits_no_subsystem_stale(self):
+        """When all freshness-checked files exist and are within 6h of
+        results, no `subsystem_stale` warning is emitted by the freshness
+        guard. R11 D4: extended from the original 3 (referee, suspension,
+        player_stats) to all 7 freshness-checked feeds (added injury,
+        weather, lineup, stats_proxy / match_stats)."""
+        feeds = {
+            "referee_2026.json": {"referee": []},
+            "suspensions_2026.json": {"suspensions": []},
+            "player_stats_2026.json": {"teams": {}},
+            "injuries_2026.json": {"teams": {}},
+            "weather_2026.json": {"weather": []},
+            "lineups_2026.json": {"lineups": []},
+            "match_stats_2026.json": {"matches": []},
+        }
+        with _TempFeeds(feeds) as tmp:
+            self._make_results(tmp)
+            state = amd.build_adjustments_state()
+        stale = [w for w in state["degradation_warnings"]
+                 if w.get("scope") == "freshness"]
+        self.assertEqual(
+            stale, [],
+            msg=f"unexpected freshness warnings: {stale}",
+        )
+
+    def test_freshness_check_does_not_raise(self):
+        """The guard must NEVER raise — failure mode is loud-degrade-warn,
+        not crash-the-tick. Even with all 3 inputs missing AND no
+        reference file, build_adjustments_state must return a state."""
+        with _TempFeeds({}):
+            # No results_2026.json either — _check_freshness should treat
+            # missing reference as "fresh" (can't compute delta) and just
+            # surface the missing-file warning for each input.
+            state = amd.build_adjustments_state()
+        self.assertIsInstance(state, dict)
+        self.assertIn("degradation_warnings", state)
+
+    def test_freshness_threshold_constant_is_six_hours(self):
+        """Pin the threshold so a future refactor doesn't silently widen
+        it (e.g. to 24h) and start hiding real staleness. 6h = 2 slow-cron
+        ticks (cron schedule = every 3h). Bumping it MUST be a deliberate
+        documented decision, not a drive-by refactor."""
+        self.assertEqual(amd.STALENESS_MAX_AGE_HOURS, 6.0)
+
+
+# R8 O2: matchday_intelligence.json writer rejects NaN / Infinity at the
+# producer side. Pre-R8, CPython json round-tripped Infinity silently
+# (json.loads("Infinity") → inf), so an upstream numerical bug could write
+# Inf and have it propagate into 03_simulate's base_intel_plus_state →
+# predict_lambdas → nbinom.pmf → NaN p_champion. Fail-loud on the write
+# now; clean runs unaffected.
+class TestR8O2AllowNanFalse(unittest.TestCase):
+    def test_atomic_write_rejects_infinity(self):
+        """A producer that accidentally emits Infinity must raise at the
+        write boundary, not silently round-trip through json and corrupt
+        downstream model lookups."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            target = Path(tmp_dir) / "matchday_intelligence.json"
+            payload = {
+                "generated_at": "2026-06-18T00:00:00+00:00",
+                "schema_version": 1,
+                "active_adjustments": [
+                    {"team": "MEX", "total_elo_adjustment": float("inf")},
+                ],
+            }
+            with self.assertRaises(ValueError):
+                amd._atomic_write_json(target, payload)
+            # And no .tmp file should be lingering committed in target.
+            self.assertFalse(target.exists(),
+                             "no atomically-replaced file should exist on rejected write")
+
+    def test_atomic_write_rejects_nan(self):
+        """Same fail-loud semantics for NaN — the silent-NaN-in,
+        silent-NaN-out pipeline is exactly what R8 O2 closes."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            target = Path(tmp_dir) / "matchday_intelligence.json"
+            payload = {"summary": {"net": float("nan")}}
+            with self.assertRaises(ValueError):
+                amd._atomic_write_json(target, payload)
+
+    def test_atomic_write_accepts_clean_finite_floats(self):
+        """Negative case: a clean payload round-trips. R8 O2 changes
+        nothing for any tick that doesn't carry NaN/Inf."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            target = Path(tmp_dir) / "matchday_intelligence.json"
+            payload = {"summary": {"net": 1.5, "ratio": 0.0, "min": -3.14}}
+            amd._atomic_write_json(target, payload)
+            self.assertTrue(target.exists())
+            self.assertEqual(json.loads(target.read_text())["summary"]["net"], 1.5)
 
 
 def _summary(result):

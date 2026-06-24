@@ -1,0 +1,50 @@
+{
+  "captured": "2026-06-16",
+  "hash": "c640a5ce49c8bd5f",
+  "shape_tree": {
+    "_comment": "str",
+    "errors": "list<empty>",
+    "get": "str",
+    "paging": {
+      "current": "int",
+      "total": "int"
+    },
+    "parameters": {
+      "league": "str",
+      "season": "str"
+    },
+    "response": [
+      {
+        "fixture": {
+          "date": "str",
+          "id": "int",
+          "timestamp": "int",
+          "timezone": "str"
+        },
+        "league": {
+          "country": "str",
+          "flag": "null",
+          "id": "int",
+          "logo": "str",
+          "name": "str",
+          "round": "str",
+          "season": "int"
+        },
+        "player": {
+          "id": "int",
+          "name": "str",
+          "reason": "str",
+          "type": "str"
+        },
+        "reason": "str",
+        "team": {
+          "id": "int",
+          "logo": "str",
+          "name": "str"
+        },
+        "type": "str"
+      }
+    ],
+    "results": "int"
+  }
+}

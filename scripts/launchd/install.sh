@@ -47,8 +47,35 @@ if launchctl list | grep -q "$PLIST_NAME"; then
 fi
 
 mkdir -p "$(dirname "$PLIST_DEST")"
-cp "$PLIST_SRC" "$PLIST_DEST"
-echo "→ Copied plist to $PLIST_DEST"
+
+# Audit H1 (R2 round 3): plist is a template. Substitute __REPO_ROOT__
+# with the actual repository root so the agent runs from this checkout,
+# not whatever path was hardcoded the day the template was committed.
+#
+# Pre-flight: refuse to install a template with no substitution markers
+# (catches a partial revert that re-introduces hardcoded paths) or with
+# unresolved markers post-substitution (catches a sed-failure).
+REPO_ROOT_RESOLVED="$(cd "$(dirname "$0")"/../.. && pwd)"
+
+if ! grep -q "__REPO_ROOT__" "$PLIST_SRC"; then
+  echo "FATAL: $PLIST_SRC has no __REPO_ROOT__ markers — refusing to install."
+  echo "       Either the template was reverted to a hardcoded plist, or"
+  echo "       you edited it manually. See com.prav.wc26-preview.plist for"
+  echo "       the template format."
+  exit 1
+fi
+
+# `|` separator avoids needing to escape forward slashes in REPO_ROOT.
+sed "s|__REPO_ROOT__|$REPO_ROOT_RESOLVED|g" "$PLIST_SRC" > "$PLIST_DEST"
+
+if grep -q "__REPO_ROOT__" "$PLIST_DEST"; then
+  echo "FATAL: substitution left unresolved __REPO_ROOT__ markers in $PLIST_DEST."
+  echo "       Check 'sed' availability and the contents of $PLIST_SRC."
+  rm -f "$PLIST_DEST"
+  exit 1
+fi
+
+echo "→ Materialized plist into $PLIST_DEST (REPO_ROOT=$REPO_ROOT_RESOLVED)"
 
 launchctl load "$PLIST_DEST"
 echo "→ Loaded agent: $PLIST_NAME"

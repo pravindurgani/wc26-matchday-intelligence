@@ -1,0 +1,40 @@
+{
+  "captured": "2026-06-16",
+  "hash": "eb57a6b22776e0d0",
+  "shape_tree": {
+    "_comment": "str",
+    "errors": "list<empty>",
+    "get": "str",
+    "paging": {
+      "current": "int",
+      "total": "int"
+    },
+    "parameters": {
+      "league": "str",
+      "season": "str"
+    },
+    "response": [
+      {
+        "team": {
+          "code": "str",
+          "country": "str",
+          "founded": "int",
+          "id": "int",
+          "logo": "str",
+          "name": "str",
+          "national": "bool"
+        },
+        "venue": {
+          "address": "str",
+          "capacity": "int",
+          "city": "str",
+          "id": "int",
+          "image": "str",
+          "name": "str",
+          "surface": "str"
+        }
+      }
+    ],
+    "results": "int"
+  }
+}

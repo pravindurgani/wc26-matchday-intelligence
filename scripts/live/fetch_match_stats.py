@@ -60,10 +60,46 @@ OUT_PATH = LIVE / "match_stats_2026.json"
 
 APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 
+# Schema-drift watchdog: compares fresh /fixtures/statistics responses to the
+# captured baseline under data/live/_provider_schemas/. Soft-mode by default —
+# drift logs a WARNING, does NOT crash the tick.
+# R15: ROOT on sys.path so absolute `scripts.live.*` import resolves under
+# script-mode test invocations (CI runs `python tests/live/test_*.py`).
+sys.path.insert(0, str(ROOT))
+from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+_SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from stats_proxy_adjustments import (  # noqa: E402
-    stats_to_dict, compute_form_delta,
+    stats_to_dict, compute_form_delta, compute_xg_form_delta,
 )
+# R11 E3: name-aware side resolution. Pre-R11 the positional
+# `len(response_sides) == 2` fallback at build_match_entry silently swapped
+# home/away stats whenever the provider returned [away, home] order — API
+# Football has no documented response ordering — sign-flipping form_delta
+# Elo for that fixture. normalize_team applies the canonical TEAM_ALIAS map
+# from fetch_results so provider aliases ("USA" → "United States" etc.)
+# resolve correctly.
+from fetch_results import normalize_team  # noqa: E402
+
+# Real-xG path is dead by default. Flipping to True ALSO requires updating
+# the pre_flight.py:628-629 assertion that enforces true_xg_available=False.
+XG_ENABLED = False
+
+
+def _xg_value(side_stats_raw: list[dict]):
+    """API-Football exposes 'Expected Goals' only on Pro-tier plans. Pulled
+    from the raw stats array because stats_to_dict() coerces to int."""
+    for entry in side_stats_raw or []:
+        if (entry.get("type") or "").strip() == "Expected Goals":
+            v = entry.get("value")
+            if v is None:
+                return None
+            try:
+                return float(str(v).rstrip("%"))
+            except (TypeError, ValueError):
+                return None
+    return None
 
 
 def _now_iso() -> str:
@@ -76,15 +112,21 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2, ensure_ascii=False)
+        # R9 P3: allow_nan=False at producer boundary — apply_matchday
+        # reads this file; pre-R9 only the matchday writer rejected NaN.
+        json.dump(payload, tmp, indent=2, ensure_ascii=False, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 
 
 def _http_get_json(url: str, headers: dict, timeout: int = 15) -> dict:
-    req = urllib.request.Request(url, headers=headers, method="GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode("utf-8"))
+    """Thin shim — delegates to `_http_client.http_get_json` so a 5xx /
+    URLError / TimeoutError gets retried (3 attempts, exponential
+    backoff) instead of escalating straight to subsystem_stale.
+    Audit H3 (R2 round 3).
+    """
+    from _http_client import http_get_json  # noqa: PLC0415
+    return http_get_json(url, headers, timeout=timeout)
 
 
 def load_ft_matches(only: int | None = None) -> list[dict]:
@@ -125,6 +167,11 @@ def fetch_one_fixture(api_key: str, provider_fixture_id: str) -> list[dict]:
     url = f"{APIFOOTBALL_BASE}/fixtures/statistics?fixture={provider_fixture_id}"
     headers = {"x-apisports-key": api_key, "Accept": "application/json"}
     payload = _http_get_json(url, headers)
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. Lets the stats feed keep flowing while flagging the
+    # operator that the provider changed something.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures_statistics.shape.json")
     if payload.get("errors") and any((payload.get("errors") or {}).values()):
         raise RuntimeError(f"API errors: {payload['errors']}")
     return payload.get("response") or []
@@ -133,23 +180,55 @@ def fetch_one_fixture(api_key: str, provider_fixture_id: str) -> list[dict]:
 def build_match_entry(match: dict, response_sides: list[dict],
                       fixture_id: str | None) -> dict:
     """Compose one entry. `response_sides` is the /fixtures/statistics array
-    (one item per team). Order isn't guaranteed — match by team name."""
+    (one item per team). Order isn't guaranteed — match by team name.
+
+    R11 E3: name-based assignment only. The pre-R11 positional fallback
+    (`or len(response_sides) == 2`) silently swapped home/away stats
+    whenever the provider returned [away, home] order, sign-flipping the
+    form-delta Elo for that fixture. We now require an exact normalized
+    name match on either side; an unrecognized name is logged via the
+    returned `side_match_warnings` list (caller decides whether to surface
+    it as a warning or fall back to per-side zero deltas).
+    """
     home_team = match["home"]
     away_team = match["away"]
     home_stats_raw: list[dict] = []
     away_stats_raw: list[dict] = []
+    side_match_warnings: list[str] = []
+    norm_home = normalize_team(home_team)
+    norm_away = normalize_team(away_team)
     for side in response_sides:
-        team_name = (side.get("team") or {}).get("name", "")
-        # Defensive: provider may use slightly different alias. Falling back
-        # to position (first/second) avoids dropping data if names diverge.
-        if not home_stats_raw and (team_name == home_team or len(response_sides) == 2):
+        team_name_raw = (side.get("team") or {}).get("name", "")
+        team_name = normalize_team(team_name_raw)
+        if team_name == norm_home and not home_stats_raw:
             home_stats_raw = side.get("statistics") or []
-        elif not away_stats_raw:
+        elif team_name == norm_away and not away_stats_raw:
             away_stats_raw = side.get("statistics") or []
+        else:
+            side_match_warnings.append(
+                f"unrecognized side '{team_name_raw}' for M{match.get('m')} "
+                f"(expected {home_team!r} or {away_team!r})"
+            )
     home_dict = stats_to_dict(home_stats_raw)
     away_dict = stats_to_dict(away_stats_raw)
-    home_delta = compute_form_delta(home_dict, away_dict)
-    away_delta = compute_form_delta(away_dict, home_dict)
+
+    # Honesty flags: surface whether we even tried to read xG, and whether
+    # the provider returned it. true_xg_available is the gated combination —
+    # the proxy stays in charge until both XG_ENABLED is flipped here AND
+    # pre_flight.py:628-629 is updated.
+    home_xg = _xg_value(home_stats_raw)
+    away_xg = _xg_value(away_stats_raw)
+    xg_attempted = True
+    xg_found = home_xg is not None and away_xg is not None
+    true_xg_available = bool(XG_ENABLED and xg_found)
+
+    if true_xg_available:
+        home_delta = compute_xg_form_delta(home_xg, away_xg)
+        away_delta = compute_xg_form_delta(away_xg, home_xg)
+    else:
+        home_delta = compute_form_delta(home_dict, away_dict)
+        away_delta = compute_form_delta(away_dict, home_dict)
+
     return {
         "match_id": int(match["m"]),
         "status": match.get("status", "FT"),
@@ -157,11 +236,14 @@ def build_match_entry(match: dict, response_sides: list[dict],
         "away": away_team,
         "home_form_adjustment_elo": round(home_delta, 3),
         "away_form_adjustment_elo": round(away_delta, 3),
-        "true_xg_available": False,    # locked by spec — never xG
+        "true_xg_available": true_xg_available,
+        "xg_attempted": xg_attempted,
+        "xg_found": xg_found,
         "home_stats": home_dict,
         "away_stats": away_dict,
         "fixture_id": fixture_id,
         "captured_at": _now_iso(),
+        "side_match_warnings": side_match_warnings,
     }
 
 
@@ -179,7 +261,11 @@ def _replay_local(fixture_dir: Path, matches: list[dict],
                              "match_id": m["m"], "fixture_id": pfid})
             continue
         response = json.loads(f.read_text()).get("response") or []
-        entries.append(build_match_entry(m, response, pfid))
+        entry = build_match_entry(m, response, pfid)
+        for note in entry.pop("side_match_warnings", []):
+            warnings.append({"type": "side_match_unrecognized",
+                             "match_id": m["m"], "message": note})
+        entries.append(entry)
     return entries, warnings
 
 
@@ -244,7 +330,11 @@ def main() -> int:
                 continue
             if not response:
                 continue
-            entries.append(build_match_entry(m, response, pfid))
+            entry = build_match_entry(m, response, pfid)
+            for note in entry.pop("side_match_warnings", []):
+                warnings.append({"type": "side_match_unrecognized",
+                                 "match_id": m["m"], "message": note})
+            entries.append(entry)
 
     snap = build_snapshot(entries, warnings)
     print(f"[fetch_match_stats] entries: {len(entries)} · warnings: {len(warnings)}")

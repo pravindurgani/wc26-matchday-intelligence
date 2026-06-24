@@ -18,13 +18,45 @@ The simulator (--live) reads this and applies as an Elo bump before lambdas.
 """
 from __future__ import annotations
 import json
+import os
+import sys
+import tempfile
 from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
 RAW = ROOT / "data" / "raw"
 PROC = ROOT / "data" / "processed"
+
+# R12 B3: load_knockout_fixtures so KO results contribute to live Elo deltas.
+# Pre-R12 schedule_by_m was groups-only — every KO result silently skipped at
+# `if not fx: continue`. K=60 tournament-strength updates froze at end-of-
+# groups, MAX_PER_KNOCKOUT cap was unreachable, and live auto-tier never saw
+# KO-elimination Elo movement.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _knockout import load_knockout_fixtures  # noqa: E402, PLC0415
+
+
+def _atomic_write_json(path: Path, payload: dict) -> None:
+    """R11 D5: atomic tempfile + os.replace. Pre-R11 this file used bare
+    .write_text(json.dumps(...)) — SIGKILL / OOM / disk-full mid-write
+    leaves a partial JSON on disk that the simulator parses with bare
+    json.loads at 03_simulate.py:698, raising mid-load and crashing the
+    tick. Mirrors the pattern in run_live_update.atomic_write_json."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=str(path.parent),
+        prefix=path.name + ".", suffix=".tmp", delete=False,
+    ) as tmp:
+        json.dump(payload, tmp, indent=2, allow_nan=False, default=str)
+        tmp_path = Path(tmp.name)
+    os.replace(tmp_path, path)
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 K_TOURNAMENT = 60
 MAX_PER_MATCH = 12.0
@@ -53,24 +85,47 @@ def main():
     elo = json.loads((PROC / "elo_ratings.json").read_text())
     results = json.loads(results_path.read_text())
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    schedule_by_m = {f["m"]: f for f in cfg["group_stage_schedule"]}
+    # R12 B3: include KO fixtures so completed_matches with m>=73 are not
+    # silently dropped. KO bracket entries carry slot codes ("1A", "W74") in
+    # home/away that won't match the resolved team names in the result record
+    # — we resolve teams from the match record itself for m>=73 below.
+    schedule_by_m = {f["m"]: f for f in
+                     cfg["group_stage_schedule"] + load_knockout_fixtures()}
 
     completed = results.get("completed_matches", [])
     if not completed:
         out = {"schema": "soft Elo delta per team since tournament start",
-               "deltas": {}, "n_processed": 0}
-        (LIVE / "live_team_state.json").write_text(json.dumps(out, indent=2))
+               "deltas": {}, "n_processed": 0,
+               # R11 D5: last_updated read by compute_input_hash
+               # (run_live_update.py:278, 03_simulate.py:1171) — pre-R11
+               # the field was missing → hash always saw empty string →
+               # a stalled writer that re-emitted identical deltas
+               # forever was invisible to the hash gate.
+               "last_updated": _now_iso()}
+        _atomic_write_json(LIVE / "live_team_state.json", out)
         print("[update_team_state] no completed matches yet")
         return
 
     deltas: dict[str, float] = defaultdict(float)
     deltas_count: dict[str, int] = defaultdict(int)
+    ko_matches_count: dict[str, int] = defaultdict(int)
     processed = 0
     for m in completed:
         fx = schedule_by_m.get(m["m"])
         if not fx:
             continue
-        h, a = fx["home"], fx["away"]
+        # R12 B3: KO fixtures hold slot codes ("1A", "W74") in fx["home"]/
+        # fx["away"] until the bracket resolves. The result record m has
+        # the resolved team names (fetch_results.py:661-667 substitutes
+        # them for m>=73). Use the resolved names for KO; the schedule
+        # names for group.
+        is_ko = m["m"] >= 73
+        if is_ko:
+            h, a = m.get("home"), m.get("away")
+            if not h or not a:
+                continue  # unresolved KO row — skip until bracket fills
+        else:
+            h, a = fx["home"], fx["away"]
         # Use updated effective Elo (base + accumulated delta so far)
         rh = elo.get(h, 1500) + deltas[h]
         ra = elo.get(a, 1500) + deltas[a]
@@ -82,19 +137,31 @@ def main():
         mm = margin_multiplier(gd)
         d_h = K_TOURNAMENT * mm * (sh - eh)
         d_a = K_TOURNAMENT * mm * (sa - (1 - eh))
-        # Cap per-match swing
+        # Cap per-match swing (tighter for KO: ±MAX_PER_KNOCKOUT individual
+        # matches in single-elim carry more upset signal but model risk is
+        # higher — the existing aggregate cap below applies the knockout
+        # bonus). R12 B3: KO matches now actually flow here.
         d_h = max(-MAX_PER_MATCH, min(MAX_PER_MATCH, d_h))
         d_a = max(-MAX_PER_MATCH, min(MAX_PER_MATCH, d_a))
         deltas[h] += d_h
         deltas[a] += d_a
         deltas_count[h] += 1
         deltas_count[a] += 1
+        if is_ko:
+            ko_matches_count[h] += 1
+            ko_matches_count[a] += 1
         processed += 1
 
-    # Cap aggregate per-team movement
+    # Cap aggregate per-team movement. R12 B3: previously the
+    # `deltas_count[team] <= 3` heuristic was a proxy for "still in group
+    # stage" — pre-R12 KO matches never landed here, so it sort-of worked.
+    # Now with KO flowing, use ko_matches_count to deterministically grant
+    # the knockout-bonus cap only when the team actually played a KO match.
     capped = {}
     for team, d in deltas.items():
-        cap = MAX_PER_TEAM_GROUP if deltas_count[team] <= 3 else MAX_PER_TEAM_GROUP + MAX_PER_KNOCKOUT
+        cap = (MAX_PER_TEAM_GROUP + MAX_PER_KNOCKOUT
+               if ko_matches_count[team] > 0
+               else MAX_PER_TEAM_GROUP)
         capped[team] = float(max(-cap, min(cap, d)))
 
     out = {
@@ -105,8 +172,10 @@ def main():
                    "max_per_knockout": MAX_PER_KNOCKOUT},
         "n_processed": processed,
         "deltas": capped,
+        # R11 D5: timestamp for compute_input_hash freshness signal.
+        "last_updated": _now_iso(),
     }
-    (LIVE / "live_team_state.json").write_text(json.dumps(out, indent=2, default=str))
+    _atomic_write_json(LIVE / "live_team_state.json", out)
     print(f"[update_team_state] processed {processed} matches, {len(capped)} teams adjusted")
     for t, d in sorted(capped.items(), key=lambda kv: -abs(kv[1]))[:5]:
         print(f"  {t:<25s} {d:+.1f} Elo")

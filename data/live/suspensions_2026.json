@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-06-16T20:40:53.525916+00:00",
+  "schema_version": 1,
+  "source": "fetch_results_events",
+  "cap_used": 8.0,
+  "per_suspension_elo": -3.0,
+  "yellow_threshold": 2,
+  "suspensions": [],
+  "warnings": [
+    {
+      "type": "no_events_in_snapshot",
+      "n_completed": 5,
+      "n_with_events": 0,
+      "message": "Live events not enriched on any completed match. Suspension tracker returns empty — this is NOT a confirmation that no players are suspended. Run `fetch_results.py --with-events` to populate."
+    }
+  ],
+  "summary": {
+    "n_completed_matches": 5,
+    "n_with_events": 0,
+    "n_suspensions": 0
+  }
+}

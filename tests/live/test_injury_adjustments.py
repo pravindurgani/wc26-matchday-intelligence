@@ -18,7 +18,8 @@ sys.path.insert(0, str(ROOT / "scripts" / "live"))
 from injury_adjustments import (  # noqa: E402
     TIER_TO_ELO, DEFAULT_TIER, DOUBTFUL_DISCOUNT,
     classify_api_type, tier_elo, discounted_elo,
-    classify_tier, normalize_player_name,
+    classify_tier, classify_tier_with_replacement, net_injury_elo,
+    normalize_player_name,
     _load_key_players_index, reset_key_players_index_for_tests,
 )
 import fetch_injuries  # noqa: E402
@@ -425,9 +426,20 @@ class TestWhitelistSelfConsistency(unittest.TestCase):
                 for team, name, stored, computed in mismatches[:5]))
 
     def test_stored_last_name_normalized_is_a_window_of_full(self):
-        """Stored last_name_normalized must be a trailing window of the
-        full normalized name — anything else means the by_last index
-        will never match what classify_tier computes."""
+        """Stored last_name_normalized must appear as a trailing OR
+        leading window of the full normalized name — anything else
+        means the by_last index will never match what classify_tier
+        computes.
+
+        R14 MED: extended to accept leading windows too. Korean naming
+        convention places the surname FIRST (Son Heung-min: surname
+        'son', given name 'heung-min'). Pre-R14 the data carried Son's
+        last_name_normalized as 'heung-min' (the trailing window) which
+        the by_last index then keyed on the GIVEN NAME, defeating the
+        team-aware canonical resolution for "Son" / "H. Son" aliases.
+        R14 corrected the data to 'son' (the actual surname); this test
+        now accepts both window directions to allow the correction.
+        """
         problems = []
         for entry in self.raw["players"]:
             full = normalize_player_name(entry["name"])
@@ -435,15 +447,19 @@ class TestWhitelistSelfConsistency(unittest.TestCase):
             if not last:
                 continue
             tokens = full.split()
-            valid_windows = {
+            trailing = {
                 " ".join(tokens[-n:]) for n in range(1, len(tokens) + 1)
             }
+            leading = {
+                " ".join(tokens[:n]) for n in range(1, len(tokens) + 1)
+            }
+            valid_windows = trailing | leading
             if last not in valid_windows:
                 problems.append((entry["team"], entry["name"], full, last))
         self.assertFalse(
             problems,
             "Stored last_name_normalized values don't appear as a "
-            "trailing window of the full normalized name:\n"
+            "trailing or leading window of the full normalized name:\n"
             + "\n".join(
                 f"  {team} | {name!r} | full={full!r} | last={last!r}"
                 for team, name, full, last in problems[:5]))
@@ -1362,6 +1378,151 @@ class TestAmbiguityWarningPropagation(unittest.TestCase):
             records, wc_teams={"Argentina"})
         amb = [w for w in warnings if w["type"] == "ambiguous_classification"]
         self.assertEqual(amb, [])
+
+
+class TestNetInjuryEloPhase1B(unittest.TestCase):
+    """Phase 1B (CORRECTIONS.md §1) — replacement-aware net Elo.
+
+    The fetch layer must surface `replacement_elo` and `net_elo` per
+    player, and `net_elo_active: true` at top level. The raw `elo` field
+    stays unchanged so existing readers keep working.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        reset_key_players_index_for_tests()
+
+    def test_net_injury_elo_math(self):
+        # elo = -30 (tier_1_star), replacement = -9.6 (tier_2_starter * 0.8)
+        # → net = -30 - (-9.6) = -20.4
+        self.assertAlmostEqual(net_injury_elo(-30.0, -9.6), -20.4, places=6)
+
+    def test_net_injury_elo_no_replacement_falls_back_to_elo(self):
+        self.assertEqual(net_injury_elo(-12.0, None), -12.0)
+
+    def test_classify_with_replacement_returns_elo_equiv(self):
+        custom = {
+            "Wakanda": {
+                "by_full": {"tchalla": {
+                    "tier": "tier_1_star",
+                    "name_normalized": "tchalla",
+                    "replacement": {"name": "M'Baku",
+                                    "tier": "tier_2_starter",
+                                    "elo_equiv": -9.6},
+                }},
+                "by_last": {},
+            }
+        }
+        tier, src, repl = classify_tier_with_replacement(
+            "T'Challa", "Wakanda", index=custom)
+        self.assertEqual(tier, "tier_1_star")
+        self.assertEqual(src, "whitelist_full")
+        self.assertEqual(repl, -9.6)
+
+    def test_classify_with_replacement_missing_block_returns_none(self):
+        custom = {
+            "Wakanda": {
+                "by_full": {"tchalla": {"tier": "tier_1_star",
+                                        "name_normalized": "tchalla"}},
+                "by_last": {},
+            }
+        }
+        tier, src, repl = classify_tier_with_replacement(
+            "T'Challa", "Wakanda", index=custom)
+        self.assertEqual(tier, "tier_1_star")
+        self.assertIsNone(repl)
+
+    def test_classify_with_replacement_unknown_player_returns_none(self):
+        tier, src, repl = classify_tier_with_replacement(
+            "Some Random Reserve", "France")
+        self.assertEqual(tier, DEFAULT_TIER)
+        self.assertEqual(src, "default")
+        self.assertIsNone(repl)
+
+    def test_fetch_injuries_emits_replacement_and_net_elo(self):
+        records = [{
+            "team": {"name": "France"},
+            "player": {"name": "Kylian Mbappé", "type": "Missing Fixture"},
+            "fixture": {"id": 1},
+        }]
+        teams, _ = fetch_injuries.normalise_records(
+            records, wc_teams={"France"})
+        self.assertIn("France", teams)
+        player = teams["France"]["players"][0]
+        self.assertIn("replacement_elo", player)
+        self.assertIn("net_elo", player)
+        self.assertEqual(player["elo"], -30.0)
+        # Mbappé's whitelist entry must have a replacement with elo_equiv
+        # for this test to be meaningful — if the data file ever loses it,
+        # this assertion will surface the regression immediately.
+        if player["replacement_elo"] is not None:
+            expected_net = round(
+                player["elo"] - player["replacement_elo"], 3)
+            self.assertEqual(player["net_elo"], expected_net)
+            self.assertEqual(
+                teams["France"]["total_net_elo_adjustment"], expected_net)
+        else:
+            self.assertEqual(player["net_elo"], player["elo"])
+
+    def test_fetch_injuries_unknown_player_net_equals_elo(self):
+        records = [{
+            "team": {"name": "France"},
+            "player": {"name": "Some Reserve", "type": "Missing Fixture"},
+            "fixture": {"id": 1},
+        }]
+        teams, _ = fetch_injuries.normalise_records(
+            records, wc_teams={"France"})
+        player = teams["France"]["players"][0]
+        self.assertIsNone(player["replacement_elo"])
+        self.assertEqual(player["net_elo"], player["elo"])
+
+    def test_snapshot_carries_net_elo_active_flag(self):
+        snap = fetch_injuries.build_snapshot([], fetch_warnings=[])
+        self.assertTrue(snap.get("net_elo_active"))
+
+
+class TestNetInjuryEloClamp(unittest.TestCase):
+    """S5 fix — net_injury_elo() must clamp the result into [elo, 0].
+
+    Two failure modes the clamp catches:
+      1. replacement.elo_equiv MORE negative than elo (data slip in
+         key_players_2026.json): raw `elo - replacement_elo` flips
+         POSITIVE — an injury that improves the team. Cap at 0.
+      2. replacement.elo_equiv ABOVE 0 (positive — replacement is "better
+         than baseline"): raw `elo - replacement_elo` becomes more negative
+         than `elo`. Floor at `elo` so we never penalise harder than the
+         zero-quality-replacement case.
+
+    Also re-asserts the Round-4 finite-guard so a future refactor doesn't
+    silently drop NaN/inf handling.
+    """
+
+    def test_clamp_caps_positive_at_zero(self):
+        # tier_3_squad-style elo (-30) but a worse-than-baseline replacement
+        # at -50 would emit raw = -30 - (-50) = +20. Clamp must cap at 0.
+        self.assertEqual(net_injury_elo(-30.0, -50.0), 0.0)
+
+    def test_clamp_floors_at_elo(self):
+        # Positive replacement_elo (e.g. a typo'd entry where replacement
+        # was supposed to be a penalty but got a sign flip) would emit
+        # raw = -30 - (+20) = -50, deeper than elo. Floor must hold at elo.
+        self.assertEqual(net_injury_elo(-30.0, 20.0), -30.0)
+
+    def test_clamp_preserves_in_range(self):
+        # Healthy case: elo=-30, replacement=-10, raw=-20 ∈ [-30, 0] →
+        # pass through unchanged.
+        self.assertAlmostEqual(net_injury_elo(-30.0, -10.0), -20.0, places=6)
+
+    def test_clamp_propagates_finite_guard(self):
+        # NaN/inf must still raise ValueError (Round-4 hardening preserved).
+        with self.assertRaises(ValueError):
+            net_injury_elo(float("nan"), -9.6)
+        with self.assertRaises(ValueError):
+            net_injury_elo(-30.0, float("nan"))
+        with self.assertRaises(ValueError):
+            net_injury_elo(float("inf"), -9.6)
+        with self.assertRaises(ValueError):
+            net_injury_elo(-30.0, float("-inf"))
 
 
 def _summary(result):

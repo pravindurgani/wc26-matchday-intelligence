@@ -54,6 +54,17 @@ ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
 RAW = ROOT / "data" / "raw"
 
+# Schema-drift watchdog (Round 5/6): compares fresh provider responses to
+# captured baselines under data/live/_provider_schemas/. Soft-mode by default —
+# drift logs a WARNING, does NOT crash the tick.
+# R15: ROOT on sys.path so absolute `scripts.live.*` imports resolve under
+# script-mode test invocations (CI runs `python tests/live/test_*.py`
+# directly — script-mode does NOT add CWD to sys.path).
+sys.path.insert(0, str(ROOT))
+from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+from scripts.live._knockout import load_knockout_fixtures  # noqa: E402  # R9 P4
+_SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
+
 LOCKED_STATUSES = {"FT", "AET", "PEN"}
 WARN_STATUSES = {"POSTPONED", "ABANDONED", "CANCELED", "CANCELLED",
                  "SUSPENDED", "INTERRUPTED", "WALKOVER", "WALKOVERAWARD"}
@@ -93,15 +104,19 @@ FOOTBALLDATA_STATUS_MAP = {
     "CANCELED":    "CANCELED",
 }
 
-# Team-name normalisation: provider name → our canonical name
+# Team-name normalisation: provider name → our canonical name.
+# R12 MED: extend with football-data.org and operator-overlay variants.
 TEAM_ALIAS = {
     "USA":                "United States",
     "U.S.A.":             "United States",
     "United States of America": "United States",
     "Korea Republic":     "South Korea",
     "Republic of Korea":  "South Korea",
+    "Korea, Republic of": "South Korea",  # R12: football-data.org tournament format
+    "South Korea (Korea Republic)": "South Korea",
     "Türkiye":            "Turkey",
     "Turkiye":            "Turkey",
+    "Türkiye (Turkey)":   "Turkey",       # R12
     "Czech Republic":     "Czechia",
     "Cabo Verde":         "Cape Verde",
     "Cape Verde Islands": "Cape Verde",
@@ -157,30 +172,28 @@ def atomic_write_json(path: Path, payload: dict):
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2)
+        # R9 P3: allow_nan=False — reject NaN/Infinity at producer boundary
+        # so downstream consumers (apply_matchday_adjustments aggregator,
+        # 03_simulate live re-run) never read poisoned floats. Pre-R9 R8 O2
+        # only hardened the matchday writer; results_2026.json is read into
+        # locked_score / events tallies. A NaN home_score would silently
+        # propagate into the sim and emerge as NaN p_champion at the very end.
+        json.dump(payload, tmp, indent=2, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 
 
-def http_get_json(url: str, headers: dict, timeout: int = 15, retries: int = 3) -> dict:
-    """HTTP GET with exponential backoff on 5xx + transient network errors.
-
-    Raises urllib.error.HTTPError for 4xx (don't retry — likely auth/usage).
-    """
-    last_err = None
-    for attempt in range(retries):
-        try:
-            req = urllib.request.Request(url, headers=headers, method="GET")
-            with urllib.request.urlopen(req, timeout=timeout) as r:
-                return json.loads(r.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            if 400 <= e.code < 500:
-                raise  # don't retry client errors
-            last_err = e
-        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
-            last_err = e
-        time.sleep(2 ** attempt)  # 1s, 2s, 4s
-    raise last_err if last_err else RuntimeError(f"http_get_json failed: {url}")
+# R12 B2: route through the shared _http_client.http_get_json so the
+# R11 C1 Retry-After honoring and 429-retry behavior actually applies to
+# fetch_results' three call sites (events fetch + both adapter list calls).
+# Pre-R12 fetch_results.py shipped its own local http_get_json that:
+#   (a) ignored Retry-After (R32 burst risk on /fixtures/events)
+#   (b) raised on 429 without retry
+#   (c) sleeps on EVERY attempt including the final (1s wasted per fail)
+# All three issues are fixed by the shared client. The local fn was a
+# pre-R11-C1 artifact; the comment at fetch_apifootball_events_for_fixture
+# already claimed R11 C1 benefit but L386 actually called the LOCAL fn.
+from scripts.live._http_client import http_get_json  # noqa: E402
 
 
 # ─── KNOCKOUT DECODER (A.2) ─────────────────────────────────────────────────
@@ -275,6 +288,189 @@ def fetch_mock() -> list[dict]:
 APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 
 
+# ─── EVENT NORMALISATION (Phase B3) ────────────────────────────────────────
+# API-Football /fixtures/events shape:
+#   {"time": {"elapsed": 25, "extra": null},
+#    "team": {"id": 463, "name": "..."},
+#    "player": {"id": 6126, "name": "..."},
+#    "assist": {"id": null, "name": null},
+#    "type": "Goal" | "Card" | "subst" | "Var",
+#    "detail": "Normal Goal" | "Yellow Card" | "Red Card" | "Substitution 1" | ...,
+#    "comments": null | str}
+#
+# Compact internal shape (consumed by suspension_tracker, scorer-rate, CLV):
+#   {"type": "goal" | "card" | "subst" | "var" | "other",
+#    "subtype": "normal_goal" | "yellow_card" | "red_card" | "second_yellow" | ...,
+#    "team": "<canonical>",
+#    "player": "<name>", "assist": "<name | None>",
+#    "minute": int, "extra_minute": int | None,
+#    "comments": str | None}
+EVENT_TYPE_MAP = {
+    "goal":  "goal",
+    "card":  "card",
+    "subst": "subst",
+    "var":   "var",
+}
+
+
+def _slug_detail(detail: str | None) -> str:
+    if not detail:
+        return ""
+    return "_".join(detail.strip().lower().split())
+
+
+def normalize_event(e: dict) -> dict | None:
+    """Map a raw API-Football event → compact dict. None on malformed input.
+
+    Subtype slugging is deliberately verbatim ("normal_goal", "yellow_card",
+    "substitution_1") so the suspension tracker can pattern-match without an
+    enum table that lags the provider's vocabulary. Card detection keys off
+    `type == "card"` + `subtype.startswith("yellow"/"red"/"second")`.
+    """
+    if not isinstance(e, dict):
+        return None
+    raw_type = str(e.get("type") or "").strip().lower()
+    canon_type = EVENT_TYPE_MAP.get(raw_type, "other")
+    detail = e.get("detail")
+    subtype = _slug_detail(detail)
+    time_block = e.get("time") or {}
+    elapsed = time_block.get("elapsed")
+    extra = time_block.get("extra")
+    try:
+        minute = int(elapsed) if elapsed is not None else None
+    except (TypeError, ValueError):
+        minute = None
+    try:
+        extra_minute = int(extra) if extra is not None else None
+    except (TypeError, ValueError):
+        extra_minute = None
+    team_name_raw = (e.get("team") or {}).get("name", "")
+    team_name = normalize_team(team_name_raw) if team_name_raw else None
+    player = ((e.get("player") or {}).get("name") or None)
+    assist = ((e.get("assist") or {}).get("name") or None)
+    comments = e.get("comments")
+    # API-Football encodes a 2nd-yellow as detail="Second Yellow card" — fold
+    # it under the card type even if its provider type slug drifts.
+    if canon_type == "other" and subtype.startswith(("yellow", "red", "second")):
+        canon_type = "card"
+    return {
+        "type": canon_type,
+        "subtype": subtype,
+        "team": team_name,
+        "player": player,
+        "assist": assist,
+        "minute": minute,
+        "extra_minute": extra_minute,
+        "comments": comments,
+    }
+
+
+def fetch_apifootball_events_for_fixture(
+    api_key: str, fixture_id: str | int, timeout: int = 15,
+) -> tuple[list[dict], dict | None]:
+    """Fetch /fixtures/events?fixture={id}. Returns (events, warning_or_None).
+
+    Returns ([], warning) on http/api errors so callers can attach the warning
+    and continue — the events feed is supplemental to results_2026.json's
+    locked scores. A failure here must never block the score-locking path.
+    """
+    headers = {"x-apisports-key": api_key, "Accept": "application/json"}
+    url = f"{APIFOOTBALL_BASE}/fixtures/events?fixture={fixture_id}"
+    try:
+        # R11 C3: retries=3 (was 2). R32 burst of 8 KO matches in 24h hits
+        # /fixtures/events back-to-back; a single 5xx with retries=2 means
+        # one attempt + 1s sleep + one attempt → suspension data missed for
+        # that match → no penalty for the player's next match. retries=3
+        # adds a second retry (1+2=3s extra) and pairs with the R11 C1
+        # Retry-After honoring in _http_client.http_get_json.
+        payload = http_get_json(url, headers, timeout=timeout, retries=3)
+    except urllib.error.HTTPError as e:
+        body = ""
+        try: body = e.read().decode("utf-8", errors="replace")[:200]
+        except Exception: body = "<body unreadable>"
+        return [], {"type": "events_http_error", "fixture_id": str(fixture_id),
+                    "code": e.code, "body": body}
+    except Exception as e:
+        return [], {"type": "events_fetch_error", "fixture_id": str(fixture_id),
+                    "message": f"{type(e).__name__}: {e}"}
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. Lets the events feed keep flowing while flagging the
+    # operator that the provider changed something.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures_events.shape.json")
+    if isinstance(payload, dict) and payload.get("errors"):
+        errs = payload.get("errors") or {}
+        if any(errs.values() if isinstance(errs, dict) else errs):
+            return [], {"type": "events_api_error", "fixture_id": str(fixture_id),
+                        "errors": errs}
+    raw = payload.get("response") or []
+    out: list[dict] = []
+    for e in raw:
+        norm = normalize_event(e)
+        if norm is not None:
+            out.append(norm)
+    return out, None
+
+
+def enrich_matches_with_events(
+    matches: list[dict],
+    api_key: str | None,
+    existing_events_by_m: dict[int, list[dict]] | None = None,
+    sleep_between: float = 0.15,
+) -> tuple[list[dict], list[dict]]:
+    """Attach `events: [...]` to each locked match record. Cache-aware.
+
+    For any match `m` present in `existing_events_by_m`, we reuse the cached
+    events (immutable once status is locked — see CORRECTIONS.md §4). For
+    everything else we hit /fixtures/events once per fixture, with a small
+    inter-request sleep to stay polite under API-Football's rate limit.
+
+    A per-fixture failure attaches `events: []` + records a warning; the
+    locked score itself is left untouched. Returns (matches, warnings).
+    """
+    cache = existing_events_by_m or {}
+    warnings_out: list[dict] = []
+    if not api_key:
+        # No key — just thread cached events through and warn.
+        for m in matches:
+            mid = m.get("m")
+            if mid in cache and "events" not in m:
+                m["events"] = cache[mid]
+        if any(m.get("status") in LOCKED_STATUSES for m in matches):
+            warnings_out.append({"type": "events_missing_key",
+                                 "message": "API_FOOTBALL_KEY not in env — events not fetched"})
+        return matches, warnings_out
+    fetched = 0
+    reused = 0
+    for m in matches:
+        if (m.get("status") or "").upper() not in LOCKED_STATUSES:
+            continue
+        mid = m.get("m")
+        if mid in cache:
+            m["events"] = cache[mid]
+            reused += 1
+            continue
+        fixture_id = m.get("provider_fixture_id")
+        if not fixture_id:
+            m["events"] = []
+            warnings_out.append({"type": "events_no_fixture_id", "m": mid,
+                                 "message": "no provider_fixture_id — cannot fetch events"})
+            continue
+        events, warn = fetch_apifootball_events_for_fixture(api_key, fixture_id)
+        if warn:
+            warn["m"] = mid
+            warnings_out.append(warn)
+            m["events"] = []
+        else:
+            m["events"] = events
+            fetched += 1
+        if sleep_between:
+            time.sleep(sleep_between)
+    if fetched or reused:
+        print(f"[fetch_results] events: fetched={fetched} reused={reused} (cached)")
+    return matches, warnings_out
+
+
 def load_fixture_map() -> dict | None:
     """Returns {provider_fixture_id_str: internal_match_id} if map file exists."""
     p = LIVE / "provider_fixture_map.json"
@@ -327,6 +523,13 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
         print(f"[fetch_results] API-Football fetch failed: {type(e).__name__}: {e}")
         return []
 
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. The scoring + locking logic below stays intact even if
+    # the provider added/removed/renamed a field; the warning gives the
+    # operator a heads-up before a silent data loss bug appears.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures.shape.json")
+
     if payload.get("errors"):
         print(f"[fetch_results] API-Football returned errors: {payload['errors']}")
         # Don't return [] silently — surface upstream so we don't overwrite locked data
@@ -368,7 +571,19 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
 
     # Load our schedule for fuzzy fallback + date validation
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    schedule = cfg["group_stage_schedule"]
+    # R9 P4 A2: extend with KO bracket so KO match IDs (m=73..104) can be
+    # mapped from provider_fixture_map.json. Pre-R9 only group_stage_schedule
+    # was loaded — any KO fixture_id that mapped to m_id ∈ [73,104] hit the
+    # `sched = schedule_by_id.get(m_id)` line at the previous loop iteration
+    # and got silently dropped to `unmapped` with reason="m not in schedule".
+    # Net effect pre-R9: entire knockout phase invisible to fetch_results;
+    # results_2026.json.completed_matches frozen at 72; predictions_live
+    # never updates for any KO outcome; dashboard locks at pre-R32 state.
+    # KO entries have slot codes ("1A", "W74") in home/away — for KO output
+    # rows we use the provider's normalised team names directly (handled at
+    # the result-emission step below).
+    ko_schedule = load_knockout_fixtures()
+    schedule = cfg["group_stage_schedule"] + ko_schedule
     schedule_by_id = {f["m"]: f for f in schedule}
 
     out = []
@@ -436,12 +651,26 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
             print(f"[fetch_results] WARN: M{m_id} status=PEN but no winner field — skipping")
             continue
 
+        # Phase 2 — referee name from fixture.referee (probed in A.0 as present).
+        # May be None for unassigned/early fixtures; downstream lookup handles
+        # absence gracefully (zero contribution).
+        referee_raw = fx.get("referee")
+        referee = referee_raw.strip() if isinstance(referee_raw, str) else None
+
+        # R9 P4 A2: for KO matches (m >= 73), sched["home"]/["away"] are
+        # bracket slot codes ("1A", "W74") that are placeholders until
+        # results resolve them — emitting those into results_2026.json
+        # would be wrong (the simulator's locked_score path doesn't read
+        # home/away strings, but dashboards and audit logs do). Use the
+        # provider's normalised team names for KO; sched values for group
+        # (where sched["home"] matches normalize_team(home_raw) by design).
+        is_ko_match = int(m_id) >= 73
         out.append({
             "m": int(m_id),
             "provider_fixture_id": provider_fixture_id,
             "date": sched["date"],
-            "home": sched["home"],
-            "away": sched["away"],
+            "home": home if is_ko_match else sched["home"],
+            "away": away if is_ko_match else sched["away"],
             "home_score": int(gh) if isinstance(gh, int) else None,
             "away_score": int(ga) if isinstance(ga, int) else None,
             "home_pens": home_pens,
@@ -450,6 +679,7 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
             "status": canon_status,
             "status_long": status.get("long", ""),
             "elapsed": status.get("elapsed"),
+            "referee": referee,
             "source": "api_football",
             "updated_at": datetime.now(timezone.utc).isoformat(),
             "raw_status": short,
@@ -459,6 +689,18 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
         print(f"[fetch_results] {len(unmapped)} unmapped provider fixtures (likely friendlies)")
         for u in unmapped[:3]:
             print(f"  ? {u}")
+        # R9 P4 A2: louder warning when an unmapped fixture has a date in the
+        # KO window. Pre-R9 those silently dropped; if R32 kickoff (2026-06-28)
+        # passes and a KO match still isn't in provider_fixture_map.json,
+        # operator MUST rebuild via scripts/live/build_provider_fixture_map.py
+        # or KO results never lock and the dashboard freezes at end-of-groups.
+        ko_unmapped = [u for u in unmapped if (u.get("date") or "") >= "2026-06-28"]
+        if ko_unmapped:
+            print(f"[fetch_results] CRITICAL: {len(ko_unmapped)} unmapped fixtures "
+                  f"in KO window (date>=2026-06-28). Rebuild provider_fixture_map.json "
+                  f"or KO results will not lock. Sample:", file=sys.stderr)
+            for u in ko_unmapped[:5]:
+                print(f"  KO-unmapped: {u}", file=sys.stderr)
 
     return out
 
@@ -509,7 +751,9 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
 
     fixture_map = load_fixture_map() or {}
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    schedule = cfg["group_stage_schedule"]
+    # R9 P4 A2: extend with KO bracket (same closure as fetch_apifootball above).
+    ko_schedule = load_knockout_fixtures()
+    schedule = cfg["group_stage_schedule"] + ko_schedule
     schedule_by_id = {f["m"]: f for f in schedule}
 
     out: list[dict] = []
@@ -581,12 +825,14 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
             print(f"[fetch_results] WARN: M{m_id} status=PEN but no winner field — skipping")
             continue
 
+        # R9 P4 A2: KO matches use provider team names (sched has slot codes).
+        is_ko_match = int(m_id) >= 73
         out.append({
             "m": int(m_id),
             "provider_fixture_id": provider_id,
             "date": sched["date"],
-            "home": sched["home"],
-            "away": sched["away"],
+            "home": home if is_ko_match else sched["home"],
+            "away": away if is_ko_match else sched["away"],
             "home_score": int(gh) if isinstance(gh, int) else None,
             "away_score": int(ga) if isinstance(ga, int) else None,
             "home_pens": home_pens,
@@ -604,6 +850,14 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
         print(f"[fetch_results] {len(unmapped)} unmapped football-data fixtures (likely friendlies)")
         for u in unmapped[:3]:
             print(f"  ? {u}")
+        # R9 P4 A2: same KO-window critical warning as fetch_apifootball.
+        ko_unmapped = [u for u in unmapped if (u.get("date") or "") >= "2026-06-28"]
+        if ko_unmapped:
+            print(f"[fetch_results] CRITICAL: {len(ko_unmapped)} unmapped fixtures "
+                  f"in KO window (date>=2026-06-28). Rebuild provider_fixture_map.json "
+                  f"or KO results will not lock.", file=sys.stderr)
+            for u in ko_unmapped[:5]:
+                print(f"  KO-unmapped: {u}", file=sys.stderr)
 
     return out
 
@@ -617,7 +871,18 @@ def fetch_sportmonks(token: str, dry_run: bool = False) -> list[dict]:
 
 # ─── VALIDATION ────────────────────────────────────────────────────────────
 def validate_match(m: dict, schedule: list) -> tuple[bool, str]:
-    """Schema + cross-reference validation."""
+    """Schema + cross-reference validation.
+
+    R11 E1: schedule must include BOTH group_stage_schedule and the KO
+    bracket rows from load_knockout_fixtures() — pre-R11 main() loaded
+    only groups, so every KO result (m>=73) was silently rejected from
+    2026-06-28 onward. KO bracket rows carry slot codes ("1A", "W74")
+    in home/away until results resolve them, but the API-Football
+    adapter substitutes resolved team names for m>=73 at fetch time
+    (fetch_results.py:661-667). The home/away string cross-check is
+    therefore skipped for KO matches — comparing resolved team names
+    to bracket slot codes would reject every KO result forever.
+    """
     required = ["m", "home_score", "away_score"]
     for k in required:
         if k not in m:
@@ -633,6 +898,9 @@ def validate_match(m: dict, schedule: list) -> tuple[bool, str]:
     fixture = next((f for f in schedule if f["m"] == m["m"]), None)
     if not fixture:
         return False, f"match {m['m']} not in WC2026 schedule"
+    # KO matches: skip home/away string check (see docstring).
+    if m["m"] >= 73:
+        return True, "ok"
     if m.get("home") and m["home"] != fixture["home"]:
         return False, f"home mismatch: expected {fixture['home']}, got {m['home']}"
     if m.get("away") and m["away"] != fixture["away"]:
@@ -647,6 +915,11 @@ def main() -> int:
                     help="mock | api_football | sportmonks (default: env)")
     ap.add_argument("--dry-run", action="store_true",
                     help="Fetch and print plan, but do not write results_2026.json")
+    ap.add_argument("--with-events", action="store_true",
+                    default=(os.environ.get("WC_FETCH_EVENTS", "").lower()
+                             in ("1", "true", "yes", "on")),
+                    help="Enrich locked matches with /fixtures/events. "
+                         "Cached events on existing results_2026.json are reused.")
     args = ap.parse_args()
 
     src = (args.provider or get_provider_name()).lower().replace("-", "_")
@@ -657,7 +930,13 @@ def main() -> int:
     except Exception as e:
         print(f"[fetch_results] FATAL: cannot read wc2026_config.json — {e}")
         return 1
-    schedule = cfg.get("group_stage_schedule", [])
+    # R11 E1 (R32-blocker): extend schedule with KO bracket so validate_match
+    # accepts m>=73 records. Pre-R11 main() loaded only group_stage_schedule;
+    # from 2026-06-28 every R32/R16/QF/SF/3rd/Final result emitted by both
+    # adapters was rejected at the validation gate with reason
+    # "match N not in WC2026 schedule" — dashboard would freeze at end of
+    # groups and suspensions would never resolve from KO events.
+    schedule = cfg.get("group_stage_schedule", []) + load_knockout_fixtures()
     if not schedule:
         print("[fetch_results] FATAL: empty group_stage_schedule in config")
         return 1
@@ -756,17 +1035,80 @@ def main() -> int:
     for w in warnings_list[:5]:
         print(f"  ⚠ M{w['m']}: {w['status']} {('· ' + w['note']) if w['note'] else ''}")
 
+    out_path = LIVE / "results_2026.json"
+
+    # Phase B3: optional events enrichment. Cache already-fetched events from
+    # the existing results_2026.json so we only hit /fixtures/events for
+    # matches that newly entered a LOCKED status this run.
+    if args.with_events and src in ("api_football", "apifootball"):
+        existing_events_by_m: dict[int, list[dict]] = {}
+        if out_path.exists():
+            try:
+                existing = json.loads(out_path.read_text())
+                for em in existing.get("completed_matches", []) or []:
+                    if isinstance(em.get("events"), list) and em.get("m") is not None:
+                        existing_events_by_m[int(em["m"])] = em["events"]
+            except Exception as e:
+                print(f"[fetch_results] events cache read failed: {e}")
+        api_key = get_api_football_key()
+        valid, ev_warnings = enrich_matches_with_events(
+            valid, api_key, existing_events_by_m=existing_events_by_m,
+        )
+        warnings_list.extend(ev_warnings)
+
     if args.dry_run:
         print("[fetch_results] dry-run — no file written")
         return 0
-
-    out_path = LIVE / "results_2026.json"
-    # Preserve existing locked data if provider returned nothing useful
+    # Preserve existing locked data if provider returned nothing useful.
+    # R5 C1: emit an explicit `provider_returned_nothing` warning into the
+    # preserved file so the orchestrator's get_results_warnings() surfaces it
+    # to live_state.json. Without this the silent-failure mode (provider
+    # returns HTTP 200 + empty body with no parser-side warning — e.g.
+    # auth token silently expired, or API serving cached empty response)
+    # leaves results_2026.json untouched AND the dashboard unaware.
     if not valid and not warnings_list and out_path.exists():
         try:
             existing = json.loads(out_path.read_text())
             if existing.get("completed_matches"):
                 print("[fetch_results] adapter returned nothing useful; preserving existing locked matches")
+                # R6 M3: dedup the provider_returned_nothing warning across
+                # consecutive preservation ticks. A 3h sustained provider
+                # outage = ~18 fast ticks, each previously appending a
+                # duplicate entry → warnings[] grew linearly and
+                # results_2026.json bloated. Now: if the warning already
+                # exists, bump a count + last_seen_utc instead of appending;
+                # if not, append once with count=1 + first_seen_utc.
+                now_iso = datetime.now(timezone.utc).isoformat()
+                warnings = existing.setdefault("warnings", [])
+                existing_warning = next(
+                    (w for w in warnings
+                     if isinstance(w, dict) and w.get("type") == "provider_returned_nothing"),
+                    None,
+                )
+                if existing_warning is not None:
+                    existing_warning["count"] = int(existing_warning.get("count", 1)) + 1
+                    existing_warning["last_seen_utc"] = now_iso
+                    # R7 N3: backfill first_seen_utc on any pre-R6 warning entry
+                    # that was written before the dedup fields existed. Without
+                    # this the duration of an in-progress outage that started on
+                    # an old build would appear to start at the first post-deploy
+                    # tick rather than at the actual onset.
+                    existing_warning.setdefault("first_seen_utc", now_iso)
+                else:
+                    warnings.append({
+                        "type": "provider_returned_nothing",
+                        "message": (
+                            f"Provider '{src}' returned 0 matches with no warnings; "
+                            f"existing locked matches preserved. Investigate the "
+                            f"adapter / provider token if this persists across ticks."
+                        ),
+                        "count": 1,
+                        "first_seen_utc": now_iso,
+                        "last_seen_utc": now_iso,
+                    })
+                existing["updated_at"] = now_iso
+                existing["source"] = src
+                atomic_write_json(out_path, existing)
                 return 0
         except Exception:
             pass

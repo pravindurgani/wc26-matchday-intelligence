@@ -31,8 +31,17 @@ def poisson_pmf(k: int, lam: float) -> float:
     return math.exp(-lam) * lam ** k / math.factorial(k)
 
 
-def lambdas_to_wdl(lam_h: float, lam_a: float, max_g: int = 10) -> tuple:
-    """Convert (λ_h, λ_a) → (p_away, p_draw, p_home)."""
+def lambdas_to_wdl(lam_h: float, lam_a: float, max_g: int = 15) -> tuple:
+    """Convert (λ_h, λ_a) → (p_away, p_draw, p_home).
+
+    R14 C1: default `max_g` bumped 10 → 15 to align with the production
+    simulator (03_simulate.py build_score_matrix max_g=15, R12 MED).
+    Goal-model evaluation uses Poisson marginals (not NB+DC like the
+    sim), but the truncation level still matters: at λ=4.0, Poisson tail
+    mass above 10 is ~3% — pre-R14 the daily-baseline calibration and
+    backtest metrics were biased by this truncation while production
+    operated at max_g=15. Now consistent across both pipelines.
+    """
     ph = np.array([poisson_pmf(k, lam_h) for k in range(max_g + 1)])
     pa = np.array([poisson_pmf(k, lam_a) for k in range(max_g + 1)])
     ph /= ph.sum(); pa /= pa.sum()

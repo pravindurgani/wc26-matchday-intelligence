@@ -41,6 +41,15 @@ DASH = ROOT / "dashboard"
 CB_PATH = LIVE / "circuit_breaker_state.json"
 CB_THRESHOLD = 3  # consecutive sim failures before tripping the breaker
 
+# Wave R2 P1c: sys.path injection so the matchday freshness helper is
+# importable whether run_live_update is invoked as a script
+# (`python scripts/live/run_live_update.py`) or as a module
+# (`python -m scripts.live.run_live_update`). Matches the same pattern
+# scripts/live/export_ko_advance.py uses at L63-64.
+_LIVE_DIR = str(ROOT / "scripts" / "live")
+if _LIVE_DIR not in sys.path:
+    sys.path.insert(0, _LIVE_DIR)
+
 # C1: required artifacts for --live sim. Missing any of these crashes the sim
 # silently behind the circuit breaker; we fail loud BEFORE invoking 03_simulate.
 REQUIRED_ARTIFACTS = [
@@ -63,13 +72,69 @@ def run(cmd: list[str]) -> int:
     return subprocess.run(cmd, cwd=str(ROOT)).returncode
 
 
+def run_capture(cmd: list[str]) -> tuple[int, str]:
+    """Like run() but captures stderr so failure context can flow into the
+    operator-visible sim_failure warning. Use ONLY when the captured stderr
+    is needed in the dashboard payload — for most subprocess calls plain
+    run() (which inherits stderr to CI logs) is sufficient.
+
+    R8 O1: pre-R8 the R7 N1 RuntimeError diagnostic (e.g. "annex_c miss +
+    fallback exhausted: ... unused thirds=... check ...") printed to stderr
+    but was lost between the simulator subprocess and the dashboard —
+    operators saw a generic "sim_failure" pill with no hint that the
+    underlying cause was a third-place fallback exhaustion. Capturing stderr
+    here lets the sim_failure warning carry the actual subprocess error
+    tail. Captured stderr is also tee'd to this process's stderr so CI
+    logs still see the full output.
+    """
+    print(f"  → {' '.join(cmd)}")
+    res = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True)
+    if res.stderr:
+        sys.stderr.write(res.stderr)
+    return res.returncode, (res.stderr or "")
+
+
+def _matchday_freshness_warnings_safe() -> list[dict]:
+    """Wave R2 P1c: probe matchday freshness without ever crashing the tick.
+
+    The underlying `get_matchday_freshness_warnings()` in
+    `apply_matchday_adjustments` returns live_state-shaped {type, message}
+    dicts describing the three failure modes that the fast path was
+    previously blind to:
+      - matchday_consolidated_missing  (slow workflow never ran here)
+      - matchday_consolidated_stale    (slow workflow stalled >6h)
+      - matchday_subsystem_stale       (a producer underneath stalled)
+
+    Any unexpected exception is captured into a diagnostic warning rather
+    than propagated — losing a tick because of a freshness probe would
+    defeat the entire point of the probe.
+    """
+    try:
+        from apply_matchday_adjustments import (  # noqa: PLC0415
+            get_matchday_freshness_warnings,
+        )
+        return get_matchday_freshness_warnings()
+    except Exception as e:
+        return [{
+            "type": "matchday_freshness_check_error",
+            "message": (
+                f"matchday freshness probe failed: "
+                f"{type(e).__name__}: {e}"
+            ),
+        }]
+
+
 def atomic_write_json(path: Path, payload: dict):
+    """R9 P3: allow_nan=False rejects NaN/Infinity at the boundary. This
+    writer covers dashboard/live_state.json and circuit_breaker_state.json;
+    a NaN warning count or non-finite timestamp would silently round-trip
+    and corrupt downstream consumers (dashboard, next-tick CB read)."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2)
+        json.dump(payload, tmp, indent=2, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 
@@ -253,6 +318,59 @@ def detect_provider_source() -> tuple[str, str]:
     return "manual/mock", "manual"
 
 
+def _provider_fallback_warnings() -> list[dict]:
+    """R6 M2: surface a structured warning when the operator requested a
+    real provider but the corresponding key is missing — the live update
+    silently falls back to manual/mock mode and serves the last-committed
+    snapshot. Pre-R6 there was no signal on `live_state.json:warnings[]`
+    so the dashboard read source="manual/mock" and the operator could
+    miss the rotated/expired secret entirely. Now: if the requested
+    provider is non-mock AND its key is absent, emit a
+    `provider_key_missing` warning that flows into every write_live_state
+    call alongside mf_warnings.
+
+    Returns [] on the happy path (no env override OR key present) so the
+    warning array stays empty on a clean tick. Exception-safe by design;
+    a key-detection bug never propagates upward."""
+    try:
+        provider = (os.environ.get("FOOTBALL_PROVIDER")
+                    or os.environ.get("WC_RESULTS_SOURCE")
+                    or "mock").strip().lower().replace("-", "_")
+        if provider in ("mock", ""):
+            return []  # explicit mock — no warning, user opted in
+        apifootball_key = (os.environ.get("API_FOOTBALL_KEY")
+                           or os.environ.get("WC_APIFOOTBALL_KEY"))
+        football_data_token = (os.environ.get("FOOTBALL_DATA_TOKEN")
+                               or os.environ.get("WC_FOOTBALL_DATA_TOKEN"))
+        sportmonks_token = (os.environ.get("SPORTMONKS_TOKEN")
+                            or os.environ.get("WC_SPORTMONKS_TOKEN"))
+        missing = None
+        if provider in ("api_football", "apifootball") and not apifootball_key:
+            missing = "API_FOOTBALL_KEY"
+        elif provider in ("football_data", "footballdata") and not football_data_token:
+            missing = "FOOTBALL_DATA_TOKEN"
+        elif provider == "sportmonks" and not sportmonks_token:
+            missing = "SPORTMONKS_TOKEN"
+        if missing is None:
+            return []
+        return [{
+            "type": "provider_key_missing",
+            "message": (
+                f"Provider '{provider}' was requested via FOOTBALL_PROVIDER but "
+                f"required env var '{missing}' is unset/empty. Falling back to "
+                f"manual/mock mode; dashboard serves the last committed snapshot. "
+                f"Check secret rotation in the workflow."
+            ),
+            "requested_provider": provider,
+            "missing_env_var": missing,
+        }]
+    except Exception as e:
+        return [{
+            "type": "provider_fallback_check_error",
+            "message": f"{type(e).__name__}: {e}",
+        }]
+
+
 def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
                      warnings: list | None = None, source: str | None = None,
                      provider_mode: str | None = None,
@@ -386,6 +504,25 @@ def main() -> int:
 
     print("== Live update tick ==" + (" [dry-run]" if args.dry_run else ""))
 
+    # Wave R2 P1c: probe matchday freshness ONCE at the top so EVERY
+    # write_live_state path — including the three early-exit guards
+    # below (circuit breaker, fetch failure, input corruption) — carries
+    # the signal. The helper is exception-safe (see
+    # `_matchday_freshness_warnings_safe`); it returns [] on a clean tick
+    # so the early-exit warning arrays stay minimal in the happy case.
+    #
+    # R6 M2: also fold provider-fallback warnings into the same array.
+    # If the operator requested api_football/sportmonks/football_data
+    # but the corresponding key is missing, detect_provider_source()
+    # silently returns ("manual/mock", "manual"); without this merge the
+    # dashboard would see `source="manual/mock"` with no warning
+    # explaining WHY (rotated secret, deleted env var, etc.). The helper
+    # is exception-safe — a check bug never blocks the tick.
+    mf_warnings = (
+        _matchday_freshness_warnings_safe()
+        + _provider_fallback_warnings()
+    )
+
     failures = read_circuit_breaker()
     if failures >= CB_THRESHOLD:
         msg = f"Circuit breaker tripped after {failures} consecutive failures. " \
@@ -393,11 +530,22 @@ def main() -> int:
         print(f"[run_live_update] {msg}")
         # Still emit live_state so the dashboard reflects the situation
         write_live_state("live", get_completed_count(), sim_rerun=False,
-                         warnings=[{"type": "circuit_breaker", "message": msg}])
+                         warnings=[{"type": "circuit_breaker", "message": msg}]
+                                  + mf_warnings)
         return 2
 
-    # Step 1: fetch results (pass --dry-run through)
-    fetch_cmd = [sys.executable, "scripts/live/fetch_results.py"]
+    # Step 1: fetch results (pass --dry-run through). R5 C6: also enrich with
+    # `--with-events` so a newly-locked FT match's card events land in
+    # results_2026.json on the SAME tick. Without this flag the fast (10-min)
+    # path captures score+status only; events stay null until the slow (3h)
+    # tick re-runs fetch_results --with-events. That gap means
+    # suspension_tracker sees a stale events array for up to 3h, so a player
+    # who picks up his 2nd yellow in a fast-tick-locked match is NOT in
+    # suspensions_2026.json for the next R32 opponent's win-prob calculation.
+    # Cost is bounded: enrich_matches_with_events skips matches that already
+    # have events (existing_events_by_m cache), so worst case ≈ 1-2 extra
+    # /fixtures/events calls per fast tick (one per new FT match).
+    fetch_cmd = [sys.executable, "scripts/live/fetch_results.py", "--with-events"]
     if args.dry_run:
         fetch_cmd.append("--dry-run")
     rc = run(fetch_cmd)
@@ -407,7 +555,8 @@ def main() -> int:
                          get_completed_count(), sim_rerun=False,
                          warnings=[{"type": "fetch_failure",
                                     "message": "Live result fetcher exited non-zero; "
-                                               "previous predictions retained."}])
+                                               "previous predictions retained."}]
+                                  + mf_warnings)
         return 0  # don't trip CB for fetch failure — that's transient
 
     # H2: refuse to feed a truncated / corrupt results_2026.json into the
@@ -419,12 +568,20 @@ def main() -> int:
         write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
                          get_completed_count(), sim_rerun=False,
                          warnings=[{"type": "input_corruption",
-                                    "message": reason}])
+                                    "message": reason}]
+                                  + mf_warnings)
         # Don't trip CB — this is a data-integrity issue, not a sim regression.
         return 2
 
     new_count = get_completed_count()
     warns = get_results_warnings()
+    # Wave R2 P1c: matchday freshness probed once at the top of main()
+    # (`mf_warnings`) — fold it in here so every downstream
+    # write_live_state path carries the signal (unchanged-inputs early
+    # exit, dry-run, missing-artifacts, sim-fail, success). The CB /
+    # fetch-failure / input-corruption guards above already merged it
+    # into their isolated warning arrays.
+    warns = warns + mf_warnings
     last_synced = get_live_predictions_locked_count()
 
     # H1: hash-based change detection. Catches score corrections AND
@@ -495,23 +652,51 @@ def main() -> int:
     # fidelity here — fidelity drift is silent and erodes trust; cadence
     # drift is at most a freshness lag.
     print(f"[run_live_update] {new_count} matches completed, re-simulating…")
-    rc = run([sys.executable, "scripts/03_simulate.py",
-              "--live", "--seeds", "5", "--sims", "5000",
-              "--out", "predictions_live.json"])
+    # R8 O1: capture sim stderr so a typed RuntimeError (e.g. R7 N1 third-
+    # place fallback exhaustion) surfaces in the operator-visible warning,
+    # not just CI logs. The tail (last 500 chars) keeps the live_state.json
+    # payload bounded.
+    rc, sim_stderr = run_capture([sys.executable, "scripts/03_simulate.py",
+                                  "--live", "--seeds", "5", "--sims", "5000",
+                                  "--out", "predictions_live.json"])
     if rc != 0:
         new_failures = failures + 1
         write_circuit_breaker(new_failures)
+        sim_msg = (f"Live simulation failed ({new_failures}/{CB_THRESHOLD}); "
+                   "previous predictions_live.json retained.")
+        stderr_tail = (sim_stderr or "").strip()
+        if stderr_tail:
+            sim_msg += f" Last stderr: {stderr_tail[-500:]}"
         write_live_state("live" if new_count > 0 else "pre_tournament",
                          new_count, sim_rerun=False,
                          warnings=warns + [{
                              "type": "sim_failure",
-                             "message": f"Live simulation failed ({new_failures}/{CB_THRESHOLD}); "
-                                        "previous predictions_live.json retained.",
+                             "message": sim_msg,
                          }])
         return 1
 
     # Success: reset breaker
     write_circuit_breaker(0)
+
+    # Step 4b (Wave-4 wiring): KO advance-prob post-processor (S7).
+    # Reads data/processed/predictions_live.json + knockout_bracket +
+    # results + config, then writes `match_predictions_ko` back into
+    # predictions_live.json (atomic). This is what surfaces the
+    # `p_advance_match = p_home_win + 0.5 * p_draw` field consumed by the
+    # outright KO-market sheet. Without this hook the module exists on
+    # disk but never produces output — the S0 "looks wired, isn't
+    # flowing" class of bug.
+    # Non-fatal on failure: a Σ-gate or bracket-resolution problem leaves
+    # the predictions_live.json from the sim intact (export writes
+    # atomically) and a warning lands on the dashboard via live_state.
+    rc_ko = run([sys.executable, "-m", "scripts.live.export_ko_advance"])
+    if rc_ko != 0:
+        print(f"[run_live_update] export_ko_advance exited {rc_ko}; "
+              "predictions_live.json from sim retained (no p_advance_match "
+              "this tick)")
+        warns = warns + [{"type": "export_ko_advance_failure",
+                          "message": f"export_ko_advance exited {rc_ko}; "
+                                     "p_advance_match not emitted this tick"}]
 
     # Step 5: live delta — only meaningful once matches are locked
     if new_count > 0:
@@ -548,8 +733,27 @@ def main() -> int:
                   f"source not a valid prediction file: {type(e).__name__}: {e}. "
                   f"Previous dashboard copy retained.")
 
-    # Step 8: validator
-    run([sys.executable, "scripts/09_validate.py"])
+    # Step 8: validator. R11 D3: capture rc. Pre-R11 the return code was
+    # discarded — if the R10 Q3 strict 1e-6 Σ-gate (canonical + dashboard
+    # mirror) failed on a LIVE tick, the corrupted predictions_live.json was
+    # already published in Step 7 above with ZERO operator signal: dashboard
+    # serves invariant-violating data; no warning lights up. We re-write
+    # live_state with a sigma_gate_failed warning so the operator's top pill
+    # surfaces the failure even though the bad publish already shipped (next
+    # tick re-runs validate against the next sim and converges).
+    validate_rc = run([sys.executable, "scripts/09_validate.py"])
+    if validate_rc != 0:
+        warns_with_gate = list(warns) + [{
+            "type": "sigma_gate_failed",
+            "message": (
+                f"scripts/09_validate.py exited rc={validate_rc} — "
+                f"predictions_live.json may violate Σ p_champion ≈ 1.0 or "
+                f"annex_c_misses == 0. See workflow logs for the specific "
+                f"failed gate. Next tick re-runs."
+            ),
+        }]
+        write_live_state(mode, new_count, sim_rerun=True,
+                         warnings=warns_with_gate)
 
     print(f"[run_live_update] DONE — locked {new_count} matches")
     if delta and delta.get("top_movers_up"):
@@ -564,12 +768,53 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"[run_live_update] FATAL {type(e).__name__}: {e}")
         traceback.print_exc()
-        # Best-effort: write a warning to live_state so the dashboard knows
+        # Best-effort: write a warning to live_state so the dashboard knows.
+        # Audit H2 (R2 round 3): re-probe matchday freshness here too. The
+        # `mf_warnings` computed in main() went out of scope when main()
+        # raised, so we have to recompute. The helper is exception-safe by
+        # construction (`_matchday_freshness_warnings_safe`), so a follow-on
+        # failure inside it degrades to a single freshness_check_error
+        # warning rather than masking the orchestrator crash itself.
         try:
-            write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
-                             get_completed_count(), sim_rerun=False,
-                             warnings=[{"type": "orchestrator_crash",
-                                        "message": f"{type(e).__name__}: {e}"[:200]}])
+            crash_warnings: list = [{
+                "type": "orchestrator_crash",
+                "message": f"{type(e).__name__}: {e}"[:200],
+            }]
+            try:
+                crash_warnings.extend(_matchday_freshness_warnings_safe())
+            except Exception:
+                # Truly belt-and-braces — the safe wrapper itself shouldn't
+                # raise, but if it somehow does, drop the freshness signal
+                # rather than mask the orchestrator-crash signal we need
+                # the operator to see.
+                pass
+            # R6 M2: also fold in provider-fallback warnings on the crash
+            # path so an orchestrator_crash + missing-provider-key combo
+            # surfaces BOTH signals (the crash hints at what failed; the
+            # provider-key signal hints at WHY data was stale heading
+            # into the crash). The helper is internally exception-safe;
+            # outer try/except is belt-and-braces.
+            try:
+                crash_warnings.extend(_provider_fallback_warnings())
+            except Exception:
+                pass
+            write_live_state(
+                "live" if get_completed_count() > 0 else "pre_tournament",
+                get_completed_count(), sim_rerun=False,
+                warnings=crash_warnings,
+            )
         except Exception:
+            pass
+        # R13 MED: orchestrator crash must count toward CB escalation,
+        # same as sim_failure does at line 664. Pre-R13 only sim failures
+        # incremented; a string of orchestrator crashes (e.g. unhandled
+        # exception in apply_matchday integration) left CB at 0 forever
+        # and never tripped the CB_THRESHOLD=3 trip condition that
+        # operators rely on as the silent-failure tripwire.
+        try:
+            current = read_circuit_breaker()
+            write_circuit_breaker(current + 1)
+        except Exception:
+            # Belt-and-braces: don't let CB write failure mask the crash.
             pass
         sys.exit(1)

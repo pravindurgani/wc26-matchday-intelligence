@@ -66,10 +66,24 @@ OUT_PATH = LIVE / "lineups_2026.json"
 APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 DEFAULT_HOURS_AHEAD = 4
 
+# Schema-drift watchdog: compares fresh /fixtures/lineups responses to the
+# captured baseline under data/live/_provider_schemas/. Soft-mode by default —
+# drift logs a WARNING, does NOT crash the tick.
+# R15: ROOT on sys.path so absolute `scripts.live.*` import resolves under
+# script-mode test invocations (CI runs `python tests/live/test_*.py`).
+sys.path.insert(0, str(ROOT))
+from scripts.live._schema_watchdog import assert_shape  # noqa: E402
+_SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lineup_adjustments import (  # noqa: E402
     extract_starting_xi, compute_lineup_delta_elo,
 )
+from _knockout import (  # noqa: E402
+    is_placeholder_slot, load_knockout_fixtures,
+)
+# R11 E4: name-aware side resolution. See build_lineup_entry docstring.
+from fetch_results import normalize_team  # noqa: E402
 
 
 def _now_utc() -> datetime:
@@ -86,28 +100,49 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2, ensure_ascii=False)
+        # R9 P3: allow_nan=False at producer boundary — apply_matchday
+        # reads this file; pre-R9 only the matchday writer rejected NaN.
+        json.dump(payload, tmp, indent=2, ensure_ascii=False, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 
 
 def _http_get_json(url: str, headers: dict, timeout: int = 15) -> dict:
-    req = urllib.request.Request(url, headers=headers, method="GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode("utf-8"))
+    """Thin shim — delegates to `_http_client.http_get_json` so a 5xx /
+    URLError / TimeoutError gets retried (3 attempts, exponential
+    backoff) instead of escalating straight to subsystem_stale.
+    Audit H3 (R2 round 3).
+    """
+    from _http_client import http_get_json  # noqa: PLC0415
+    return http_get_json(url, headers, timeout=timeout)
 
 
 def _load_schedule() -> list[dict]:
-    """Load schedule and enrich each entry with `_tz` (IANA zone resolved
-    via venue_city_map + host_cities[].tz). Entries whose venue lacks a
-    tz field fall through to legacy local-as-UTC behavior in _kickoff_utc."""
+    """Load group + knockout schedule, enriching each entry with `_tz`
+    (IANA zone resolved via venue_city_map + host_cities[].tz). Entries
+    whose venue lacks a tz field fall through to legacy local-as-UTC
+    behavior in _kickoff_utc.
+
+    Round 6 R32-critical fix: pre-Round 6 this loaded ONLY
+    `group_stage_schedule`, so no knockout fixture ever entered the
+    lineup-poll window. Now we merge `knockout_bracket_2026.json` rows
+    too. Placeholder slot codes ("1A", "W74") stay in the schedule so
+    the kickoff window is contiguous; the per-fixture poll in main()
+    skips them via `is_placeholder_slot` until results land.
+    """
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
-    sched = cfg.get("group_stage_schedule", []) or []
+    sched = list(cfg.get("group_stage_schedule", []) or [])
+    sched.extend(load_knockout_fixtures(RAW / "knockout_bracket_2026.json"))
     venue_city_map = cfg.get("venue_city_map", {}) or {}
     city_to_tz = {hc["city"]: hc.get("tz")
                   for hc in (cfg.get("host_cities") or [])}
     for s in sched:
-        city = venue_city_map.get(s.get("venue", ""), s.get("venue", ""))
+        # Venue strings in the knockout bracket include state suffixes
+        # ("Inglewood, CA", "Foxborough, MA"). Strip the suffix before
+        # mapping suburbs to host-city anchors so the tz lookup hits.
+        venue_raw = s.get("venue", "") or ""
+        suburb = venue_raw.split(",")[0].strip()
+        city = venue_city_map.get(suburb, suburb)
         s["_tz"] = city_to_tz.get(city)
     return sched
 
@@ -194,6 +229,11 @@ def fetch_one_fixture(api_key: str, provider_fixture_id: str) -> list[dict]:
     url = f"{APIFOOTBALL_BASE}/fixtures/lineups?fixture={provider_fixture_id}"
     headers = {"x-apisports-key": api_key, "Accept": "application/json"}
     payload = _http_get_json(url, headers)
+    # Schema-drift watchdog: soft mode — logs a WARNING on shape drift but
+    # never raises. Lets the lineups feed keep flowing while flagging the
+    # operator that the provider changed something.
+    assert_shape(payload,
+                 _SCHEMA_BASELINE_DIR / "apifootball_fixtures_lineups.shape.json")
     if payload.get("errors") and any((payload.get("errors") or {}).values()):
         raise RuntimeError(f"API errors: {payload['errors']}")
     return payload.get("response") or []
@@ -215,20 +255,39 @@ def _summarise_xi(xi_block_raw: list[dict]) -> list[dict]:
 
 def build_lineup_entry(sched: dict, response_sides: list[dict],
                        prior_xis: dict[str, dict]) -> dict:
-    """Turn one fixture's /fixtures/lineups response into our schema entry."""
+    """Turn one fixture's /fixtures/lineups response into our schema entry.
+
+    R11 E4: name-based home/away assignment. Pre-R11 the assignment was
+    purely positional (first side = home, second = away). API-Football
+    has no documented ordering guarantee — whenever the provider returned
+    [away, home] order, the GK-swap detector compared away GK to home's
+    prior XI and the 11-position diff fired on every position, both
+    triggering false −8/−1*11 = −19 → cap-hit −20 Elo deltas per team
+    on every mis-ordered fixture. normalize_team applies the canonical
+    TEAM_ALIAS map so aliases ("Korea Republic" → "South Korea" etc.)
+    resolve to canonical names before comparison. side_match_warnings
+    list propagates ambiguous cases up to the caller.
+    """
     home_team_canonical = sched["home"]
     away_team_canonical = sched["away"]
     home_block: dict = {}
     away_block: dict = {}
+    side_match_warnings: list[str] = []
+    norm_home = normalize_team(home_team_canonical)
+    norm_away = normalize_team(away_team_canonical)
     for side_entry in response_sides:
-        team_name = (side_entry.get("team") or {}).get("name", "")
-        # Provider name may differ from canonical (e.g. Korea Republic) —
-        # take the first as home, second as away when provider order matches
-        # the fixture. Fall back to name-prefix heuristic otherwise.
-        if not home_block:
+        team_name_raw = (side_entry.get("team") or {}).get("name", "")
+        team_name = normalize_team(team_name_raw)
+        if team_name == norm_home and not home_block:
             home_block = side_entry
-        else:
+        elif team_name == norm_away and not away_block:
             away_block = side_entry
+        else:
+            side_match_warnings.append(
+                f"unrecognized lineup side '{team_name_raw}' for "
+                f"M{sched.get('m')} (expected {home_team_canonical!r} "
+                f"or {away_team_canonical!r})"
+            )
     home_xi = extract_starting_xi(home_block)
     away_xi = extract_starting_xi(away_block)
     home_delta, home_reason = compute_lineup_delta_elo(
@@ -252,6 +311,7 @@ def build_lineup_entry(sched: dict, response_sides: list[dict],
         "home_xi": _summarise_xi(home_block.get("startXI") or []),
         "away_xi": _summarise_xi(away_block.get("startXI") or []),
         "captured_at": _now_iso(),
+        "side_match_warnings": side_match_warnings,
     }
 
 
@@ -283,8 +343,18 @@ def _replay_local_fixtures(fixture_dir: Path, schedule: list[dict],
         sched = next((s for s in schedule if s["m"] == mid), None)
         if sched is None:
             continue
+        # Round 6: skip unresolved KO slots — see main() for rationale.
+        if (is_placeholder_slot(sched.get("home"))
+                or is_placeholder_slot(sched.get("away"))):
+            warnings.append({"type": "unresolved_slot",
+                             "match_id": sched.get("m")})
+            continue
         response = json.loads(f.read_text()).get("response") or []
-        entries.append(build_lineup_entry(sched, response, prior_xis))
+        entry = build_lineup_entry(sched, response, prior_xis)
+        for note in entry.pop("side_match_warnings", []):
+            warnings.append({"type": "lineup_side_unrecognized",
+                             "match_id": sched.get("m"), "message": note})
+        entries.append(entry)
     return entries, warnings
 
 
@@ -318,6 +388,18 @@ def main() -> int:
                              "message": "API_FOOTBALL_KEY not in env"})
         prior_xis = _load_prior_lineups()
         for sched in upcoming:
+            # Round 6: a knockout fixture whose home/away are still slot
+            # codes (e.g. "1A", "W74") can't have a meaningful lineup poll
+            # — we don't know which national team will fill the slot.
+            # Skip until results lock in; the cron re-runs and will pick
+            # it up once the bracket is resolved.
+            if (is_placeholder_slot(sched.get("home"))
+                    or is_placeholder_slot(sched.get("away"))):
+                warnings.append({"type": "unresolved_slot",
+                                 "match_id": sched.get("m"),
+                                 "home": sched.get("home"),
+                                 "away": sched.get("away")})
+                continue
             pfid = fixture_map.get(int(sched["m"]))
             if not pfid:
                 warnings.append({"type": "unmapped_match",
@@ -339,7 +421,11 @@ def main() -> int:
             if not sides:
                 # Lineups not published yet — common at T-3h, rare at T-30min.
                 continue
-            entries.append(build_lineup_entry(sched, sides, prior_xis))
+            entry = build_lineup_entry(sched, sides, prior_xis)
+            for note in entry.pop("side_match_warnings", []):
+                warnings.append({"type": "lineup_side_unrecognized",
+                                 "match_id": sched.get("m"), "message": note})
+            entries.append(entry)
 
     snapshot = build_snapshot(entries, warnings, args.hours_ahead)
     print(f"[fetch_lineups] entries: {len(entries)} · warnings: {len(warnings)}")

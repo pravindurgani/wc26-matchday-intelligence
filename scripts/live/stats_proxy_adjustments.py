@@ -22,7 +22,7 @@ v1 formula (signed, in Elo points):
 
 Then the consumer (apply_matchday_adjustments) re-clamps at the locked
 caps: per-match ±8 (STATS_CAP_PER_MATCH) and group-stage total ±20
-(STATS_CAP_GROUP_TOTAL). Our raw cap is intentionally a bit looser so
+(STATS_CAP_TOURNAMENT_TOTAL). Our raw cap is intentionally a bit looser so
 the simulator-side caps remain the load-bearing ceiling.
 
 Sign convention: positive means "deserved more than the scoreboard shows"
@@ -37,11 +37,17 @@ Reference fields in /fixtures/statistics response items:
 """
 from __future__ import annotations
 
+import math
+
 STATS_PROXY_RAW_CAP = 12.0  # downstream re-caps at ±8 per match
 
 SHOT_DOMINANCE_WEIGHT = 1.2
 POSSESSION_WEIGHT = 0.06
 CORNER_WEIGHT = 0.3
+# Possession within ±5pp of 50/50 is noise — score it as zero.
+POSSESSION_DEADZONE_PP = 5.0
+# Real-xG branch (dead by default; flag-gated upstream in fetch_match_stats).
+XG_EDGE_WEIGHT = 6.0  # 1.0 xG edge ≈ 6 Elo of "deserved" credit
 
 
 def _to_int(v) -> int | None:
@@ -60,32 +66,79 @@ def _to_int(v) -> int | None:
 
 def stats_to_dict(side_stats: list[dict]) -> dict:
     """Convert an API-Football statistics array
-       [{"type": "Shots on Goal", "value": 5}, ...] → flat dict."""
+       [{"type": "Shots on Goal", "value": 5}, ...] → flat dict.
+
+    R12 MED: stat-type keys are case-tolerant. API-Football's documented
+    casing is "Shots on Goal" / "Ball Possession" / "Corner Kicks" but
+    occasional provider drift ("shots on goal" / "Shots On Goal") would
+    silently miss the consumer's strict `own.get("Shots on Goal")` and
+    return 0 → form_delta collapses to 0 without any warning. Store
+    EACH stat under BOTH the original-case key (back-compat) AND a
+    normalised key (lowercase, whitespace-collapsed) so consumers that
+    look up the canonical form always succeed.
+    """
     out: dict[str, int | None] = {}
     for entry in side_stats or []:
         t = (entry.get("type") or "").strip()
         v = _to_int(entry.get("value"))
-        if t:
-            out[t] = v
+        if not t:
+            continue
+        out[t] = v
+        # R12 MED: case-tolerant alias. lowercase + collapse whitespace.
+        canonical = " ".join(t.lower().split())
+        if canonical and canonical != t:
+            out.setdefault(canonical, v)
     return out
+
+
+def _stat_lookup(d: dict, key: str):
+    """Look up a stat with case-tolerant fallback (R12 MED).
+
+    Tries the original key first (back-compat), then the lowercase /
+    whitespace-collapsed form populated by stats_to_dict.
+    """
+    if d is None:
+        return None
+    v = d.get(key)
+    if v is not None:
+        return v
+    return d.get(" ".join(key.lower().split()))
+
+
+def _possession_signal(own_poss) -> float:
+    if own_poss is None or (isinstance(own_poss, float) and math.isnan(own_poss)):
+        return 0.0
+    edge = own_poss - 50.0
+    if abs(edge) <= POSSESSION_DEADZONE_PP:
+        return 0.0
+    adjusted = edge - (POSSESSION_DEADZONE_PP if edge > 0 else -POSSESSION_DEADZONE_PP)
+    return adjusted * POSSESSION_WEIGHT
 
 
 def compute_form_delta(own: dict, opp: dict) -> float:
     """Apply v1 weighted-sum heuristic. Returns signed Elo points, clamped
     at ±STATS_PROXY_RAW_CAP."""
-    own_sot = own.get("Shots on Goal") or 0
-    opp_sot = opp.get("Shots on Goal") or 0
-    own_poss = own.get("Ball Possession")
-    own_corn = own.get("Corner Kicks") or 0
-    opp_corn = opp.get("Corner Kicks") or 0
+    # R12 MED: case-tolerant lookups (see stats_to_dict + _stat_lookup).
+    own_sot = _stat_lookup(own, "Shots on Goal") or 0
+    opp_sot = _stat_lookup(opp, "Shots on Goal") or 0
+    own_corn = _stat_lookup(own, "Corner Kicks") or 0
+    opp_corn = _stat_lookup(opp, "Corner Kicks") or 0
 
     shot_dominance = (own_sot - opp_sot) * SHOT_DOMINANCE_WEIGHT
-    possession_edge = (
-        (own_poss - 50.0) * POSSESSION_WEIGHT if own_poss is not None else 0.0
-    )
+    possession_edge = _possession_signal(_stat_lookup(own, "Ball Possession"))
     corner_edge = (own_corn - opp_corn) * CORNER_WEIGHT
 
     raw = shot_dominance + possession_edge + corner_edge
+    return max(-STATS_PROXY_RAW_CAP, min(STATS_PROXY_RAW_CAP, raw))
+
+
+def compute_xg_form_delta(own_xg: float, opp_xg: float) -> float:
+    """Real-xG form delta. Dead by default — gated upstream by
+    fetch_match_stats.XG_ENABLED + per-row xg_found honesty flags. Same
+    cap as the proxy so downstream re-clamps stay load-bearing."""
+    if not (math.isfinite(own_xg) and math.isfinite(opp_xg)):
+        raise ValueError("xg must be finite")
+    raw = (float(own_xg) - float(opp_xg)) * XG_EDGE_WEIGHT
     return max(-STATS_PROXY_RAW_CAP, min(STATS_PROXY_RAW_CAP, raw))
 
 

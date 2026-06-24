@@ -1,0 +1,32 @@
+{
+  "captured": "2026-06-16",
+  "hash": "e21c10ed7746da6d",
+  "shape_tree": {
+    "_comment": "str",
+    "errors": "list<empty>",
+    "get": "str",
+    "paging": {
+      "current": "int",
+      "total": "int"
+    },
+    "parameters": {
+      "fixture": "str"
+    },
+    "response": [
+      {
+        "statistics": [
+          {
+            "type": "str",
+            "value": "int"
+          }
+        ],
+        "team": {
+          "id": "int",
+          "logo": "str",
+          "name": "str"
+        }
+      }
+    ],
+    "results": "int"
+  }
+}

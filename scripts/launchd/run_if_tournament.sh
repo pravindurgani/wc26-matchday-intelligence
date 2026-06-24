@@ -10,10 +10,23 @@
 #
 # Logs every fire (including no-op early exits) to logs/launchd-tick.log
 # so you can confirm the agent is alive.
+#
+# REPO_ROOT resolution: derived from the script's own location (two levels up
+# from scripts/launchd/) rather than hardcoded. This keeps the wrapper robust
+# to symlinks, different clones, and launchd invoking us via an absolute path
+# while $PWD points elsewhere. A .git sanity guard below makes a misconfigured
+# checkout fail loudly instead of silently running in the wrong directory.
 
 set -euo pipefail
 
-REPO_ROOT="/Users/prav/Desktop/personal-projects/fifa-wc-26-prediction"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+if [ ! -d "$REPO_ROOT/.git" ]; then
+  echo "ERROR: REPO_ROOT=$REPO_ROOT does not look like a git checkout" >&2
+  exit 1
+fi
+
 LOG="${REPO_ROOT}/logs/launchd-tick.log"
 mkdir -p "$(dirname "$LOG")"
 

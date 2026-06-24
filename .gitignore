@@ -38,7 +38,11 @@ models/*.joblib
 !models/feature_cols_v2.json
 circuit-breaker-state.json
 circuit_breaker_state.json
-data/live/circuit_breaker_state.json
+# R11 D1: explicitly UN-ignore the canonical CB file so it persists across
+# GHA ticks. Without this every tick boots from fetch-depth:1 with no CB
+# file → read_circuit_breaker() returns 0 → CB_THRESHOLD=3 escalation
+# NEVER happens across ticks (only inside a single python process).
+!data/live/circuit_breaker_state.json
 .vercel
 
 # launchd autopilot logs (Choice 3)

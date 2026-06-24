@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-06-16T19:23:07.950375+00:00",
+  "schema_version": 1,
+  "cap_used": 8.0,
+  "min_matches_for_bonus": 20,
+  "referee": [
+    {
+      "match_id": 1,
+      "home_team": "Mexico",
+      "away_team": "South Africa",
+      "referee_name": null,
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "no_referee_assigned",
+      "notes": null
+    },
+    {
+      "match_id": 2,
+      "home_team": "South Korea",
+      "away_team": "Czechia",
+      "referee_name": null,
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "no_referee_assigned",
+      "notes": null
+    },
+    {
+      "match_id": 3,
+      "home_team": "Canada",
+      "away_team": "Bosnia and Herzegovina",
+      "referee_name": null,
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "no_referee_assigned",
+      "notes": null
+    },
+    {
+      "match_id": 4,
+      "home_team": "United States",
+      "away_team": "Paraguay",
+      "referee_name": null,
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "no_referee_assigned",
+      "notes": null
+    },
+    {
+      "match_id": 5,
+      "home_team": "Qatar",
+      "away_team": "Switzerland",
+      "referee_name": null,
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "no_referee_assigned",
+      "notes": null
+    }
+  ],
+  "warnings": []
+}

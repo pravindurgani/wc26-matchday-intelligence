@@ -30,7 +30,11 @@ ev_spec = importlib.util.spec_from_file_location("ev", ROOT / "scripts" / "04_ev
 ev = importlib.util.module_from_spec(ev_spec); ev_spec.loader.exec_module(ev)
 
 
-def lambdas_to_wdl(lam_h, lam_a, max_g=10):
+def lambdas_to_wdl(lam_h, lam_a, max_g=15):
+    # R14 C1: default `max_g` bumped 10 → 15 to follow R14 C1 in
+    # 04_evaluate.py (which itself follows R12 MED's sim default change).
+    # Ablation metrics (ablation.json on dashboard) now align with the
+    # production sim's truncation level.
     return ev.lambdas_to_wdl(lam_h, lam_a, max_g)
 
 

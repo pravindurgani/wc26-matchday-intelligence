@@ -259,10 +259,24 @@ function applyLiveUpdate({ liveState, liveDelta, livePred, fetchFailures = 0 }) 
   safe(() => renderLiveStatusBar(liveState),              'renderLiveStatusBar');
   safe(() => renderLiveStrip(liveState),                  'renderLiveStrip');
   safe(() => renderHero(primary, liveState, liveDelta),   'renderHero');
+  // R12 D1: re-call the stats-strip + storylines + interesting + compare
+  // + matchday-intel render fns every tick. Pre-R12 applyLiveUpdate
+  // omitted these 5 — stale "Closest match" persisted after the match
+  // concluded, stale "Strongest favourite / Dark horse" survived an
+  // upset, stat-top1 froze. Matchday-intel didn't update when warnings
+  // changed (matchdayIntel.warnings is rendered top-pill via the
+  // R11 B2 INTEL_TOP_BAR_TYPES whitelist, but the matchday-intel
+  // SECTION below the fold rendered only on boot).
+  safe(() => renderStatsStrip(primary, cal),              'renderStatsStrip');
+  safe(() => renderStorylines(primary, travel),           'renderStorylines');
+  safe(() => renderInteresting(primary),                  'renderInteresting');
   safe(() => renderMovers(primary, liveState, liveDelta), 'renderMovers');
   safe(() => renderContenders(primary, liveDelta, travel),'renderContenders');
   safe(() => renderGroups(primary),                       'renderGroups');
   safe(() => renderMatches(primary, liveState),           'renderMatches');
+  safe(() => renderCompare(primary, travel),              'renderCompare');
+  safe(() => renderMatchdayIntelligence(window._matchdayIntel),
+       'renderMatchdayIntelligence');
   safe(() => renderFooter(primary, liveState),            'renderFooter');
   // P1-H: charts (title-prob, confederation, calibration) read from `primary`
   // too. Without rebuilding them on a live tick the contenders table moves
@@ -387,9 +401,22 @@ function renderLastUpdated(data, liveState, fetchFailures = 0, matchdayIntel = n
   // they previously sat collapsed-by-default below the fold). Only lift
   // alert-grade types — benign info (`feed_missing`, `filter_non_wc`)
   // would noise-up the pill every tick.
+  // R11 B2 extension: add apply_matchday alert-grade types that previously
+  // sat collapsed in matchdayIntel.warnings without ever lifting to the
+  // pill. Pre-R11 a `no_records_returned` from fetch_results or a
+  // `matchday_consolidated_stale` from apply_matchday silently lived
+  // below the fold; operator had to scroll + expand <details> to see.
   const INTEL_TOP_BAR_TYPES = new Set([
     'ambiguous_classification', 'http_error', 'fetch_error',
     'api_error', 'missing_key',
+    'subsystem_degraded', 'pipeline_unhealthy',
+    'matchday_consolidated_stale', 'matchday_consolidated_missing',
+    'matchday_consolidated_unparseable', 'matchday_consolidated_unreadable',
+    'matchday_record_degradation',
+    'no_records_returned', 'provider_returned_nothing',
+    'no_events_in_snapshot',
+    'side_match_unrecognized', 'lineup_side_unrecognized',
+    'sigma_gate_failed',
   ]);
   const intelWarningsRaw = Array.isArray(matchdayIntel?.warnings) ? matchdayIntel.warnings : [];
   const intelWarnings = intelWarningsRaw
@@ -400,6 +427,44 @@ function renderLastUpdated(data, liveState, fetchFailures = 0, matchdayIntel = n
   const warnings = liveStateWarnings.concat(
     intelWarnings.map(w => ({ ...w, _source: 'matchday-intel' }))
   );
+  // R12 D4: rank warnings by severity before picking warnings[0] for the
+  // pill. Pre-R12 the pill showed warnings[0] in emission order — a
+  // `fetch_failure` (auto-recovering next tick) would mask a
+  // `sigma_gate_failed` (sim invariant tripped — data is WRONG, not just
+  // stale) or a `matchday_consolidated_stale` (matchday adjustments many
+  // days behind reality). Higher severity = lower number.
+  const SEVERITY_RANK = {
+    sigma_gate_failed: 0,
+    orchestrator_crash: 1,
+    pipeline_unhealthy: 2,
+    matchday_consolidated_missing: 3,
+    matchday_consolidated_unparseable: 3,
+    matchday_consolidated_unreadable: 3,
+    matchday_consolidated_stale: 4,
+    matchday_record_degradation: 5,
+    subsystem_degraded: 6,
+    sim_failure: 7,
+    circuit_breaker: 8,
+    input_corruption: 9,
+    fetch_failure: 10,
+    http_error: 11,
+    fetch_error: 11,
+    api_error: 11,
+    missing_key: 12,
+    provider_key_missing: 12,
+    no_records_returned: 13,
+    provider_returned_nothing: 13,
+    no_events_in_snapshot: 13,
+    side_match_unrecognized: 14,
+    lineup_side_unrecognized: 14,
+    ambiguous_classification: 15,
+  };
+  // Stable sort: preserve original index as secondary key for equal-severity ties.
+  warnings.sort((a, b) => {
+    const ra = SEVERITY_RANK[a?.type] ?? 99;
+    const rb = SEVERITY_RANK[b?.type] ?? 99;
+    return ra - rb;
+  });
   const hasWarning = warnings.length > 0;
   el.classList.toggle('stale', isStale);
   el.classList.toggle('fetch-error', fetchFailures >= 3);
@@ -517,7 +582,23 @@ function renderLiveStatusBar(liveState) {
 }
 
 function renderHero(data, liveState, liveDelta) {
-  const top = data.team_predictions[0];
+  // R12 D3: empty-data guard. Pre-R12 only renderContenders had the R11 B3
+  // guard; renderHero / renderStorylines / renderCompare crashed on
+  // `data.team_predictions[0]` when sigma_gate_failed or sim crash shipped
+  // an empty team_predictions. safe() swallowed the TypeError into a
+  // console.warn but the hero cards then froze at the last good DOM with
+  // NO operator-visible signal data was broken.
+  const _tp = data && Array.isArray(data.team_predictions) ? data.team_predictions : [];
+  if (_tp.length === 0) {
+    const champEl = document.getElementById('champ-team');
+    if (champEl) champEl.textContent = 'No predictions available';
+    const champProb = document.getElementById('champ-prob');
+    if (champProb) champProb.textContent = '—';
+    const champCi = document.getElementById('champ-ci');
+    if (champCi) champCi.textContent = 'See top-bar warning for details (sigma_gate_failed / sim_failure / matchday_consolidated_stale).';
+    return;
+  }
+  const top = _tp[0];
   document.getElementById('champ-team').innerHTML = `${confedDotHtml(top.team)}${escapeHtml(top.team)}`;
   countUp(document.getElementById('champ-prob'), +(top.p_champion * 100).toFixed(1), '%');
   document.getElementById('champ-ci').textContent =
@@ -525,13 +606,15 @@ function renderHero(data, liveState, liveDelta) {
       ? `Simulation range: ${fmt(top.p_champion_p05)} – ${fmt(top.p_champion_p95)}`
       : '';
 
-  const finalLeader = [...data.team_predictions].sort((a,b) => b.p_reach_final - a.p_reach_final)[0];
+  const finalLeader = [..._tp].sort((a,b) => b.p_reach_final - a.p_reach_final)[0];
   document.getElementById('final-team').innerHTML = `${confedDotHtml(finalLeader.team)}${escapeHtml(finalLeader.team)}`;
   document.getElementById('final-prob').textContent = `${fmt(finalLeader.p_reach_final)} to reach the final`;
 
   const dh = darkHorse(data);
-  document.getElementById('dh-team').innerHTML = `${confedDotHtml(dh.team)}${escapeHtml(dh.team)}`;
-  document.getElementById('dh-prob').textContent = `${fmt(dh.p_reach_sf)} reach SF · Model Elo ${Math.round(dh.elo)}`;
+  if (dh && dh.team) {
+    document.getElementById('dh-team').innerHTML = `${confedDotHtml(dh.team)}${escapeHtml(dh.team)}`;
+    document.getElementById('dh-prob').textContent = `${fmt(dh.p_reach_sf)} reach SF · Model Elo ${Math.round(dh.elo)}`;
+  }
 
   const isLive = liveState?.mode === 'live';
   document.getElementById('mode-label').textContent = isLive ? 'Live-adjusted' : 'Pre-tournament';
@@ -583,7 +666,12 @@ function renderStorylines(data, travel) {
   const grid = document.getElementById('storylines-grid');
   if (!grid) return;
 
-  const teams = data.team_predictions;
+  // R12 D3: empty-data guard (see renderHero).
+  const teams = data && Array.isArray(data.team_predictions) ? data.team_predictions : [];
+  if (teams.length === 0) {
+    grid.innerHTML = '<div class="muted small" style="padding:1rem;opacity:0.6;">No team predictions available — storylines hidden. Check the top-bar warning.</div>';
+    return;
+  }
   const fav = teams[0];
   const dh = darkHorse(data);
 
@@ -664,15 +752,25 @@ function renderMovers(data, liveState, liveDelta) {
   const isLive = liveState?.mode === 'live';
   const movers = (liveDelta?.all_movers || []);
 
+  // R12 MED: distinguish "no matches finished yet" from "matches done
+  // but no significant movers". Pre-R12 both showed the same "No matches
+  // have finished yet" copy, even when N completed_matches > 0.
+  const matchesDone = liveState?.completed_matches_count || 0;
   if (!isLive || movers.length === 0) {
+    const heading = matchesDone > 0
+      ? `Movers below threshold (${matchesDone} of 104 matches locked).`
+      : 'No matches have finished yet.';
+    const sub = matchesDone > 0
+      ? ' All champion-probability shifts on the locked matches were under the 0.3pp display threshold. Larger movers will surface as upset results come in.'
+      : ' Champion-probability deltas will appear here automatically as matches lock during the tournament. The simulator re-runs every 10 minutes during the matchday window (11 Jun → 19 Jul 2026), gated on real input changes so it only fires when there\'s actually new data.';
     root.innerHTML = `
       <div class="movers-empty">
         <div class="movers-empty-icon" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         </div>
         <div>
-          <strong>No matches have finished yet.</strong>
-          <span class="muted small"> Champion-probability deltas will appear here automatically as matches lock during the tournament. The simulator re-runs every 10 minutes during the matchday window (11 Jun → 19 Jul 2026), gated on real input changes so it only fires when there's actually new data.</span>
+          <strong>${escapeHtml(heading)}</strong>
+          <span class="muted small">${escapeHtml(sub)}</span>
         </div>
       </div>`;
     return;
@@ -703,6 +801,20 @@ function renderMovers(data, liveState, liveDelta) {
 function renderContenders(data, liveDelta, travel) {
   const tbody = document.querySelector('#contenders-table tbody');
   const all = data.team_predictions;
+  // R11 B3: empty-state guard. Pre-R11 `all[0].p_champion` raised
+  // TypeError on missing/empty team_predictions; safe() at app.js:138-141
+  // swallowed it into a console.warn and the whole contenders section
+  // disappeared with no operator-visible signal that the data was bad.
+  // Render an explicit placeholder row so an operator can tell "no data"
+  // from "render broke".
+  if (!Array.isArray(all) || all.length === 0) {
+    if (tbody) tbody.innerHTML =
+      '<tr><td colspan="99" class="muted small" style="padding:1rem;">' +
+      'No team predictions available — predictions_live.json is missing ' +
+      'team_predictions or returned an empty array. Check live_state.json ' +
+      'for a sim_failure or sigma_gate_failed warning.</td></tr>';
+    return;
+  }
   const maxP = all[0].p_champion;
   const countEl = document.getElementById('contenders-count');
   const groupSel = document.getElementById('team-group');
@@ -711,6 +823,18 @@ function renderContenders(data, liveDelta, travel) {
   const resetBtn = document.getElementById('contenders-reset');
   const headerCells = document.querySelectorAll('#contenders-table thead th[data-sort]');
 
+  // R14 D2: clear groupSel options before re-appending. Same DOM-leak
+  // pattern as R13 D1 fixed for renderCompare — R12 D1 wired
+  // renderContenders into applyLiveUpdate's tick, but this group-option
+  // append loop did not clear first → ~8 dup options per 60s tick →
+  // ~9,600 dup <option> nodes per 20h of live window → mobile OOM.
+  // The HTML carries a default <option value="all">All</option> at
+  // index 0 — preserve it and remove only the dynamically-appended
+  // group options (indices 1..N). Mirrors renderMatches' clearing
+  // pattern at app.js:1241.
+  if (groupSel) {
+    while (groupSel.options.length > 1) groupSel.remove(1);
+  }
   [...new Set(all.map(t => t.group))].sort().forEach(g => {
     const o = document.createElement('option'); o.value = g; o.textContent = `Group ${g}`;
     if (groupSel) groupSel.appendChild(o);
@@ -878,24 +1002,40 @@ function renderContenders(data, liveDelta, travel) {
     });
   }
 
-  tbody.addEventListener('click', (e) => {
-    // Drawer action handlers
-    const copyBtn = e.target.closest('[data-copy]');
-    if (copyBtn) {
-      const path = copyBtn.dataset.copy;
-      const url = window.location.origin + window.location.pathname + path;
-      navigator.clipboard?.writeText(url).then(() => {
-        const old = copyBtn.textContent; copyBtn.textContent = 'Copied!';
-        setTimeout(() => { copyBtn.textContent = old; }, 1500);
-      });
-      return;
-    }
-    const tr = e.target.closest('tr.team-row');
-    if (!tr || !tr.classList.contains('is-expandable')) return;
-    const team = tr.dataset.team;
-    if (expanded.has(team)) expanded.delete(team); else expanded.add(team);
-    paint();
-  });
+  // R12 D2: guard listener binding so re-renders (every 60s live tick)
+  // don't stack handlers. Pre-R12 24h of an idle tab = ~1440 stacked
+  // handlers per element; one click triggered paint() N times, scroll
+  // jank cascaded. The `_r12Bound` marker is set on the persistent DOM
+  // node the first time we bind; subsequent re-renders skip. State
+  // (sortKey/sortDir/expanded/showAll) lives in the renderContenders
+  // closure — but we need to read it through a window-level handle so
+  // re-renders' handlers see the latest state. Move handler state to
+  // window._contendersState so the bound handlers always read fresh.
+  window._contendersState = { paint, expanded, sortKey, sortDir };
+  if (!tbody._r12Bound) {
+    tbody._r12Bound = true;
+    tbody.addEventListener('click', (e) => {
+      const state = window._contendersState;
+      if (!state) return;
+      // Drawer action handlers
+      const copyBtn = e.target.closest('[data-copy]');
+      if (copyBtn) {
+        const path = copyBtn.dataset.copy;
+        const url = window.location.origin + window.location.pathname + path;
+        navigator.clipboard?.writeText(url).then(() => {
+          const old = copyBtn.textContent; copyBtn.textContent = 'Copied!';
+          setTimeout(() => { copyBtn.textContent = old; }, 1500);
+        });
+        return;
+      }
+      const tr = e.target.closest('tr.team-row');
+      if (!tr || !tr.classList.contains('is-expandable')) return;
+      const team = tr.dataset.team;
+      if (state.expanded.has(team)) state.expanded.delete(team);
+      else state.expanded.add(team);
+      state.paint();
+    });
+  }
 
   headerCells.forEach(th => {
     th.style.cursor = 'pointer';
@@ -906,15 +1046,21 @@ function renderContenders(data, liveDelta, travel) {
       ? (sortDir === 'asc' ? 'ascending' : 'descending')
       : 'none');
     th.setAttribute('aria-label', `Sort by ${th.textContent.trim()}`);
+    if (th._r12Bound) return;
+    th._r12Bound = true;
     const doSort = () => {
+      const state = window._contendersState;
+      if (!state) return;
       const key = th.dataset.sort;
-      if (sortKey === key) {
-        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      if (state.sortKey === key) {
+        state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
       } else {
-        sortKey = key;
-        sortDir = th.dataset.sortDefault || (['team', 'group', 'rank'].includes(key) ? 'asc' : 'desc');
+        state.sortKey = key;
+        state.sortDir = th.dataset.sortDefault || (['team', 'group', 'rank'].includes(key) ? 'asc' : 'desc');
       }
-      paint();
+      // Mirror back into local closure for the current paint() call
+      sortKey = state.sortKey; sortDir = state.sortDir;
+      state.paint();
     };
     th.addEventListener('click', doSort);
     th.addEventListener('keydown', (e) => {
@@ -922,17 +1068,32 @@ function renderContenders(data, liveDelta, travel) {
     });
   });
 
-  if (btn) btn.addEventListener('click', () => { showAll = !showAll; paint(); });
-  searchEl?.addEventListener('input', () => paint());
-  groupSel?.addEventListener('change', () => paint());
-  regionSel?.addEventListener('change', () => paint());
-  resetBtn?.addEventListener('click', () => {
-    if (searchEl) searchEl.value = '';
-    if (groupSel) groupSel.value = 'all';
-    if (regionSel) regionSel.value = 'all';
-    sortKey = 'p_champion'; sortDir = 'desc';
-    paint();
-  });
+  if (btn && !btn._r12Bound) {
+    btn._r12Bound = true;
+    btn.addEventListener('click', () => { showAll = !showAll; paint(); });
+  }
+  if (searchEl && !searchEl._r12Bound) {
+    searchEl._r12Bound = true;
+    searchEl.addEventListener('input', () => paint());
+  }
+  if (groupSel && !groupSel._r12Bound) {
+    groupSel._r12Bound = true;
+    groupSel.addEventListener('change', () => paint());
+  }
+  if (regionSel && !regionSel._r12Bound) {
+    regionSel._r12Bound = true;
+    regionSel.addEventListener('change', () => paint());
+  }
+  if (resetBtn && !resetBtn._r12Bound) {
+    resetBtn._r12Bound = true;
+    resetBtn.addEventListener('click', () => {
+      if (searchEl) searchEl.value = '';
+      if (groupSel) groupSel.value = 'all';
+      if (regionSel) regionSel.value = 'all';
+      sortKey = 'p_champion'; sortDir = 'desc';
+      paint();
+    });
+  }
 
   // Expose for deep link
   window._openContenderDrawer = (team) => {
@@ -982,8 +1143,30 @@ function renderInteresting(data) {
   if (!grid) return;
   // P1-D: knockout fixtures have no p_home_win/p_away_win pre-resolution.
   // The "interesting" picks are group-stage-only.
+  // R10 Q1 (B1): also exclude past group matches. Pre-R10 the filter only
+  // checked stage+typeof, so locked group matches (which retain their
+  // pre-tournament probabilities in the data file) continued to surface
+  // as "Closest match"/"Most likely draw"/"Biggest upset" cards through
+  // the entire KO phase — stale and contradictory to the played result
+  // operators could see one section below. todayIso uses UTC because the
+  // dataset's `date` field is calendar-date in tournament/UTC reference.
+  const todayIso = new Date().toISOString().slice(0, 10);
   const ms = (data.match_predictions || []).filter(
-    m => (m.stage || 'group') === 'group' && typeof m.p_home_win === 'number');
+    m => (m.stage || 'group') === 'group'
+         && typeof m.p_home_win === 'number'
+         && (m.date || '') >= todayIso);
+
+  // R10 Q1: once the group stage is over, ms is empty — guard the card
+  // builders below (which dereference closest.p_home_win etc.) and hide
+  // the section gracefully instead of TypeErroring the whole render.
+  if (ms.length === 0) {
+    // R12 MED: anchor the prose to the matches grid so the reader can
+    // actually scroll to where "knockouts below" lives — the dashboard
+    // has no dedicated bracket section, so the matches grid is where
+    // KO entries surface.
+    grid.innerHTML = '<div class="interesting-empty" style="opacity:0.6;padding:1rem;">All group matches complete — see knockouts in the <a href="#matches">fixtures grid below</a>.</div>';
+    return;
+  }
 
   // Pick categories
   const closest = ms.slice().sort((a,b) => {
@@ -1204,7 +1387,7 @@ function renderMatches(data, liveState) {
       return `<div class="card match" id="match-${m.m}">
         <div class="match-head">
           <span class="pill">${headLabel}</span>
-          <span>${escapeHtml(m.date)}${m.time ? ' ' + escapeHtml(m.time) : ''} · ${escapeHtml(m.venue)}</span>
+          <span>${escapeHtml(m.date)}${m.time ? ' ' + escapeHtml(m.time) + ' (local)' : ''} · ${escapeHtml(m.venue)}</span>
         </div>
         ${tags.length ? `<div class="venue-tags">${tags.join('')}</div>` : ''}
         <div class="match-teams">
@@ -1235,7 +1418,10 @@ function renderMatches(data, liveState) {
     }).join('');
   }
 
+  // R12 D2: bind-once-per-element guard. Same pattern as renderContenders.
   toggleButtons.forEach(btn => {
+    if (btn._r12Bound) return;
+    btn._r12Bound = true;
     btn.addEventListener('click', () => {
       toggleButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
       btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
@@ -1245,6 +1431,8 @@ function renderMatches(data, liveState) {
   });
 
   chips.forEach(c => {
+    if (c._r12Bound) return;
+    c._r12Bound = true;
     c.addEventListener('click', () => {
       chips.forEach(x => x.classList.remove('active'));
       c.classList.add('active');
@@ -1253,21 +1441,39 @@ function renderMatches(data, liveState) {
     });
   });
 
-  groupSel.addEventListener('change', paint);
-  dateSel.addEventListener('change', paint);
-  venueSel.addEventListener('change', paint);
-  searchEl?.addEventListener('input', paint);
-  closeOnly?.addEventListener('change', paint);
-  resetBtn?.addEventListener('click', () => {
-    if (searchEl) searchEl.value = '';
-    groupSel.value = 'all'; dateSel.value = 'all'; venueSel.value = 'all';
-    if (closeOnly) closeOnly.checked = false;
-    chip = 'all';
-    chips.forEach(c => c.classList.toggle('active', c.dataset.chip === 'all'));
-    view = 'featured';
-    toggleButtons.forEach(b => { b.classList.toggle('active', b.dataset.view === 'featured'); b.setAttribute('aria-selected', b.dataset.view === 'featured' ? 'true' : 'false'); });
-    paint();
-  });
+  if (groupSel && !groupSel._r12BoundMatches) {
+    groupSel._r12BoundMatches = true;
+    groupSel.addEventListener('change', paint);
+  }
+  if (dateSel && !dateSel._r12BoundMatches) {
+    dateSel._r12BoundMatches = true;
+    dateSel.addEventListener('change', paint);
+  }
+  if (venueSel && !venueSel._r12BoundMatches) {
+    venueSel._r12BoundMatches = true;
+    venueSel.addEventListener('change', paint);
+  }
+  if (searchEl && !searchEl._r12BoundMatches) {
+    searchEl._r12BoundMatches = true;
+    searchEl.addEventListener('input', paint);
+  }
+  if (closeOnly && !closeOnly._r12BoundMatches) {
+    closeOnly._r12BoundMatches = true;
+    closeOnly.addEventListener('change', paint);
+  }
+  if (resetBtn && !resetBtn._r12BoundMatches) {
+    resetBtn._r12BoundMatches = true;
+    resetBtn.addEventListener('click', () => {
+      if (searchEl) searchEl.value = '';
+      groupSel.value = 'all'; dateSel.value = 'all'; venueSel.value = 'all';
+      if (closeOnly) closeOnly.checked = false;
+      chip = 'all';
+      chips.forEach(c => c.classList.toggle('active', c.dataset.chip === 'all'));
+      view = 'featured';
+      toggleButtons.forEach(b => { b.classList.toggle('active', b.dataset.view === 'featured'); b.setAttribute('aria-selected', b.dataset.view === 'featured' ? 'true' : 'false'); });
+      paint();
+    });
+  }
 
   // Expose for deep-link
   window._setMatchGroup = (g) => { groupSel.value = g; chip = 'all'; chips.forEach(c => c.classList.toggle('active', c.dataset.chip === 'all')); view = 'all'; toggleButtons.forEach(b => { b.classList.toggle('active', b.dataset.view === 'all'); b.setAttribute('aria-selected', b.dataset.view === 'all' ? 'true' : 'false'); }); paint(); };
@@ -1283,13 +1489,27 @@ function renderCompare(data, travel) {
   const swap = document.getElementById('cmp-swap');
   if (!a || !b || !grid) return;
 
-  const teams = data.team_predictions.slice().sort((x, y) => x.team.localeCompare(y.team));
+  // R12 D3: empty-data guard. The two team-pickers + grid would crash on
+  // empty team_predictions; leave a friendly empty state instead.
+  const _tp = data && Array.isArray(data.team_predictions) ? data.team_predictions : [];
+  if (_tp.length < 2) {
+    grid.innerHTML = '<div class="muted small" style="padding:1rem;opacity:0.6;">Team comparison unavailable — fewer than 2 team predictions in the dataset.</div>';
+    return;
+  }
+  const teams = _tp.slice().sort((x, y) => x.team.localeCompare(y.team));
+  // R13 D1: clear existing options before appending. Pre-R13 R12's D1
+  // wired renderCompare into applyLiveUpdate's 10-min tick, but the
+  // option-append loop did not clear first — 32 team options got pushed
+  // every tick → 3840 duplicate <option> nodes per 2h of live window,
+  // jank + DOM-bloat memory leak on long sessions.
+  a.replaceChildren();
+  b.replaceChildren();
   teams.forEach(t => {
     const o1 = document.createElement('option'); o1.value = t.team; o1.textContent = t.team; a.appendChild(o1);
     const o2 = document.createElement('option'); o2.value = t.team; o2.textContent = t.team; b.appendChild(o2);
   });
   // Default to top-2 favourites
-  const sortedByChamp = data.team_predictions.slice().sort((x,y) => y.p_champion - x.p_champion);
+  const sortedByChamp = _tp.slice().sort((x,y) => y.p_champion - x.p_champion);
   a.value = sortedByChamp[0]?.team || teams[0].team;
   b.value = sortedByChamp[1]?.team || teams[1].team;
 
@@ -1344,11 +1564,17 @@ function renderCompare(data, travel) {
       </div>`;
   }
 
-  a.addEventListener('change', paint);
-  b.addEventListener('change', paint);
-  swap?.addEventListener('click', () => {
-    const tmp = a.value; a.value = b.value; b.value = tmp; paint();
-  });
+  // R12 D2: bind-once guards. renderCompare also called via applyLiveUpdate
+  // (R12 D1) — without these guards every tick would add a `change`
+  // handler, eventually firing paint() N times per dropdown change.
+  if (!a._r12Bound) { a._r12Bound = true; a.addEventListener('change', paint); }
+  if (!b._r12Bound) { b._r12Bound = true; b.addEventListener('change', paint); }
+  if (swap && !swap._r12Bound) {
+    swap._r12Bound = true;
+    swap.addEventListener('click', () => {
+      const tmp = a.value; a.value = b.value; b.value = tmp; paint();
+    });
+  }
 
   window._setCompare = (teamA, teamB) => {
     if (teamA && data.team_predictions.some(t => t.team === teamA)) a.value = teamA;

@@ -56,6 +56,14 @@ sys.path.insert(0, str(Path(__file__).parent))
 from weather_adjustments import (  # noqa: E402
     heat_index_c, wet_bulb_proxy_c, classify_weather_bucket, team_elo_adjustment,
 )
+# R10 Q2 (D1): consume the shared KO bracket loader so the R9 P4 A1 missing-
+# time warning fires once per fetch_weather process. Pre-R10 the weather path
+# inlined its own bracket parsing at _load_config and silently hardcoded
+# time="20:00" for every KO entry (lines 110, 118) — bypassing the R9
+# warning surface that only covered _knockout consumers. Net pre-R10: every
+# Open-Meteo KO forecast was aimed at the wrong UTC hour with NO operator
+# signal, even after R9.
+from _knockout import load_knockout_fixtures  # noqa: E402
 
 
 def _atomic_write_json(path: Path, payload: dict) -> None:
@@ -64,7 +72,9 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
         mode="w", encoding="utf-8", dir=str(path.parent),
         prefix=path.name + ".", suffix=".tmp", delete=False,
     ) as tmp:
-        json.dump(payload, tmp, indent=2, ensure_ascii=False)
+        # R9 P3: allow_nan=False at producer boundary — apply_matchday
+        # reads this file; pre-R9 only the matchday writer rejected NaN.
+        json.dump(payload, tmp, indent=2, ensure_ascii=False, allow_nan=False)
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 
@@ -96,27 +106,17 @@ def _load_config() -> tuple[list[dict], dict[str, dict], dict[str, str]]:
     """
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
     schedule = list(cfg.get("group_stage_schedule") or [])
-    bracket_path = RAW / "knockout_bracket_2026.json"
-    if bracket_path.exists():
-        bracket = json.loads(bracket_path.read_text())
-        # Knockout matches don't have home/away assigned until the bracket
-        # resolves — we still need them in the schedule so we can fetch
-        # their weather using the venue. Mark them with phase='knockout'.
-        for section_key in ("r32_slots", "r16_bracket", "qf_bracket", "sf_bracket"):
-            for s in bracket.get(section_key, []):
-                schedule.append({
-                    "m": s["match_num"], "date": s["date"], "time": "20:00",
-                    "venue": s["venue"], "home": None, "away": None,
-                    "phase": "knockout",
-                })
-        ft = bracket.get("final_and_third_place") or {}
-        for k in ("third_place", "final"):
-            if k in ft:
-                schedule.append({
-                    "m": ft[k]["match_num"], "date": ft[k]["date"], "time": "20:00",
-                    "venue": ft[k]["venue"], "home": None, "away": None,
-                    "phase": "knockout",
-                })
+    # R10 Q2 (D1): use the shared loader so the R9 P4 A1 missing-time
+    # warning fires for the weather process. load_knockout_fixtures
+    # returns m/date/time/venue/home/away/stage — for weather we don't
+    # need the team identity, just venue+date+time, so collapse home/away
+    # to None and tag phase="knockout" to preserve the legacy contract.
+    for ko in load_knockout_fixtures():
+        schedule.append({
+            "m": ko["m"], "date": ko["date"], "time": ko["time"],
+            "venue": ko["venue"], "home": None, "away": None,
+            "phase": "knockout",
+        })
     # Venue-city index
     host_cities = cfg.get("host_cities") or []
     venue_by_city = {hc["city"]: hc for hc in host_cities}

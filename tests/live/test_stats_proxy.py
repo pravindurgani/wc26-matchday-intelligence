@@ -17,7 +17,8 @@ sys.path.insert(0, str(ROOT / "scripts" / "live"))
 
 from stats_proxy_adjustments import (  # noqa: E402
     stats_to_dict, compute_form_delta, both_form_deltas,
-    STATS_PROXY_RAW_CAP,
+    compute_xg_form_delta,
+    STATS_PROXY_RAW_CAP, POSSESSION_DEADZONE_PP, XG_EDGE_WEIGHT,
 )
 import fetch_match_stats  # noqa: E402
 
@@ -107,6 +108,9 @@ class TestBuildMatchEntry(unittest.TestCase):
         self.assertEqual(entry["status"], "FT")
         self.assertFalse(entry["true_xg_available"],
                          "true_xg_available must be False — spec lock")
+        # Honesty flags: we always check for xG; provider didn't return it.
+        self.assertTrue(entry["xg_attempted"])
+        self.assertFalse(entry["xg_found"])
         self.assertGreater(entry["home_form_adjustment_elo"], 0)
         self.assertLess(entry["away_form_adjustment_elo"], 0)
         self.assertEqual(entry["fixture_id"], "1489369")
@@ -120,6 +124,115 @@ class TestBuildMatchEntry(unittest.TestCase):
         entry = fetch_match_stats.build_match_entry(match, response, "1")
         self.assertIsNotNone(entry["home_form_adjustment_elo"])
         self.assertIsNotNone(entry["away_form_adjustment_elo"])
+
+
+class TestPossessionDeadzone(unittest.TestCase):
+    """Phase 3 (b): possession edges within ±5pp are noise."""
+
+    def test_possession_within_deadzone_contributes_zero(self):
+        # 53/47 → within ±5pp; shots & corners balanced ⇒ delta == 0.
+        own = {"Shots on Goal": 4, "Ball Possession": 53, "Corner Kicks": 5}
+        opp = {"Shots on Goal": 4, "Ball Possession": 47, "Corner Kicks": 5}
+        self.assertEqual(compute_form_delta(own, opp), 0.0)
+
+    def test_possession_just_beyond_deadzone_credits_only_excess(self):
+        # 56/44 → 6pp above 50 → only 1pp credited after deadzone.
+        own = {"Shots on Goal": 0, "Ball Possession": 56, "Corner Kicks": 0}
+        opp = {"Shots on Goal": 0, "Ball Possession": 44, "Corner Kicks": 0}
+        delta = compute_form_delta(own, opp)
+        # (56 - 50 - 5) * 0.06 = 0.06
+        self.assertAlmostEqual(delta, 0.06, places=4)
+
+    def test_deadzone_constant_is_5pp(self):
+        self.assertEqual(POSSESSION_DEADZONE_PP, 5.0)
+
+
+class TestComputeXgFormDelta(unittest.TestCase):
+    """Phase 3 (c): real-xG branch helper. Dead by default upstream."""
+
+    def test_positive_xg_edge(self):
+        # 1.5 xG advantage ⇒ 9 Elo
+        self.assertAlmostEqual(compute_xg_form_delta(2.5, 1.0), 1.5 * XG_EDGE_WEIGHT)
+
+    def test_xg_branch_is_capped(self):
+        self.assertEqual(compute_xg_form_delta(10.0, 0.0), STATS_PROXY_RAW_CAP)
+        self.assertEqual(compute_xg_form_delta(0.0, 10.0), -STATS_PROXY_RAW_CAP)
+
+    def test_xg_branch_symmetric(self):
+        self.assertAlmostEqual(
+            compute_xg_form_delta(1.8, 0.6),
+            -compute_xg_form_delta(0.6, 1.8),
+        )
+
+
+class TestXgFlagGating(unittest.TestCase):
+    """Phase 3 (c): build_match_entry uses xG only when both flag + data align."""
+
+    _RESP_WITH_XG = [
+        {"team": {"name": "Mexico"},
+         "statistics": [{"type": "Shots on Goal", "value": 4},
+                        {"type": "Ball Possession", "value": "52%"},
+                        {"type": "Corner Kicks", "value": 4},
+                        {"type": "Expected Goals", "value": "2.4"}]},
+        {"team": {"name": "South Africa"},
+         "statistics": [{"type": "Shots on Goal", "value": 3},
+                        {"type": "Ball Possession", "value": "48%"},
+                        {"type": "Corner Kicks", "value": 3},
+                        {"type": "Expected Goals", "value": "0.6"}]},
+    ]
+    _MATCH = {"m": 1, "home": "Mexico", "away": "South Africa", "status": "FT"}
+
+    def test_xg_found_but_flag_off_keeps_proxy(self):
+        # Default: XG_ENABLED is False ⇒ flag-gated branch dormant.
+        entry = fetch_match_stats.build_match_entry(
+            self._MATCH, self._RESP_WITH_XG, "1489369",
+        )
+        self.assertTrue(entry["xg_attempted"])
+        self.assertTrue(entry["xg_found"])
+        self.assertFalse(entry["true_xg_available"])
+        # Proxy formula's home delta with these stats is small (poss in deadzone).
+        # 1 SoT edge * 1.2 + 1 corner edge * 0.3 = 1.5
+        self.assertAlmostEqual(entry["home_form_adjustment_elo"], 1.5, places=3)
+
+    def test_flag_on_with_data_uses_xg_branch(self):
+        orig = fetch_match_stats.XG_ENABLED
+        fetch_match_stats.XG_ENABLED = True
+        try:
+            entry = fetch_match_stats.build_match_entry(
+                self._MATCH, self._RESP_WITH_XG, "1489369",
+            )
+        finally:
+            fetch_match_stats.XG_ENABLED = orig
+        self.assertTrue(entry["true_xg_available"])
+        # 1.8 xG edge * 6.0 = 10.8, capped at 12 ⇒ 10.8
+        self.assertAlmostEqual(entry["home_form_adjustment_elo"], 10.8, places=3)
+        self.assertAlmostEqual(entry["away_form_adjustment_elo"], -10.8, places=3)
+
+    def test_flag_on_without_data_falls_back_to_proxy(self):
+        resp_no_xg = [
+            {"team": {"name": "Mexico"},
+             "statistics": [{"type": "Shots on Goal", "value": 4},
+                            {"type": "Corner Kicks", "value": 4}]},
+            {"team": {"name": "South Africa"},
+             "statistics": [{"type": "Shots on Goal", "value": 3},
+                            {"type": "Corner Kicks", "value": 3}]},
+        ]
+        orig = fetch_match_stats.XG_ENABLED
+        fetch_match_stats.XG_ENABLED = True
+        try:
+            entry = fetch_match_stats.build_match_entry(
+                self._MATCH, resp_no_xg, "1489369",
+            )
+        finally:
+            fetch_match_stats.XG_ENABLED = orig
+        # No Expected Goals returned ⇒ xg_found False, true_xg_available False.
+        self.assertTrue(entry["xg_attempted"])
+        self.assertFalse(entry["xg_found"])
+        self.assertFalse(entry["true_xg_available"])
+
+    def test_xg_enabled_module_constant_defaults_false(self):
+        # Defense: the module ships with the gate closed.
+        self.assertFalse(fetch_match_stats.XG_ENABLED)
 
 
 class TestBuildSnapshot(unittest.TestCase):
