@@ -747,15 +747,23 @@ def phase_12_matchday_intel():
                 computed_full = _norm(name)
                 if stored_full != computed_full:
                     drift_full.append((e.get("team"), name, stored_full, computed_full))
-                # last_name_normalized must be a trailing window of the full
-                # normalised name — otherwise the by_last index key never
-                # matches what classify_tier computes for an incoming injury.
+                # last_name_normalized must be EITHER a trailing window OR a
+                # leading window of the full normalised name — classify_tier
+                # probes both directions against by_last (trailing-window for
+                # Western names at scripts/live/injury_adjustments.py:494-500,
+                # leading-window for surname-first names at lines 501-510).
+                # R15: leading windows accepted to admit Korean (and other
+                # surname-first) names like "Son Heung-min" where the surname
+                # is the LEADING token. R14 stored last_name_normalized="son"
+                # for that reason; the pre-R15 trailing-only invariant
+                # rejected it.
                 stored_last = e.get("last_name_normalized", "")
                 if stored_last:
                     tokens = computed_full.split()
-                    valid_windows = {
-                        " ".join(tokens[-n:]) for n in range(1, len(tokens) + 1)
-                    }
+                    n = len(tokens)
+                    trailing = {" ".join(tokens[-k:]) for k in range(1, n + 1)}
+                    leading = {" ".join(tokens[:k]) for k in range(1, n + 1)}
+                    valid_windows = trailing | leading
                     if stored_last not in valid_windows:
                         drift_last.append((e.get("team"), name, stored_last))
             sample_full = ", ".join(
@@ -771,7 +779,7 @@ def phase_12_matchday_intel():
                 f"{t}:{n!r}(stored={s!r})" for t, n, s in drift_last[:3]
             ) or "none"
             check(
-                f"whitelist last_name_normalized is a trailing window of full "
+                f"whitelist last_name_normalized is a leading or trailing window of full "
                 f"(drifts: {len(drift_last)}; sample: {sample_last})",
                 not drift_last,
             )
