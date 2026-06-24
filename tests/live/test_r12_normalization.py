@@ -52,9 +52,16 @@ class TestR12A1SuspensionPlayerNameNormalization(unittest.TestCase):
             "(drops single-letter initials, falls back to surname)")
 
     def test_yellow_accumulation_across_name_variants(self):
-        """Two yellow cards for the same player emitted as different
-        provider name forms ('R. Jiménez' / 'Raúl Jiménez') must trigger
-        the YELLOW_THRESHOLD=2 suspension."""
+        """Two yellow cards for the same KEY player (in key_players_2026.
+        json) emitted as different provider name forms ('E. Álvarez' /
+        'Edson Álvarez') must trigger the YELLOW_THRESHOLD=2 suspension
+        via the R13 A1 team-aware canonical resolution.
+
+        R12 used surname-only collapse, which over-merged intra-team
+        same-surname pairs. R13 resolves via key_players index: known
+        players canonicalize ("E. Álvarez" → "edson alvarez"); unknown
+        players or ambiguous surnames preserve the forename component.
+        """
         schedule = [
             {"m": 1, "home": "Mexico", "away": "Poland",
              "date": "2026-06-11", "stage": "group", "group": "A"},
@@ -63,54 +70,55 @@ class TestR12A1SuspensionPlayerNameNormalization(unittest.TestCase):
             {"m": 33, "home": "Mexico", "away": "Argentina",
              "date": "2026-06-25", "stage": "group", "group": "A"},
         ]
-        # Events must be in the post-normalize_event shape that
-        # suspension_tracker expects: {type: "card", subtype: "yellow_card",
-        # team, player, minute}.
+        # Edson Álvarez IS in key_players_2026.json (Mexico tier_1_star).
+        # The by_last index resolves "E. Álvarez" → "edson alvarez"
+        # because there's only one Álvarez on Mexico's key_players.
         completed = [
             {"m": 1, "home": "Mexico", "away": "Poland",
              "home_score": 1, "away_score": 0, "status": "FT",
              "events": [
                  {"type": "card", "subtype": "yellow_card",
-                  "team": "Mexico", "player": "R. Jiménez", "minute": 30},
+                  "team": "Mexico", "player": "E. Álvarez", "minute": 30},
              ]},
             {"m": 17, "home": "Mexico", "away": "Saudi Arabia",
              "home_score": 2, "away_score": 0, "status": "FT",
              "events": [
                  {"type": "card", "subtype": "yellow_card",
-                  "team": "Mexico", "player": "Raúl Jiménez", "minute": 60},
+                  "team": "Mexico", "player": "Edson Álvarez", "minute": 60},
              ]},
         ]
         suspensions, summary = self.st.build_suspensions(
             completed, schedule)
-        # Expected: 1 suspension for the next match (m=33) due to
-        # accumulated yellows. Pre-R12 this would have been 0 because
-        # the raw-name keys diverged.
+        # Expected: 1 accumulation suspension for m=33.
         accum = [s for s in suspensions if s["reason"] == "accumulated_yellows"]
         self.assertEqual(len(accum), 1,
-            f"R12 A1: yellow accumulation across 'R. Jiménez' / 'Raúl Jiménez' "
-            f"must trigger 1 suspension; got {len(accum)}; suspensions={suspensions}")
+            f"R13 A1: yellow accumulation across 'E. Álvarez' / 'Edson Álvarez' "
+            f"must trigger 1 suspension via key_players canonicalization; "
+            f"got {len(accum)}; suspensions={suspensions}")
         self.assertEqual(accum[0]["match_id"], 33,
-            "R12 A1: suspension must be for the NEXT match (m=33)")
+            "R13 A1: suspension must be for the NEXT match (m=33)")
 
     def test_red_card_dedup_across_provider_variants(self):
         """Two providers emitting the same red card with name drift must
-        not result in two suspension rows."""
+        not result in two suspension rows. Uses a player WITH key_players
+        coverage (Vinícius Júnior on Brazil) so R13 A1 canonical resolution
+        applies."""
         schedule = [
-            {"m": 1, "home": "Mexico", "away": "Poland",
-             "date": "2026-06-11", "stage": "group", "group": "A"},
-            {"m": 17, "home": "Mexico", "away": "Saudi Arabia",
-             "date": "2026-06-18", "stage": "group", "group": "A"},
+            {"m": 1, "home": "Brazil", "away": "Switzerland",
+             "date": "2026-06-12", "stage": "group", "group": "E"},
+            {"m": 17, "home": "Brazil", "away": "Cameroon",
+             "date": "2026-06-19", "stage": "group", "group": "E"},
         ]
         completed = [
-            {"m": 1, "home": "Mexico", "away": "Poland",
+            {"m": 1, "home": "Brazil", "away": "Switzerland",
              "home_score": 1, "away_score": 0, "status": "FT",
              "events": [
                  {"type": "card", "subtype": "red_card",
-                  "team": "Mexico", "player": "Vinícius Júnior",
+                  "team": "Brazil", "player": "Vinícius Júnior",
                   "minute": 88},
                  # Provider duplicate (different name form, same incident).
                  {"type": "card", "subtype": "red_card",
-                  "team": "Mexico", "player": "Vinicius Junior",
+                  "team": "Brazil", "player": "Vinicius Junior",
                   "minute": 88},
              ]},
         ]
@@ -118,8 +126,8 @@ class TestR12A1SuspensionPlayerNameNormalization(unittest.TestCase):
         # Expected: 1 red-card suspension, not 2.
         reds = [s for s in suspensions if s["reason"] == "red_card"]
         self.assertEqual(len(reds), 1,
-            f"R12 A1: red-card dedup across name variants must collapse to 1; "
-            f"got {len(reds)}; suspensions={suspensions}")
+            f"R12 A1 / R13 A1: red-card dedup across name variants must "
+            f"collapse to 1; got {len(reds)}; suspensions={suspensions}")
 
 
 class TestR12A2OverlayTeamNormalization(unittest.TestCase):

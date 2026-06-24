@@ -1485,6 +1485,13 @@ function renderCompare(data, travel) {
     return;
   }
   const teams = _tp.slice().sort((x, y) => x.team.localeCompare(y.team));
+  // R13 D1: clear existing options before appending. Pre-R13 R12's D1
+  // wired renderCompare into applyLiveUpdate's 10-min tick, but the
+  // option-append loop did not clear first — 32 team options got pushed
+  // every tick → 3840 duplicate <option> nodes per 2h of live window,
+  // jank + DOM-bloat memory leak on long sessions.
+  a.replaceChildren();
+  b.replaceChildren();
   teams.forEach(t => {
     const o1 = document.createElement('option'); o1.value = t.team; o1.textContent = t.team; a.appendChild(o1);
     const o2 = document.createElement('option'); o2.value = t.team; o2.textContent = t.team; b.appendChild(o2);

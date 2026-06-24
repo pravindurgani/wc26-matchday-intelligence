@@ -87,9 +87,13 @@ from check_invariants import (  # noqa: E402
 # If any of these drift in 03_simulate.py without updating here, the
 # `test_ko_advance_agreement` test in tests/live/test_goal_grid_feed_
 # agreement.py breaks at 1e-9, telling you exactly which knob moved.
+# R13 C1: bumped 10 → 15 to follow R12 MED (sim default max_g 10 → 15).
+# Pre-R13 the export silently truncated the NB tail at 10, publishing
+# KO advance probabilities that diverged from the production sim's
+# 16×16 by up to 2.2pp at the high-λ tail.
 NB_ALPHA = 5.0
 DC_RHO = -0.13
-MAX_G = 10
+MAX_G = 15
 FLOOR = 1e-12
 
 DEFAULT_IN = PROC / "predictions_live.json"

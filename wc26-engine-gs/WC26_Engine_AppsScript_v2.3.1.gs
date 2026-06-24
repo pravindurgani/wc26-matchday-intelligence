@@ -81,11 +81,14 @@ const SHEET = {
 
 // Phase 5B — Goal Grid: Poisson + Dixon-Coles τ correction.
 // τ = -0.13 matches scripts/03_simulate.py:96 (negative τ boosts low-score
-// draws). MAX_GOALS = 10 gives an 11×11 matrix (0..10 per side) which covers
-// every observed scoreline in WC history with mass to spare. Guard rail:
+// draws). MAX_GOALS = 15 (R13 C3, was 10 pre-R12) gives a 16×16 matrix
+// (0..15 per side) which captures the Poisson tail at high-λ matchups
+// without truncation — at λ=4.0 (realistic WC high), the pre-R12 truncation
+// at 10 left ~3% tail mass unaccounted, drifting GOAL_GRID prices vs the
+// production sim's 16×16 by up to 2pp on outright markets. Guard rail:
 // λ_max × |τ| < 1 keeps the (0,0) cell strictly positive (with λ_clip≈7,
 // 7 × 0.13 = 0.91 — same safe margin used by the Python sim).
-const GOAL_GRID_MAX_GOALS = 10;
+const GOAL_GRID_MAX_GOALS = 15;
 const GOAL_GRID_TAU = -0.13;
 
 // Phase 5C — CLV: rolling closing-line-value window. 20 bets is the smallest

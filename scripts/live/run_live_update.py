@@ -805,4 +805,16 @@ if __name__ == "__main__":
             )
         except Exception:
             pass
+        # R13 MED: orchestrator crash must count toward CB escalation,
+        # same as sim_failure does at line 664. Pre-R13 only sim failures
+        # incremented; a string of orchestrator crashes (e.g. unhandled
+        # exception in apply_matchday integration) left CB at 0 forever
+        # and never tripped the CB_THRESHOLD=3 trip condition that
+        # operators rely on as the silent-failure tripwire.
+        try:
+            current = read_circuit_breaker()
+            write_circuit_breaker(current + 1)
+        except Exception:
+            # Belt-and-braces: don't let CB write failure mask the crash.
+            pass
         sys.exit(1)

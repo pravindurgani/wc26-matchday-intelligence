@@ -26,7 +26,8 @@ def _src() -> str:
 
 def test_tau_and_max_goals_constants():
     src = _src()
-    assert "const GOAL_GRID_MAX_GOALS = 10;" in src
+    # R13 C3: bumped to 15 to match production sim's max_g=15 (R12 MED).
+    assert "const GOAL_GRID_MAX_GOALS = 15;" in src
     assert "const GOAL_GRID_TAU = -0.13;" in src
 
 
@@ -65,7 +66,9 @@ def test_goal_grid_markets_routed():
 # the production Poisson-mode sim GOAL_GRID is meant to mirror.
 # --------------------------------------------------------------------------
 DC_RHO = -0.13
-MAX_G = 10
+# R13 C3: bumped 10 → 15 to follow the Apps Script change (which itself
+# follows R12 MED's sim default change).
+MAX_G = 15
 
 
 def _js_dc_tau(h, a, lam_h, lam_a, rho):
@@ -119,19 +122,20 @@ def _market(M, pred):
 def test_dc_cells_asymmetric_pinned():
     """λ_h=1.8, λ_a=0.9, ρ=-0.13. Pinned numerically against
     scripts/03_simulate.py:build_score_matrix(use_dispersion=False).
-    If GOAL_GRID's _dcTau_ ever home/away-swaps, these break."""
+    If GOAL_GRID's _dcTau_ ever home/away-swaps, these break.
+    R13 C3: re-pinned at max_g=15."""
     M = _js_build_score_matrix(1.8, 0.9)
     tol = 1e-9
-    assert abs(M[0][0] - 0.0819391118) < tol
-    assert abs(M[0][1] - 0.0537890403) < tol
-    assert abs(M[1][0] - 0.0933236803) < tol
-    assert abs(M[1][1] - 0.1239036330) < tol
-    assert abs(M[2][1] - 0.0986843095) < tol
-    assert abs(M[1][2] - 0.0493421547) < tol
-    assert abs(M[2][0] - 0.1096492327) < tol
-    assert abs(M[0][2] - 0.0274123082) < tol
-    assert abs(M[2][2] - 0.0444079393) < tol
-    assert abs(M[3][0] - 0.0657895396) < tol
+    assert abs(M[0][0] - 0.0819388537) < tol
+    assert abs(M[0][1] - 0.0537888709) < tol
+    assert abs(M[1][0] - 0.0933233864) < tol
+    assert abs(M[1][1] - 0.1239032427) < tol
+    assert abs(M[2][1] - 0.0986839986) < tol
+    assert abs(M[1][2] - 0.0493419993) < tol
+    assert abs(M[2][0] - 0.1096488874) < tol
+    assert abs(M[0][2] - 0.0274122218) < tol
+    assert abs(M[2][2] - 0.0444077994) < tol
+    assert abs(M[3][0] - 0.0657893324) < tol
     s = sum(M[h][a] for h in range(MAX_G + 1) for a in range(MAX_G + 1))
     assert abs(s - 1.0) < tol
 
@@ -146,37 +150,40 @@ def test_dc_swap_detector_asymmetric():
 
 
 def test_dc_swap_detector_reversed():
-    """Reversed λ_h < λ_a ⇒ P(0,1) > P(1,0). Cells mirror the asym case."""
+    """Reversed λ_h < λ_a ⇒ P(0,1) > P(1,0). Cells mirror the asym case.
+    R13 C3: re-pinned at max_g=15 (was 10 pre-R12)."""
     M = _js_build_score_matrix(0.9, 1.8)
     assert M[0][1] > M[1][0]
     tol = 1e-9
-    assert abs(M[1][0] - 0.0537890403) < tol
-    assert abs(M[0][1] - 0.0933236803) < tol
+    assert abs(M[1][0] - 0.0537888709) < tol
+    assert abs(M[0][1] - 0.0933233864) < tol
 
 
 def test_dc_cells_symmetric_pinned():
-    """λ_h = λ_a = 1.4. P(0,1) and P(1,0) must be exact mirrors."""
+    """λ_h = λ_a = 1.4. P(0,1) and P(1,0) must be exact mirrors.
+    R13 C3: re-pinned at max_g=15."""
     M = _js_build_score_matrix(1.4, 1.4)
     tol = 1e-9
-    assert abs(M[0][0] - 0.0763045097) < tol
-    assert abs(M[0][1] - 0.0696397231) < tol
-    assert abs(M[1][0] - 0.0696397231) < tol
-    assert abs(M[1][1] - 0.1346822029) < tol
+    assert abs(M[0][0] - 0.0763044666) < tol
+    assert abs(M[0][1] - 0.0696396837) < tol
+    assert abs(M[1][0] - 0.0696396837) < tol
+    assert abs(M[1][1] - 0.1346821267) < tol
     assert abs(M[0][1] - M[1][0]) < 1e-15
 
 
 def test_dc_markets_asymmetric_pinned():
     """Market probabilities derived from the asymmetric matrix —
-    pinned so a τ regression flips home/away markets visibly."""
+    pinned so a τ regression flips home/away markets visibly.
+    R13 C3: re-pinned at max_g=15."""
     M = _js_build_score_matrix(1.8, 0.9)
     tol = 1e-9
-    assert abs(_market(M, lambda h, a: h + a > 1.5) - 0.7709481676) < tol
-    assert abs(_market(M, lambda h, a: h + a > 2.5) - 0.5099829937) < tol
-    assert abs(_market(M, lambda h, a: h + a > 3.5) - 0.2879432975) < tol
-    assert abs(_market(M, lambda h, a: h > 0 and a > 0) - 0.5131214209) < tol
-    assert abs(_market(M, lambda h, a: h > a) - 0.5617382207) < tol
-    assert abs(_market(M, lambda h, a: h == a) - 0.2591083327) < tol
-    assert abs(_market(M, lambda h, a: h < a) - 0.1791534466) < tol
+    assert abs(_market(M, lambda h, a: h + a > 1.5) - 0.7709488890) < tol
+    assert abs(_market(M, lambda h, a: h + a > 2.5) - 0.5099845371) < tol
+    assert abs(_market(M, lambda h, a: h + a > 3.5) - 0.2879455402) < tol
+    assert abs(_market(M, lambda h, a: h > 0 and a > 0) - 0.5131216747) < tol
+    assert abs(_market(M, lambda h, a: h > a) - 0.5617395976) < tol
+    assert abs(_market(M, lambda h, a: h == a) - 0.2591075167) < tol
+    assert abs(_market(M, lambda h, a: h < a) - 0.1791528858) < tol
 
 
 def test_dc_tau_source_branches_present():

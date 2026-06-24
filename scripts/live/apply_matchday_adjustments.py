@@ -542,7 +542,14 @@ def _load_injury_components(now_iso: str, warnings_acc: list | None = None) -> d
     # Per-team API totals (tournament-wide, not match-scoped).
     api_path = LIVE / "injuries_2026.json"
     api_data = _read_json(api_path, default={}) or {}
-    for team, blob in (api_data.get("teams") or {}).items():
+    for raw_team, blob in (api_data.get("teams") or {}).items():
+        # R13 A2: defensive normalization. fetch_injuries.py already
+        # normalizes team names before writing, but an operator manual
+        # edit to injuries_2026.json (per CORRECTIONS.md §4 override
+        # pattern) could enter raw "USA" / "Korea Republic" → silent
+        # key mismatch with overlay (which DOES normalize at line 646).
+        # Defense-in-depth: normalize at the loader too.
+        team = normalize_team(raw_team)
         # Per-record degradation: a single bad team blob (NaN total,
         # missing field surfacing as KeyError) must not abort injury
         # loading for the other 47 WC2026 squads.
@@ -768,9 +775,15 @@ def _load_referee_components(warnings_acc: list | None = None) -> dict:
         m_id = r.get("match_id") if isinstance(r, dict) else None
         if m_id is None:
             continue
-        team = r.get("home_team")
-        if not team:
+        raw_team = r.get("home_team")
+        if not raw_team:
             continue
+        # R13 A2: defensive normalization. referee_adjustments.py reads
+        # results.home/away (which fetch_results already normalizes), so
+        # referee_2026.json should carry canonical names. Defense-in-
+        # depth: re-normalize at the loader in case an operator hand-
+        # edits the file with a raw alias ("USA" / "Korea Republic").
+        team = normalize_team(raw_team)
         def _build_ref_record(r=r, m_id=m_id, team=team):
             raw = float(r.get("home_team_adjustment_elo", 0.0) or 0.0)
             capped = max(-REFEREE_CAP, min(REFEREE_CAP, raw))
@@ -819,9 +832,14 @@ def _load_suspension_components(warnings_acc: list | None = None) -> dict:
     by_key: dict[tuple[str, int | None], list[dict]] = {}
     for s in entries:
         m_id = s.get("match_id") if isinstance(s, dict) else None
-        team = s.get("team") if isinstance(s, dict) else None
-        if m_id is None or not team:
+        raw_team = s.get("team") if isinstance(s, dict) else None
+        if m_id is None or not raw_team:
             continue
+        # R13 A2: defensive normalization. suspension_tracker writes
+        # canonical team names (events from fetch_results.normalize_event
+        # already canonicalize), but an operator override edit could
+        # introduce a raw alias. Defense-in-depth at the loader.
+        team = normalize_team(raw_team)
         def _build_susp_record(s=s, m_id=m_id, team=team):
             raw = float(s.get("team_adjustment_elo", 0.0) or 0.0)
             if raw == 0.0:
@@ -1056,15 +1074,16 @@ def _apply_injury_suspension_dedup(
                 amt = p.get("amount")
                 if not name or amt is None:
                     continue
-                # R12 A1: normalize (team, player) before bucketing so an
-                # operator overlay entry for "Vinícius Júnior" cancels a
-                # suspension row keyed "V. Júnior" (provider-side initial-
-                # form drift). Same goes for team aliases ("USA" vs
-                # canonical "United States") via R12 A2. player_join_key
-                # collapses initial-form variants by dropping single-letter
-                # tokens and falling back to the surname.
-                key = (normalize_team(team),
-                       player_join_key(name) or name)
+                # R12 A1 / R13 A1: team-aware join key so an operator
+                # overlay entry for "Vinícius Júnior" cancels a suspension
+                # row keyed "V. Júnior" via key_players_2026.json
+                # canonical resolution, while intra-team same-surname
+                # pairs (Lautaro/Emiliano Martínez on Argentina) stay
+                # distinct. Team aliases ("USA" vs canonical "United
+                # States") are normalized via R12 A2.
+                canonical_team = normalize_team(team)
+                key = (canonical_team,
+                       player_join_key(name, team=canonical_team) or name)
                 overlay_player_amount[key] = (
                     overlay_player_amount.get(key, 0.0) + float(amt)
                 )
@@ -1081,11 +1100,15 @@ def _apply_injury_suspension_dedup(
             player_name = c.get("player")
             if not player_name:
                 continue
-            # R12 A1: lookup key normalized to match the bucketing above
-            # — without this, a suspension row's raw "R. Jiménez" would
-            # never find the overlay entry stored under "raul jimenez".
-            key = (normalize_team(team),
-                   player_join_key(player_name) or player_name)
+            # R12 A1 / R13 A1: lookup key team-aware to match the
+            # bucketing above — without this, a suspension row's raw
+            # "R. Jiménez" would never find the overlay entry stored
+            # under "raul jimenez", and on Argentina an overlay for
+            # Lautaro Martínez would credit-back an Emiliano suspension.
+            canonical_team = normalize_team(team)
+            key = (canonical_team,
+                   player_join_key(player_name, team=canonical_team)
+                   or player_name)
             overlay_amt = overlay_player_amount.get(key)
             if overlay_amt is None or overlay_amt == 0.0:
                 continue

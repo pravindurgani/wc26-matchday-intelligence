@@ -1,9 +1,9 @@
-# R32 Readiness Checklist — Post Pressure-Test R12
+# R32 Readiness Checklist — Post Pressure-Test R13
 
 **Date**: 2026-06-24 (T-4 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1250 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
-**Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48 (canonical + dashboard mirror)
+**Suite**: **1272 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Σ-gate (real data)**: exit 0, |Δ| = 1.110e-16, teams = 48 (canonical + dashboard mirror)
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
 **Round 3 closure**: all 4 HIGH-severity audit findings closed
 (H1 launchd plist, H2 crash-path freshness, H3 HTTP retries, H4 rate limiter) — see `PRESSURE_TEST_R3.md`
@@ -157,6 +157,31 @@ of" + "Türkiye (Turkey)"; stats_to_dict now case-insensitive on
 provider key drift; D-UX nits (renderMovers distinguishes no-matches
 from no-movers, renderInteresting empty-state anchors to #matches).
 Documented in `PRESSURE_TEST_R12.md`.
+**Round 13 closure**: audit-the-audit round — 5 parallel adversarial
+agents explicitly tasked with finding HIGH-severity bugs R12 introduced
+or missed, plus 2 independent monitor agents. T-4 days from R32 kickoff
+unchanged. **FIVE HIGH + 4 MEDIUM closed, ZERO deferrals**: A1
+(player_join_key surname-only collapse silently merged intra-team same-
+surname pairs on WC2026 squads — Argentina Lautaro+Emiliano Martínez,
+Curaçao Leandro+Juninho Bacuna — would have suspended the WRONG
+Martínez during the group stage; fix made the helper team-aware via
+key_players_2026.json by_full/by_last canonical resolution); C1 (export_
+ko_advance.MAX_G stuck at 10 vs sim's 15 → KO advance probabilities
+diverged 2.2pp at high λ from the sim's group-stage WDL); C2 (goal-grid
+agreement tests pinned MAX_G=10, validating WRONG spec — passed pre-R13
+because the production feed had been written by a pre-R12 sim); C3
+(Apps Script GOAL_GRID_MAX_GOALS=10 stale → trader sheet GOAL_GRID()
+prices diverged from dashboard); D1 (renderCompare DOM leak — R12 D1
+wired the fn into applyLiveUpdate but the option-append loop did not
+clear → 32 dups per 10-min tick → 3840 nodes per 20h of live window).
+MEDIUMs: check_invariants now distinguishes zero-coverage (skip) from
+partial-coverage (raise — real regression signal); orchestrator crash
+path now increments CB (pre-R13 only sim_failure counted); player_norm
+internal join key stripped from suspensions_2026.json output; A2
+defense-in-depth normalize_team added at injury/referee/suspension
+loaders (catches operator manual-edit overrides). Regenerated
+predictions_live.json + dashboard mirror with sim at max_g=15 (Σ-gate
+green on both, |Δ| = 1.110e-16). Documented in `PRESSURE_TEST_R13.md`.
 
 ---
 

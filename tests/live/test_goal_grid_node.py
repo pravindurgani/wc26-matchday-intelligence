@@ -33,37 +33,40 @@ from _node_resolver import NODE_BIN  # noqa: E402
 # Pinned numbers — copied verbatim from tests/live/test_goal_grid.py.
 # If the real engine disagrees with these, the engine wins and that file
 # is what needs updating (see module docstring).
+# R13 C3: re-pinned at max_g=15 (was 10 pre-R12). Differences are tiny
+# (~4e-7 on the (0,0) cell at λ=1.4, growing slightly at higher λ where
+# the Poisson tail above 10 carries more mass).
 PINNED_ASYM = {                                  # λ_h=1.8, λ_a=0.9
-    (0, 0): 0.0819391118,
-    (0, 1): 0.0537890403,
-    (1, 0): 0.0933236803,
-    (1, 1): 0.1239036330,
-    (2, 1): 0.0986843095,
-    (1, 2): 0.0493421547,
-    (2, 0): 0.1096492327,
-    (0, 2): 0.0274123082,
-    (2, 2): 0.0444079393,
-    (3, 0): 0.0657895396,
+    (0, 0): 0.0819388537,
+    (0, 1): 0.0537888709,
+    (1, 0): 0.0933233864,
+    (1, 1): 0.1239032427,
+    (2, 1): 0.0986839986,
+    (1, 2): 0.0493419993,
+    (2, 0): 0.1096488874,
+    (0, 2): 0.0274122218,
+    (2, 2): 0.0444077994,
+    (3, 0): 0.0657893324,
 }
-PINNED_SWAP_RATIO = 1.7350                       # M[1][0]/M[0][1] @ (1.8,0.9)
+PINNED_SWAP_RATIO = 1.7350                       # M[1][0]/M[0][1] @ (1.8,0.9) — unchanged at 4dp
 PINNED_REV = {                                   # λ_h=0.9, λ_a=1.8 (mirror)
-    (1, 0): 0.0537890403,
-    (0, 1): 0.0933236803,
+    (1, 0): 0.0537888709,
+    (0, 1): 0.0933233864,
 }
 PINNED_SYM = {                                   # λ_h=λ_a=1.4
-    (0, 0): 0.0763045097,
-    (0, 1): 0.0696397231,
-    (1, 0): 0.0696397231,
-    (1, 1): 0.1346822029,
+    (0, 0): 0.0763044666,
+    (0, 1): 0.0696396837,
+    (1, 0): 0.0696396837,
+    (1, 1): 0.1346821267,
 }
 PINNED_MARKETS_ASYM = {                          # via test_goal_grid.py
-    "ou15": 0.7709481676,
-    "ou25": 0.5099829937,
-    "ou35": 0.2879432975,
-    "btts": 0.5131214209,
-    "home": 0.5617382207,                        # ah0
-    "draw": 0.2591083327,
-    "away": 0.1791534466,
+    "ou15": 0.7709488890,
+    "ou25": 0.5099845371,
+    "ou35": 0.2879455402,
+    "btts": 0.5131216747,
+    "home": 0.5617395976,                        # ah0
+    "draw": 0.2591075167,
+    "away": 0.1791528858,
 }
 
 ABS_TOL = 1e-9
@@ -112,7 +115,8 @@ def _matrix(report: dict, key: str) -> list[list[float]]:
 
 
 def test_engine_loaded_and_constants(engine_report):
-    assert engine_report["max_goals"] == 10
+    # R13 C3: bumped 10 → 15 to follow R12 MED's sim default change.
+    assert engine_report["max_goals"] == 15
     assert engine_report["rho"] == -0.13
     assert "asym_1p8_0p9" in engine_report["scenarios"]
     assert "asym_0p9_1p8" in engine_report["scenarios"]

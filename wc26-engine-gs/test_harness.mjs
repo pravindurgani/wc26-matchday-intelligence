@@ -83,7 +83,7 @@ if (!E.GOAL_GRID || !E._buildScoreMatrix_) {
 }
 
 // ---- 4. Drive math --------------------------------------------------------
-const MAX_G = E.GOAL_GRID_MAX_GOALS;     // 10
+const MAX_G = E.GOAL_GRID_MAX_GOALS;     // 15 (R13 C3, was 10 pre-R12)
 const TAU   = E.GOAL_GRID_TAU;           // -0.13
 
 function fullMatrix(lh, la) {

@@ -161,10 +161,19 @@ def _winner_to_index(winner: object, home_score: object, away_score: object) -> 
 
 
 def load_predictions(path: Path) -> dict[int, tuple[float, float, float]]:
-    """Read ``predictions_live.json`` and return ``{m: (p_h, p_d, p_a)}``."""
+    """Read ``predictions_live.json`` and return ``{m: (p_h, p_d, p_a)}``.
+
+    Skips entries lacking ``p_home_win`` — the sim appends KO placeholder
+    rows (m=73..104) with unresolved slot codes ("1A", "W74") for the
+    dashboard's Matches view, and those rows carry no per-team
+    probabilities pre-resolution. Calibration only needs scored fixtures.
+    """
     payload = json.loads(path.read_text())
     out: dict[int, tuple[float, float, float]] = {}
     for entry in payload.get("match_predictions", []):
+        if "p_home_win" not in entry:
+            # KO placeholder pre-resolution — skip.
+            continue
         m = entry["m"]
         p_h = float(entry["p_home_win"])
         p_d = float(entry["p_draw"])

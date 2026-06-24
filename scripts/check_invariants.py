@@ -232,10 +232,29 @@ def check_invariants(path: Union[str, Path, None] = None) -> None:
         ("p_reach_sf", 4.0),
         ("p_reach_final", 2.0),
     )
+    # R13 MED: harden the silent skip. Pre-R13 ANY missing field on any
+    # team caused the whole stage to be skipped. That hides PARTIAL
+    # coverage — a real regression where the sim emits the field on
+    # 47/48 teams but drops it on the 48th would skip the check entirely
+    # and publish unvalidated predictions. The fix: if SOME teams have
+    # the field but others don't, that's a regression — raise. If NO
+    # teams have it (synthetic test blob, legacy pre-R11 file), skip
+    # silently to preserve backward compatibility.
     for field, expected in stage_expectations:
-        if not all(field in t for t in teams):
-            # Field not in this blob (pre-R11 or legacy) — skip silently.
+        n_with = sum(1 for t in teams if field in t)
+        if n_with == 0:
+            # Field absent everywhere — synthetic blob or legacy. Skip.
             continue
+        if n_with < len(teams):
+            # Partial coverage — real regression. Raise.
+            missing = next(
+                (t.get("team") for t in teams if field not in t), "?")
+            raise MissingField(
+                f"R13 MED: {field!r} present on {n_with}/{len(teams)} "
+                f"teams (partial coverage) — missing on team {missing!r}. "
+                f"Pre-R13 the check silently skipped this field, hiding a "
+                f"regression that drops the field for a subset of teams."
+            )
         s = 0.0
         for t in teams:
             v = t[field]

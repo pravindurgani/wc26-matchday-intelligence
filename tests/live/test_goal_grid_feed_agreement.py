@@ -78,7 +78,12 @@ FEED = REPO / "data" / "processed" / "predictions_live.json"
 
 DC_RHO = -0.13
 NB_ALPHA = 5.0
-MAX_G = 10
+# R13 C2: bumped 10 → 15 to follow R12 MED (sim default max_g 10 → 15)
+# and R13 C1 (export_ko_advance.MAX_G 10 → 15). Pre-R13 this constant
+# pinned the WRONG spec — tests passed because feed/export/replica all
+# used the stale max_g=10 mutually, hiding a real divergence vs the
+# production sim's 16×16 matrix.
+MAX_G = 15
 
 # (A) Analytical equality — accommodates nbinom.pmf round-off and the
 #     1e-12 floor + renorm in build_score_matrix. Empirically: 6.7e-16

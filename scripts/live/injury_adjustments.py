@@ -182,40 +182,91 @@ def normalize_player_name(name: str | None) -> str:
     return " ".join(cleaned.split())
 
 
-def player_join_key(name: str | None) -> str:
-    """Stronger normalization for cross-feed JOIN keys.
+def player_join_key(name: str | None, team: str | None = None) -> str:
+    """Cross-feed JOIN key for player dedup, team-aware.
 
-    `normalize_player_name` keeps the first-name tokens — fine for tier
-    lookup against a curated index (`Kylian Mbappé` and `K. Mbappé` both
-    classify_tier-match by last-name token). But for CROSS-FEED dedup
-    (suspension yellow accumulation, cross-subsystem absentee dedup),
-    provider drift between `R. Jiménez` and `Raúl Jiménez` keeps them on
-    different keys and silently splits the count.
+    R12 A1 introduced this as surname-only ("Lautaro Martínez" → "martinez"
+    and "Emiliano Martínez" → "martinez") to dedup provider initial-form
+    drift ("R. Jiménez" vs "Raúl Jiménez"). R13 A1 caught the intra-team
+    same-surname collision: Argentina's Lautaro + Emiliano Martínez (and
+    Curaçao's Leandro + Juninho Bacuna) silently collapse, so a yellow
+    earned by one player increments the other's counter and the wrong
+    player ends up suspended.
 
-    The join key drops single-character "initial" tokens and keeps the
-    remaining tokens joined. If only initials + last-name remain (e.g.
-    'R Jimenez'), the key collapses to just the last token. Use this
-    when joining card/injury events from independent feeds where the
-    operator's source-of-truth is the (team, surname) pair, not full
-    forenames — combined with the team scoping already in the tuple key,
-    intra-team same-surname collisions remain rare enough to favour
-    aggressive deduplication.
+    Resolution order:
+      1. Normalize via `normalize_player_name`.
+      2. If `team` is supplied, look up the normalized form against the
+         per-team `key_players_2026.json` index:
+           a. `by_full` hit → already canonical, return the normalized form.
+           b. `by_last` with exactly ONE match → canonicalize the initial-
+              form to that match's full normalized name. Solves
+              "R. Jiménez" → "raul jimenez" for Mexico's only Jiménez.
+           c. `by_last` with MULTIPLE matches → ambiguous; do NOT
+              canonicalize. Fall through to step 3.
+      3. Fallback: return the full normalized form. Preserves the
+         forename component so "lautaro martinez" ≠ "emiliano martinez".
+
+    Trade-off: for non-key players or teams with same-surname collisions,
+    cross-feed initial-form drift no longer dedups ("R. Jiménez" without
+    team context stays "r jimenez"; "L. Martínez" on Argentina stays
+    "l martinez"). This is the SAFE direction — accepting a missed dedup
+    is far less harmful than suspending the wrong player.
+
+    Callers should ALWAYS pass `team` when known (it's always known for
+    suspension/event flows). Without team context, the fallback applies.
     """
     norm = normalize_player_name(name)
     if not norm:
         return ""
+    if team:
+        canonical = _resolve_player_canonical_for_join(team, norm)
+        if canonical:
+            return canonical
+    return norm
+
+
+def _resolve_player_canonical_for_join(team: str, norm: str) -> str | None:
+    """Per-team canonical resolution for the join key.
+
+    Returns the canonical normalized full name when:
+      - `norm` already matches the team's `by_full` index (already canonical), OR
+      - `norm`'s last token has exactly ONE `by_last` match on the team
+        (unambiguous initial-form resolution).
+
+    Returns None when:
+      - No matching entry in the team's index.
+      - `by_last` matches >1 entry (intra-team surname collision; refuse
+        to guess and let the caller fall back to the full normalized form).
+
+    Uses the process-level cache via `_get_key_players_index`; tests that
+    rebind `KEY_PLAYERS_PATH` must call `reset_key_players_index_for_tests()`.
+    """
+    index = _get_key_players_index()
+    team_bucket = index.get(team)
+    if not team_bucket:
+        return None
+    by_full = team_bucket.get("by_full") or {}
+    if norm in by_full:
+        # Aliases land in by_full keyed by alias_norm but the entry's
+        # `name_normalized` is the canonical form. Return the canonical
+        # so "Son" (alias) and "Son Heung-min" (canonical) collapse to
+        # the same join key.
+        entry = by_full[norm]
+        return (entry.get("name_normalized")
+                or normalize_player_name(entry.get("name"))
+                or norm)
     tokens = norm.split()
-    # Drop single-character initials so 'r jimenez' and 'raul jimenez'
-    # both reduce to a shared key.
-    significant = [t for t in tokens if len(t) > 1]
-    if not significant:
-        return norm
-    if len(significant) == 1:
-        return significant[0]
-    # Two or more significant tokens: keep the last token as the join
-    # key (cross-feed convention: surname is the stable identifier;
-    # forenames drift more across providers than surnames do).
-    return significant[-1]
+    if not tokens:
+        return None
+    last = tokens[-1]
+    by_last = team_bucket.get("by_last") or {}
+    matches = by_last.get(last) or []
+    if len(matches) == 1:
+        entry = matches[0]
+        canonical = (entry.get("name_normalized")
+                     or normalize_player_name(entry.get("name")))
+        return canonical or None
+    return None
 
 
 def _load_key_players_index(path: Path = KEY_PLAYERS_PATH) -> dict:

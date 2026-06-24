@@ -344,15 +344,18 @@ def build_suspensions(completed_matches: list[dict],
             player = ev.get("player")
             if not team or not player:
                 continue
-            # R12 A1: collapse cross-feed initial-form drift on the join
-            # keys (per-match dedup, yellow_counter, yellow_evidence). The
-            # display string `player` is preserved unchanged so dashboard
-            # rows show the original provider name; player_join_key (the
-            # stronger normalization that drops single-letter initials and
-            # falls back to the surname token) is used only for joining
-            # across matches where the provider may emit "R. Jiménez" in
-            # one match and "Raúl Jiménez" in another for the same player.
-            player_key = player_join_key(player) or player
+            # R12 A1 / R13 A1: cross-feed join key, TEAM-AWARE. R12
+            # collapsed initial-form drift via surname-only ("R. Jiménez"
+            # = "Raúl Jiménez" = "jimenez"), but that silently merged
+            # intra-team same-surname pairs (Argentina's Lautaro +
+            # Emiliano Martínez, Curaçao's Leandro + Juninho Bacuna) →
+            # yellow earned by one bumped the other's counter → wrong
+            # player suspended. R13 passes the team so player_join_key
+            # can resolve via the key_players_2026.json by_full/by_last
+            # index (unambiguous → canonicalize; ambiguous → preserve
+            # forename to keep the pair distinct). Display string
+            # `player` is preserved for the dashboard row.
+            player_key = player_join_key(player, team=team) or player
             seen_key = (team, player_key, kind)
             if seen_key in seen:
                 continue
@@ -397,14 +400,15 @@ def build_suspensions(completed_matches: list[dict],
     deduped: list[dict] = []
     final_seen: set[tuple[str, str, int, str]] = set()
     for row in suspensions:
-        # R12 A1: key the cross-provider idempotency tuple on the
-        # stronger join form so providers that emit "R. Jiménez" and
-        # "Raúl Jiménez" for the same suspension don't both land.
-        # player_norm was attached above; fall back to player_join_key
-        # on the raw player for any pre-R12 callsite that bypasses the
-        # writer.
+        # R12 A1 / R13 A1: key the cross-provider idempotency tuple on
+        # the team-aware join form so providers that emit "R. Jiménez"
+        # and "Raúl Jiménez" for the same suspension don't both land,
+        # while preserving distinct keys for intra-team same-surname
+        # pairs. player_norm was attached above with the correct team
+        # context; fall back to player_join_key(row["player"], team=...)
+        # for any pre-R13 callsite that bypasses the writer.
         norm = (row.get("player_norm")
-                or player_join_key(row["player"])
+                or player_join_key(row["player"], team=row.get("team"))
                 or row["player"])
         final_key = (row["team"], norm, row["match_id"], row["reason"])
         if final_key in final_seen:
@@ -425,12 +429,20 @@ def _attach_elo(suspensions: list[dict]) -> list[dict]:
     cap_used / confidence. Per-player penalty stacks naturally at the
     apply_matchday_adjustments cap — we still write the per-player
     capped value here so the dashboard view never displays a row whose
-    `team_adjustment_elo` exceeds the cap."""
+    `team_adjustment_elo` exceeds the cap.
+
+    R13 MED: strip the internal `player_norm` field before the on-disk
+    write. player_norm is the team-aware join key (e.g. "edson alvarez")
+    used internally for dedup; downstream consumers should use the
+    display `player` field (e.g. "Edson Álvarez"). Pre-R13 the field
+    leaked into suspensions_2026.json, surfacing internal join keys to
+    any dashboard tool that displayed suspension rows directly.
+    """
     out: list[dict] = []
     for s in suspensions:
         raw = PER_SUSPENSION_ELO
         capped = max(-SUSPENSION_CAP, min(SUSPENSION_CAP, raw))
-        row = dict(s)
+        row = {k: v for k, v in s.items() if k != "player_norm"}
         row["raw_elo"] = raw
         row["team_adjustment_elo"] = capped
         row["cap_used"] = SUSPENSION_CAP

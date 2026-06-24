@@ -103,7 +103,8 @@ from scripts.live.export_ko_advance import (  # noqa: E402
 # drifts here, the test fails — by design.
 PROD_NB_DISPERSION = 5.0
 PROD_DC_RHO = -0.13
-PROD_MAX_G = 10
+# R13 C1 / C3: bumped 10 → 15 to follow R12 MED's sim default change.
+PROD_MAX_G = 15
 SIM_CFG = {
     "nb_dispersion": PROD_NB_DISPERSION,
     "dc_rho": PROD_DC_RHO,

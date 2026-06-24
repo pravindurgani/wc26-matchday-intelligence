@@ -45,7 +45,10 @@ REPO = Path(__file__).resolve().parents[2]
 FEED = REPO / "data" / "processed" / "predictions_live.json"
 
 DC_RHO = -0.13
-MAX_G = 10
+# R13 C2: bumped 10 → 15 to follow R12 MED + R13 C1. Pre-R13 the
+# verifier compared the .gs Poisson+DC at max_g=10 against the export
+# at max_g=10 — both wrong vs production sim's max_g=15.
+MAX_G = 15
 TOLERANCE = 0.01   # 1% reporting tolerance for PASS/FAIL column
 N_SAMPLE = 10
 
