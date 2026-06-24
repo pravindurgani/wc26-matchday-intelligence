@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-24T14:32:57.985111+00:00",
+  "generated_at": "2026-06-24T17:06:47.073275+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1922,25 +1922,6 @@
       ]
     },
     {
-      "team": "Scotland",
-      "match_id": 51,
-      "total_elo_adjustment": -8.0,
-      "raw_sum_before_aggregate_cap": -8.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -8.0,
-          "capped_elo": -8.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Senegal",
       "match_id": null,
       "total_elo_adjustment": -17.76,
@@ -2579,9 +2560,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 135,
+    "total_active_components": 134,
     "teams_affected": 48,
-    "matches_affected": 17,
+    "matches_affected": 16,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {
