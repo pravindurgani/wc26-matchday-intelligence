@@ -1,8 +1,6 @@
 # wc26-matchday-intelligence — runbook
 
 This repo is the standalone home for **https://wc26-matchday-intelligence.vercel.app/**.
-It is completely separate from `pravindurgani/fifa-wc-26-prediction`
-(the original production simulator).
 
 ## Architecture
 
@@ -103,16 +101,9 @@ The `wc26-dispatcher` PAT auto-expires 2026-07-25 — no manual revocation
 needed. The fine-grained PAT only has Actions:R/W on this single repo, so
 zero blast radius even if leaked.
 
-## Isolation from `fifa-wc-26-prediction`
+## Project identifiers
 
-This repo is fully independent:
-
-- Different GitHub repo (`pravindurgani/wc26-matchday-intelligence`)
-- Different Vercel project (`prj_Fb8FwiirJJbSJgdzNzVdC4BEetN2`)
-- Different domain (`wc26-matchday-intelligence.vercel.app`)
-- Different cron schedulers (CF Worker, native GHA cron from this repo)
-- No shared workflows, no shared secrets, no git remote overlap
-
-Production at `fifa-wc-26-prediction.vercel.app` is untouched by every
-code path in this repo. Verified by checking prod `live_state.json` ts
-remained unchanged through the entire migration.
+- GitHub repo: `pravindurgani/wc26-matchday-intelligence`
+- Vercel project: `prj_Fb8FwiirJJbSJgdzNzVdC4BEetN2`
+- Domain: `wc26-matchday-intelligence.vercel.app`
+- Cron schedulers: Cloudflare Worker + native GitHub Actions cron from this repo

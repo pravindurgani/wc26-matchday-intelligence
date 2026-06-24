@@ -1,4 +1,4 @@
-# Deployment runbook — fifa-wc-26-prediction
+# Deployment runbook — wc26-matchday-intelligence
 
 Follow these steps **in order**. Each block tells you (a) what to do, (b) which command to run, and (c) what success looks like. Anything tagged **MANUAL** needs you to click in the GitHub or Vercel UI — the rest is shell.
 
@@ -69,7 +69,7 @@ git push origin feature/matchday-intelligence    # keeps the branch in sync
 
 ## 2. GitHub repo secrets + variables
 
-Open `https://github.com/<you>/fifa-wc-26-prediction/settings/secrets/actions` and confirm these. Anything missing? Add it.
+Open `https://github.com/<you>/wc26-matchday-intelligence/settings/secrets/actions` and confirm these. Anything missing? Add it.
 
 | Kind     | Name                       | Purpose                                                  |
 |----------|----------------------------|----------------------------------------------------------|
@@ -120,7 +120,7 @@ You have two paths. Pick one.
 
 ### 4a — push triggers Vercel Git integration (recommended)
 
-`git push origin main` (already done in step 1d) → Vercel auto-builds main → deploys to your production domain. Watch the build at <https://vercel.com/<you>/fifa-wc-26-prediction/deployments>.
+`git push origin main` (already done in step 1d) → Vercel auto-builds main → deploys to your production domain. Watch the build at <https://vercel.com/<you>/wc26-matchday-intelligence/deployments>.
 
 ### 4b — direct CLI deploy
 
@@ -129,7 +129,7 @@ vercel pull   --yes --environment=production
 vercel deploy --prod --yes
 ```
 
-Once deployed, Vercel will also tell you the production URL (e.g. `https://fifa-wc-26-prediction.vercel.app`). Open it on your phone for the smoke test.
+Once deployed, Vercel will also tell you the production URL (e.g. `https://wc26-matchday-intelligence.vercel.app`). Open it on your phone for the smoke test.
 
 ---
 

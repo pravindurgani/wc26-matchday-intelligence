@@ -183,7 +183,7 @@ So the 3 new producer outputs will land on `main` every 3h, and the freshness gu
 
 The Vercel deploy consumes `data/processed/predictions_live.json`. After branch merge and the first sim tick, the new fields will appear in the deployed dashboard. Until KO teams resolve (post-group-stage), both fields will be empty arrays — which is correct.
 
-`fifa-wc-26-prediction.vercel.app/live_state.json` (per Sigil memory: the single source of truth for verifying production state) will reflect this branch after merge.
+`wc26-matchday-intelligence.vercel.app/live_state.json` is the single source of truth for verifying production state and will reflect this branch after merge.
 
 ---
 

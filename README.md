@@ -136,7 +136,7 @@ controlled by whether `API_FOOTBALL_KEY` is set in CI.
 ## Project layout
 
 ```
-fifa-wc-26-prediction/
+wc26-matchday-intelligence/
 ├── data/
 │   ├── raw/
 │   │   ├── results.csv                            # 49k matches since 1872

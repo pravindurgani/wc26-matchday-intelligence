@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Manual preview-deploy helper for the personal-use Vercel link
-# (wc26-matchday-intelligence.vercel.app). NEVER touches main or
-# fifa-wc-26-prediction.vercel.app.
+# (wc26-matchday-intelligence.vercel.app). NEVER touches main.
 #
 # Usage:
 #   ./scripts/deploy_preview.sh                  # full live refresh + deploy
@@ -93,4 +92,4 @@ npx --yes vercel@latest alias set "$PREVIEW_URL" "$ALIAS_NAME"
 echo ""
 echo "✅ DONE. Open: https://${ALIAS_NAME}"
 echo ""
-echo "Reminder: this script never touches main or fifa-wc-26-prediction.vercel.app."
+echo "Reminder: this script never touches main."
