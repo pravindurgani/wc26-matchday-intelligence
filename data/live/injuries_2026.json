@@ -1,13 +1,16 @@
 {
-  "generated_at": "2026-06-24T09:31:02.745090+00:00",
+  "generated_at": "2026-06-24T14:31:39.456637+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
+  "net_elo_active": true,
+  "auto_tier_active": false,
   "teams_with_injuries": 14,
   "teams": {
     "Brazil": {
-      "total_elo_adjustment": -120.0,
+      "total_elo_adjustment": -60.0,
+      "total_net_elo_adjustment": -40.8,
       "players": [
         {
           "name": "Neymar",
@@ -16,25 +19,18 @@
           "status": "confirmed_out",
           "reason": "Calf Injury",
           "elo": -30.0,
-          "fixture_id": 1489371
-        },
-        {
-          "name": "Neymar",
-          "tier": "tier_1_star",
-          "auto_tier_source": "whitelist_full",
-          "status": "confirmed_out",
-          "reason": "Calf Injury",
-          "elo": -30.0,
-          "fixture_id": 1489389
-        },
-        {
-          "name": "Neymar",
-          "tier": "tier_1_star",
-          "auto_tier_source": "whitelist_full",
-          "status": "confirmed_out",
-          "reason": "Calf Injury",
-          "elo": -30.0,
-          "fixture_id": 1489406
+          "replacement_elo": -9.6,
+          "net_elo": -20.4,
+          "fixture_id": 1489371,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.204,
+            "ga90": 1.433,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 314,
+            "team_top_minutes": 1538
+          }
         },
         {
           "name": "Raphinha",
@@ -43,12 +39,24 @@
           "status": "confirmed_out",
           "reason": "Hamstring muscle injury",
           "elo": -30.0,
-          "fixture_id": 1489406
+          "replacement_elo": -9.6,
+          "net_elo": -20.4,
+          "fixture_id": 1489406,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.702,
+            "ga90": 0.584,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 1079,
+            "team_top_minutes": 1538
+          }
         }
       ]
     },
     "Czechia": {
       "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
       "players": [
         {
           "name": "D. Jurásek",
@@ -57,12 +65,22 @@
           "status": "confirmed_out",
           "reason": "Thigh problems",
           "elo": -12.0,
-          "fixture_id": 1539010
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539010,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 180,
+            "floor": 200,
+            "minutes": 44
+          }
         }
       ]
     },
     "Belgium": {
-      "total_elo_adjustment": -60.0,
+      "total_elo_adjustment": -36.0,
+      "total_net_elo_adjustment": -36.0,
       "players": [
         {
           "name": "Z. Debast",
@@ -71,25 +89,18 @@
           "status": "confirmed_out",
           "reason": "Leg Injury",
           "elo": -12.0,
-          "fixture_id": 1489377
-        },
-        {
-          "name": "Z. Debast",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Leg Injury",
-          "elo": -12.0,
-          "fixture_id": 1489395
-        },
-        {
-          "name": "Z. Debast",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Leg Injury",
-          "elo": -12.0,
-          "fixture_id": 1489415
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489377,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.277,
+            "ga90": 1.125,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 80,
+            "team_top_minutes": 289
+          }
         },
         {
           "name": "J. Doku",
@@ -98,7 +109,18 @@
           "status": "confirmed_out",
           "reason": "Illness",
           "elo": -12.0,
-          "fixture_id": 1489415
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489415,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.844,
+            "ga90": 0.738,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 244,
+            "team_top_minutes": 289
+          }
         },
         {
           "name": "N. Ngoy",
@@ -107,12 +129,24 @@
           "status": "confirmed_out",
           "reason": "Red Card",
           "elo": -12.0,
-          "fixture_id": 1489415
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489415,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.907,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 262,
+            "team_top_minutes": 289
+          }
         }
       ]
     },
     "Uruguay": {
-      "total_elo_adjustment": -84.0,
+      "total_elo_adjustment": -42.0,
+      "total_net_elo_adjustment": -32.4,
       "players": [
         {
           "name": "G. de Arrascaeta",
@@ -121,25 +155,18 @@
           "status": "confirmed_out",
           "reason": "Muscle bruise",
           "elo": -12.0,
-          "fixture_id": 1489398
-        },
-        {
-          "name": "G. de Arrascaeta",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Muscle bruise",
-          "elo": -12.0,
-          "fixture_id": 1489417
-        },
-        {
-          "name": "R. Araújo",
-          "tier": "tier_1_star",
-          "auto_tier_source": "whitelist_last",
-          "status": "confirmed_out",
-          "reason": "Muscle bruise",
-          "elo": -30.0,
-          "fixture_id": 1489398
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489398,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.358,
+            "ga90": 0.383,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 470,
+            "team_top_minutes": 1313
+          }
         },
         {
           "name": "R. Araújo",
@@ -148,12 +175,24 @@
           "status": "confirmed_out",
           "reason": "Muscle bruise",
           "elo": -30.0,
-          "fixture_id": 1489417
+          "replacement_elo": -9.6,
+          "net_elo": -20.4,
+          "fixture_id": 1489398,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.553,
+            "ga90": 0.124,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 726,
+            "team_top_minutes": 1313
+          }
         }
       ]
     },
     "Japan": {
       "total_elo_adjustment": -42.0,
+      "total_net_elo_adjustment": -32.4,
       "players": [
         {
           "name": "T. Kubo",
@@ -162,7 +201,18 @@
           "status": "confirmed_out",
           "reason": "Wound",
           "elo": -30.0,
-          "fixture_id": 1489394
+          "replacement_elo": -9.6,
+          "net_elo": -20.4,
+          "fixture_id": 1489394,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.735,
+            "ga90": 1.627,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 664,
+            "team_top_minutes": 903
+          }
         },
         {
           "name": "S. Machino",
@@ -171,12 +221,24 @@
           "status": "confirmed_out",
           "reason": "Illness",
           "elo": -12.0,
-          "fixture_id": 1539011
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539011,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.122,
+            "ga90": 2.455,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 110,
+            "team_top_minutes": 903
+          }
         }
       ]
     },
     "Senegal": {
       "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
       "players": [
         {
           "name": "É. Mendy",
@@ -185,12 +247,22 @@
           "status": "confirmed_out",
           "reason": "Twisted knee",
           "elo": -12.0,
-          "fixture_id": 1539074
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539074,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 184,
+            "floor": 200,
+            "minutes": 153
+          }
         }
       ]
     },
     "Bosnia and Herzegovina": {
       "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
       "players": [
         {
           "name": "T. Muharemović",
@@ -199,12 +271,19 @@
           "status": "confirmed_out",
           "reason": "Red Card",
           "elo": -12.0,
-          "fixture_id": 1539009
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539009,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "reason": "zero_minutes"
+          }
         }
       ]
     },
     "South Africa": {
       "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
       "players": [
         {
           "name": "T. Mokoena",
@@ -213,12 +292,24 @@
           "status": "confirmed_out",
           "reason": "Yellow card suspension",
           "elo": -12.0,
-          "fixture_id": 1489407
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489407,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.636,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 157,
+            "team_top_minutes": 247
+          }
         }
       ]
     },
     "Algeria": {
       "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
       "players": [
         {
           "name": "M. Amoura",
@@ -227,12 +318,22 @@
           "status": "confirmed_out",
           "reason": "Hamstring muscle injury",
           "elo": -12.0,
-          "fixture_id": 1489418
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489418,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 184,
+            "floor": 200,
+            "minutes": 95
+          }
         }
       ]
     },
     "Cape Verde": {
       "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
       "players": [
         {
           "name": "S. Lopes Cabral",
@@ -241,12 +342,22 @@
           "status": "confirmed_out",
           "reason": "Yellow card suspension",
           "elo": -12.0,
-          "fixture_id": 1489413
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489413,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 180,
+            "floor": 200,
+            "minutes": 166
+          }
         }
       ]
     },
     "Qatar": {
       "total_elo_adjustment": -24.0,
+      "total_net_elo_adjustment": -24.0,
       "players": [
         {
           "name": "Homam Ahmed",
@@ -255,7 +366,18 @@
           "status": "confirmed_out",
           "reason": "Red Card",
           "elo": -12.0,
-          "fixture_id": 1539009
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539009,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.609,
+            "ga90": 0.426,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 845,
+            "team_top_minutes": 1388
+          }
         },
         {
           "name": "Assim Madibo",
@@ -264,26 +386,50 @@
           "status": "confirmed_out",
           "reason": "Red Card",
           "elo": -12.0,
-          "fixture_id": 1539009
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539009,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.247,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 343,
+            "team_top_minutes": 1388
+          }
         }
       ]
     },
     "Paraguay": {
-      "total_elo_adjustment": -12.0,
+      "total_elo_adjustment": -30.0,
+      "total_net_elo_adjustment": -26.8,
       "players": [
         {
           "name": "M. Almirón",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_last",
           "status": "confirmed_out",
           "reason": "Red Card",
-          "elo": -12.0,
-          "fixture_id": 1489411
+          "elo": -30.0,
+          "replacement_elo": -3.2,
+          "net_elo": -26.8,
+          "fixture_id": 1489411,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.925,
+            "ga90": 0.139,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 1292,
+            "team_top_minutes": 1397
+          }
         }
       ]
     },
     "United States": {
       "total_elo_adjustment": -30.0,
+      "total_net_elo_adjustment": -20.4,
       "players": [
         {
           "name": "C. Pulišić",
@@ -292,12 +438,24 @@
           "status": "confirmed_out",
           "reason": "Calf muscle strain",
           "elo": -30.0,
-          "fixture_id": 1489391
+          "replacement_elo": -9.6,
+          "net_elo": -20.4,
+          "fixture_id": 1489391,
+          "auto_tier_suggestion": "tier_1_star",
+          "auto_tier_components": {
+            "minutes_share": 0.94,
+            "ga90": 0.814,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 221,
+            "team_top_minutes": 235
+          }
         }
       ]
     },
     "Canada": {
       "total_elo_adjustment": -24.0,
+      "total_net_elo_adjustment": -24.0,
       "players": [
         {
           "name": "I. Koné",
@@ -306,7 +464,18 @@
           "status": "confirmed_out",
           "reason": "Fracture of lower leg",
           "elo": -12.0,
-          "fixture_id": 1489408
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489408,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.264,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 57,
+            "team_top_minutes": 216
+          }
         },
         {
           "name": "A. Jones",
@@ -315,10 +484,59 @@
           "status": "confirmed_out",
           "reason": null,
           "elo": -12.0,
-          "fixture_id": 1489408
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489408,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.093,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 20,
+            "team_top_minutes": 216
+          }
         }
       ]
     }
   },
-  "warnings": []
+  "warnings": [
+    {
+      "type": "duplicate_record",
+      "count": 6,
+      "cases": [
+        {
+          "team": "Brazil",
+          "input": "Neymar",
+          "fixture_id": 1489389
+        },
+        {
+          "team": "Brazil",
+          "input": "Neymar",
+          "fixture_id": 1489406
+        },
+        {
+          "team": "Belgium",
+          "input": "Z. Debast",
+          "fixture_id": 1489395
+        },
+        {
+          "team": "Belgium",
+          "input": "Z. Debast",
+          "fixture_id": 1489415
+        },
+        {
+          "team": "Uruguay",
+          "input": "G. de Arrascaeta",
+          "fixture_id": 1489417
+        },
+        {
+          "team": "Uruguay",
+          "input": "R. Araújo",
+          "fixture_id": 1489417
+        }
+      ],
+      "message": "6 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Belgium/'Z. Debast' (+3 more)"
+    }
+  ]
 }

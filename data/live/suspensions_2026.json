@@ -1,22 +1,158 @@
 {
-  "generated_at": "2026-06-16T20:40:53.525916+00:00",
+  "generated_at": "2026-06-24T14:31:39.521959+00:00",
   "schema_version": 1,
   "source": "fetch_results_events",
   "cap_used": 8.0,
   "per_suspension_elo": -3.0,
   "yellow_threshold": 2,
-  "suspensions": [],
-  "warnings": [
+  "suspensions": [
     {
-      "type": "no_events_in_snapshot",
-      "n_completed": 5,
-      "n_with_events": 0,
-      "message": "Live events not enriched on any completed match. Suspension tracker returns empty — this is NOT a confirmation that no players are suspended. Run `fetch_results.py --with-events` to populate."
+      "match_id": 25,
+      "team": "South Africa",
+      "player": "Siphephelo Sithole",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        1
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 25,
+      "team": "South Africa",
+      "player": "Themba Zwane",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        1
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 28,
+      "team": "Mexico",
+      "player": "César Montes",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        1
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 54,
+      "team": "South Africa",
+      "player": "Teboho Mokoena",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        1,
+        25
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 50,
+      "team": "Bosnia and Herzegovina",
+      "player": "Tarik Muharemović",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        26
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 50,
+      "team": "Qatar",
+      "player": "Homam Al-Amin",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        27
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 50,
+      "team": "Qatar",
+      "player": "Assim Madibo",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        27
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 60,
+      "team": "Paraguay",
+      "player": "Miguel Almirón",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        32
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 66,
+      "team": "Belgium",
+      "player": "Nathan Ngoy",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        38
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 64,
+      "team": "Cape Verde",
+      "player": "Sidny Lopes Cabral",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        13,
+        39
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
     }
   ],
+  "warnings": [],
   "summary": {
-    "n_completed_matches": 5,
-    "n_with_events": 0,
-    "n_suspensions": 0
+    "n_completed_matches": 48,
+    "n_with_events": 48,
+    "n_suspensions": 10
   }
 }
