@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-23T22:15:00.810058+00:00",
+  "generated_at": "2026-06-24T03:38:50.463046+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 47,
-      "home": "Panama",
-      "away": "Croatia",
+      "match_id": 48,
+      "home": "Colombia",
+      "away": "DR Congo",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,141 +15,141 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 2968,
-          "name": "Orlando Mosquera",
-          "number": 22,
+          "id": 2482,
+          "name": "Camilo Vargas",
+          "number": 12,
           "pos": "G"
         },
         {
-          "id": 57667,
-          "name": "Jiovany Ramos",
-          "number": 13,
+          "id": 13736,
+          "name": "Daniel Muñoz",
+          "number": 2,
           "pos": "D"
         },
         {
-          "id": 57739,
-          "name": "José Córdoba",
+          "id": 168,
+          "name": "Davinson Sánchez",
+          "number": 23,
+          "pos": "D"
+        },
+        {
+          "id": 1929,
+          "name": "Jhon Lucumí",
           "number": 3,
           "pos": "D"
         },
         {
-          "id": 7197,
-          "name": "Andrés Andrade",
-          "number": 16,
+          "id": 64268,
+          "name": "Johan Mojica",
+          "number": 17,
           "pos": "D"
         },
         {
-          "id": 2973,
-          "name": "Amir Murillo",
-          "number": 23,
-          "pos": "M"
-        },
-        {
-          "id": 71230,
-          "name": "Carlos Harvey",
+          "id": 324034,
+          "name": "Gustavo Puerta",
           "number": 14,
           "pos": "M"
         },
         {
-          "id": 46855,
-          "name": "Yoel Bárcenas",
+          "id": 2490,
+          "name": "Jefferson Lerma",
+          "number": 16,
+          "pos": "M"
+        },
+        {
+          "id": 13708,
+          "name": "Jhon Arias",
           "number": 11,
           "pos": "M"
         },
         {
-          "id": 2975,
-          "name": "César Blackman",
-          "number": 2,
-          "pos": "M"
-        },
-        {
-          "id": 50911,
-          "name": "Cristian Martínez",
-          "number": 6,
+          "id": 517,
+          "name": "James Rodríguez",
+          "number": 10,
           "pos": "F"
         },
         {
-          "id": 2983,
-          "name": "José Fajardo",
-          "number": 17,
+          "id": 47237,
+          "name": "Luis Javier Suárez",
+          "number": 25,
           "pos": "F"
         },
         {
-          "id": 2979,
-          "name": "José Luis Rodríguez",
+          "id": 2489,
+          "name": "Luis Díaz",
           "number": 7,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 1305,
-          "name": "Dominik Livaković",
+          "id": 24012,
+          "name": "Lionel Mpasi Nzau",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 125171,
-          "name": "Josip Stanišić",
+          "id": 18846,
+          "name": "Aaron Wan-Bissaka",
           "number": 2,
           "pos": "D"
         },
         {
-          "id": 14701,
-          "name": "Josip Šutalo",
-          "number": 6,
+          "id": 375,
+          "name": "Chancel Mbemba",
+          "number": 22,
           "pos": "D"
         },
         {
-          "id": 1084,
-          "name": "Marin Pongračić",
-          "number": 3,
-          "pos": "D"
-        },
-        {
-          "id": 129033,
-          "name": "Joško Gvardiol",
+          "id": 19182,
+          "name": "Axel Tuanzebe",
           "number": 4,
           "pos": "D"
         },
         {
-          "id": 754,
-          "name": "Luka Modrić",
-          "number": 10,
+          "id": 199767,
+          "name": "Steve Kapuadi",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 18816,
+          "name": "Arthur Masuaku",
+          "number": 26,
+          "pos": "D"
+        },
+        {
+          "id": 375598,
+          "name": "Ngal'ayel Mukau",
+          "number": 6,
           "pos": "M"
         },
         {
-          "id": 2291,
-          "name": "Mateo Kovačić",
+          "id": 21101,
+          "name": "Samuel Moutoussamy",
           "number": 8,
           "pos": "M"
         },
         {
-          "id": 260865,
-          "name": "Marco Pašalić",
-          "number": 24,
+          "id": 1424,
+          "name": "Edo Kayembe",
+          "number": 25,
           "pos": "M"
         },
         {
-          "id": 295026,
-          "name": "Martin Baturina",
-          "number": 16,
-          "pos": "M"
+          "id": 3033,
+          "name": "Cédric Bakambu",
+          "number": 17,
+          "pos": "F"
         },
         {
-          "id": 207,
-          "name": "Ivan Perišić",
-          "number": 14,
-          "pos": "M"
-        },
-        {
-          "id": 66055,
-          "name": "Petar Musa",
-          "number": 26,
+          "id": 20649,
+          "name": "Yoane Wissa",
+          "number": 20,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-23T22:15:00.810040+00:00"
+      "captured_at": "2026-06-24T03:38:50.463028+00:00"
     }
   ],
   "warnings": []
