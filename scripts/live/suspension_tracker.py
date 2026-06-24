@@ -437,12 +437,19 @@ def _attach_elo(suspensions: list[dict]) -> list[dict]:
     display `player` field (e.g. "Edson Álvarez"). Pre-R13 the field
     leaked into suspensions_2026.json, surfacing internal join keys to
     any dashboard tool that displayed suspension rows directly.
+
+    R14 MED: also strip `triggering_match_id` — same class of internal
+    field added in R6 for the per-match dedup logic. The on-disk schema
+    documented at lines 22-50 does NOT include triggering_match_id;
+    downstream consumers use `evidence_match_ids` which is the canonical
+    list. Pre-R14 triggering_match_id passed through R13's filter.
     """
     out: list[dict] = []
+    _INTERNAL_FIELDS = {"player_norm", "triggering_match_id"}
     for s in suspensions:
         raw = PER_SUSPENSION_ELO
         capped = max(-SUSPENSION_CAP, min(SUSPENSION_CAP, raw))
-        row = {k: v for k, v in s.items() if k != "player_norm"}
+        row = {k: v for k, v in s.items() if k not in _INTERNAL_FIELDS}
         row["raw_elo"] = raw
         row["team_adjustment_elo"] = capped
         row["cap_used"] = SUSPENSION_CAP

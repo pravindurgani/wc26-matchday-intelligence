@@ -823,6 +823,18 @@ function renderContenders(data, liveDelta, travel) {
   const resetBtn = document.getElementById('contenders-reset');
   const headerCells = document.querySelectorAll('#contenders-table thead th[data-sort]');
 
+  // R14 D2: clear groupSel options before re-appending. Same DOM-leak
+  // pattern as R13 D1 fixed for renderCompare — R12 D1 wired
+  // renderContenders into applyLiveUpdate's tick, but this group-option
+  // append loop did not clear first → ~8 dup options per 60s tick →
+  // ~9,600 dup <option> nodes per 20h of live window → mobile OOM.
+  // The HTML carries a default <option value="all">All</option> at
+  // index 0 — preserve it and remove only the dynamically-appended
+  // group options (indices 1..N). Mirrors renderMatches' clearing
+  // pattern at app.js:1241.
+  if (groupSel) {
+    while (groupSel.options.length > 1) groupSel.remove(1);
+  }
   [...new Set(all.map(t => t.group))].sort().forEach(g => {
     const o = document.createElement('option'); o.value = g; o.textContent = `Group ${g}`;
     if (groupSel) groupSel.appendChild(o);

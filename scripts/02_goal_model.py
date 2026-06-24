@@ -188,8 +188,13 @@ def equivalent_wdl_logloss(home_model, away_model, X_te, y_home, y_away) -> floa
     lam_h = np.clip(home_model.predict(X_te), 1e-6, 10)
     lam_a = np.clip(away_model.predict(X_te), 1e-6, 10)
 
-    # Build score matrix up to 8-8
-    max_g = 8
+    # Build score matrix up to 15-15.
+    # R14 C2: bumped 8 → 15 to align with production sim's max_g=15 (R12 MED)
+    # and 04_evaluate.py's lambdas_to_wdl default (R14 C1). At λ=4 (clip max
+    # is 10 here), Poisson tail mass above 8 was ~5%; above 15 it's ~1e-3.
+    # Training-time WDL log-loss diagnostic now uses the same truncation as
+    # the downstream production sim, eliminating a cross-pipeline drift.
+    max_g = 15
     proba = np.zeros((len(X_te), 3))  # away, draw, home
     for i in range(len(X_te)):
         p_h = np.array([math.exp(-lam_h[i]) * lam_h[i] ** k / math.factorial(k) for k in range(max_g + 1)])

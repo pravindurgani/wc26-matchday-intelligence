@@ -426,9 +426,20 @@ class TestWhitelistSelfConsistency(unittest.TestCase):
                 for team, name, stored, computed in mismatches[:5]))
 
     def test_stored_last_name_normalized_is_a_window_of_full(self):
-        """Stored last_name_normalized must be a trailing window of the
-        full normalized name — anything else means the by_last index
-        will never match what classify_tier computes."""
+        """Stored last_name_normalized must appear as a trailing OR
+        leading window of the full normalized name — anything else
+        means the by_last index will never match what classify_tier
+        computes.
+
+        R14 MED: extended to accept leading windows too. Korean naming
+        convention places the surname FIRST (Son Heung-min: surname
+        'son', given name 'heung-min'). Pre-R14 the data carried Son's
+        last_name_normalized as 'heung-min' (the trailing window) which
+        the by_last index then keyed on the GIVEN NAME, defeating the
+        team-aware canonical resolution for "Son" / "H. Son" aliases.
+        R14 corrected the data to 'son' (the actual surname); this test
+        now accepts both window directions to allow the correction.
+        """
         problems = []
         for entry in self.raw["players"]:
             full = normalize_player_name(entry["name"])
@@ -436,15 +447,19 @@ class TestWhitelistSelfConsistency(unittest.TestCase):
             if not last:
                 continue
             tokens = full.split()
-            valid_windows = {
+            trailing = {
                 " ".join(tokens[-n:]) for n in range(1, len(tokens) + 1)
             }
+            leading = {
+                " ".join(tokens[:n]) for n in range(1, len(tokens) + 1)
+            }
+            valid_windows = trailing | leading
             if last not in valid_windows:
                 problems.append((entry["team"], entry["name"], full, last))
         self.assertFalse(
             problems,
             "Stored last_name_normalized values don't appear as a "
-            "trailing window of the full normalized name:\n"
+            "trailing or leading window of the full normalized name:\n"
             + "\n".join(
                 f"  {team} | {name!r} | full={full!r} | last={last!r}"
                 for team, name, full, last in problems[:5]))

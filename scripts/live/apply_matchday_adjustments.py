@@ -724,9 +724,14 @@ def _load_weather_components(warnings_acc: list | None = None) -> dict:
         confidence = w.get("confidence")
         # Two sides — each may have an independent acclimatisation penalty.
         for side in ("home", "away"):
-            team = w.get(f"{side}_team")
-            if not team:
+            raw_team = w.get(f"{side}_team")
+            if not raw_team:
                 continue
+            # R14 MED: defense-in-depth team normalization. fetch_weather
+            # writes canonical names, but per CORRECTIONS.md §4 operator
+            # overrides may carry raw aliases. Same hardening R13 A2
+            # applied to injury/referee/suspension loaders.
+            team = normalize_team(raw_team)
             def _build_side(w=w, side=side, team=team, m_id=m_id,
                             bucket=bucket, confidence=confidence):
                 raw = float(w.get(f"{side}_team_adjustment_elo", 0.0) or 0.0)
@@ -906,9 +911,15 @@ def _load_lineup_components(warnings_acc: list | None = None) -> dict:
         if m_id is None:
             continue
         for side in ("home", "away"):
-            team = ln.get(side)
-            if not team:
+            raw_team = ln.get(side)
+            if not raw_team:
                 continue
+            # R14 MED: defense-in-depth team normalization for operator
+            # manual-edit overrides (CORRECTIONS.md §4). fetch_lineups
+            # writes canonical names but the loader re-normalizes for
+            # safety, matching R13 A2 hardening on injury/referee/
+            # suspension loaders.
+            team = normalize_team(raw_team)
             def _build_lineup_side(ln=ln, side=side, team=team, m_id=m_id):
                 raw = float(ln.get(f"{side}_team_adjustment_elo", 0.0) or 0.0)
                 capped = max(-LINEUP_CAP, min(LINEUP_CAP, raw))
@@ -978,9 +989,15 @@ def _load_stats_components(warnings_acc: list | None = None) -> dict:
         if not isinstance(s, dict) or s.get("status") != "FT":
             continue
         for side in ("home", "away"):
-            team = s.get(side)
-            if not team:
+            raw_team = s.get(side)
+            if not raw_team:
                 continue
+            # R14 MED: defense-in-depth team normalization for operator
+            # manual-edit overrides (CORRECTIONS.md §4). fetch_match_stats
+            # writes canonical names but the loader re-normalizes for
+            # safety, matching R13 A2 hardening on injury/referee/
+            # suspension loaders.
+            team = normalize_team(raw_team)
             def _build_stats_side(s=s, side=side, team=team):
                 raw = float(s.get(f"{side}_form_adjustment_elo", 0.0) or 0.0)
                 # H7: 0.5× discount when live_team_state already reflects form.

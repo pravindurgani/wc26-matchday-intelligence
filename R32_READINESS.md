@@ -1,8 +1,8 @@
-# R32 Readiness Checklist — Post Pressure-Test R13
+# R32 Readiness Checklist — Post Pressure-Test R14
 
 **Date**: 2026-06-24 (T-4 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1272 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Suite**: **1283 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
 **Σ-gate (real data)**: exit 0, |Δ| = 1.110e-16, teams = 48 (canonical + dashboard mirror)
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
 **Round 3 closure**: all 4 HIGH-severity audit findings closed
@@ -182,6 +182,29 @@ defense-in-depth normalize_team added at injury/referee/suspension
 loaders (catches operator manual-edit overrides). Regenerated
 predictions_live.json + dashboard mirror with sim at max_g=15 (Σ-gate
 green on both, |Δ| = 1.110e-16). Documented in `PRESSURE_TEST_R13.md`.
+**Round 14 closure**: audit-the-audit on R13 — 5 parallel adversarial
+agents + 2 monitor agents. T-4 days from R32 kickoff unchanged.
+**THREE HIGH + 5 MEDIUM closed, ZERO deferrals**: D2 (renderContenders
+DOM leak — same pattern R13 D1 fixed in renderCompare, but missed;
+~9,600 dup option nodes per 20h live window → mobile OOM); C1
+(scripts/04_evaluate.py + scripts/06_ablation.py lambdas_to_wdl
+default max_g=10 → 15; pre-R14 daily-baseline calibration/ablation
+metrics ran at 11×11 Poisson while production sim ran at 16×16 NB+DC
+→ dashboard calibration curves biased by ~3% tail-mass truncation);
+C2 (scripts/02_goal_model.py equivalent_wdl_logloss max_g=8 → 15;
+training-time WDL log-loss diagnostic now aligns with sim + daily-
+baseline). MEDIUMs: Son Heung-min last_name_normalized fixed
+"heung-min" → "son" (Korean surname-first convention); existing test
+test_stored_last_name_normalized_is_a_window_of_full extended to
+accept leading windows too. triggering_match_id stripped from
+suspensions_2026.json output (R13 MED-3 missed it alongside
+player_norm). normalize_team defense-in-depth added at weather/lineup/
+stats loaders in apply_matchday_adjustments (symmetric with R13 A2).
+Two test gap closures: partial-coverage with n_with==1 (symmetric
+edge of R13 MED-1's 47/48 test); missing key_players_2026.json
+graceful fallback. max_g=15 now consistent across 6 places (sim,
+ko_advance export, goal_grid tests, Apps Script, 04_evaluate,
+06_ablation, 02_goal_model). Documented in `PRESSURE_TEST_R14.md`.
 
 ---
 

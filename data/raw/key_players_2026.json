@@ -151,7 +151,7 @@
      "replacement": {"name": "Hidemasa Morita", "tier": "tier_2_starter", "elo_equiv": -9.6}},
     {"team": "Japan",        "name": "Daichi Kamada",          "name_normalized": "daichi kamada",        "last_name_normalized": "kamada",        "tier": "tier_1_star",   "reason": "Crystal Palace; primary creator",
      "replacement": {"name": "Hiroki Sakai", "tier": "tier_3_squad", "elo_equiv": -3.2}},
-    {"team": "South Korea",  "name": "Son Heung-min",          "name_normalized": "son heung-min",        "last_name_normalized": "heung-min",     "tier": "tier_1_star",   "reason": "Tottenham/LAFC; captain; talisman",
+    {"team": "South Korea",  "name": "Son Heung-min",          "name_normalized": "son heung-min",        "last_name_normalized": "son",           "tier": "tier_1_star",   "reason": "Tottenham/LAFC; captain; talisman (R14: last_name_normalized = surname per Korean convention, not the hyphenated given name)",
      "aliases": ["Son", "H. Son", "Son H.", "Heung-min Son", "Son Heungmin"],
      "replacement": {"name": "Hwang Hee-chan", "tier": "tier_2_starter", "elo_equiv": -9.6}},
     {"team": "Saudi Arabia", "name": "Salem Al-Dawsari",       "name_normalized": "salem al-dawsari",     "last_name_normalized": "al-dawsari",    "tier": "tier_1_star",   "reason": "Saudi Pro League star; chief creator",
