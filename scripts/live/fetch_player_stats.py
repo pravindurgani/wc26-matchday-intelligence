@@ -61,6 +61,9 @@ TTL_SECONDS = 7 * 24 * 3600
 # Schema-drift watchdog: compares fresh /teams + /players responses to their
 # captured baselines under data/live/_provider_schemas/. Soft-mode by default —
 # drift logs a WARNING, does NOT crash the tick.
+# R15: ROOT on sys.path so absolute `scripts.live.*` import resolves under
+# script-mode test invocations (CI runs `python tests/live/test_*.py`).
+sys.path.insert(0, str(ROOT))
 from scripts.live._schema_watchdog import assert_shape  # noqa: E402
 _SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
 

@@ -57,6 +57,10 @@ RAW = ROOT / "data" / "raw"
 # Schema-drift watchdog (Round 5/6): compares fresh provider responses to
 # captured baselines under data/live/_provider_schemas/. Soft-mode by default —
 # drift logs a WARNING, does NOT crash the tick.
+# R15: ROOT on sys.path so absolute `scripts.live.*` imports resolve under
+# script-mode test invocations (CI runs `python tests/live/test_*.py`
+# directly — script-mode does NOT add CWD to sys.path).
+sys.path.insert(0, str(ROOT))
 from scripts.live._schema_watchdog import assert_shape  # noqa: E402
 from scripts.live._knockout import load_knockout_fixtures  # noqa: E402  # R9 P4
 _SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"

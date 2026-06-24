@@ -60,6 +60,11 @@ APIFOOTBALL_BASE = "https://v3.football.api-sports.io"
 # Schema-drift watchdog: compares fresh /injuries responses to the captured
 # baseline under data/live/_provider_schemas/. Soft-mode by default — drift
 # logs a WARNING, does NOT crash the tick.
+# R15: ROOT on sys.path so the absolute `scripts.live.*` import resolves
+# when this module is loaded by tests invoked as scripts (CI runs
+# `python tests/live/test_injury_adjustments.py` directly — script-mode
+# does NOT add CWD to sys.path, only pytest does).
+sys.path.insert(0, str(ROOT))
 from scripts.live._schema_watchdog import assert_shape  # noqa: E402
 _SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
 
