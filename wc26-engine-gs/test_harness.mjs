@@ -25,7 +25,7 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const GS_PATH = path.join(__dirname, 'WC26_Engine_AppsScript_v2.3.5.gs');
+const GS_PATH = path.join(__dirname, 'WC26_Engine_AppsScript_v2.3.6.gs');
 
 // ---- 1. Read source ------------------------------------------------------
 let src = fs.readFileSync(GS_PATH, 'utf8');
@@ -74,13 +74,14 @@ const wrapped = `
     _isOutOfBinRange_:    (typeof _isOutOfBinRange_    !== 'undefined') ? _isOutOfBinRange_    : null,
     _interp_:             (typeof _interp_             !== 'undefined') ? _interp_             : null,
     _knockoutStakingFormulas_: (typeof _knockoutStakingFormulas_ !== 'undefined') ? _knockoutStakingFormulas_ : null,
+    _matchdayKnockoutRowFormulas_: (typeof _matchdayKnockoutRowFormulas_ !== 'undefined') ? _matchdayKnockoutRowFormulas_ : null,
     KNOCKOUT_FIRST_ROW:   (typeof KNOCKOUT_FIRST_ROW   !== 'undefined') ? KNOCKOUT_FIRST_ROW   : null,
     KNOCKOUT_LAST_ROW:    (typeof KNOCKOUT_LAST_ROW    !== 'undefined') ? KNOCKOUT_LAST_ROW    : null,
   };
 })();
 `;
 
-vm.runInThisContext(wrapped, { filename: 'WC26_Engine_AppsScript_v2.3.5.gs' });
+vm.runInThisContext(wrapped, { filename: 'WC26_Engine_AppsScript_v2.3.6.gs' });
 const E = globalThis.__engine;
 
 if (!E.GOAL_GRID || !E._buildScoreMatrix_) {
@@ -581,6 +582,150 @@ function v235Regressions() {
   return out;
 }
 
+// ---- 6.8 v2.3.6 regression suite ----------------------------------------
+// Five closures that v2.3.5's operator-workflow audit surfaced as unreachable
+// — the entire knockout betting UX was broken end-to-end even though the
+// v2.3.5 P0-A formulas SAID they were ready. v2.3.6 wires the inputs.
+//
+// CRIT-A: L:N block exists on _knockoutStakingFormulas_ output and uses
+//         Matchday!E/F/G mirror at rm=r+2 anchor.
+// CRIT-B: _matchdayKnockoutRowFormulas_ returns the 21-cell row with the
+//         right shape (11 formulas + 10 null operator-input cells), with
+//         per-row anchors on the Bets references.
+// CRIT-C: applyProtections() Matchday allow-list strings are bumped 75→107.
+// CRIT-D: onEdit() snapshot row bound bumped 75→107.
+// MED:    installEngine() body contains extendToKnockouts() call.
+// HIGH:   AU formula (block_AR_AV[3]) byte-exact to xlsx master row 2.
+function v236Regressions() {
+  const out = { all_ok: true, fixtures: {} };
+  function assert(name, ok, detail) {
+    out.fixtures[name] = Object.assign({ ok: ok }, detail || {});
+    if (!ok) out.all_ok = false;
+  }
+
+  // --- CRIT-A: L:N seed block exists and references Matchday rm=r+2 ---
+  if (E._knockoutStakingFormulas_) {
+    const f74 = E._knockoutStakingFormulas_(74);
+    assert('crita_L_N_block_exists',
+      Array.isArray(f74.L_N) && f74.L_N.length === 3,
+      { got: f74.L_N ? f74.L_N.length : null });
+    assert('crita_L74_anchor_E76',
+      f74.L_N[0] === '=IF(Matchday!E76="","",Matchday!E76)',
+      { got: f74.L_N[0] });
+    assert('crita_M74_anchor_F76',
+      f74.L_N[1] === '=IF(Matchday!F76="","",Matchday!F76)',
+      { got: f74.L_N[1] });
+    assert('crita_N74_anchor_G76',
+      f74.L_N[2] === '=IF(Matchday!G76="","",Matchday!G76)',
+      { got: f74.L_N[2] });
+    // r=105 (final R32 row in window): rm=107
+    const f105 = E._knockoutStakingFormulas_(105);
+    assert('crita_L105_anchor_E107',
+      f105.L_N[0] === '=IF(Matchday!E107="","",Matchday!E107)',
+      { got: f105.L_N[0] });
+  } else {
+    assert('crita_helper_present', false, { reason: '_knockoutStakingFormulas_ missing' });
+  }
+
+  // --- CRIT-B: Matchday row helper returns right shape + anchors ---
+  if (E._matchdayKnockoutRowFormulas_) {
+    const m76 = E._matchdayKnockoutRowFormulas_(74);   // bets row 74 → matchday row 76
+    assert('critb_row_length_21',
+      Array.isArray(m76) && m76.length === 21,
+      { got: m76 ? m76.length : null });
+    // Auto-mirror cells
+    assert('critb_A_matchno_anchor',
+      m76[0] === '=Bets!A74', { got: m76[0] });
+    assert('critb_B_date_anchor',
+      m76[1] === '=Bets!B74', { got: m76[1] });
+    assert('critb_C_time_anchor',
+      m76[2] === '=IF(Bets!H74="","TBC",Bets!H74)', { got: m76[2] });
+    assert('critb_D_label_anchor',
+      m76[3] === '=Bets!D74&"  v  "&Bets!E74', { got: m76[3] });
+    assert('critb_H_pick_anchor',
+      m76[7] === '=Bets!AD74', { got: m76[7] });
+    assert('critb_I_decision_anchor',
+      m76[8] === '=Bets!AH74', { got: m76[8] });
+    assert('critb_J_stake_anchor',
+      m76[9] === '=Bets!AJ74', { got: m76[9] });
+    assert('critb_S_audit_anchor',
+      m76[18] === '=Bets!AU74', { got: m76[18] });
+    // Operator-input cells must be null markers
+    [4, 5, 6, 11, 13, 14, 15, 16, 17, 19].forEach(function(idx) {
+      assert('critb_operator_cell_null_' + idx,
+        m76[idx] === null, { got: m76[idx] });
+    });
+    // CLV formula uses Matchday row (rm=76) anchors, not Bets row
+    assert('critb_U_clv_matchday_anchor',
+      m76[20] === '=IF(OR(T76="",P76=""),"",P76/T76-1)', { got: m76[20] });
+    // M-message uses L76 for team news (rm=76, not r=74)
+    assert('critb_M_msg_uses_L76',
+      m76[12].indexOf('L76="N"') !== -1 &&
+      m76[12].indexOf('Bets!AH74') !== -1, { got: m76[12].slice(0, 200) });
+    // Distinct row → distinct anchors (r=105 → rm=107)
+    const m107 = E._matchdayKnockoutRowFormulas_(105);
+    assert('critb_r105_anchor_A107',
+      m107[0] === '=Bets!A105', { got: m107[0] });
+    assert('critb_r105_clv_anchor_107',
+      m107[20] === '=IF(OR(T107="",P107=""),"",P107/T107-1)', { got: m107[20] });
+  } else {
+    assert('critb_helper_present', false, { reason: '_matchdayKnockoutRowFormulas_ missing' });
+  }
+
+  // --- CRIT-C: protection allow-list bumped to row 107 ---
+  assert('critc_matchday_E_extended_to_107',
+    /Matchday:\s*\[\s*'E4:G107'/.test(src),
+    { note: 'expected Matchday E4:G107 in editable map' });
+  assert('critc_matchday_L_extended_to_107',
+    /'L4:L107'/.test(src),
+    { note: 'expected L4:L107' });
+  assert('critc_matchday_NR_extended_to_107',
+    /'N4:R107'/.test(src),
+    { note: 'expected N4:R107' });
+  assert('critc_matchday_T_extended_to_107',
+    /'T4:T107'/.test(src),
+    { note: 'expected T4:T107' });
+  assert('critc_no_residual_row75_in_matchday',
+    !/Matchday:\s*\[\s*'E4:G75'/.test(src),
+    { note: 'residual E4:G75 still present' });
+
+  // --- CRIT-D: onEdit upper bound bumped to 107 ---
+  assert('critd_onedit_upper_bound_107',
+    /mdRow\s*>\s*107/.test(src),
+    { note: 'expected mdRow > 107 guard in onEdit' });
+  assert('critd_no_residual_row75_in_onedit',
+    !/mdRow\s*<\s*4\s*\|\|\s*mdRow\s*>\s*75/.test(src),
+    { note: 'residual onEdit 4..75 bound still present' });
+
+  // --- MED: installEngine() calls extendToKnockouts() ---
+  // Look at the function body. Simple substring match in source.
+  const installRe = /function installEngine\(\)\s*\{[\s\S]*?extendToKnockouts\(\)[\s\S]*?installAutoRefresh\(\)/;
+  assert('med_installEngine_auto_extends',
+    installRe.test(src),
+    { note: 'expected extendToKnockouts() inside installEngine() before installAutoRefresh()' });
+
+  // --- HIGH: AU formula byte-matches xlsx master (concat fix verified) ---
+  // Reconstruct the AU formula for r=2 and compare to the xlsx master
+  // captured manually below (taken from sheet4.xml AU2).
+  if (E._knockoutStakingFormulas_) {
+    const f2 = E._knockoutStakingFormulas_(2);
+    const au2 = f2.AR_AV[3];  // 4th cell = AU
+    const expected = '=IF(AN2<>"Y","",IF(AH2="· enter odds","⚠ type the 3 odds (1/X/2) to grade this bet",IF(OR(AV2="",AO2="",AP2=""),"⚠ log backed pick, odds & stake",IF(AZ2<>"BET","⚠ FUN BET — engine said pass · staked £"&AP2&" vs engine £"&BA2,IF(AV2<>IF(AY2="",AC2,AY2),"⚠ backed "&AV2&" but engine pick was "&IF(AY2="",AC2,AY2),IF(AP2>BA2,"⚠ stake over engine £"&BA2,IF(ABS(AO2-IFERROR(INDEX(L2:N2,1,MATCH(AV2,{"H","D","A"},0)),AE2))>0.02,"⚠ odds moved — re-check value","✓ engine bet")))))))';
+    assert('high_AU_byte_exact_xlsx_master',
+      au2 === expected,
+      { got_len: au2.length, expected_len: expected.length });
+    // Specific concat operators that v2.3.5 was missing
+    assert('high_AU_AP_concat_operator',
+      au2.indexOf('&AP2&" vs engine') !== -1,
+      { note: 'expected "&AP2&" vs engine" (with trailing &)' });
+    assert('high_AU_AV_concat_operator',
+      au2.indexOf('&AV2&" but engine') !== -1,
+      { note: 'expected "&AV2&" but engine" (with trailing &)' });
+  }
+
+  return out;
+}
+
 // ---- 7. Emit -------------------------------------------------------------
 const report = {
   node_version: process.version,
@@ -596,6 +741,7 @@ const report = {
   intel_gate_v233: intelGateRegression(),
   v234_regressions: v234Regressions(),
   v235_regressions: v235Regressions(),
+  v236_regressions: v236Regressions(),
 };
 
 process.stdout.write(JSON.stringify(report));
