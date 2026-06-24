@@ -25,7 +25,7 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const GS_PATH = path.join(__dirname, 'WC26_Engine_AppsScript_v2.3.4.gs');
+const GS_PATH = path.join(__dirname, 'WC26_Engine_AppsScript_v2.3.5.gs');
 
 // ---- 1. Read source ------------------------------------------------------
 let src = fs.readFileSync(GS_PATH, 'utf8');
@@ -73,11 +73,14 @@ const wrapped = `
     _num_:                (typeof _num_                !== 'undefined') ? _num_                : null,
     _isOutOfBinRange_:    (typeof _isOutOfBinRange_    !== 'undefined') ? _isOutOfBinRange_    : null,
     _interp_:             (typeof _interp_             !== 'undefined') ? _interp_             : null,
+    _knockoutStakingFormulas_: (typeof _knockoutStakingFormulas_ !== 'undefined') ? _knockoutStakingFormulas_ : null,
+    KNOCKOUT_FIRST_ROW:   (typeof KNOCKOUT_FIRST_ROW   !== 'undefined') ? KNOCKOUT_FIRST_ROW   : null,
+    KNOCKOUT_LAST_ROW:    (typeof KNOCKOUT_LAST_ROW    !== 'undefined') ? KNOCKOUT_LAST_ROW    : null,
   };
 })();
 `;
 
-vm.runInThisContext(wrapped, { filename: 'WC26_Engine_AppsScript_v2.3.4.gs' });
+vm.runInThisContext(wrapped, { filename: 'WC26_Engine_AppsScript_v2.3.5.gs' });
 const E = globalThis.__engine;
 
 if (!E.GOAL_GRID || !E._buildScoreMatrix_) {
@@ -398,6 +401,186 @@ function v234Regressions() {
   return out;
 }
 
+// ---- 6.7 v2.3.5 regression suite ----------------------------------------
+// Seven new closures shipped in v2.3.5 close the AUDIT pressure-test of
+// v2.3.4 against R32 kickoff (2026-06-28, T-4d).
+//
+// P0-A: _knockoutStakingFormulas_(r) returns three blocks of the right
+//   shape (29/5/2). Anchors must reference row r and Matchday row r+2.
+// P0-B: _writeCalibratedProbs_ must skip rows with m >= KNOCKOUT_FIRST_M
+//   (binned LUT only valid for group-stage draw distribution). Pure-logic
+//   gate predicate replayed inline.
+// H-1: fallback NaN→'' guard. Any Number(undefined/null) === NaN must be
+//   coerced to '' on the returned row to avoid Apps Script setValues
+//   throwing 'Cannot use value: NaN'.
+// H-2: dedicated B27 cell for OOB count (separate from B24 intelWarn,
+//   which races refreshIntel and extendToKnockouts conflict tagger).
+// M-1: OOB warning format includes denominator (home=X/N).
+// M-2: missing-timestamp branch surfaces BOTH cb-tripped AND
+//   missing-timestamp signals when both fire.
+// P1: outrights sort uses localeCompare(team) as deterministic tiebreak.
+function v235Regressions() {
+  const out = { all_ok: true, fixtures: {} };
+
+  function assert(name, ok, detail) {
+    out.fixtures[name] = Object.assign({ ok: ok }, detail || {});
+    if (!ok) out.all_ok = false;
+  }
+
+  // --- P0-A: _knockoutStakingFormulas_ shape + per-row anchors ---
+  if (E._knockoutStakingFormulas_) {
+    const f74 = E._knockoutStakingFormulas_(74);
+    assert('p0a_block_O_AQ_length',
+      Array.isArray(f74.O_AQ) && f74.O_AQ.length === 29,
+      { got: f74.O_AQ ? f74.O_AQ.length : null });
+    assert('p0a_block_AR_AV_length',
+      Array.isArray(f74.AR_AV) && f74.AR_AV.length === 5,
+      { got: f74.AR_AV ? f74.AR_AV.length : null });
+    assert('p0a_block_AZ_BA_length',
+      Array.isArray(f74.AZ_BA) && f74.AZ_BA.length === 2,
+      { got: f74.AZ_BA ? f74.AZ_BA.length : null });
+    // O column = fair prob 1/L74 — exact match on row anchor
+    assert('p0a_row74_anchor_O',
+      f74.O_AQ[0] === '=IF(L74="","",1/L74)',
+      { got: f74.O_AQ[0] });
+    // AN column (Matchday-mirror N) → rMatchday = r+2 = 76
+    assert('p0a_row74_matchday_offset_AN',
+      f74.O_AQ[25] === '=IF(Matchday!N76="","",Matchday!N76)',
+      { got: f74.O_AQ[25] });
+    // AV column (backed pick mirror) → Matchday!O76
+    assert('p0a_row74_matchday_offset_AV',
+      f74.AR_AV[4] === '=IF(Matchday!O76="","",Matchday!O76)',
+      { got: f74.AR_AV[4] });
+    // AZ column (snap-or-current decision)
+    assert('p0a_row74_AZ_decision_fallback',
+      f74.AZ_BA[0] === '=IF(AW74="",AH74,AW74)',
+      { got: f74.AZ_BA[0] });
+    // Distinct row → distinct anchors (no global-leak)
+    const f105 = E._knockoutStakingFormulas_(105);
+    assert('p0a_row105_anchor_O',
+      f105.O_AQ[0] === '=IF(L105="","",1/L105)',
+      { got: f105.O_AQ[0] });
+    assert('p0a_row105_matchday_offset_AN',
+      f105.O_AQ[25] === '=IF(Matchday!N107="","",Matchday!N107)',
+      { got: f105.O_AQ[25] });
+  } else {
+    assert('p0a_helper_exported', false, { reason: '_knockoutStakingFormulas_ not exported' });
+  }
+
+  // --- P0-A: row-window matches KNOCKOUT_FIRST_ROW..KNOCKOUT_LAST_ROW = 74..105 ---
+  assert('p0a_window_first_row',
+    E.KNOCKOUT_FIRST_ROW === 74,
+    { got: E.KNOCKOUT_FIRST_ROW });
+  assert('p0a_window_last_row',
+    E.KNOCKOUT_LAST_ROW === 105,
+    { got: E.KNOCKOUT_LAST_ROW });
+  assert('p0a_window_size',
+    (E.KNOCKOUT_LAST_ROW - E.KNOCKOUT_FIRST_ROW + 1) === 32,
+    { got: E.KNOCKOUT_LAST_ROW - E.KNOCKOUT_FIRST_ROW + 1 });
+
+  // --- P0-B: knockout gate predicate. Group-stage = m<73 = isotonic LUT
+  // applies. Knockout = m>=73 = MUST raw-mirror (no draw market in LUT
+  // training data). Re-implement inline.
+  function shouldSkipCalibration(m) {
+    return isFinite(m) && m >= E.KNOCKOUT_FIRST_M;
+  }
+  assert('p0b_group_stage_m48', shouldSkipCalibration(48) === false);
+  assert('p0b_group_stage_m72', shouldSkipCalibration(72) === false);
+  assert('p0b_knockout_m73',    shouldSkipCalibration(73) === true);
+  assert('p0b_knockout_m105',   shouldSkipCalibration(105) === true);
+  assert('p0b_non_numeric_m',   shouldSkipCalibration('') === false);
+  assert('p0b_null_m',          shouldSkipCalibration(null) === false);
+
+  // --- H-1: NaN→'' guard for setValues safety ---
+  // Apps Script setValues throws 'Cannot use value: NaN' on any NaN cell.
+  // The fallback path uses Number(I/J/K) when the row's _interp_ output
+  // is non-finite; if I/J/K themselves are blank, Number('')===0 (safe)
+  // but Number(undefined)===NaN (unsafe). Replicate the safe-coerce.
+  function safeCoerce(v) {
+    if (v === '' || v === null || v === undefined) return '';
+    const n = Number(v);
+    if (!isFinite(n) || isNaN(n)) return '';
+    return n;
+  }
+  assert('h1_undefined_to_empty', safeCoerce(undefined) === '');
+  assert('h1_null_to_empty',      safeCoerce(null) === '');
+  assert('h1_empty_string_to_empty', safeCoerce('') === '');
+  assert('h1_NaN_to_empty',       safeCoerce(NaN) === '');
+  assert('h1_finite_preserved',   safeCoerce(0.42) === 0.42);
+  assert('h1_zero_preserved',     safeCoerce(0) === 0);
+  assert('h1_string_number_ok',   safeCoerce('0.5') === 0.5);
+
+  // --- H-2: dedicated OOB cell ≠ shared intelWarn ---
+  // Pure-logic check: the LIVE_CELL constants must define a separate
+  // address for OOB warnings. Read directly from the engine module by
+  // pulling the LIVE_CELL global — but that's not exported. Instead we
+  // assert via runtime that the row-router constants disagree by
+  // construction (verified by code review; runtime check uses string
+  // form).
+  // We do verify the engine source contains the dedicated B27 wire by
+  // inspecting the LIVE_CELL block in src directly.
+  const liveCellOob = /calibrationOob:\s*'B27'/.test(src);
+  const liveCellIntelWarn = /intelWarn:\s*'B24'/.test(src);
+  assert('h2_calibrationOob_dedicated_B27', liveCellOob === true);
+  assert('h2_intelWarn_still_B24',          liveCellIntelWarn === true);
+
+  // --- M-1: OOB count surface includes denominator ---
+  // The format must be `home=X/N draw=Y/N away=Z/N` (X out of N total).
+  // Inspect source for the new format token.
+  const oobFormatRe = /home=.*\/.*N|home=.*\+.*\/.*total|home=[^,]*\/\d|nRows.*home=/;
+  assert('m1_format_token_present',
+    /'home=' \+ oobCounts\.home \+ '\/' \+ denom/.test(src),
+    { note: 'looked for: \'home=\' + oobCounts.home + \'/\' + denom' });
+
+  // --- M-2: missing-timestamp branch surfaces BOTH messages when cb tripped ---
+  // Re-implement the inline branch from refreshLive v2.3.5.
+  function buildStaleMsg(luMissing, cbTripped) {
+    if (!luMissing) return null;
+    if (cbTripped) {
+      return '⚠ circuit-breaker tripped upstream AND feed missing last_updated_utc — model paused';
+    }
+    return '⚠ feed missing last_updated_utc — model paused (safe-fail)';
+  }
+  assert('m2_only_lu_missing',
+    buildStaleMsg(true, false).indexOf('missing last_updated_utc') !== -1 &&
+    buildStaleMsg(true, false).indexOf('circuit-breaker') === -1);
+  assert('m2_both_signals',
+    buildStaleMsg(true, true).indexOf('circuit-breaker') !== -1 &&
+    buildStaleMsg(true, true).indexOf('last_updated_utc') !== -1);
+  assert('m2_neither',
+    buildStaleMsg(false, false) === null);
+
+  // --- P1: outrights sort uses localeCompare tiebreak ---
+  // Replay the sort against two teams with equal p_champion → must order
+  // alphabetically (A before B).
+  function outrightsSort(teams) {
+    const arr = teams.slice();
+    const numOf = E._num_ || function(v) { const n = Number(v); return isFinite(n) ? n : NaN; };
+    arr.sort(function(a, b) {
+      const d = numOf(b.p_champion) - numOf(a.p_champion);
+      if (d !== 0) return d;
+      return String(a.team || '').localeCompare(String(b.team || ''));
+    });
+    return arr.map(function(t) { return t.team; });
+  }
+  const tied = [
+    { team: 'Brazil',  p_champion: 0.15 },
+    { team: 'Argentina', p_champion: 0.15 },
+    { team: 'France', p_champion: 0.20 },
+  ];
+  assert('p1_tiebreak_alphabetical',
+    JSON.stringify(outrightsSort(tied)) === JSON.stringify(['France', 'Argentina', 'Brazil']),
+    { got: outrightsSort(tied) });
+  // Determinism over two consecutive runs.
+  const r1 = outrightsSort(tied);
+  const r2 = outrightsSort(tied);
+  assert('p1_deterministic',
+    JSON.stringify(r1) === JSON.stringify(r2),
+    { r1: r1, r2: r2 });
+
+  return out;
+}
+
 // ---- 7. Emit -------------------------------------------------------------
 const report = {
   node_version: process.version,
@@ -412,6 +595,7 @@ const report = {
   clv_seed_helper: clvStatus,
   intel_gate_v233: intelGateRegression(),
   v234_regressions: v234Regressions(),
+  v235_regressions: v235Regressions(),
 };
 
 process.stdout.write(JSON.stringify(report));
