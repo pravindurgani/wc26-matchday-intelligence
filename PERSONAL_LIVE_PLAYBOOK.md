@@ -1,14 +1,15 @@
 # Personal-use live link — operator playbook
 
-Your separate preview at **https://wc26-matchday-intelligence.vercel.app** is fed
-by manual deploys from the `feature/matchday-intelligence` branch. Production
-(`fifa-wc-26-prediction.vercel.app`) is on `main` and is **never touched** by
-anything in this file.
+The production deployment at **https://wc26-matchday-intelligence.vercel.app** is fed
+automatically by `main`-branch pushes (Vercel Git integration + cron workflows). This
+playbook covers the manual preview-deploy workflow from a `feature/matchday-intelligence`
+working branch — for when you want to push operator edits without waiting for the next
+cron tick. The preview script never touches `main`.
 
 ## TL;DR — after every match you care about
 
 ```bash
-cd ~/Desktop/personal-projects/fifa-wc-26-prediction
+cd ~/Desktop/wc26-matchday-intelligence
 
 # 1. Edit data/live/results_2026.json — add the FT result. Example:
 #    "completed_matches": [
@@ -85,7 +86,7 @@ git pull origin feature/matchday-intelligence
 ### Something went sideways and you want to roll back
 ```bash
 # List recent deploys, pick a known-good one (by URL or timestamp):
-vercel ls fifa-wc-26-prediction
+vercel ls wc26-matchday-intelligence
 # Re-alias the personal-link to that older deploy:
 vercel alias set <old-preview-url> wc26-matchday-intelligence.vercel.app
 ```
@@ -125,9 +126,9 @@ catches up.
 
 **Safety:** the agent calls `./scripts/deploy_preview.sh`, which deploys
 **preview only** (no `--prod` flag) and re-aliases to
-`wc26-matchday-intelligence.vercel.app`. Production at
-`fifa-wc-26-prediction.vercel.app` is on `main` and is untouched by this
-file or any agent it spawns.
+`wc26-matchday-intelligence.vercel.app`. The `main`-branch production
+deployment (driven by Vercel Git integration + cron workflows) is
+untouched by this file or any agent it spawns.
 
 ---
 
