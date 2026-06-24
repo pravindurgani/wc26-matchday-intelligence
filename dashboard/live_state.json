@@ -1,11 +1,32 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-24T21:45:36.483661+00:00",
+  "last_updated_utc": "2026-06-24T22:15:44.903430+00:00",
   "completed_matches_count": 50,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 52,
+      "home": "Morocco",
+      "away": "Haiti",
+      "home_score": 0,
+      "away_score": 1,
+      "elapsed": 10,
+      "status": "LIVE",
+      "status_long": "First Half"
+    },
+    {
+      "m": 51,
+      "home": "Scotland",
+      "away": "Brazil",
+      "home_score": 0,
+      "away_score": 1,
+      "elapsed": 10,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 2,
   "warnings": []
 }
