@@ -76,6 +76,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _knockout import (  # noqa: E402
     is_placeholder_slot, load_knockout_fixtures,
 )
+# R12 A1: normalize player names on yellow-accumulation join keys. Pre-R12
+# `yellow_counter[(team, player)]` used the raw provider event string. When
+# API-Football emits the same player as "R. Jiménez" in one match and
+# "Raúl Jiménez" in another (provider-side initial-form drift on accented
+# names — verified in tests/live/provider_samples/apifootball_events_sample.json),
+# the counter splits across keys and never reaches YELLOW_THRESHOLD=2 →
+# silent zero suspension rows. The display field on the suspension row
+# preserves the original raw name from the triggering event so the dashboard
+# row still reads the way the operator sees it.
+from injury_adjustments import normalize_player_name, player_join_key  # noqa: E402
 
 # ── Tunables ────────────────────────────────────────────────────────────
 # Per-player Elo penalty for a single suspension. Conservative — without
@@ -334,11 +344,20 @@ def build_suspensions(completed_matches: list[dict],
             player = ev.get("player")
             if not team or not player:
                 continue
-            seen_key = (team, player, kind)
+            # R12 A1: collapse cross-feed initial-form drift on the join
+            # keys (per-match dedup, yellow_counter, yellow_evidence). The
+            # display string `player` is preserved unchanged so dashboard
+            # rows show the original provider name; player_join_key (the
+            # stronger normalization that drops single-letter initials and
+            # falls back to the surname token) is used only for joining
+            # across matches where the provider may emit "R. Jiménez" in
+            # one match and "Raúl Jiménez" in another for the same player.
+            player_key = player_join_key(player) or player
+            seen_key = (team, player_key, kind)
             if seen_key in seen:
                 continue
             seen.add(seen_key)
-            key = (team, player)
+            key = (team, player_key)
             if kind == "yellow":
                 yellow_counter[key] = yellow_counter.get(key, 0) + 1
                 yellow_evidence.setdefault(key, []).append(mid)
@@ -349,6 +368,7 @@ def build_suspensions(completed_matches: list[dict],
                             "match_id": next_m,
                             "team": team,
                             "player": player,
+                            "player_norm": player_key,
                             "reason": "accumulated_yellows",
                             "evidence_match_ids": list(yellow_evidence[key]),
                             "triggering_match_id": mid,
@@ -362,6 +382,7 @@ def build_suspensions(completed_matches: list[dict],
                         "match_id": next_m,
                         "team": team,
                         "player": player,
+                        "player_norm": player_key,
                         "reason": ("red_card" if kind == "red"
                                    else "second_yellow_card"),
                         "evidence_match_ids": [mid],
@@ -376,7 +397,16 @@ def build_suspensions(completed_matches: list[dict],
     deduped: list[dict] = []
     final_seen: set[tuple[str, str, int, str]] = set()
     for row in suspensions:
-        final_key = (row["team"], row["player"], row["match_id"], row["reason"])
+        # R12 A1: key the cross-provider idempotency tuple on the
+        # stronger join form so providers that emit "R. Jiménez" and
+        # "Raúl Jiménez" for the same suspension don't both land.
+        # player_norm was attached above; fall back to player_join_key
+        # on the raw player for any pre-R12 callsite that bypasses the
+        # writer.
+        norm = (row.get("player_norm")
+                or player_join_key(row["player"])
+                or row["player"])
+        final_key = (row["team"], norm, row["match_id"], row["reason"])
         if final_key in final_seen:
             continue
         final_seen.add(final_key)

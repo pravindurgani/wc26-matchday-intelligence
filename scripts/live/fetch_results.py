@@ -100,15 +100,19 @@ FOOTBALLDATA_STATUS_MAP = {
     "CANCELED":    "CANCELED",
 }
 
-# Team-name normalisation: provider name → our canonical name
+# Team-name normalisation: provider name → our canonical name.
+# R12 MED: extend with football-data.org and operator-overlay variants.
 TEAM_ALIAS = {
     "USA":                "United States",
     "U.S.A.":             "United States",
     "United States of America": "United States",
     "Korea Republic":     "South Korea",
     "Republic of Korea":  "South Korea",
+    "Korea, Republic of": "South Korea",  # R12: football-data.org tournament format
+    "South Korea (Korea Republic)": "South Korea",
     "Türkiye":            "Turkey",
     "Turkiye":            "Turkey",
+    "Türkiye (Turkey)":   "Turkey",       # R12
     "Czech Republic":     "Czechia",
     "Cabo Verde":         "Cape Verde",
     "Cape Verde Islands": "Cape Verde",
@@ -175,25 +179,17 @@ def atomic_write_json(path: Path, payload: dict):
     os.replace(tmp_path, path)
 
 
-def http_get_json(url: str, headers: dict, timeout: int = 15, retries: int = 3) -> dict:
-    """HTTP GET with exponential backoff on 5xx + transient network errors.
-
-    Raises urllib.error.HTTPError for 4xx (don't retry — likely auth/usage).
-    """
-    last_err = None
-    for attempt in range(retries):
-        try:
-            req = urllib.request.Request(url, headers=headers, method="GET")
-            with urllib.request.urlopen(req, timeout=timeout) as r:
-                return json.loads(r.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            if 400 <= e.code < 500:
-                raise  # don't retry client errors
-            last_err = e
-        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
-            last_err = e
-        time.sleep(2 ** attempt)  # 1s, 2s, 4s
-    raise last_err if last_err else RuntimeError(f"http_get_json failed: {url}")
+# R12 B2: route through the shared _http_client.http_get_json so the
+# R11 C1 Retry-After honoring and 429-retry behavior actually applies to
+# fetch_results' three call sites (events fetch + both adapter list calls).
+# Pre-R12 fetch_results.py shipped its own local http_get_json that:
+#   (a) ignored Retry-After (R32 burst risk on /fixtures/events)
+#   (b) raised on 429 without retry
+#   (c) sleeps on EVERY attempt including the final (1s wasted per fail)
+# All three issues are fixed by the shared client. The local fn was a
+# pre-R11-C1 artifact; the comment at fetch_apifootball_events_for_fixture
+# already claimed R11 C1 benefit but L386 actually called the LOCAL fn.
+from scripts.live._http_client import http_get_json  # noqa: E402
 
 
 # ─── KNOCKOUT DECODER (A.2) ─────────────────────────────────────────────────

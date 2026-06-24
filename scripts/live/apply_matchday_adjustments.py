@@ -60,6 +60,15 @@ from typing import Any
 # record / subsystem doesn't abort the whole tick.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _degrade import degrade_record, degrade_subsystem  # noqa: E402
+# R12 A1 + A2: normalize team and player names on cross-subsystem dedup
+# join keys. Pre-R12 the overlay→suspension dedup at apply_matchday_adjustments
+# keyed on raw provider strings; an operator entering "Vinícius Jr." in the
+# overlay and a suspension row showing "V. Júnior" would FAIL to dedup → the
+# injury overlay AND the suspension both stack as Elo penalties for the
+# same match for the same player. Same goes for "USA" vs "United States"
+# on the team key — silent miss.
+from injury_adjustments import normalize_player_name, player_join_key  # noqa: E402
+from fetch_results import normalize_team  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 LIVE = ROOT / "data" / "live"
@@ -624,9 +633,17 @@ def _load_injury_components(now_iso: str, warnings_acc: list | None = None) -> d
             amount = float(adj.get("adjustment_elo", 0) or 0)
             if adj.get("status") == "doubtful":
                 amount *= 0.5
-            team = adj.get("team")
-            if not team:
+            # R12 A2: normalize operator-entered team string. Pre-R12 an
+            # operator typing "USA" / "Korea Republic" / "Côte d'Ivoire"
+            # into team_adjustments.json silently failed to apply at the
+            # consumer side because get_team_elo_adjustment uses strict
+            # equality against the simulator's canonical team names. The
+            # display string `team` is preserved in the warning record
+            # below so the audit log still reads how the operator typed it.
+            raw_team = adj.get("team")
+            if not raw_team:
                 return None
+            team = normalize_team(raw_team)
             overlay_by_team[team] = overlay_by_team.get(team, 0.0) + amount
             overlay_reasons.setdefault(team, []).append(
                 adj.get("reason") or adj.get("player") or adj.get("status") or "manual"
@@ -1039,10 +1056,17 @@ def _apply_injury_suspension_dedup(
                 amt = p.get("amount")
                 if not name or amt is None:
                     continue
-                # Sum across multiple overlay entries for the same player
-                # (e.g. two operator notes for one tier-1 star).
-                overlay_player_amount[(team, name)] = (
-                    overlay_player_amount.get((team, name), 0.0) + float(amt)
+                # R12 A1: normalize (team, player) before bucketing so an
+                # operator overlay entry for "Vinícius Júnior" cancels a
+                # suspension row keyed "V. Júnior" (provider-side initial-
+                # form drift). Same goes for team aliases ("USA" vs
+                # canonical "United States") via R12 A2. player_join_key
+                # collapses initial-form variants by dropping single-letter
+                # tokens and falling back to the surname.
+                key = (normalize_team(team),
+                       player_join_key(name) or name)
+                overlay_player_amount[key] = (
+                    overlay_player_amount.get(key, 0.0) + float(amt)
                 )
 
     if not overlay_player_amount:
@@ -1057,7 +1081,11 @@ def _apply_injury_suspension_dedup(
             player_name = c.get("player")
             if not player_name:
                 continue
-            key = (team, player_name)
+            # R12 A1: lookup key normalized to match the bucketing above
+            # — without this, a suspension row's raw "R. Jiménez" would
+            # never find the overlay entry stored under "raul jimenez".
+            key = (normalize_team(team),
+                   player_join_key(player_name) or player_name)
             overlay_amt = overlay_player_amount.get(key)
             if overlay_amt is None or overlay_amt == 0.0:
                 continue

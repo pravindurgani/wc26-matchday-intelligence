@@ -98,8 +98,10 @@ class TestDCTauPostNoiseClip(unittest.TestCase):
             self.assertIsInstance(a, int)
             self.assertGreaterEqual(h, 0)
             self.assertGreaterEqual(a, 0)
-            self.assertLessEqual(h, 10)
-            self.assertLessEqual(a, 10)
+            # R12 MED: max_g raised 10 → 15 so NB tail truncation no longer
+            # redistributes 18% mass over [0..10] for high-λ matches.
+            self.assertLessEqual(h, 15)
+            self.assertLessEqual(a, 15)
 
     def test_module_load_assert_still_meaningful(self):
         """The R9 P2 fix is the engineering counterpart of the module-load

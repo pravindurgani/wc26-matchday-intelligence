@@ -993,6 +993,46 @@ def phase_12_matchday_intel():
         f"first: {repl_errors[0]}" if repl_errors else "",
     )
 
+    # ─ R12 A2: every team referenced in data/live/team_adjustments.json's
+    # operator overlay must round-trip through normalize_team to a team that
+    # appears in the WC2026 group_stage_schedule. Pre-R12 an operator typing
+    # "USA" / "Korea Republic" / "Côte d'Ivoire" into the overlay silently
+    # failed to apply because get_team_elo_adjustment uses strict equality
+    # against the canonical names. apply_matchday_adjustments now normalises
+    # at the writer side (R12 A2 fix) but this gate catches operator entries
+    # that don't resolve to ANY canonical name at all.
+    ta_path = ROOT / "data" / "live" / "team_adjustments.json"
+    if ta_path.exists():
+        try:
+            ta = json.loads(ta_path.read_text())
+            cfg = json.loads((ROOT / "data" / "raw" / "wc2026_config.json").read_text())
+            canonical_teams = set()
+            for f in cfg.get("group_stage_schedule", []):
+                canonical_teams.add(f.get("home"))
+                canonical_teams.add(f.get("away"))
+            sys.path.insert(0, str(ROOT / "scripts" / "live"))
+            from fetch_results import normalize_team as _norm_team  # noqa: E402
+            unresolved = []
+            for idx, adj in enumerate(ta.get("adjustments", []) or []):
+                raw = adj.get("team")
+                if not raw:
+                    continue
+                resolved = _norm_team(raw)
+                if resolved not in canonical_teams:
+                    unresolved.append(
+                        f"idx={idx} raw={raw!r} → normalized={resolved!r}"
+                    )
+            check(
+                f"team_adjustments.json team field resolves to canonical "
+                f"WC2026 team via normalize_team "
+                f"({len(unresolved)} unresolved)",
+                not unresolved,
+                f"first: {unresolved[0]}" if unresolved else "",
+            )
+        except Exception as e:
+            check(f"team_adjustments.json gate parseable: {type(e).__name__}",
+                  False, str(e))
+
 
 # ─── Standalone config validators (callable from tests + CLI) ─────────────
 

@@ -62,7 +62,13 @@ class TestEmptyOrSparseInputs:
             {"type": "Yellow Cards", "value": 3},
             {"type": "Goalkeeper Saves", "value": 5},
         ])
-        assert d == {"Yellow Cards": 3, "Goalkeeper Saves": 5}
+        # R12 MED: stats_to_dict now ALSO populates lowercase-collapsed
+        # alias keys for case-tolerance against provider-side drift.
+        # Original keys still present; aliases added.
+        assert d["Yellow Cards"] == 3
+        assert d["Goalkeeper Saves"] == 5
+        assert d["yellow cards"] == 3
+        assert d["goalkeeper saves"] == 5
         assert compute_form_delta(d, d) == 0.0
 
     def test_stats_to_dict_handles_none_payload(self):

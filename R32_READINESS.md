@@ -1,9 +1,9 @@
-# R32 Readiness Checklist — Post Pressure-Test R11
+# R32 Readiness Checklist — Post Pressure-Test R12
 
-**Date**: 2026-06-18 (T-10 days from R32 first kickoff: 2026-06-28)
+**Date**: 2026-06-24 (T-4 days from R32 first kickoff: 2026-06-28)
 **Branch**: `hardening/r32-pressure-test-r2` (local — push human-gated per instruction)
-**Suite**: **1206 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
-**Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48
+**Suite**: **1250 passed**, 1 skipped, 0 failed, 0 xfailed (`tests/live/`)
+**Σ-gate (real data)**: exit 0, |Δ| = 0.000e+00, teams = 48 (canonical + dashboard mirror)
 **`AUTO_TIER_ACTIVE`**: False at `scripts/live/injury_adjustments.py:64`
 **Round 3 closure**: all 4 HIGH-severity audit findings closed
 (H1 launchd plist, H2 crash-path freshness, H3 HTTP retries, H4 rate limiter) — see `PRESSURE_TEST_R3.md`
@@ -111,6 +111,52 @@ indirection validator at startup, E2-old annex_c_misses pinned in
 check_invariants (auto-applies to dashboard mirror via R10 Q3 wiring),
 E10 per-stage Σ (8/4/2) + INV1 stacking invariant pinned. Documented
 in `PRESSURE_TEST_R11.md`.
+**Round 12 closure**: 5-agent orthogonal sweep (feature normalization
+end-to-end, network retry contract, invariant coverage gaps, frontend
+tick rendering, state-file lifecycle) + 2 independent monitor agents
+verified. T-4 days from R32 kickoff. NEW user emphasis: **"VERIFY IF
+EVERY NECESSARY FEATURE IS NORMALISE ACCURATELY AND APPROPRIATELY"** —
+anchored an entire sweep on cross-feed join keys. **TWELVE genuine
+HIGH findings + 5 MEDIUM hardening items closed in one commit, ZERO
+deferrals**: A1 (suspension yellow-accumulation silently zero across
+"R. Jiménez"/"Raúl Jiménez" cross-feed name drift; new player_join_key
+helper drops single-letter initials + falls back to surname so all
+provider name variants collapse to a shared join key); A2 (overlay
+team field silently dropped on alias drift, "USA"/"Korea Republic" →
+canonical via normalize_team; pre_flight gate added); B2 (fetch_results
+defined its own local http_get_json that ignored Retry-After on 429 —
+deleted, switched to shared _http_client.http_get_json so R32 burst on
+8 KO matches × /fixtures/events on 2026-06-28 now backs off correctly
+on rate limits); B3 (update_team_state schedule loader had groups-only
+schedule — every KO match silently skipped Elo deltas, complement to
+R11 E1's validate_match fix); C1 (check_invariants stage_expectations
++ stack_order extended with p_advance_groups + p_reach_r16 so off-by-
+one in groups→R32 or R32→R16 transitions now trips the Σ-gate); C2
+(comment block claimed wrong "Σ p_reach_r16 ≈ 32" and "16 groups" —
+rewritten with correct values; documentation can be load-bearing
+when wrong); D1 (applyLiveUpdate omitted 5 render fns from every tick;
+stats strip / storylines / interesting / compare / matchday intelligence
+all stayed frozen at initial-load through the live window); D2
+(addEventListener handler stacking — 180 handler copies per button
+after 30min of ticks → OOM on mobile; bind-once via _r12Bound marker);
+D3 (renderHero/renderStorylines/renderCompare crashed on empty data —
+a sigma_gate_failed sim bricked the page above the fold; empty-data
+guards added); D4 (warning pill picked warnings[0] by insertion order
+not severity — benign fetch_failure displaced critical sigma_gate_failed;
+SEVERITY_RANK map + warnings.sort() added); E1 (circuit_breaker_state.
+json never existed on disk — R11 D1 commit allow-list had nothing to
+add, `git add 2>/dev/null` silently swallowed missing-file error every
+tick → CB_THRESHOLD=3 unreachable; seeded + verified gitignore allow-
+list); E2 (live_team_state.json missing last_updated → compute_input_
+hash sees empty string → sims mis-cache as unchanged when team state
+HAD changed; field added). MEDIUMs: decide_knockout on tied locked KO
+with no winner now raises instead of silently defaulting to team_b;
+build_score_matrix max_g raised 10→15 to capture NB tail above 10
+goals for high-λ matchups; TEAM_ALIAS extended for "Korea, Republic
+of" + "Türkiye (Turkey)"; stats_to_dict now case-insensitive on
+provider key drift; D-UX nits (renderMovers distinguishes no-matches
+from no-movers, renderInteresting empty-state anchors to #matches).
+Documented in `PRESSURE_TEST_R12.md`.
 
 ---
 

@@ -66,14 +66,43 @@ def _to_int(v) -> int | None:
 
 def stats_to_dict(side_stats: list[dict]) -> dict:
     """Convert an API-Football statistics array
-       [{"type": "Shots on Goal", "value": 5}, ...] → flat dict."""
+       [{"type": "Shots on Goal", "value": 5}, ...] → flat dict.
+
+    R12 MED: stat-type keys are case-tolerant. API-Football's documented
+    casing is "Shots on Goal" / "Ball Possession" / "Corner Kicks" but
+    occasional provider drift ("shots on goal" / "Shots On Goal") would
+    silently miss the consumer's strict `own.get("Shots on Goal")` and
+    return 0 → form_delta collapses to 0 without any warning. Store
+    EACH stat under BOTH the original-case key (back-compat) AND a
+    normalised key (lowercase, whitespace-collapsed) so consumers that
+    look up the canonical form always succeed.
+    """
     out: dict[str, int | None] = {}
     for entry in side_stats or []:
         t = (entry.get("type") or "").strip()
         v = _to_int(entry.get("value"))
-        if t:
-            out[t] = v
+        if not t:
+            continue
+        out[t] = v
+        # R12 MED: case-tolerant alias. lowercase + collapse whitespace.
+        canonical = " ".join(t.lower().split())
+        if canonical and canonical != t:
+            out.setdefault(canonical, v)
     return out
+
+
+def _stat_lookup(d: dict, key: str):
+    """Look up a stat with case-tolerant fallback (R12 MED).
+
+    Tries the original key first (back-compat), then the lowercase /
+    whitespace-collapsed form populated by stats_to_dict.
+    """
+    if d is None:
+        return None
+    v = d.get(key)
+    if v is not None:
+        return v
+    return d.get(" ".join(key.lower().split()))
 
 
 def _possession_signal(own_poss) -> float:
@@ -89,13 +118,14 @@ def _possession_signal(own_poss) -> float:
 def compute_form_delta(own: dict, opp: dict) -> float:
     """Apply v1 weighted-sum heuristic. Returns signed Elo points, clamped
     at ±STATS_PROXY_RAW_CAP."""
-    own_sot = own.get("Shots on Goal") or 0
-    opp_sot = opp.get("Shots on Goal") or 0
-    own_corn = own.get("Corner Kicks") or 0
-    opp_corn = opp.get("Corner Kicks") or 0
+    # R12 MED: case-tolerant lookups (see stats_to_dict + _stat_lookup).
+    own_sot = _stat_lookup(own, "Shots on Goal") or 0
+    opp_sot = _stat_lookup(opp, "Shots on Goal") or 0
+    own_corn = _stat_lookup(own, "Corner Kicks") or 0
+    opp_corn = _stat_lookup(opp, "Corner Kicks") or 0
 
     shot_dominance = (own_sot - opp_sot) * SHOT_DOMINANCE_WEIGHT
-    possession_edge = _possession_signal(own.get("Ball Possession"))
+    possession_edge = _possession_signal(_stat_lookup(own, "Ball Possession"))
     corner_edge = (own_corn - opp_corn) * CORNER_WEIGHT
 
     raw = shot_dominance + possession_edge + corner_edge

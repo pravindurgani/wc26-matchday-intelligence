@@ -205,19 +205,29 @@ def check_invariants(path: Union[str, Path, None] = None) -> None:
             f"will silently fall back to non-canonical permutations."
         )
 
-    # R11 E10: pin per-stage round-survival Σ and per-team probability
-    # stacking. Pre-R11 only Σ p_champion was checked strictly. Single-
-    # elimination structure gives:
-    #   Σ p_advance_groups ≈ 32 (R32 = top-2 of 16 groups)
-    #   Σ p_reach_r16 ≈ 32 (same — R32 = R16 entry by definition)
-    #   Σ p_reach_qf ≈ 8 (16 → 8 winners)
-    #   Σ p_reach_sf ≈ 4 (8 → 4 winners)
-    #   Σ p_reach_final ≈ 2 (4 → 2 winners)
-    #   Σ p_champion ≈ 1 (2 → 1 winner)
+    # R11 E10 + R12 C1/C2: pin per-stage round-survival Σ and per-team
+    # probability stacking. Pre-R11 only Σ p_champion was checked strictly.
+    # Single-elimination structure gives (verified empirically against
+    # data/processed/predictions_live.json):
+    #   Σ p_advance_groups ≈ 32 (12 groups × top-2 + 8 best-thirds = 32 in R32)
+    #   Σ p_reach_r16 ≈ 16 (16 R32 winners reach R16)
+    #   Σ p_reach_qf ≈ 8 (8 R16 winners reach QF)
+    #   Σ p_reach_sf ≈ 4 (4 QF winners reach SF)
+    #   Σ p_reach_final ≈ 2 (2 SF winners reach final)
+    #   Σ p_champion ≈ 1 (1 final winner)
+    # R12 C2: prior comment swapped p_reach_r16 with p_advance_groups and
+    # cited the wrong group count. The 2026 format is 12 groups (advancing
+    # 2 each + 8 best thirds = 32 advancers) and p_reach_r16 = P(team won
+    # its R32 match) = P(team is one of the 16 in R16) → Σ = 16 (NOT 32).
+    # A maintainer trusting the old comment and pinning the wrong value
+    # would have FALSELY FAILED every sim by 16 ≫ 1e-6. Comment + assertion
+    # now match correct value.
     # Tolerance same 1e-6 as Σ p_champion since the simulator emits these
     # from the same 25k-trial empirical proportions. A drift in any of
     # them would signal an off-by-one stage transition.
     stage_expectations = (
+        ("p_advance_groups", 32.0),
+        ("p_reach_r16", 16.0),
         ("p_reach_qf", 8.0),
         ("p_reach_sf", 4.0),
         ("p_reach_final", 2.0),
@@ -242,13 +252,16 @@ def check_invariants(path: Union[str, Path, None] = None) -> None:
             )
 
     # Per-team stacking: p_champion ≤ p_reach_final ≤ p_reach_sf ≤
-    # p_reach_qf ≤ p_reach_r16. A violation means the simulator emitted a
-    # team that "reached the final" less often than it "won the cup" —
-    # an impossible event in a single-elim bracket. INV1 (probability-
-    # monotone) catches the class of bug R11 E10 was designed to pin.
+    # p_reach_qf ≤ p_reach_r16 ≤ p_advance_groups. A violation means the
+    # simulator emitted a team that (e.g.) "reached the final" less often
+    # than it "won the cup" — an impossible event in a single-elim
+    # bracket. R12 C1 extends the stack to include p_reach_r16 and
+    # p_advance_groups too; pre-R12 the stack stopped at p_reach_qf so
+    # an off-by-one in groups→R32 or R32→R16 transition could slip past.
     # Allow a 1e-9 cushion for floating-point on the few "round-robin"
     # teams whose deeper-stage probabilities round to the same value.
-    stack_order = ("p_reach_qf", "p_reach_sf", "p_reach_final", "p_champion")
+    stack_order = ("p_advance_groups", "p_reach_r16", "p_reach_qf",
+                   "p_reach_sf", "p_reach_final", "p_champion")
     stack_cushion = 1e-9
     for t in teams:
         if not all(f in t for f in stack_order):

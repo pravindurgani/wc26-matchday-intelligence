@@ -182,6 +182,42 @@ def normalize_player_name(name: str | None) -> str:
     return " ".join(cleaned.split())
 
 
+def player_join_key(name: str | None) -> str:
+    """Stronger normalization for cross-feed JOIN keys.
+
+    `normalize_player_name` keeps the first-name tokens — fine for tier
+    lookup against a curated index (`Kylian Mbappé` and `K. Mbappé` both
+    classify_tier-match by last-name token). But for CROSS-FEED dedup
+    (suspension yellow accumulation, cross-subsystem absentee dedup),
+    provider drift between `R. Jiménez` and `Raúl Jiménez` keeps them on
+    different keys and silently splits the count.
+
+    The join key drops single-character "initial" tokens and keeps the
+    remaining tokens joined. If only initials + last-name remain (e.g.
+    'R Jimenez'), the key collapses to just the last token. Use this
+    when joining card/injury events from independent feeds where the
+    operator's source-of-truth is the (team, surname) pair, not full
+    forenames — combined with the team scoping already in the tuple key,
+    intra-team same-surname collisions remain rare enough to favour
+    aggressive deduplication.
+    """
+    norm = normalize_player_name(name)
+    if not norm:
+        return ""
+    tokens = norm.split()
+    # Drop single-character initials so 'r jimenez' and 'raul jimenez'
+    # both reduce to a shared key.
+    significant = [t for t in tokens if len(t) > 1]
+    if not significant:
+        return norm
+    if len(significant) == 1:
+        return significant[0]
+    # Two or more significant tokens: keep the last token as the join
+    # key (cross-feed convention: surname is the stable identifier;
+    # forenames drift more across providers than surnames do).
+    return significant[-1]
+
+
 def _load_key_players_index(path: Path = KEY_PLAYERS_PATH) -> dict:
     """Build a tiered lookup: {team: {by_full: {full: entry},
                                       by_last: {last: [entry, ...]}}}.

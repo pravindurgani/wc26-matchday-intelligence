@@ -183,8 +183,18 @@ def dc_tau(h, a, lam_h, lam_a, rho):
     return 1.0
 
 
-def build_score_matrix(lam_h, lam_a, cfg, use_dispersion=True, max_g=10):
-    """Joint distribution P[h, a]. Uses Negative Binomial marginals + DC τ correction."""
+def build_score_matrix(lam_h, lam_a, cfg, use_dispersion=True, max_g=15):
+    """Joint distribution P[h, a]. Uses Negative Binomial marginals + DC τ correction.
+
+    R12 MED: max_g raised 10 → 15. At λ=7.0 (clip max) Σ nbinom([0..10])
+    ≈ 0.819, so 18% of mass falls beyond 10 goals and the renormalize
+    line at the bottom of this fn redistributes that 18% over [0..10],
+    artificially inflating low/mid scores for high-λ matches. Σ=1
+    invariant preserved, but the JOINT shape is biased for blowout-
+    favorite fixtures. At max_g=15, Σ nbinom([0..15]) ≈ 0.997 at the
+    same λ — drift drops below 0.3% and the renorm has negligible
+    impact on shape. Runtime cost is small (16×16 matrix vs 11×11).
+    """
     # R11 A2: runtime cfg["dc_rho"] guard. The module-load assert at
     # scripts/03_simulate.py:115 only validates DEFAULTS["dc_rho"]. A tuner /
     # sensitivity sweep / external caller that overrides cfg["dc_rho"]
@@ -232,7 +242,7 @@ def sample_from_matrix(mat, rng):
     return int(idx // mat.shape[1]), int(idx % mat.shape[1])
 
 
-def sample_score_with_noise(lam_h, lam_a, cfg, rng, max_g=10):
+def sample_score_with_noise(lam_h, lam_a, cfg, rng, max_g=15):
     """Per-match lambda noise via Gamma multipliers, then NB+τ matrix sample.
     Adds compound variance beyond just NB dispersion — captures the fact that
     on any given day a 'strong' team plays at 70-130% of average strength.
@@ -372,15 +382,32 @@ def decide_knockout(team_a, team_b, m_num, locked, mat, lam_h, lam_a, e_h, e_a, 
             return h, a, team_a
         if w == "away":
             return h, a, team_b
-        # No winner field on a locked knockout — fall back to score comparison.
-        # In practice fetch_results refuses to lock a PEN match without a
-        # winner (see A.2), so this path triggers only for group-stage drafts
-        # accidentally indexed here.
-        # M6: log loud so this defensive branch never silently swallows a
-        # bad fixture record. Awarding team_b on a tie without a winner is a
-        # last-resort guess — the operator should see it.
-        print(f"[decide_knockout] WARN: locked knockout m={m_num} {team_a} vs {team_b} "
-              f"has no winner field; tie ({h}-{a}) defaults to {'team_a' if h > a else 'team_b'}",
+        # No winner field on a locked knockout.
+        # R12 MED: on a TIED locked KO (h==a) with no `winner` field, we
+        # used to silently default to team_b (since neither h > a nor
+        # h < a is true). For an operator-edited results_2026.json with
+        # a missing winner field, the awarded team was arbitrary — the
+        # one whose name happened to come second in the fixture record.
+        # This is RAISE-WORTHY: the simulator should not invent a winner
+        # for a hand-edited PEN match. Refuse and instruct the operator.
+        # For non-tied locked KO (h != a) score comparison is still
+        # mathematically sound — keep the loud-warn-and-proceed path.
+        if h == a:
+            raise RuntimeError(
+                f"[decide_knockout] locked knockout m={m_num} {team_a} vs "
+                f"{team_b} is tied ({h}-{a}) but has no `winner` field. "
+                f"This is unrecoverable — refusing to silently assign a "
+                f"winner. Edit data/live/results_2026.json to add "
+                f"'winner': 'home' or 'away' for this match. Fetch path "
+                f"normally populates this via API-Football "
+                f"teams.{{home,away}}.winner — verify the provider feed "
+                f"isn't dropping it."
+            )
+        # Non-tied locked KO without winner — score comparison is correct
+        # (FT/AET decided by goals). Loud-warn and proceed.
+        print(f"[decide_knockout] WARN: locked knockout m={m_num} {team_a} "
+              f"vs {team_b} has no `winner` field; decided by score "
+              f"comparison ({h}-{a}) → {'team_a' if h > a else 'team_b'}",
               file=sys.stderr)
         return h, a, (team_a if h > a else team_b)
     # Not locked — sample as before.

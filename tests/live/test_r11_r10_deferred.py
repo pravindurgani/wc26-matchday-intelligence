@@ -247,18 +247,24 @@ class TestR11E10PerStageSigmaAndStacking(unittest.TestCase):
         self.ci = _load("ci_r11_e10", ROOT / "scripts" / "check_invariants.py")
 
     def _blob_with_valid_stages(self):
-        # 8 teams reach QF, 4 SF, 2 Final, 1 Champion. Construct a
-        # blob where the 48 teams have monotonically stacked
-        # probabilities and Σ-targets match exactly.
+        # 32 teams advance from groups; 16 reach R16; 8 reach QF; 4 SF;
+        # 2 Final; 1 Champion. R12 C1 extended stage_expectations and
+        # stack_order to include p_advance_groups (32) and p_reach_r16
+        # (16) — every team_predictions row must now carry those fields
+        # for the per-stage Σ check + INV1 stacking check to fire.
         teams = []
         for i in range(48):
-            # First 8 teams reach QF; first 4 reach SF; etc.
+            p_advance = 1.0 if i < 32 else 0.0
+            p_r16 = 1.0 if i < 16 else 0.0
             p_qf = 1.0 if i < 8 else 0.0
             p_sf = 1.0 if i < 4 else 0.0
             p_final = 1.0 if i < 2 else 0.0
             p_champ = 1.0 if i == 0 else 0.0
             teams.append({
-                "team": f"T{i}", "p_reach_qf": p_qf, "p_reach_sf": p_sf,
+                "team": f"T{i}",
+                "p_advance_groups": p_advance,
+                "p_reach_r16": p_r16,
+                "p_reach_qf": p_qf, "p_reach_sf": p_sf,
                 "p_reach_final": p_final, "p_champion": p_champ,
             })
         return {"team_predictions": teams, "annex_c_misses": 0}
