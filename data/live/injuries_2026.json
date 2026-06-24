@@ -1,54 +1,13 @@
 {
-  "generated_at": "2026-06-24T03:37:17.419965+00:00",
+  "generated_at": "2026-06-24T09:31:02.745090+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
-  "teams_with_injuries": 13,
+  "teams_with_injuries": 14,
   "teams": {
-    "Belgium": {
-      "total_elo_adjustment": -48.0,
-      "players": [
-        {
-          "name": "Z. Debast",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Leg Injury",
-          "elo": -12.0,
-          "fixture_id": 1489377
-        },
-        {
-          "name": "Z. Debast",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Leg Injury",
-          "elo": -12.0,
-          "fixture_id": 1489395
-        },
-        {
-          "name": "J. Doku",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Illness",
-          "elo": -12.0,
-          "fixture_id": 1489415
-        },
-        {
-          "name": "N. Ngoy",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Red Card",
-          "elo": -12.0,
-          "fixture_id": 1489415
-        }
-      ]
-    },
     "Brazil": {
-      "total_elo_adjustment": -90.0,
+      "total_elo_adjustment": -120.0,
       "players": [
         {
           "name": "Neymar",
@@ -76,11 +35,84 @@
           "reason": "Calf Injury",
           "elo": -30.0,
           "fixture_id": 1489406
+        },
+        {
+          "name": "Raphinha",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_full",
+          "status": "confirmed_out",
+          "reason": "Hamstring muscle injury",
+          "elo": -30.0,
+          "fixture_id": 1489406
+        }
+      ]
+    },
+    "Czechia": {
+      "total_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "D. Jurásek",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Thigh problems",
+          "elo": -12.0,
+          "fixture_id": 1539010
+        }
+      ]
+    },
+    "Belgium": {
+      "total_elo_adjustment": -60.0,
+      "players": [
+        {
+          "name": "Z. Debast",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Leg Injury",
+          "elo": -12.0,
+          "fixture_id": 1489377
+        },
+        {
+          "name": "Z. Debast",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Leg Injury",
+          "elo": -12.0,
+          "fixture_id": 1489395
+        },
+        {
+          "name": "Z. Debast",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Leg Injury",
+          "elo": -12.0,
+          "fixture_id": 1489415
+        },
+        {
+          "name": "J. Doku",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Illness",
+          "elo": -12.0,
+          "fixture_id": 1489415
+        },
+        {
+          "name": "N. Ngoy",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "fixture_id": 1489415
         }
       ]
     },
     "Uruguay": {
-      "total_elo_adjustment": -42.0,
+      "total_elo_adjustment": -84.0,
       "players": [
         {
           "name": "G. de Arrascaeta",
@@ -92,6 +124,15 @@
           "fixture_id": 1489398
         },
         {
+          "name": "G. de Arrascaeta",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle bruise",
+          "elo": -12.0,
+          "fixture_id": 1489417
+        },
+        {
           "name": "R. Araújo",
           "tier": "tier_1_star",
           "auto_tier_source": "whitelist_last",
@@ -99,6 +140,15 @@
           "reason": "Muscle bruise",
           "elo": -30.0,
           "fixture_id": 1489398
+        },
+        {
+          "name": "R. Araújo",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_last",
+          "status": "confirmed_out",
+          "reason": "Muscle bruise",
+          "elo": -30.0,
+          "fixture_id": 1489417
         }
       ]
     },
@@ -125,17 +175,17 @@
         }
       ]
     },
-    "Czechia": {
+    "Senegal": {
       "total_elo_adjustment": -12.0,
       "players": [
         {
-          "name": "D. Jurásek",
+          "name": "É. Mendy",
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
           "status": "confirmed_out",
-          "reason": "Thigh problems",
+          "reason": "Twisted knee",
           "elo": -12.0,
-          "fixture_id": 1539010
+          "fixture_id": 1539074
         }
       ]
     },
@@ -247,7 +297,7 @@
       ]
     },
     "Canada": {
-      "total_elo_adjustment": -12.0,
+      "total_elo_adjustment": -24.0,
       "players": [
         {
           "name": "I. Koné",
@@ -255,6 +305,15 @@
           "auto_tier_source": "default",
           "status": "confirmed_out",
           "reason": "Fracture of lower leg",
+          "elo": -12.0,
+          "fixture_id": 1489408
+        },
+        {
+          "name": "A. Jones",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": null,
           "elo": -12.0,
           "fixture_id": 1489408
         }
