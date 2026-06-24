@@ -1,6 +1,6 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-24T19:05:39.079270+00:00",
+  "last_updated_utc": "2026-06-24T19:15:40.020732+00:00",
   "completed_matches_count": 48,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
@@ -12,11 +12,21 @@
       "away": "Canada",
       "home_score": 0,
       "away_score": 0,
-      "elapsed": 1,
+      "elapsed": 11,
+      "status": "LIVE",
+      "status_long": "First Half"
+    },
+    {
+      "m": 50,
+      "home": "Bosnia and Herzegovina",
+      "away": "Qatar",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 10,
       "status": "LIVE",
       "status_long": "First Half"
     }
   ],
-  "in_play_count": 1,
+  "in_play_count": 2,
   "warnings": []
 }
