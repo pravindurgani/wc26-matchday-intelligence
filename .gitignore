@@ -50,3 +50,6 @@ logs/
 
 # Wrangler local state
 cf-worker/.wrangler/
+
+# Apps Script engine source — kept local-only, not part of the repo.
+wc26-engine-gs/
