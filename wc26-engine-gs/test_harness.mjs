@@ -25,7 +25,7 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const GS_PATH = path.join(__dirname, 'WC26_Engine_AppsScript_v2.3.6.gs');
+const GS_PATH = path.join(__dirname, 'WC26_Engine_AppsScript_v2.3.7.gs');
 
 // ---- 1. Read source ------------------------------------------------------
 let src = fs.readFileSync(GS_PATH, 'utf8');
@@ -81,7 +81,7 @@ const wrapped = `
 })();
 `;
 
-vm.runInThisContext(wrapped, { filename: 'WC26_Engine_AppsScript_v2.3.6.gs' });
+vm.runInThisContext(wrapped, { filename: 'WC26_Engine_AppsScript_v2.3.7.gs' });
 const E = globalThis.__engine;
 
 if (!E.GOAL_GRID || !E._buildScoreMatrix_) {
@@ -726,6 +726,137 @@ function v236Regressions() {
   return out;
 }
 
+// v2.3.7 — source-level regressions for the 5 closures (5-axis AUDIT-C):
+//   CRIT-1: installEngine() pre-flight sheet validation
+//   HIGH-1: Live!B28 persistent errLog cell (replaces ephemeral toast)
+//   HIGH-2: Matchday!W1 stale/CB banner mirror
+//   HIGH-3: Method!C5 quarter-Kelly walk-forward edge disclaimer
+//   MED-1:  Method!B82..B86 per-endpoint last-200-OK timestamps
+function v237Regressions() {
+  const out = { all_ok: true, fixtures: {} };
+  function assert(name, ok, detail) {
+    out.fixtures[name] = Object.assign({ ok: ok }, detail || {});
+    if (!ok) out.all_ok = false;
+  }
+
+  // --- CRIT-1: installEngine() calls _preflightSheets_() before any work ---
+  assert('crit1_preflight_helper_defined',
+    /function _preflightSheets_\s*\(\s*\)\s*\{/.test(src),
+    { note: 'expected function _preflightSheets_()' });
+  assert('crit1_preflight_throws_on_missing',
+    /function _preflightSheets_\s*\(\s*\)\s*\{[\s\S]{0,2000}throw new Error/.test(src),
+    { note: 'expected throw new Error inside _preflightSheets_' });
+  // installEngine must call _preflightSheets_ before any side-effect call
+  // (refreshAll / applyProtections / extendToKnockouts / snapshotExisting).
+  // The body has a comment-block above the call, so scan a generous window.
+  assert('crit1_installEngine_calls_preflight_before_refreshAll',
+    /function installEngine\(\)[\s\S]*?_preflightSheets_\s*\(\s*\)[\s\S]*?refreshAll\s*\(\s*\)/.test(src),
+    { note: 'expected _preflightSheets_() before refreshAll() in installEngine' });
+  assert('crit1_installEngine_calls_preflight_before_applyProtections',
+    /function installEngine\(\)[\s\S]*?_preflightSheets_\s*\(\s*\)[\s\S]*?applyProtections\s*\(\s*\)/.test(src),
+    { note: 'expected _preflightSheets_() before applyProtections() in installEngine' });
+  // Preflight iterates the SHEET dict for canonical names — check each key
+  // is in the `required` list in the helper body.
+  ['bets', 'method', 'live', 'matchday', 'outrights', 'inplay'].forEach(function (key) {
+    assert('crit1_preflight_checks_' + key,
+      new RegExp("function _preflightSheets_[\\s\\S]{0,2000}['\"]" + key + "['\"]").test(src),
+      { note: 'expected preflight required-key "' + key + '"' });
+  });
+  assert('crit1_preflight_resolves_via_SHEET_map',
+    /function _preflightSheets_[\s\S]{0,2000}SHEET\[/.test(src),
+    { note: 'expected SHEET[key] lookup inside _preflightSheets_' });
+
+  // --- HIGH-1: Live!B28 errLog cell + helpers ---
+  assert('high1_LIVE_CELL_errLog_B28',
+    /errLog\s*:\s*['"]B28['"]/.test(src),
+    { note: "expected LIVE_CELL.errLog: 'B28'" });
+  assert('high1_setErrLog_defined',
+    /function _setErrLog_\s*\(\s*msg\s*\)\s*\{/.test(src),
+    { note: 'expected function _setErrLog_(msg)' });
+  assert('high1_clearErrLog_defined',
+    /function _clearErrLog_\s*\(\s*\)\s*\{/.test(src),
+    { note: 'expected function _clearErrLog_()' });
+  assert('high1_setErrLog_writes_LIVE_errLog',
+    /function _setErrLog_[\s\S]{0,400}LIVE_CELL\.errLog/.test(src),
+    { note: 'expected LIVE_CELL.errLog write inside _setErrLog_' });
+  assert('high1_refreshAll_calls_setErrLog_on_failure',
+    /_setErrLog_\(summary\)/.test(src),
+    { note: 'expected _setErrLog_(summary) on refresh failure' });
+  assert('high1_refreshAll_clears_errLog_on_success',
+    /_clearErrLog_\(\)/.test(src),
+    { note: 'expected _clearErrLog_() on refresh success' });
+  // Intel and diagnostics fetches both surface to errLog
+  assert('high1_intel_setErrLog_wired',
+    /intel fetch failed[\s\S]{0,200}_setErrLog_/.test(src),
+    { note: 'expected _setErrLog_ in intel failure path' });
+  assert('high1_walkfwd_setErrLog_wired',
+    /walk_forward fetch failed[\s\S]{0,200}_setErrLog_/.test(src),
+    { note: 'expected _setErrLog_ in walk_forward failure path' });
+  assert('high1_calibration_setErrLog_wired',
+    /calibration fetch failed[\s\S]{0,200}_setErrLog_/.test(src),
+    { note: 'expected _setErrLog_ in calibration failure path' });
+
+  // --- HIGH-2: Matchday!W1 banner mirror ---
+  assert('high2_matchday_W1_write_present',
+    /getRange\(['"]W1['"]\)\.setValue\(staleMsg/.test(src),
+    { note: 'expected Matchday!W1 setValue(staleMsg) write' });
+  // W=col 23, data range is A:U (col 21), Matchday header row 1 — collision-safe.
+  assert('high2_matchday_W1_uses_matchday_sheet',
+    /SHEET\.matchday[\s\S]{0,400}getRange\(['"]W1['"]\)/.test(src),
+    { note: 'expected SHEET.matchday before W1 setValue' });
+
+  // --- HIGH-3: Method!C5 Kelly edge disclaimer ---
+  assert('high3_seedKelly_defined',
+    /function _seedKellyEdgeDisclaimer_\s*\(\s*\)\s*\{/.test(src),
+    { note: 'expected function _seedKellyEdgeDisclaimer_()' });
+  assert('high3_seedKelly_writes_C5',
+    /function _seedKellyEdgeDisclaimer_[\s\S]{0,2000}['"]C5['"]/.test(src),
+    { note: 'expected Method!C5 write inside _seedKellyEdgeDisclaimer_' });
+  assert('high3_seedKelly_reads_walkfwd_lift',
+    /function _seedKellyEdgeDisclaimer_[\s\S]{0,2000}walkForward2022Lift/.test(src),
+    { note: 'expected walkForward2022Lift read inside helper' });
+  assert('high3_installEngine_calls_seedKelly',
+    /function installEngine\(\)[\s\S]*?_seedKellyEdgeDisclaimer_\s*\(\s*\)/.test(src),
+    { note: 'expected _seedKellyEdgeDisclaimer_() inside installEngine' });
+
+  // --- MED-1: Method!B82..B86 per-endpoint timestamps ---
+  ['endpointLiveTs', 'endpointPredsTs', 'endpointIntelTs',
+   'endpointCalibTs', 'endpointWalkFwdTs'].forEach(function (k) {
+    assert('med1_M_CELL_' + k,
+      new RegExp(k + "\\s*:\\s*['\"]B(82|83|84|85|86)['\"]").test(src),
+      { note: 'expected M_CELL.' + k + ' anchor in B82..B86' });
+  });
+  // Exact anchor map (B82..B86 unused in v2.3.6; B81 is staleKill).
+  assert('med1_endpointLiveTs_B82',  /endpointLiveTs\s*:\s*['"]B82['"]/.test(src));
+  assert('med1_endpointPredsTs_B83', /endpointPredsTs\s*:\s*['"]B83['"]/.test(src));
+  assert('med1_endpointIntelTs_B84', /endpointIntelTs\s*:\s*['"]B84['"]/.test(src));
+  assert('med1_endpointCalibTs_B85', /endpointCalibTs\s*:\s*['"]B85['"]/.test(src));
+  assert('med1_endpointWalkFwdTs_B86', /endpointWalkFwdTs\s*:\s*['"]B86['"]/.test(src));
+  assert('med1_stampEndpoint_defined',
+    /function _stampEndpoint_\s*\(\s*cell\s*\)\s*\{/.test(src),
+    { note: 'expected function _stampEndpoint_(cell)' });
+  // Each of the 5 endpoints stamps on success.
+  ['endpointLiveTs', 'endpointPredsTs', 'endpointIntelTs',
+   'endpointCalibTs', 'endpointWalkFwdTs'].forEach(function (k) {
+    assert('med1_stamp_wired_' + k,
+      new RegExp("_stampEndpoint_\\(\\s*M_CELL\\." + k + "\\s*\\)").test(src),
+      { note: 'expected _stampEndpoint_(M_CELL.' + k + ') call' });
+  });
+
+  // --- Version sanity: v2.3.7 string present in install + toast paths ---
+  assert('version_install_string',
+    /WC26 Engine v2\.3\.7 installed/.test(src),
+    { note: 'expected v2.3.7 install toast' });
+  assert('version_writeStatus_toast',
+    /toast\(msg,\s*['"]WC26 Engine v2\.3\.7['"]/.test(src),
+    { note: 'expected v2.3.7 in _writeStatus_ toast' });
+  assert('version_no_residual_v236_toast',
+    !/toast\(msg,\s*['"]WC26 Engine v2\.3\.6['"]/.test(src),
+    { note: 'residual v2.3.6 toast string' });
+
+  return out;
+}
+
 // ---- 7. Emit -------------------------------------------------------------
 const report = {
   node_version: process.version,
@@ -742,6 +873,7 @@ const report = {
   v234_regressions: v234Regressions(),
   v235_regressions: v235Regressions(),
   v236_regressions: v236Regressions(),
+  v237_regressions: v237Regressions(),
 };
 
 process.stdout.write(JSON.stringify(report));
