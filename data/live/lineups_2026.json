@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-06-25T20:03:23.988411+00:00",
+  "generated_at": "2026-06-25T22:23:20.071795+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [
     {
-      "match_id": 55,
-      "home": "Ecuador",
-      "away": "Germany",
+      "match_id": 57,
+      "home": "Japan",
+      "away": "Sweden",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "home_adjustment_reason": null,
@@ -15,288 +15,288 @@
       "baseline_source": "none:first_recorded_xi",
       "home_xi": [
         {
-          "id": 16380,
-          "name": "H. Galíndez",
+          "id": 199578,
+          "name": "Z. Suzuki",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 16360,
-          "name": "A. Franco",
-          "number": 21,
-          "pos": "M"
+          "id": 33165,
+          "name": "A. Seko",
+          "number": 20,
+          "pos": "D"
         },
         {
-          "id": 354027,
-          "name": "J. Ordoñez",
+          "id": 38114,
+          "name": "K. Itakura",
           "number": 4,
           "pos": "D"
         },
         {
-          "id": 16367,
-          "name": "W. Pacho",
-          "number": 6,
+          "id": 32893,
+          "name": "H. Ito",
+          "number": 21,
           "pos": "D"
         },
         {
-          "id": 127817,
-          "name": "P. Hincapié",
-          "number": 3,
+          "id": 32887,
+          "name": "Y. Sugawara",
+          "number": 2,
           "pos": "D"
         },
         {
-          "id": 25414,
-          "name": "J. Yeboah",
-          "number": 9,
-          "pos": "M"
-        },
-        {
-          "id": 116117,
-          "name": "M. Caicedo",
-          "number": 23,
-          "pos": "M"
-        },
-        {
-          "id": 237078,
-          "name": "P. Vite",
+          "id": 2601,
+          "name": "D. Kamada",
           "number": 15,
           "pos": "M"
         },
         {
-          "id": 311543,
-          "name": "N. Angulo",
-          "number": 20,
-          "pos": "F"
+          "id": 32966,
+          "name": "A. Tanaka",
+          "number": 7,
+          "pos": "M"
         },
         {
-          "id": 16369,
-          "name": "G. Plata",
-          "number": 19,
-          "pos": "F"
-        },
-        {
-          "id": 35533,
-          "name": "E. Valencia",
+          "id": 33321,
+          "name": "Keito Nakamura",
           "number": 13,
+          "pos": "F"
+        },
+        {
+          "id": 2598,
+          "name": "R. Dōan",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 72155,
+          "name": "A. Ueda",
+          "number": 18,
+          "pos": "F"
+        },
+        {
+          "id": 33224,
+          "name": "D. Maeda",
+          "number": 11,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 497,
-          "name": "M. Neuer",
+          "id": 48033,
+          "name": "J. Widell Zetterström",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 502,
-          "name": "J. Kimmich",
-          "number": 6,
-          "pos": "M"
-        },
-        {
-          "id": 972,
-          "name": "J. Tah",
-          "number": 4,
-          "pos": "D"
-        },
-        {
-          "id": 2285,
-          "name": "A. Rüdiger",
+          "id": 137721,
+          "name": "G. Lagerbielke",
           "number": 2,
           "pos": "D"
         },
         {
-          "id": 25158,
-          "name": "D. Raum",
-          "number": 22,
+          "id": 137976,
+          "name": "I. Hien",
+          "number": 4,
           "pos": "D"
         },
         {
-          "id": 637,
-          "name": "F. Nmecha",
-          "number": 23,
-          "pos": "M"
-        },
-        {
-          "id": 328033,
-          "name": "A. Pavlović",
-          "number": 5,
-          "pos": "M"
-        },
-        {
-          "id": 644,
-          "name": "L. Sané",
-          "number": 19,
-          "pos": "F"
-        },
-        {
-          "id": 181812,
-          "name": "J. Musiala",
-          "number": 10,
-          "pos": "M"
-        },
-        {
-          "id": 203224,
-          "name": "F. Wirtz",
-          "number": 17,
-          "pos": "M"
-        },
-        {
-          "id": 978,
-          "name": "K. Havertz",
-          "number": 7,
-          "pos": "F"
-        }
-      ],
-      "captured_at": "2026-06-25T20:03:23.410850+00:00"
-    },
-    {
-      "match_id": 56,
-      "home": "Curacao",
-      "away": "Ivory Coast",
-      "home_team_adjustment_elo": 0.0,
-      "away_team_adjustment_elo": 0.0,
-      "home_adjustment_reason": null,
-      "away_adjustment_reason": null,
-      "baseline_source": "none:first_recorded_xi",
-      "home_xi": [
-        {
-          "id": 221,
-          "name": "E. Room",
-          "number": 1,
-          "pos": "G"
-        },
-        {
-          "id": 706,
-          "name": "J. Brenet",
-          "number": 20,
-          "pos": "D"
-        },
-        {
-          "id": 36857,
-          "name": "J. Gaari",
+          "id": 889,
+          "name": "V. Lindelöf",
           "number": 3,
           "pos": "D"
         },
         {
-          "id": 228,
-          "name": "A. Obispo",
-          "number": 18,
-          "pos": "D"
+          "id": 47696,
+          "name": "A. Bernhardsson",
+          "number": 21,
+          "pos": "F"
         },
         {
-          "id": 36970,
-          "name": "S. Floranus",
-          "number": 5,
-          "pos": "D"
-        },
-        {
-          "id": 353808,
-          "name": "Deveron Fonville",
+          "id": 226765,
+          "name": "E. Stroud",
           "number": 24,
           "pos": "D"
         },
         {
-          "id": 906,
-          "name": "T. Chong",
-          "number": 21,
+          "id": 265820,
+          "name": "Y. Ayari",
+          "number": 18,
+          "pos": "M"
+        },
+        {
+          "id": 47969,
+          "name": "G. Gudmundsson",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 153430,
+          "name": "A. Elanga",
+          "number": 11,
           "pos": "F"
         },
         {
-          "id": 18997,
-          "name": "L. Bacuna",
+          "id": 18979,
+          "name": "V. Gyökeres",
+          "number": 17,
+          "pos": "F"
+        },
+        {
+          "id": 2864,
+          "name": "A. Isak",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-25T22:23:19.939779+00:00"
+    },
+    {
+      "match_id": 58,
+      "home": "Tunisia",
+      "away": "Netherlands",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 49424,
+          "name": "A. Dahmen",
+          "number": 16,
+          "pos": "G"
+        },
+        {
+          "id": 18942,
+          "name": "Y. Valery",
+          "number": 20,
+          "pos": "D"
+        },
+        {
+          "id": 50030,
+          "name": "M. Talbi",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 49583,
+          "name": "A. Abdi",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 135059,
+          "name": "A. Ben Hmida",
+          "number": 21,
+          "pos": "D"
+        },
+        {
+          "id": 21587,
+          "name": "E. Skhiri",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 25300,
+          "name": "R. Khedira",
+          "number": 13,
+          "pos": "M"
+        },
+        {
+          "id": 199310,
+          "name": "A. Ben Slimane",
+          "number": 25,
+          "pos": "M"
+        },
+        {
+          "id": 180560,
+          "name": "H. Mejbri",
           "number": 10,
           "pos": "M"
         },
         {
-          "id": 309763,
-          "name": "L. Comenencia",
-          "number": 8,
+          "id": 310196,
+          "name": "Ismaël Gharbi",
+          "number": 11,
           "pos": "M"
         },
         {
-          "id": 18981,
-          "name": "J. Locadia",
+          "id": 344862,
+          "name": "H. Mastouri",
           "number": 9,
-          "pos": "F"
-        },
-        {
-          "id": 19047,
-          "name": "J. Bacuna",
-          "number": 7,
           "pos": "F"
         }
       ],
       "away_xi": [
         {
-          "id": 64190,
-          "name": "Y. Fofana",
+          "id": 129058,
+          "name": "B. Verbruggen",
           "number": 1,
           "pos": "G"
         },
         {
-          "id": 161747,
-          "name": "G. Doué",
-          "number": 17,
+          "id": 226,
+          "name": "D. Dumfries",
+          "number": 22,
           "pos": "D"
         },
         {
-          "id": 48119,
-          "name": "O. Kossounou",
-          "number": 7,
+          "id": 38695,
+          "name": "J. van Hecke",
+          "number": 6,
           "pos": "D"
         },
         {
-          "id": 354753,
-          "name": "O. Diomande",
-          "number": 2,
+          "id": 290,
+          "name": "V. van Dijk",
+          "number": 4,
           "pos": "D"
         },
         {
-          "id": 20836,
-          "name": "C. Operi",
-          "number": 13,
+          "id": 18861,
+          "name": "N. Aké",
+          "number": 5,
           "pos": "D"
         },
         {
-          "id": 157997,
-          "name": "A. Diallo",
-          "number": 15,
-          "pos": "F"
-        },
-        {
-          "id": 22149,
-          "name": "I. Sangaré",
-          "number": 18,
-          "pos": "M"
-        },
-        {
-          "id": 1642,
-          "name": "F. Kessié",
+          "id": 542,
+          "name": "R. Gravenberch",
           "number": 8,
           "pos": "M"
         },
         {
-          "id": 513776,
-          "name": "Y. Diomande",
-          "number": 11,
+          "id": 538,
+          "name": "F. de Jong",
+          "number": 21,
+          "pos": "M"
+        },
+        {
+          "id": 36902,
+          "name": "T. Reijnders",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 249,
+          "name": "D. Malen",
+          "number": 18,
           "pos": "F"
         },
         {
-          "id": 3246,
-          "name": "N. Pépé",
+          "id": 38750,
+          "name": "B. Brobbey",
           "number": 19,
           "pos": "F"
         },
         {
-          "id": 275651,
-          "name": "A. Bonny",
-          "number": 9,
+          "id": 247,
+          "name": "C. Gakpo",
+          "number": 11,
           "pos": "F"
         }
       ],
-      "captured_at": "2026-06-25T20:03:23.601624+00:00"
+      "captured_at": "2026-06-25T22:23:20.071771+00:00"
     }
   ],
   "warnings": []
