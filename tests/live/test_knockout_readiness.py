@@ -449,9 +449,10 @@ class TestKnockoutWDL90MinSemantics:
         the contract: a future change that adds match-aware semantics
         would have to either (a) change the GOAL_GRID signature or (b)
         introduce a second function — either makes the regression loud."""
-        gs_src = (
-            ROOT / "wc26-engine-gs" / "WC26_Engine_AppsScript_v2.3.1.gs"
-        ).read_text()
+        gs_dir = ROOT / "wc26-engine-gs"
+        gs_candidates = sorted(gs_dir.glob("WC26_Engine_AppsScript_v*.gs"))
+        assert gs_candidates, f"No WC26_Engine_AppsScript_v*.gs in {gs_dir}"
+        gs_src = gs_candidates[-1].read_text()
         # The signature line we expect.
         assert "function GOAL_GRID(lam_h, lam_a, market)" in gs_src
         # GOAL_GRID body must NOT branch on match-id / stage variables.

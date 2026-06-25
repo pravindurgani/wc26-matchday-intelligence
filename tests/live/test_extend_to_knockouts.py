@@ -6,15 +6,24 @@ assert:
   - knockout layout constants cover 32 fixtures (m=73..104)
   - stages sum to 32 with the FIFA WC 2026 breakdown (16+8+4+2+1+1)
   - the menu item is wired to the function name
-  - BC:BE seed formulas mirror I:K (matches v2.3.1 CRIT #3 pattern)
+  - BC:BE seed formulas mirror I:K (matches v*.gs CRIT #3 pattern)
 """
 from __future__ import annotations
 
 import re
 from pathlib import Path
 
-GS = (Path(__file__).resolve().parents[2]
-      / "wc26-engine-gs" / "WC26_Engine_AppsScript_v2.3.1.gs")
+
+def _engine_gs_path() -> Path:
+    """Find the latest WC26_Engine_AppsScript_v*.gs file (version-agnostic)."""
+    root = Path(__file__).resolve().parents[2] / "wc26-engine-gs"
+    candidates = sorted(root.glob("WC26_Engine_AppsScript_v*.gs"))
+    if not candidates:
+        raise FileNotFoundError(f"No WC26_Engine_AppsScript_v*.gs in {root}")
+    return candidates[-1]  # natural sort picks highest version
+
+
+GS = _engine_gs_path()
 
 
 def _src() -> str:
@@ -73,12 +82,28 @@ def test_stage_layout_covers_fifa_wc_breakdown():
 
 
 def test_bc_be_seed_formulas_mirror_ijk():
-    """v2.3.1 CRIT #3: BC:BE seeded with =I{r}/=J{r}/=K{r}."""
+    """v2.3.1 CRIT #3 + v2.3.3 HIGH #5: BC:BE seeded with blank-safe mirror of I:K.
+
+    Pre-v2.3.3 the formulas were bare `=I{r}/=J{r}/=K{r}` which rendered literal
+    0 when I/J/K were blank — that 0 then poisoned downstream EV math
+    (`BC * L - 1 = -1` → false PASS signals). v2.3.3 wrapped each in
+    `=IF(I{r}="","",I{r})` to surface blank instead. Assert the current
+    blank-safe pattern is present.
+    """
     src = _src()
-    # The extension must emit the same mirror pattern for new rows.
-    assert "'=I' + r" in src
-    assert "'=J' + r" in src
-    assert "'=K' + r" in src
+    # Blank-safe pattern (v2.3.3+). String concatenation in the source means
+    # `'=IF(I' + r + '="","",I' + r + ')'` is what we look for.
+    assert "'=IF(I' + r + '=\"\",\"\",I' + r + ')'" in src, (
+        "BC mirror formula (col I) missing v2.3.3 blank-safe IF guard"
+    )
+    assert "'=IF(J' + r + '=\"\",\"\",J' + r + ')'" in src, (
+        "BD mirror formula (col J) missing v2.3.3 blank-safe IF guard"
+    )
+    assert "'=IF(K' + r + '=\"\",\"\",K' + r + ')'" in src, (
+        "BE mirror formula (col K) missing v2.3.3 blank-safe IF guard"
+    )
+    # The seeding block itself must still be wired into extendToKnockouts.
+    assert "Seed BC:BE mirror formulas" in src
 
 
 def test_idempotent_contract_documented():

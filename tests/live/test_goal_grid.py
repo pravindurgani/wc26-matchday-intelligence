@@ -16,8 +16,16 @@ import math
 import re
 from pathlib import Path
 
-GS = (Path(__file__).resolve().parents[2]
-      / "wc26-engine-gs" / "WC26_Engine_AppsScript_v2.3.1.gs")
+def _engine_gs_path() -> Path:
+    """Find the latest WC26_Engine_AppsScript_v*.gs file (version-agnostic)."""
+    root = Path(__file__).resolve().parents[2] / "wc26-engine-gs"
+    candidates = sorted(root.glob("WC26_Engine_AppsScript_v*.gs"))
+    if not candidates:
+        raise FileNotFoundError(f"No WC26_Engine_AppsScript_v*.gs in {root}")
+    return candidates[-1]  # natural sort picks highest version
+
+
+GS = _engine_gs_path()
 
 
 def _src() -> str:
@@ -86,7 +94,7 @@ def _js_poisson_pmf(lam, k):
 
 
 def _js_build_score_matrix(lam_h, lam_a, max_g=MAX_G, rho=DC_RHO):
-    """Verbatim Python replica of WC26_Engine_AppsScript_v2.3.1.gs
+    """Verbatim Python replica of the latest WC26_Engine_AppsScript_v*.gs
     _buildScoreMatrix_ — Poisson marginals × DC τ-correction × renorm.
 
     Mirrors the engine's degenerate-matrix guard: when every cell underflows

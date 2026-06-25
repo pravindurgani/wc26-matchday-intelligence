@@ -171,7 +171,7 @@ def _js_poisson_pmf(lam: float, k: int) -> float:
 
 def _js_build_score_matrix(lam_h: float, lam_a: float,
                            max_g: int = MAX_G, rho: float = DC_RHO):
-    """Verbatim Python replica of WC26_Engine_AppsScript_v2.3.1.gs
+    """Verbatim Python replica of the latest WC26_Engine_AppsScript_v*.gs
     _buildScoreMatrix_ — Poisson marginals × DC τ-correction × renorm."""
     ph = [_js_poisson_pmf(lam_h, i) for i in range(max_g + 1)]
     pa = [_js_poisson_pmf(lam_a, i) for i in range(max_g + 1)]

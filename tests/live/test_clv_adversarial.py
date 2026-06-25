@@ -4,8 +4,8 @@ Adversarial CLV tests — Python mirror of the .gs ``refreshCLV`` math.
 Background
 ----------
 The Google Apps Script refresher
-``wc26-engine-gs/WC26_Engine_AppsScript_v2.3.1.gs:refreshCLV`` is hard to
-unit-test directly (SpreadsheetApp + cell formulas). We mirror the
+``wc26-engine-gs/WC26_Engine_AppsScript_v*.gs:refreshCLV`` (latest version)
+is hard to unit-test directly (SpreadsheetApp + cell formulas). We mirror the
 *observable* arithmetic in Python so we can stress-test the contract:
 
   CLV% per row  = (E - F) / F     where E = model_odds, F = closing_odds
@@ -37,7 +37,7 @@ from typing import Iterable, List, Optional, Sequence, Union
 
 import pytest
 
-# Mirror the constant from WC26_Engine_AppsScript_v2.3.1.gs:93
+# Mirror the constant from WC26_Engine_AppsScript_v*.gs (latest version)
 CLV_ROLLING_WINDOW = 20
 
 # Cell-blank sentinel — mirrors how the .gs writes "" into col E/F when

@@ -5,7 +5,7 @@ C1: scripts/live/export_ko_advance.py MAX_G bumped 10 → 15 (was stale vs
     R12 MED sim default).
 C2: tests/live/test_goal_grid_feed_agreement.py + scripts/live/verify_
     goal_grid_agreement.py MAX_G bumped 10 → 15.
-C3: wc26-engine-gs/WC26_Engine_AppsScript_v2.3.1.gs GOAL_GRID_MAX_GOALS
+C3: wc26-engine-gs/WC26_Engine_AppsScript_v*.gs (latest) GOAL_GRID_MAX_GOALS
     bumped 10 → 15.
 D1: dashboard/app.js::renderCompare clears select options before append
     (DOM-leak fix; pre-R13 R12 D1 added the per-tick call but did not
@@ -75,8 +75,10 @@ class TestR13C2GoalGridAgreementMaxG(unittest.TestCase):
 
 class TestR13C3AppsScriptMaxGoals(unittest.TestCase):
     def test_gs_constant_is_15(self):
-        gs = (ROOT / "wc26-engine-gs"
-              / "WC26_Engine_AppsScript_v2.3.1.gs").read_text()
+        gs_dir = ROOT / "wc26-engine-gs"
+        candidates = sorted(gs_dir.glob("WC26_Engine_AppsScript_v*.gs"))
+        assert candidates, f"No WC26_Engine_AppsScript_v*.gs in {gs_dir}"
+        gs = candidates[-1].read_text()
         self.assertIn("const GOAL_GRID_MAX_GOALS = 15;", gs,
             "R13 C3: Apps Script GOAL_GRID_MAX_GOALS must be 15")
         self.assertNotIn("const GOAL_GRID_MAX_GOALS = 10;", gs,

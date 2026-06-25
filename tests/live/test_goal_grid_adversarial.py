@@ -1,6 +1,6 @@
 """
 Adversarial audit of the GoalGrid math in
-wc26-engine-gs/WC26_Engine_AppsScript_v2.3.1.gs
+wc26-engine-gs/WC26_Engine_AppsScript_v*.gs (latest version)
   - _poissonPmf_   (line 1373)
   - _factorial_    (line 1378)
   - _dcTau_        (line 1387)
@@ -52,7 +52,16 @@ WDL_TOL = 1e-9
 # resolved via _node_resolver (env override + PATH lookup); under CI
 # the resolver itself errors at import if node is missing, so a
 # silent skip cannot mask a missing ground-truth check.
-GS_PATH = ROOT / "wc26-engine-gs" / "WC26_Engine_AppsScript_v2.3.1.gs"
+def _engine_gs_path() -> Path:
+    """Find the latest WC26_Engine_AppsScript_v*.gs file (version-agnostic)."""
+    root = ROOT / "wc26-engine-gs"
+    candidates = sorted(root.glob("WC26_Engine_AppsScript_v*.gs"))
+    if not candidates:
+        raise FileNotFoundError(f"No WC26_Engine_AppsScript_v*.gs in {root}")
+    return candidates[-1]  # natural sort picks highest version
+
+
+GS_PATH = _engine_gs_path()
 
 
 def _wdl(M) -> tuple[float, float, float]:
@@ -185,7 +194,7 @@ class TestLambdaExtremes:
         assert report["builderThrew"] is True, (
             f"REAL .gs _buildScoreMatrix_(1000,1000) did NOT throw — "
             f"report={report!r}. Fix at line 1420-1430 of "
-            f"WC26_Engine_AppsScript_v2.3.1.gs is missing."
+            f"WC26_Engine_AppsScript_v*.gs (latest) is missing."
         )
         assert "collapsed" in (report["builderError"] or "").lower(), (
             f"unexpected error: {report['builderError']!r}"
