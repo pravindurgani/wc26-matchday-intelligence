@@ -218,12 +218,12 @@ wc26-matchday-intelligence/
 
 | # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |
 |---|---|---|---|---|---|
-| 1 | Spain      | 23.6% | [22.7, 24.1] | 50.0% | 2209 |
-| 2 | Argentina  | 19.4% | [18.7, 20.0] | 45.5% | 2174 |
-| 3 | France     | 10.8% | [10.6, 11.0] | 30.6% | 2116 |
-| 4 | England    | 7.3% | [7.0, 7.7] | 24.5% | 2081 |
-| 5 | Portugal   | 4.7% | [4.3, 4.9] | 17.6% | 2034 |
-| 6 | Colombia   | 4.7% | [4.4, 4.9] | 18.2% | 2049 |
+| 1 | Spain      | 24.4% | [24.0, 24.7] | 50.6% | 2209 |
+| 2 | Argentina  | 19.3% | [19.0, 19.8] | 45.1% | 2174 |
+| 3 | France     | 10.2% | [9.4, 10.9] | 29.7% | 2116 |
+| 4 | England    | 7.2% | [7.0, 7.5] | 25.0% | 2081 |
+| 5 | Colombia   | 5.3% | [5.0, 5.6] | 19.2% | 2049 |
+| 6 | Portugal   | 4.7% | [4.3, 5.1] | 18.0% | 2034 |
 <!-- AUTO:TOP_CONTENDERS:END -->
 
 > "Model Elo" is the in-repo Elo (modified Glicko base + extra friendlies +
