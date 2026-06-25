@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T14:34:29.124774+00:00",
+  "generated_at": "2026-06-25T17:12:52.243341+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -68,12 +68,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1539010,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 180,
-            "floor": 200,
-            "minutes": 44
+            "minutes_share": 0.163,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 44,
+            "team_top_minutes": 270
           }
         }
       ]
