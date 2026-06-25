@@ -58,6 +58,15 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
+      # Node is needed for the wc26-engine-gs/test_harness.mjs ground-truth
+      # check + the tests/live/test_goal_grid_node.py wrapper that drives it.
+      # Pin to LTS (20.x) to avoid v22 ECMAScript surprises hitting the
+      # static-analysis regex matches in the harness. tests/live/_node_resolver
+      # raises if node is missing under CI=true (silent skip == silent regression).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - run: pip install -r requirements.txt
 
       - name: Live test suites (Stream B — matchday intelligence)
@@ -114,3 +123,49 @@ jobs:
         # syntax breakage before the file reaches Vercel and breaks the
         # rendered dashboard.
         run: node --check dashboard/app.js
+
+      - name: Apps Script engine coverage status
+        # wc26-engine-gs/ was untracked in commit 0babea71. When the engine
+        # source is present in the workspace (local dev, OR after a future
+        # selective un-gitignore + commit of *.gs / *.mjs / *.md), the gates
+        # below activate. In default CI checkout the dir is absent → those
+        # gates skip via hashFiles() guards and we log a visible warning.
+        # This is intentional: the gates are wired for the day they can run,
+        # without forcing wc26-engine-gs/ to be tracked unilaterally.
+        run: |
+          if [ -f "wc26-engine-gs/test_harness.mjs" ]; then
+            echo "Apps Script engine harness found — .gs regression gates ACTIVE."
+          else
+            echo "::warning title=.gs gates skipped::wc26-engine-gs/ is gitignored — Apps Script regression gates are not active in this CI run. To activate, selectively un-gitignore wc26-engine-gs/*.gs + *.mjs and commit (see audit memo)."
+          fi
+
+      - name: Apps Script engine harness (.gs ground truth — 135 assertions)
+        if: hashFiles('wc26-engine-gs/test_harness.mjs') != ''
+        # wc26-engine-gs/test_harness.mjs is the static-analysis battery for
+        # the GAS source-of-truth file. It covers every v2.3.6..v2.3.13
+        # regression anchor (positive + negative invariants), formula paren
+        # balance, setup-time invariants, XLSX mirror cross-check. Failing
+        # here means a betting-engine change broke a documented invariant —
+        # NOT something to merge unreviewed. Pre-CI this ran manually only.
+        run: node wc26-engine-gs/test_harness.mjs
+
+      - name: Goal grid pinned-number suites (Python + Node-driven)
+        if: hashFiles('wc26-engine-gs/test_harness.mjs') != ''
+        # test_goal_grid.py: Python-replica of _buildScoreMatrix_ pinned to
+        # 1e-9 at λ=(1.8,0.9), (0.9,1.8), (1.4,1.4) — catches sign / home-away
+        # swaps in the Python copy.
+        # test_goal_grid_node.py: drives the REAL .gs engine via Node and
+        # pins it to the SAME numbers — closes the circularity gap (replica
+        # could be wrong in the same way as the source and still pass).
+        # _node_resolver raises if node missing under CI=true; setup-node
+        # above guarantees the resolver hits PATH.
+        run: python -m pytest tests/live/test_goal_grid.py tests/live/test_goal_grid_node.py -v
+
+      - name: Goal-grid vs predictions feed agreement (CI-mode soft gate)
+        # Compares the .gs Poisson+DC grid against the production sim's
+        # WDL probabilities (which use NB marginals). Expected systematic
+        # gap is ~5-6% (NB-vs-Poisson). --ci-mode escalates to exit 1 only
+        # if max gap exceeds 10% — a real regression class (sign flip,
+        # stale max_g, τ break). The default 2.5% / 1% buckets stay
+        # informational so ops doesn't see CI red on the documented gap.
+        run: python scripts/live/verify_goal_grid_agreement.py --ci-mode

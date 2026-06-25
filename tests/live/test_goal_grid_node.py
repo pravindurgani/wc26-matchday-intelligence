@@ -101,10 +101,27 @@ def engine_report() -> dict:
             f"--- stdout ---\n{proc.stdout[:2000]}\n"
             f"--- stderr ---\n{proc.stderr[:2000]}"
         )
+    # The harness emits a human-readable pass/fail console log AND a
+    # sentinel-delimited JSON report block. Slice between the sentinels
+    # before json.loads — feeding the whole stdout to json.loads fails on
+    # the banner ("=== Version sanity ==="). Sentinels are exact strings
+    # matched in wc26-engine-gs/test_harness.mjs::buildEngineReport tail.
+    BEGIN = "===JSON_REPORT_BEGIN==="
+    END = "===JSON_REPORT_END==="
+    b = proc.stdout.find(BEGIN)
+    e = proc.stdout.find(END)
+    if b < 0 or e < 0 or e <= b:
+        pytest.fail(
+            "Harness output missing JSON report sentinels — check "
+            f"test_harness.mjs::buildEngineReport.\n"
+            f"BEGIN found at {b}, END found at {e}\n"
+            f"First 500 chars: {proc.stdout[:500]}"
+        )
+    payload = proc.stdout[b + len(BEGIN):e].strip()
     try:
-        return json.loads(proc.stdout)
-    except json.JSONDecodeError as e:
-        pytest.fail(f"Harness output not valid JSON: {e}\nFirst 500 chars: {proc.stdout[:500]}")
+        return json.loads(payload)
+    except json.JSONDecodeError as exc:
+        pytest.fail(f"JSON report payload not valid JSON: {exc}\nPayload (first 500): {payload[:500]}")
 
 
 # --------------------------------------------------------------------------
