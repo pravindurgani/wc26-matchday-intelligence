@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T17:14:09.101593+00:00",
+  "generated_at": "2026-06-25T20:03:35.031547+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1342,25 +1342,6 @@
       ]
     },
     {
-      "team": "Japan",
-      "match_id": 57,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Jordan",
       "match_id": null,
       "total_elo_adjustment": -4.65,
@@ -2418,25 +2399,6 @@
       ]
     },
     {
-      "team": "Sweden",
-      "match_id": 57,
-      "total_elo_adjustment": -4.0,
-      "raw_sum_before_aggregate_cap": -4.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -4.0,
-          "capped_elo": -4.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Switzerland",
       "match_id": null,
       "total_elo_adjustment": -7.5,
@@ -2739,9 +2701,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 147,
+    "total_active_components": 145,
     "teams_affected": 48,
-    "matches_affected": 16,
+    "matches_affected": 15,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {
