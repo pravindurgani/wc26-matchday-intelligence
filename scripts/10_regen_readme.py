@@ -39,6 +39,25 @@ BEGIN_M = "<!-- AUTO:MODEL_METRICS:BEGIN -->"
 END_M = "<!-- AUTO:MODEL_METRICS:END -->"
 
 
+def _snapshot_line(pred: dict) -> str:
+    """Freshness banner — the README is a snapshot regenerated nightly by
+    this script; live dashboard is always current. Without this line, GitHub
+    viewers (and anyone unzipping the repo) saw the table without realising
+    how stale it might be."""
+    gen = (pred.get("generated_at") or "").split(".")[0].replace("T", " ")
+    if gen:
+        return (
+            f"> _Snapshot: {gen} UTC · regenerates nightly · "
+            f"[live dashboard](https://wc26-matchday-intelligence.vercel.app/) "
+            f"for current numbers._"
+        )
+    return (
+        "> _Regenerates nightly · "
+        "[live dashboard](https://wc26-matchday-intelligence.vercel.app/) "
+        "for current numbers._"
+    )
+
+
 def render_contenders_table(pred: dict) -> str:
     teams = pred.get("team_predictions") or []
     n_sims = pred.get("n_simulations_total")
@@ -65,6 +84,8 @@ def render_contenders_table(pred: dict) -> str:
     )
     return "\n".join([
         header,
+        "",
+        _snapshot_line(pred),
         "",
         "| # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |",
         "|---|---|---|---|---|---|",
@@ -95,6 +116,8 @@ def render_metrics_table(pred: dict) -> str:
         return fmt.format(v) if v is not None else "—"
 
     return "\n".join([
+        _snapshot_line(pred),
+        "",
         "| Metric                          | Value  | Notes |",
         "|---|---|---|",
         f"| Holdout log-loss                | {cell(ll, '{:.3f}')} | lower is better |",

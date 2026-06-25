@@ -9,7 +9,7 @@
 [![Live Dashboard](https://img.shields.io/badge/live-wc26--matchday--intelligence.vercel.app-000?logo=vercel)](https://wc26-matchday-intelligence.vercel.app/)
 [![Model](https://img.shields.io/badge/model-v3.0.0-blue)](https://wc26-matchday-intelligence.vercel.app/methodology.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](#license)
-[![Tests](https://img.shields.io/badge/tests-1056%20passing-brightgreen)](#)
+[![Test + pre-flight](https://github.com/pravindurgani/wc26-matchday-intelligence/actions/workflows/test.yml/badge.svg)](https://github.com/pravindurgani/wc26-matchday-intelligence/actions/workflows/test.yml)
 [![Daily Refresh](https://img.shields.io/badge/refresh-every%2010%20min-orange)](#)
 
 ### [→ Open the live dashboard ←](https://wc26-matchday-intelligence.vercel.app/)
@@ -49,7 +49,7 @@ Per-team Elo deltas from injuries, weather, lineups, and stats — every tick au
 </tr>
 </table>
 
-**Current top contender:** Spain at **23.6%** champion probability ([see full table](#top-contenders))
+**Current top contenders →** [live dashboard](https://wc26-matchday-intelligence.vercel.app/) for today's numbers · [snapshot below](#top-contenders) regenerates nightly.
 
 ---
 
@@ -133,6 +133,8 @@ Every decision is appended to `data/live/matchday_intelligence_log.jsonl` so any
 ## 📊 Model performance (v3)
 
 <!-- AUTO:MODEL_METRICS:BEGIN -->
+> _Snapshot: 2026-06-25 08:39:24 UTC · regenerates nightly · [live dashboard](https://wc26-matchday-intelligence.vercel.app/) for current numbers._
+
 | Metric                          | Value  | Notes |
 |---|---|---|
 | Holdout log-loss                | 0.869 | lower is better |
@@ -147,6 +149,8 @@ Every decision is appended to `data/live/matchday_intelligence_log.jsonl` so any
 <a id="top-contenders"></a>
 <!-- AUTO:TOP_CONTENDERS:BEGIN -->
 ## Top contenders (latest run — 25,000 sims, 5 seeds × 5,000)
+
+> _Snapshot: 2026-06-25 08:39:24 UTC · regenerates nightly · [live dashboard](https://wc26-matchday-intelligence.vercel.app/) for current numbers._
 
 | # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |
 |---|---|---|---|---|---|
