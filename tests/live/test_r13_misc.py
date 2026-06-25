@@ -45,10 +45,19 @@ def _load(name: str, path: Path):
 
 class TestR13C1ExportKoAdvanceMaxG(unittest.TestCase):
     def test_export_ko_advance_max_g_is_15(self):
+        # Post-centralization (scripts/constants.py is the single source
+        # of truth): the drift guard now asserts (a) the canonical
+        # value is 15 and (b) export_ko_advance.py imports from the
+        # canonical module rather than shadow-declaring (which is
+        # exactly the drift surface centralization eliminates).
+        from constants import MAX_G as canonical_max_g
+        self.assertEqual(canonical_max_g, 15,
+            "R13 C1: canonical scripts/constants.MAX_G must be 15")
         src = (ROOT / "scripts" / "live"
                / "export_ko_advance.py").read_text()
-        self.assertIn("MAX_G = 15", src,
-            "R13 C1: export_ko_advance.MAX_G must be 15 (was 10 pre-R13)")
+        self.assertIn("from constants import", src,
+            "R13 C1: export_ko_advance.py must import from "
+            "scripts/constants.py (no shadow declaration allowed)")
         self.assertNotIn("MAX_G = 10", src,
             "R13 C1: stale MAX_G = 10 must be gone")
 
@@ -65,12 +74,15 @@ class TestR13C2GoalGridAgreementMaxG(unittest.TestCase):
             f"R13 C2: MAX_G must be 15; got {m.group(1)}")
 
     def test_verify_goal_grid_max_g_is_15(self):
+        # Post-centralization: same pattern as C1.
+        from constants import MAX_G as canonical_max_g
+        self.assertEqual(canonical_max_g, 15,
+            "R13 C2: canonical scripts/constants.MAX_G must be 15")
         src = (ROOT / "scripts" / "live"
                / "verify_goal_grid_agreement.py").read_text()
-        m = re.search(r"^MAX_G\s*=\s*(\d+)\b", src, re.M)
-        self.assertIsNotNone(m,
-            "R13 C2: verify_goal_grid_agreement.py must declare MAX_G")
-        self.assertEqual(m.group(1), "15")
+        self.assertIn("from constants import", src,
+            "R13 C2: verify_goal_grid_agreement.py must import "
+            "from scripts/constants.py (no shadow declaration allowed)")
 
 
 class TestR13C3AppsScriptMaxGoals(unittest.TestCase):

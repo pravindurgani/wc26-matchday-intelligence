@@ -79,21 +79,16 @@ from check_invariants import (  # noqa: E402
     InvariantError,
 )
 
-# Closed-form joint constants — must mirror scripts/03_simulate.py.
-# Documented invariants:
-#   NB_ALPHA = nb_dispersion in DEFAULTS         (03_simulate.py:95)
-#   DC_RHO   = dc_rho in DEFAULTS                (03_simulate.py:96)
-#   MAX_G    = build_score_matrix max_g default  (03_simulate.py:186)
-# If any of these drift in 03_simulate.py without updating here, the
-# `test_ko_advance_agreement` test in tests/live/test_goal_grid_feed_
-# agreement.py breaks at 1e-9, telling you exactly which knob moved.
-# R13 C1: bumped 10 → 15 to follow R12 MED (sim default max_g 10 → 15).
-# Pre-R13 the export silently truncated the NB tail at 10, publishing
-# KO advance probabilities that diverged from the production sim's
-# 16×16 by up to 2.2pp at the high-λ tail.
-NB_ALPHA = 5.0
-DC_RHO = -0.13
-MAX_G = 15
+# Closed-form joint constants — canonical declarations live in
+# scripts/constants.py (single source of truth). The .gs betting engine
+# mirrors them as GOAL_GRID_TAU / GOAL_GRID_MAX_GOALS, and
+# scripts/live/verify_goal_grid_agreement.py asserts numerical
+# agreement against the production sim at 1e-9.
+# R13 C1 history: bumped 10 → 15 to follow R12 MED (sim default
+# max_g 10 → 15). Pre-R13 the export silently truncated the NB tail at
+# 10, publishing KO advance probabilities that diverged from the
+# production sim's 16×16 by up to 2.2pp at the high-λ tail.
+from constants import DC_RHO, MAX_G, NB_ALPHA  # noqa: E402
 FLOOR = 1e-12
 
 DEFAULT_IN = PROC / "predictions_live.json"
