@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T09:24:43.919664+00:00",
+  "generated_at": "2026-06-25T14:35:58.205248+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -358,8 +358,8 @@
     {
       "team": "Brazil",
       "match_id": null,
-      "total_elo_adjustment": -18.94,
-      "raw_sum_before_aggregate_cap": -18.94,
+      "total_elo_adjustment": -19.69,
+      "raw_sum_before_aggregate_cap": -19.69,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -405,15 +405,15 @@
         {
           "type": "stats_proxy",
           "match_id": 51,
-          "raw_elo": 3.0,
-          "capped_elo_per_match": 3.0,
+          "raw_elo": 2.25,
+          "capped_elo_per_match": 2.25,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "xg_attempted": true,
           "xg_found": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 3.0,
+          "capped_elo": 2.25,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1994,8 +1994,8 @@
     {
       "team": "Scotland",
       "match_id": null,
-      "total_elo_adjustment": -4.92,
-      "raw_sum_before_aggregate_cap": -4.92,
+      "total_elo_adjustment": -4.17,
+      "raw_sum_before_aggregate_cap": -4.17,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2032,15 +2032,15 @@
         {
           "type": "stats_proxy",
           "match_id": 51,
-          "raw_elo": -3.0,
-          "capped_elo_per_match": -3.0,
+          "raw_elo": -2.25,
+          "capped_elo_per_match": -2.25,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "xg_attempted": true,
           "xg_found": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": -3.0,
+          "capped_elo": -2.25,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
