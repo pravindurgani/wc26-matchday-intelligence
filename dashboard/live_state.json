@@ -1,11 +1,32 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-25T00:54:11.988287+00:00",
+  "last_updated_utc": "2026-06-25T01:14:04.306299+00:00",
   "completed_matches_count": 52,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 53,
+      "home": "Czechia",
+      "away": "Mexico",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 10,
+      "status": "LIVE",
+      "status_long": "First Half"
+    },
+    {
+      "m": 54,
+      "home": "South Africa",
+      "away": "South Korea",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 11,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 2,
   "warnings": []
 }
