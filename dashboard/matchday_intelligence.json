@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T03:38:29.198003+00:00",
+  "generated_at": "2026-06-25T09:24:43.919664+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -106,11 +106,20 @@
     {
       "team": "Australia",
       "match_id": null,
-      "total_elo_adjustment": -8.04,
-      "raw_sum_before_aggregate_cap": -8.04,
+      "total_elo_adjustment": -20.04,
+      "raw_sum_before_aggregate_cap": -20.04,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 8,
@@ -2430,11 +2439,20 @@
     {
       "team": "Switzerland",
       "match_id": null,
-      "total_elo_adjustment": 4.5,
-      "raw_sum_before_aggregate_cap": 4.5,
+      "total_elo_adjustment": -7.5,
+      "raw_sum_before_aggregate_cap": -7.5,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 5,
@@ -2721,7 +2739,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 145,
+    "total_active_components": 147,
     "teams_affected": 48,
     "matches_affected": 16,
     "aggregate_caps_hit": 2
