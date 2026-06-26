@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T14:26:16.994210+00:00",
+  "generated_at": "2026-06-26T17:01:24.452166+00:00",
   "schema_version": 1,
   "source": "api_football",
   "season": 2026,
@@ -14288,6 +14288,15 @@
           "appearances": 2,
           "clean_sheets": 0,
           "position": "A"
+        },
+        {
+          "name": "R. Fernandez",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
         }
       ]
     },
@@ -18820,7 +18829,7 @@
       ]
     },
     "Turkey": {
-      "team_top_minutes": 160,
+      "team_top_minutes": 219,
       "players": [
         {
           "name": "Y. Akgün",
@@ -19085,10 +19094,10 @@
         },
         {
           "name": "K. Yıldız",
-          "minutes": 135,
+          "minutes": 219,
           "goals": 0,
           "assists": 0,
-          "appearances": 2,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "A"
         },
