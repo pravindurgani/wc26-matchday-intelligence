@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T09:29:44.286758+00:00",
+  "generated_at": "2026-06-26T14:27:15.484540+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1056,18 +1056,18 @@
     {
       "team": "Germany",
       "match_id": null,
-      "total_elo_adjustment": -2.07,
-      "raw_sum_before_aggregate_cap": -2.07,
+      "total_elo_adjustment": -14.07,
+      "raw_sum_before_aggregate_cap": -14.07,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -12.0,
-          "capped_elo": -12.0,
+          "raw_elo": -24.0,
+          "capped_elo": -24.0,
           "cap_used": 25.0,
-          "n_players": 1,
+          "n_players": 2,
           "source": "api_football"
         },
         {
@@ -2149,25 +2149,6 @@
       ]
     },
     {
-      "team": "Saudi Arabia",
-      "match_id": 64,
-      "total_elo_adjustment": -2.0,
-      "raw_sum_before_aggregate_cap": -2.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot_humid",
-          "raw_elo": -2.0,
-          "capped_elo": -2.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
-    },
-    {
       "team": "Scotland",
       "match_id": null,
       "total_elo_adjustment": -4.17,
@@ -2713,11 +2694,20 @@
     {
       "team": "Tunisia",
       "match_id": null,
-      "total_elo_adjustment": -9.39,
-      "raw_sum_before_aggregate_cap": -9.39,
+      "total_elo_adjustment": -33.39,
+      "raw_sum_before_aggregate_cap": -33.39,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -24.0,
+          "capped_elo": -24.0,
+          "cap_used": 25.0,
+          "n_players": 2,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 12,
@@ -2972,12 +2962,31 @@
           "cap_reason": "per_match"
         }
       ]
+    },
+    {
+      "team": "Uzbekistan",
+      "match_id": 70,
+      "total_elo_adjustment": -1.0,
+      "raw_sum_before_aggregate_cap": -1.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "weather",
+          "weather_bucket": "hot",
+          "raw_elo": -1.0,
+          "capped_elo": -1.0,
+          "cap_used": 15.0,
+          "confidence": "forecast",
+          "source": "open_meteo"
+        }
+      ]
     }
   ],
   "summary": {
-    "total_active_components": 163,
+    "total_active_components": 164,
     "teams_affected": 48,
-    "matches_affected": 16,
+    "matches_affected": 17,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {
