@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T19:50:25.525345+00:00",
+  "generated_at": "2026-06-26T22:16:27.799750+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -978,8 +978,8 @@
     {
       "team": "France",
       "match_id": null,
-      "total_elo_adjustment": 7.23,
-      "raw_sum_before_aggregate_cap": 7.23,
+      "total_elo_adjustment": 10.44,
+      "raw_sum_before_aggregate_cap": 10.44,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1010,6 +1010,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 3.33,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 61,
+          "raw_elo": 3.21,
+          "capped_elo_per_match": 3.21,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.21,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1274,8 +1289,8 @@
     {
       "team": "Iraq",
       "match_id": null,
-      "total_elo_adjustment": -6.36,
-      "raw_sum_before_aggregate_cap": -6.36,
+      "total_elo_adjustment": -12.36,
+      "raw_sum_before_aggregate_cap": -12.36,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1306,6 +1321,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.33,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 62,
+          "raw_elo": -6.0,
+          "capped_elo_per_match": -6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -6.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1760,8 +1790,8 @@
     {
       "team": "Norway",
       "match_id": null,
-      "total_elo_adjustment": 4.89,
-      "raw_sum_before_aggregate_cap": 4.89,
+      "total_elo_adjustment": 1.68,
+      "raw_sum_before_aggregate_cap": 1.68,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1792,6 +1822,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 1.86,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 61,
+          "raw_elo": -3.21,
+          "capped_elo_per_match": -3.21,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.21,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -2225,8 +2270,8 @@
     {
       "team": "Senegal",
       "match_id": null,
-      "total_elo_adjustment": -17.76,
-      "raw_sum_before_aggregate_cap": -17.76,
+      "total_elo_adjustment": -11.76,
+      "raw_sum_before_aggregate_cap": -11.76,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2266,6 +2311,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -1.86,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 62,
+          "raw_elo": 6.0,
+          "capped_elo_per_match": 6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 6.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -2985,16 +3045,16 @@
     {
       "team": "Uzbekistan",
       "match_id": 70,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
+      "total_elo_adjustment": -2.0,
+      "raw_sum_before_aggregate_cap": -2.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
+          "weather_bucket": "hot_humid",
+          "raw_elo": -2.0,
+          "capped_elo": -2.0,
           "cap_used": 15.0,
           "confidence": "forecast",
           "source": "open_meteo"
@@ -3003,7 +3063,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 165,
+    "total_active_components": 169,
     "teams_affected": 48,
     "matches_affected": 17,
     "aggregate_caps_hit": 2
