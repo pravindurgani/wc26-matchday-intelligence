@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T19:23:36.390381+00:00",
+  "generated_at": "2026-06-27T22:04:18.215160+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -3123,31 +3123,12 @@
           "cap_reason": "per_match"
         }
       ]
-    },
-    {
-      "team": "Uzbekistan",
-      "match_id": 70,
-      "total_elo_adjustment": -1.0,
-      "raw_sum_before_aggregate_cap": -1.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "weather",
-          "weather_bucket": "hot",
-          "raw_elo": -1.0,
-          "capped_elo": -1.0,
-          "cap_used": 15.0,
-          "confidence": "forecast",
-          "source": "open_meteo"
-        }
-      ]
     }
   ],
   "summary": {
-    "total_active_components": 175,
+    "total_active_components": 174,
     "teams_affected": 48,
-    "matches_affected": 16,
+    "matches_affected": 15,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {
