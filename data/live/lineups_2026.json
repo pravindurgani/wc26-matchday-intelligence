@@ -1,8 +1,303 @@
 {
-  "generated_at": "2026-06-26T22:16:14.846332+00:00",
+  "generated_at": "2026-06-27T03:34:28.475183+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 65,
+      "home": "Egypt",
+      "away": "Iran",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 269174,
+          "name": "Mostafa Shobeir",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 2654,
+          "name": "Mohamed Hany",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 16805,
+          "name": "Rami Rabia",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 196343,
+          "name": "Mohamed Abdelmonem",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 2649,
+          "name": "Ahmed Fatouh",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 16841,
+          "name": "Mohanad Lasheen",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 69196,
+          "name": "Mahmoud Saber",
+          "number": 21,
+          "pos": "M"
+        },
+        {
+          "id": 17269,
+          "name": "Emam Ashour",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 306,
+          "name": "Mohamed Salah",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 2664,
+          "name": "Mahmoud Trézéguet",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 395075,
+          "name": "Mostafa Ziko",
+          "number": 11,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 2682,
+          "name": "Alireza Beiranvand",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 2691,
+          "name": "Ramin Rezaeian",
+          "number": 23,
+          "pos": "D"
+        },
+        {
+          "id": 2687,
+          "name": "Hossein Kanaani",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 29704,
+          "name": "Shoja Khalilzadeh",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 29809,
+          "name": "Ali Nemati",
+          "number": 19,
+          "pos": "D"
+        },
+        {
+          "id": 2688,
+          "name": "Milad Mohammadi",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 2699,
+          "name": "Saman Ghoddos",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 19614,
+          "name": "Saeid Ezatolahi",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 341844,
+          "name": "Mohammad Ghorbani",
+          "number": 21,
+          "pos": "M"
+        },
+        {
+          "id": 134217,
+          "name": "Mohammad Mohebi",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 42315,
+          "name": "Mehdi Taremi",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-27T03:34:28.361269+00:00"
+    },
+    {
+      "match_id": 66,
+      "home": "New Zealand",
+      "away": "Belgium",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 18110,
+          "name": "Max Crocombe",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 94346,
+          "name": "Tim Payne",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 210165,
+          "name": "Finn Surman",
+          "number": 16,
+          "pos": "D"
+        },
+        {
+          "id": 430835,
+          "name": "Tyler Bindon",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 6931,
+          "name": "Liberato Cacace",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 94541,
+          "name": "Joe Bell",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 179862,
+          "name": "Marko Stamenić",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 6935,
+          "name": "Sarpreet Singh",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 242,
+          "name": "Ryan Thomas",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 94333,
+          "name": "Elijah Just",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 18931,
+          "name": "Chris Wood",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 730,
+          "name": "Thibaut Courtois",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 2920,
+          "name": "Timothy Castagne",
+          "number": 21,
+          "pos": "D"
+        },
+        {
+          "id": 69,
+          "name": "Brandon Mechele",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 204043,
+          "name": "Arthur Theate",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 162007,
+          "name": "Maxim De Cuyper",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 2926,
+          "name": "Youri Tielemans",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 78,
+          "name": "Hans Vanaken",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 1422,
+          "name": "Jérémy Doku",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 629,
+          "name": "Kevin De Bruyne",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 1946,
+          "name": "Leandro Trossard",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 147859,
+          "name": "Charles De Ketelaere",
+          "number": 17,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-06-27T03:34:28.475161+00:00"
+    }
+  ],
   "warnings": []
 }
