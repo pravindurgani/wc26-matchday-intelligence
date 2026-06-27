@@ -1,11 +1,32 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-27T02:44:47.156310+00:00",
+  "last_updated_utc": "2026-06-27T03:15:03.672591+00:00",
   "completed_matches_count": 64,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 65,
+      "home": "Egypt",
+      "away": "Iran",
+      "home_score": 1,
+      "away_score": 0,
+      "elapsed": 10,
+      "status": "LIVE",
+      "status_long": "First Half"
+    },
+    {
+      "m": 66,
+      "home": "New Zealand",
+      "away": "Belgium",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 10,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 2,
   "warnings": []
 }
