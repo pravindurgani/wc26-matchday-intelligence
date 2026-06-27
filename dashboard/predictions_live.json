@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T05:04:50.019483+00:00",
+  "generated_at": "2026-06-27T05:14:48.273397+00:00",
   "n_simulations_per_seed": 5000,
   "n_seeds": 5,
   "n_simulations_total": 25000,
@@ -159,16 +159,16 @@
       "fifa_pts": 1873.2,
       "squad_value_eur_m": 819,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.92764,
-      "p_reach_qf": 0.7921600000000001,
-      "p_reach_sf": 0.5808000000000001,
-      "p_reach_final": 0.41487999999999997,
-      "p_champion": 0.24928,
-      "p_third_place": 0.11072,
-      "p_champion_p05": 0.2374,
-      "p_champion_p95": 0.25812,
-      "p_finish_1st_group": 0.9987200000000002,
-      "p_finish_2nd_group": 0.0012799999999999999,
+      "p_reach_r16": 0.9269999999999999,
+      "p_reach_qf": 0.80284,
+      "p_reach_sf": 0.59092,
+      "p_reach_final": 0.41852,
+      "p_champion": 0.25111999999999995,
+      "p_third_place": 0.11272,
+      "p_champion_p05": 0.2478,
+      "p_champion_p95": 0.25688,
+      "p_finish_1st_group": 0.99908,
+      "p_finish_2nd_group": 0.00092,
       "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 0.0
     },
@@ -179,14 +179,14 @@
       "fifa_pts": 1880.5,
       "squad_value_eur_m": 1260,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.89904,
-      "p_reach_qf": 0.6132000000000001,
-      "p_reach_sf": 0.544,
-      "p_reach_final": 0.35708,
-      "p_champion": 0.22332000000000002,
-      "p_third_place": 0.13232000000000002,
-      "p_champion_p05": 0.22156,
-      "p_champion_p95": 0.22532,
+      "p_reach_r16": 0.9041600000000001,
+      "p_reach_qf": 0.6211599999999999,
+      "p_reach_sf": 0.5462800000000001,
+      "p_reach_final": 0.35516000000000003,
+      "p_champion": 0.22656,
+      "p_third_place": 0.1342,
+      "p_champion_p05": 0.22024,
+      "p_champion_p95": 0.23184000000000002,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
@@ -199,14 +199,14 @@
       "fifa_pts": 1869.4,
       "squad_value_eur_m": 1530,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.88276,
-      "p_reach_qf": 0.57372,
-      "p_reach_sf": 0.36304,
-      "p_reach_final": 0.20835999999999996,
-      "p_champion": 0.1132,
-      "p_third_place": 0.094,
-      "p_champion_p05": 0.10856,
-      "p_champion_p95": 0.1168,
+      "p_reach_r16": 0.8825600000000001,
+      "p_reach_qf": 0.57752,
+      "p_reach_sf": 0.35944000000000004,
+      "p_reach_final": 0.20768000000000003,
+      "p_champion": 0.11191999999999999,
+      "p_third_place": 0.0928,
+      "p_champion_p05": 0.10432,
+      "p_champion_p95": 0.1184,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
@@ -219,17 +219,17 @@
       "fifa_pts": 1827.05,
       "squad_value_eur_m": 1310,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.70136,
-      "p_reach_qf": 0.40184,
+      "p_reach_r16": 0.70484,
+      "p_reach_qf": 0.40476,
       "p_reach_sf": 0.25827999999999995,
-      "p_reach_final": 0.13643999999999998,
-      "p_champion": 0.07392000000000001,
-      "p_third_place": 0.06988000000000001,
-      "p_champion_p05": 0.06852,
-      "p_champion_p95": 0.08184,
-      "p_finish_1st_group": 0.68712,
-      "p_finish_2nd_group": 0.30799999999999994,
-      "p_finish_3rd_group": 0.004880000000000001,
+      "p_reach_final": 0.13367999999999997,
+      "p_champion": 0.06816,
+      "p_third_place": 0.07239999999999999,
+      "p_champion_p05": 0.06336,
+      "p_champion_p95": 0.0712,
+      "p_finish_1st_group": 0.69436,
+      "p_finish_2nd_group": 0.30176000000000003,
+      "p_finish_3rd_group": 0.00388,
       "p_finish_4th_group": 0.0
     },
     {
@@ -239,16 +239,16 @@
       "fifa_pts": 1698.35,
       "squad_value_eur_m": 306,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.75092,
-      "p_reach_qf": 0.45476,
-      "p_reach_sf": 0.22572,
-      "p_reach_final": 0.12732000000000002,
-      "p_champion": 0.06000000000000001,
+      "p_reach_r16": 0.75184,
+      "p_reach_qf": 0.45611999999999997,
+      "p_reach_sf": 0.22256,
+      "p_reach_final": 0.12676,
+      "p_champion": 0.06008,
       "p_third_place": 0.053000000000000005,
-      "p_champion_p05": 0.05316,
-      "p_champion_p95": 0.06412,
-      "p_finish_1st_group": 0.7101200000000001,
-      "p_finish_2nd_group": 0.28988,
+      "p_champion_p05": 0.05568,
+      "p_champion_p95": 0.06520000000000001,
+      "p_finish_1st_group": 0.71056,
+      "p_finish_2nd_group": 0.28944000000000003,
       "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 0.0
     },
@@ -259,37 +259,17 @@
       "fifa_pts": 1766.17,
       "squad_value_eur_m": 1020,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.6656,
-      "p_reach_qf": 0.30335999999999996,
-      "p_reach_sf": 0.1744,
-      "p_reach_final": 0.09336,
-      "p_champion": 0.041120000000000004,
-      "p_third_place": 0.042120000000000005,
-      "p_champion_p05": 0.0394,
-      "p_champion_p95": 0.042960000000000005,
-      "p_finish_1st_group": 0.28988,
-      "p_finish_2nd_group": 0.6998800000000001,
-      "p_finish_3rd_group": 0.010239999999999999,
-      "p_finish_4th_group": 0.0
-    },
-    {
-      "team": "Netherlands",
-      "group": "F",
-      "elo": 2011.7423508183908,
-      "fifa_pts": 1753.57,
-      "squad_value_eur_m": 837,
-      "p_advance_groups": 1.0,
-      "p_reach_r16": 0.5528000000000001,
-      "p_reach_qf": 0.40036000000000005,
-      "p_reach_sf": 0.21051999999999998,
-      "p_reach_final": 0.08984,
-      "p_champion": 0.03932,
-      "p_third_place": 0.06067999999999999,
-      "p_champion_p05": 0.0356,
-      "p_champion_p95": 0.04256,
-      "p_finish_1st_group": 1.0,
-      "p_finish_2nd_group": 0.0,
-      "p_finish_3rd_group": 0.0,
+      "p_reach_r16": 0.66896,
+      "p_reach_qf": 0.3012,
+      "p_reach_sf": 0.1722,
+      "p_reach_final": 0.0934,
+      "p_champion": 0.04192,
+      "p_third_place": 0.040600000000000004,
+      "p_champion_p05": 0.037160000000000006,
+      "p_champion_p95": 0.045360000000000004,
+      "p_finish_1st_group": 0.28944000000000003,
+      "p_finish_2nd_group": 0.7024000000000001,
+      "p_finish_3rd_group": 0.008159999999999999,
       "p_finish_4th_group": 0.0
     },
     {
@@ -299,34 +279,34 @@
       "fifa_pts": 1765.86,
       "squad_value_eur_m": 912,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.6181599999999999,
-      "p_reach_qf": 0.37528,
-      "p_reach_sf": 0.20612,
-      "p_reach_final": 0.09,
-      "p_champion": 0.03848,
-      "p_third_place": 0.058600000000000006,
-      "p_champion_p05": 0.03676,
-      "p_champion_p95": 0.03984,
+      "p_reach_r16": 0.62768,
+      "p_reach_qf": 0.38548,
+      "p_reach_sf": 0.21383999999999997,
+      "p_reach_final": 0.09096000000000001,
+      "p_champion": 0.039,
+      "p_third_place": 0.0616,
+      "p_champion_p05": 0.03708,
+      "p_champion_p95": 0.04272,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 0.0
     },
     {
-      "team": "Germany",
-      "group": "E",
-      "elo": 2010.7369976819127,
-      "fifa_pts": 1735.77,
-      "squad_value_eur_m": 998,
+      "team": "Netherlands",
+      "group": "F",
+      "elo": 2011.7423508183908,
+      "fifa_pts": 1753.57,
+      "squad_value_eur_m": 837,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.65856,
-      "p_reach_qf": 0.30976,
-      "p_reach_sf": 0.16399999999999998,
-      "p_reach_final": 0.06068,
-      "p_champion": 0.0252,
-      "p_third_place": 0.0498,
-      "p_champion_p05": 0.022160000000000003,
-      "p_champion_p95": 0.027719999999999998,
+      "p_reach_r16": 0.55216,
+      "p_reach_qf": 0.40208000000000005,
+      "p_reach_sf": 0.21139999999999998,
+      "p_reach_final": 0.08924,
+      "p_champion": 0.03812,
+      "p_third_place": 0.06344,
+      "p_champion_p05": 0.0354,
+      "p_champion_p95": 0.04084,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
@@ -339,16 +319,36 @@
       "fifa_pts": 1755.44,
       "squad_value_eur_m": 488,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.44720000000000004,
-      "p_reach_qf": 0.30624,
-      "p_reach_sf": 0.14872000000000002,
-      "p_reach_final": 0.05992000000000001,
-      "p_champion": 0.02508,
-      "p_third_place": 0.042559999999999994,
-      "p_champion_p05": 0.02408,
-      "p_champion_p95": 0.026359999999999998,
+      "p_reach_r16": 0.44783999999999996,
+      "p_reach_qf": 0.30676000000000003,
+      "p_reach_sf": 0.15348,
+      "p_reach_final": 0.06248,
+      "p_champion": 0.025640000000000003,
+      "p_third_place": 0.04467999999999999,
+      "p_champion_p05": 0.023,
+      "p_champion_p95": 0.02752,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
+      "p_finish_3rd_group": 0.0,
+      "p_finish_4th_group": 0.0
+    },
+    {
+      "team": "Germany",
+      "group": "E",
+      "elo": 2010.7369976819127,
+      "fifa_pts": 1735.77,
+      "squad_value_eur_m": 998,
+      "p_advance_groups": 1.0,
+      "p_reach_r16": 0.66176,
+      "p_reach_qf": 0.30732,
+      "p_reach_sf": 0.1578,
+      "p_reach_final": 0.05908,
+      "p_champion": 0.02284,
+      "p_third_place": 0.04756,
+      "p_champion_p05": 0.02104,
+      "p_champion_p95": 0.02444,
+      "p_finish_1st_group": 1.0,
+      "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 0.0
     },
@@ -359,14 +359,14 @@
       "fifa_pts": 1557.44,
       "squad_value_eur_m": 601,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.7031599999999999,
-      "p_reach_qf": 0.35208,
-      "p_reach_sf": 0.16892000000000001,
-      "p_reach_final": 0.05628,
-      "p_champion": 0.02016,
-      "p_third_place": 0.0474,
-      "p_champion_p05": 0.0186,
-      "p_champion_p95": 0.02344,
+      "p_reach_r16": 0.70112,
+      "p_reach_qf": 0.34636,
+      "p_reach_sf": 0.16724,
+      "p_reach_final": 0.056679999999999994,
+      "p_champion": 0.02112,
+      "p_third_place": 0.048519999999999994,
+      "p_champion_p05": 0.01832,
+      "p_champion_p95": 0.02456,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
       "p_finish_3rd_group": 0.0,
@@ -379,14 +379,14 @@
       "fifa_pts": 1598.51,
       "squad_value_eur_m": 376,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.51356,
-      "p_reach_qf": 0.26155999999999996,
-      "p_reach_sf": 0.13108,
-      "p_reach_final": 0.04828,
-      "p_champion": 0.019840000000000003,
-      "p_third_place": 0.039560000000000005,
-      "p_champion_p05": 0.01756,
-      "p_champion_p95": 0.021480000000000003,
+      "p_reach_r16": 0.5134,
+      "p_reach_qf": 0.2604,
+      "p_reach_sf": 0.13367999999999997,
+      "p_reach_final": 0.04972,
+      "p_champion": 0.01848,
+      "p_third_place": 0.038239999999999996,
+      "p_champion_p05": 0.01704,
+      "p_champion_p95": 0.01968,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 1.0,
@@ -399,14 +399,14 @@
       "fifa_pts": 1687.48,
       "squad_value_eur_m": 195,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.4960800000000001,
-      "p_reach_qf": 0.24652000000000002,
-      "p_reach_sf": 0.12143999999999999,
-      "p_reach_final": 0.04256,
-      "p_champion": 0.015080000000000001,
-      "p_third_place": 0.033999999999999996,
-      "p_champion_p05": 0.01448,
-      "p_champion_p95": 0.01568,
+      "p_reach_r16": 0.4868,
+      "p_reach_qf": 0.23524000000000003,
+      "p_reach_sf": 0.11155999999999999,
+      "p_reach_final": 0.038680000000000006,
+      "p_champion": 0.014000000000000002,
+      "p_third_place": 0.03144,
+      "p_champion_p05": 0.01284,
+      "p_champion_p95": 0.0162,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
@@ -419,16 +419,16 @@
       "fifa_pts": 1742.23,
       "squad_value_eur_m": 543,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.5999599999999999,
-      "p_reach_qf": 0.32884,
-      "p_reach_sf": 0.08856000000000001,
-      "p_reach_final": 0.033999999999999996,
-      "p_champion": 0.00972,
-      "p_third_place": 0.02168,
-      "p_champion_p05": 0.00816,
-      "p_champion_p95": 0.01132,
-      "p_finish_1st_group": 0.68268,
-      "p_finish_2nd_group": 0.31732,
+      "p_reach_r16": 0.606,
+      "p_reach_qf": 0.41896000000000005,
+      "p_reach_sf": 0.10288,
+      "p_reach_final": 0.03856,
+      "p_champion": 0.012440000000000001,
+      "p_third_place": 0.0242,
+      "p_champion_p05": 0.011000000000000001,
+      "p_champion_p95": 0.013519999999999999,
+      "p_finish_1st_group": 1.0,
+      "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 0.0
     },
@@ -439,14 +439,14 @@
       "fifa_pts": 1650.07,
       "squad_value_eur_m": 334,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.63924,
-      "p_reach_qf": 0.2756,
-      "p_reach_sf": 0.07264000000000001,
-      "p_reach_final": 0.030440000000000002,
-      "p_champion": 0.008879999999999999,
-      "p_third_place": 0.01704,
-      "p_champion_p05": 0.00668,
-      "p_champion_p95": 0.0106,
+      "p_reach_r16": 0.62684,
+      "p_reach_qf": 0.2714,
+      "p_reach_sf": 0.07092000000000001,
+      "p_reach_final": 0.032479999999999995,
+      "p_champion": 0.00964,
+      "p_third_place": 0.01452,
+      "p_champion_p05": 0.00792,
+      "p_champion_p95": 0.0112,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
@@ -459,14 +459,14 @@
       "fifa_pts": 1661.58,
       "squad_value_eur_m": 280,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.38184,
-      "p_reach_qf": 0.17996,
-      "p_reach_sf": 0.07888,
-      "p_reach_final": 0.02468,
-      "p_champion": 0.00792,
-      "p_third_place": 0.02152,
-      "p_champion_p05": 0.0066,
-      "p_champion_p95": 0.0102,
+      "p_reach_r16": 0.37232000000000004,
+      "p_reach_qf": 0.1744,
+      "p_reach_sf": 0.07744,
+      "p_reach_final": 0.023039999999999998,
+      "p_champion": 0.00828,
+      "p_third_place": 0.022279999999999998,
+      "p_champion_p05": 0.00728,
+      "p_champion_p95": 0.009999999999999998,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
       "p_finish_3rd_group": 0.0,
@@ -478,19 +478,19 @@
       "elo": 1966.2616327022765,
       "fifa_pts": 1714.87,
       "squad_value_eur_m": 386,
-      "p_advance_groups": 0.9219200000000001,
-      "p_reach_r16": 0.41500000000000004,
-      "p_reach_qf": 0.16072000000000003,
-      "p_reach_sf": 0.06904,
-      "p_reach_final": 0.024640000000000002,
-      "p_champion": 0.007719999999999999,
-      "p_third_place": 0.01708,
-      "p_champion_p05": 0.00688,
-      "p_champion_p95": 0.00856,
-      "p_finish_1st_group": 0.23204000000000002,
-      "p_finish_2nd_group": 0.39692,
-      "p_finish_3rd_group": 0.35411999999999993,
-      "p_finish_4th_group": 0.01692
+      "p_advance_groups": 0.9046,
+      "p_reach_r16": 0.40824,
+      "p_reach_qf": 0.15575999999999998,
+      "p_reach_sf": 0.06552,
+      "p_reach_final": 0.02332,
+      "p_champion": 0.0076,
+      "p_third_place": 0.01668,
+      "p_champion_p05": 0.00556,
+      "p_champion_p95": 0.00896,
+      "p_finish_1st_group": 0.22532000000000002,
+      "p_finish_2nd_group": 0.4018,
+      "p_finish_3rd_group": 0.35500000000000004,
+      "p_finish_4th_group": 0.01788
     },
     {
       "team": "Canada",
@@ -499,14 +499,14 @@
       "fifa_pts": 1559.48,
       "squad_value_eur_m": 203,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.74664,
-      "p_reach_qf": 0.25472,
-      "p_reach_sf": 0.0706,
-      "p_reach_final": 0.018000000000000002,
-      "p_champion": 0.0041600000000000005,
-      "p_third_place": 0.017079999999999998,
-      "p_champion_p05": 0.0035199999999999997,
-      "p_champion_p95": 0.00456,
+      "p_reach_r16": 0.7544000000000001,
+      "p_reach_qf": 0.2524,
+      "p_reach_sf": 0.07464,
+      "p_reach_final": 0.018439999999999998,
+      "p_champion": 0.0047599999999999995,
+      "p_third_place": 0.01812,
+      "p_champion_p05": 0.00364,
+      "p_champion_p95": 0.00536,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
       "p_finish_3rd_group": 0.0,
@@ -519,14 +519,14 @@
       "fifa_pts": 1579.34,
       "squad_value_eur_m": 74,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.50436,
-      "p_reach_qf": 0.09464,
-      "p_reach_sf": 0.03508,
-      "p_reach_final": 0.012879999999999999,
-      "p_champion": 0.003320000000000001,
+      "p_reach_r16": 0.591,
+      "p_reach_qf": 0.11440000000000002,
+      "p_reach_sf": 0.04152,
+      "p_reach_final": 0.014479999999999998,
+      "p_champion": 0.00368,
       "p_third_place": 0.008360000000000001,
-      "p_champion_p05": 0.00268,
-      "p_champion_p95": 0.0042,
+      "p_champion_p05": 0.0027199999999999998,
+      "p_champion_p95": 0.00448,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
       "p_finish_3rd_group": 0.0,
@@ -538,15 +538,15 @@
       "elo": 1907.6528961032573,
       "fifa_pts": 1686.41,
       "squad_value_eur_m": 473,
-      "p_advance_groups": 0.96508,
-      "p_reach_r16": 0.34108,
-      "p_reach_qf": 0.15716000000000002,
-      "p_reach_sf": 0.04592,
-      "p_reach_final": 0.01184,
-      "p_champion": 0.00272,
-      "p_third_place": 0.01196,
-      "p_champion_p05": 0.00184,
-      "p_champion_p95": 0.0034,
+      "p_advance_groups": 1.0,
+      "p_reach_r16": 0.34028,
+      "p_reach_qf": 0.1642,
+      "p_reach_sf": 0.04644,
+      "p_reach_final": 0.0108,
+      "p_champion": 0.00256,
+      "p_third_place": 0.01124,
+      "p_champion_p05": 0.00164,
+      "p_champion_p95": 0.003,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 1.0,
@@ -559,37 +559,17 @@
       "fifa_pts": 1671.24,
       "squad_value_eur_m": 379,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.70464,
-      "p_reach_qf": 0.30408,
-      "p_reach_sf": 0.04808,
-      "p_reach_final": 0.011000000000000001,
-      "p_champion": 0.00212,
-      "p_third_place": 0.01044,
+      "p_reach_r16": 0.7030000000000001,
+      "p_reach_qf": 0.28004,
+      "p_reach_sf": 0.0436,
+      "p_reach_final": 0.010199999999999997,
+      "p_champion": 0.0021999999999999997,
+      "p_third_place": 0.008799999999999999,
       "p_champion_p05": 0.00184,
-      "p_champion_p95": 0.0025199999999999997,
+      "p_champion_p95": 0.0025599999999999998,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
-      "p_finish_4th_group": 0.0
-    },
-    {
-      "team": "South Korea",
-      "group": "A",
-      "elo": 1878.0846598375106,
-      "fifa_pts": 1591.63,
-      "squad_value_eur_m": 142,
-      "p_advance_groups": 0.5498,
-      "p_reach_r16": 0.26532,
-      "p_reach_qf": 0.15616000000000002,
-      "p_reach_sf": 0.028559999999999995,
-      "p_reach_final": 0.0086,
-      "p_champion": 0.00172,
-      "p_third_place": 0.0062,
-      "p_champion_p05": 0.00124,
-      "p_champion_p95": 0.00216,
-      "p_finish_1st_group": 0.0,
-      "p_finish_2nd_group": 0.0,
-      "p_finish_3rd_group": 1.0,
       "p_finish_4th_group": 0.0
     },
     {
@@ -599,14 +579,14 @@
       "fifa_pts": 1505.35,
       "squad_value_eur_m": 157,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.34143999999999997,
-      "p_reach_qf": 0.08604,
-      "p_reach_sf": 0.030079999999999996,
-      "p_reach_final": 0.00648,
-      "p_champion": 0.0016400000000000002,
-      "p_third_place": 0.007680000000000001,
+      "p_reach_r16": 0.33824,
+      "p_reach_qf": 0.08468,
+      "p_reach_sf": 0.03048,
+      "p_reach_final": 0.00844,
+      "p_champion": 0.0020399999999999997,
+      "p_third_place": 0.006840000000000001,
       "p_champion_p05": 0.00124,
-      "p_champion_p95": 0.00212,
+      "p_champion_p95": 0.00356,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 1.0,
@@ -618,18 +598,38 @@
       "elo": 1892.5951409551615,
       "fifa_pts": 1619.58,
       "squad_value_eur_m": 33,
-      "p_advance_groups": 0.6793600000000001,
-      "p_reach_r16": 0.29975999999999997,
-      "p_reach_qf": 0.07552,
-      "p_reach_sf": 0.02108,
-      "p_reach_final": 0.007000000000000001,
-      "p_champion": 0.00124,
-      "p_third_place": 0.004079999999999999,
-      "p_champion_p05": 0.00048,
-      "p_champion_p95": 0.00216,
-      "p_finish_1st_group": 0.02176,
-      "p_finish_2nd_group": 0.37344,
-      "p_finish_3rd_group": 0.6048,
+      "p_advance_groups": 0.91576,
+      "p_reach_r16": 0.34676000000000007,
+      "p_reach_qf": 0.11467999999999998,
+      "p_reach_sf": 0.02332,
+      "p_reach_final": 0.00776,
+      "p_champion": 0.00196,
+      "p_third_place": 0.00448,
+      "p_champion_p05": 0.00116,
+      "p_champion_p95": 0.0024,
+      "p_finish_1st_group": 0.0,
+      "p_finish_2nd_group": 0.0,
+      "p_finish_3rd_group": 1.0,
+      "p_finish_4th_group": 0.0
+    },
+    {
+      "team": "South Korea",
+      "group": "A",
+      "elo": 1878.0846598375106,
+      "fifa_pts": 1591.63,
+      "squad_value_eur_m": 142,
+      "p_advance_groups": 0.41464,
+      "p_reach_r16": 0.16463999999999998,
+      "p_reach_qf": 0.09564,
+      "p_reach_sf": 0.01832,
+      "p_reach_final": 0.00608,
+      "p_champion": 0.0018000000000000002,
+      "p_third_place": 0.0034000000000000002,
+      "p_champion_p05": 0.0007999999999999999,
+      "p_champion_p95": 0.0025199999999999997,
+      "p_finish_1st_group": 0.0,
+      "p_finish_2nd_group": 0.0,
+      "p_finish_3rd_group": 1.0,
       "p_finish_4th_group": 0.0
     },
     {
@@ -639,17 +639,17 @@
       "fifa_pts": 1562.37,
       "squad_value_eur_m": 135,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.37996,
-      "p_reach_qf": 0.12392,
-      "p_reach_sf": 0.023880000000000002,
-      "p_reach_final": 0.006959999999999999,
-      "p_champion": 0.0012000000000000001,
-      "p_third_place": 0.004200000000000001,
-      "p_champion_p05": 0.00084,
-      "p_champion_p95": 0.0016,
-      "p_finish_1st_group": 0.29556000000000004,
-      "p_finish_2nd_group": 0.30924,
-      "p_finish_3rd_group": 0.39520000000000005,
+      "p_reach_r16": 0.409,
+      "p_reach_qf": 0.060919999999999995,
+      "p_reach_sf": 0.019679999999999996,
+      "p_reach_final": 0.00608,
+      "p_champion": 0.00116,
+      "p_third_place": 0.00364,
+      "p_champion_p05": 0.00088,
+      "p_champion_p95": 0.0013599999999999999,
+      "p_finish_1st_group": 0.0,
+      "p_finish_2nd_group": 1.0,
+      "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 0.0
     },
     {
@@ -659,14 +659,14 @@
       "fifa_pts": 1540.87,
       "squad_value_eur_m": 531,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.29684,
-      "p_reach_qf": 0.09268000000000001,
-      "p_reach_sf": 0.028720000000000002,
-      "p_reach_final": 0.00532,
-      "p_champion": 0.00116,
-      "p_third_place": 0.006719999999999999,
-      "p_champion_p05": 0.001,
-      "p_champion_p95": 0.0014,
+      "p_reach_r16": 0.29888000000000003,
+      "p_reach_qf": 0.09376,
+      "p_reach_sf": 0.02952,
+      "p_reach_final": 0.005600000000000001,
+      "p_champion": 0.001,
+      "p_third_place": 0.006,
+      "p_champion_p05": 0.0006399999999999999,
+      "p_champion_p95": 0.00152,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
       "p_finish_3rd_group": 0.0,
@@ -678,19 +678,19 @@
       "elo": 1889.1808525346705,
       "fifa_pts": 1597.41,
       "squad_value_eur_m": 272,
-      "p_advance_groups": 0.86148,
-      "p_reach_r16": 0.14088,
-      "p_reach_qf": 0.05416000000000001,
-      "p_reach_sf": 0.0174,
-      "p_reach_final": 0.00492,
-      "p_champion": 0.00116,
-      "p_third_place": 0.0041600000000000005,
+      "p_advance_groups": 0.8244,
+      "p_reach_r16": 0.12096,
+      "p_reach_qf": 0.051559999999999995,
+      "p_reach_sf": 0.016960000000000003,
+      "p_reach_final": 0.0044399999999999995,
+      "p_champion": 0.00092,
+      "p_third_place": 0.0037600000000000003,
       "p_champion_p05": 0.0006399999999999999,
-      "p_champion_p95": 0.0016,
-      "p_finish_1st_group": 0.00124,
-      "p_finish_2nd_group": 0.6993600000000001,
-      "p_finish_3rd_group": 0.29623999999999995,
-      "p_finish_4th_group": 0.0031599999999999996
+      "p_champion_p95": 0.00132,
+      "p_finish_1st_group": 0.0008399999999999999,
+      "p_finish_2nd_group": 0.70188,
+      "p_finish_3rd_group": 0.29396,
+      "p_finish_4th_group": 0.003319999999999999
     },
     {
       "team": "Algeria",
@@ -698,19 +698,19 @@
       "elo": 1861.9598093636873,
       "fifa_pts": 1571.04,
       "squad_value_eur_m": 258,
-      "p_advance_groups": 0.65264,
-      "p_reach_r16": 0.1518,
-      "p_reach_qf": 0.06107999999999999,
-      "p_reach_sf": 0.013439999999999999,
-      "p_reach_final": 0.0037199999999999998,
-      "p_champion": 0.0008400000000000001,
-      "p_third_place": 0.0024400000000000003,
-      "p_champion_p05": 0.00032,
-      "p_champion_p95": 0.00132,
-      "p_finish_1st_group": 4e-05,
-      "p_finish_2nd_group": 0.29935999999999996,
-      "p_finish_3rd_group": 0.68788,
-      "p_finish_4th_group": 0.01272
+      "p_advance_groups": 0.62196,
+      "p_reach_r16": 0.13656000000000001,
+      "p_reach_qf": 0.06048,
+      "p_reach_sf": 0.01248,
+      "p_reach_final": 0.00332,
+      "p_champion": 0.0006399999999999999,
+      "p_third_place": 0.00216,
+      "p_champion_p05": 0.0006,
+      "p_champion_p95": 0.00076,
+      "p_finish_1st_group": 8e-05,
+      "p_finish_2nd_group": 0.2972,
+      "p_finish_3rd_group": 0.6899200000000001,
+      "p_finish_4th_group": 0.0128
     },
     {
       "team": "Sweden",
@@ -719,54 +719,14 @@
       "fifa_pts": 1509.79,
       "squad_value_eur_m": 429,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.11723999999999998,
+      "p_reach_r16": 0.11743999999999999,
       "p_reach_qf": 0.03048,
-      "p_reach_sf": 0.008,
-      "p_reach_final": 0.00108,
-      "p_champion": 0.00016,
-      "p_third_place": 0.0014399999999999999,
-      "p_champion_p05": 0.0,
-      "p_champion_p95": 0.0004,
-      "p_finish_1st_group": 0.0,
-      "p_finish_2nd_group": 0.0,
-      "p_finish_3rd_group": 1.0,
-      "p_finish_4th_group": 0.0
-    },
-    {
-      "team": "South Africa",
-      "group": "A",
-      "elo": 1663.3656788926153,
-      "fifa_pts": 1385.0,
-      "squad_value_eur_m": 46,
-      "p_advance_groups": 1.0,
-      "p_reach_r16": 0.25336,
-      "p_reach_qf": 0.038680000000000006,
-      "p_reach_sf": 0.005040000000000001,
-      "p_reach_final": 0.00056,
-      "p_champion": 0.00012000000000000002,
-      "p_third_place": 0.0007199999999999999,
-      "p_champion_p05": 0.0,
+      "p_reach_sf": 0.00808,
+      "p_reach_final": 0.0018000000000000002,
+      "p_champion": 0.00024000000000000003,
+      "p_third_place": 0.0016,
+      "p_champion_p05": 0.0002,
       "p_champion_p95": 0.00035999999999999997,
-      "p_finish_1st_group": 0.0,
-      "p_finish_2nd_group": 1.0,
-      "p_finish_3rd_group": 0.0,
-      "p_finish_4th_group": 0.0
-    },
-    {
-      "team": "Bosnia and Herzegovina",
-      "group": "B",
-      "elo": 1663.565376458217,
-      "fifa_pts": 1380.0,
-      "squad_value_eur_m": 149,
-      "p_advance_groups": 1.0,
-      "p_reach_r16": 0.29536000000000007,
-      "p_reach_qf": 0.06867999999999999,
-      "p_reach_sf": 0.0064,
-      "p_reach_final": 0.00104,
-      "p_champion": 8e-05,
-      "p_third_place": 0.00068,
-      "p_champion_p05": 0.0,
-      "p_champion_p95": 0.0002,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 1.0,
@@ -778,19 +738,19 @@
       "elo": 1765.5631472584062,
       "fifa_pts": 1479.68,
       "squad_value_eur_m": 149,
-      "p_advance_groups": 0.30016000000000004,
-      "p_reach_r16": 0.06508,
-      "p_reach_qf": 0.0152,
+      "p_advance_groups": 0.29964,
+      "p_reach_r16": 0.0676,
+      "p_reach_qf": 0.0154,
       "p_reach_sf": 0.0034000000000000002,
-      "p_reach_final": 0.00044,
+      "p_reach_final": 0.00076,
       "p_champion": 8e-05,
-      "p_third_place": 0.0008399999999999999,
+      "p_third_place": 0.00035999999999999997,
       "p_champion_p05": 0.0,
-      "p_champion_p95": 0.0002,
+      "p_champion_p95": 0.00031999999999999997,
       "p_finish_1st_group": 0.0,
-      "p_finish_2nd_group": 0.010239999999999999,
-      "p_finish_3rd_group": 0.6092799999999999,
-      "p_finish_4th_group": 0.38048000000000004
+      "p_finish_2nd_group": 0.008159999999999999,
+      "p_finish_3rd_group": 0.62008,
+      "p_finish_4th_group": 0.37176
     },
     {
       "team": "Cape Verde",
@@ -799,14 +759,34 @@
       "fifa_pts": 1340.0,
       "squad_value_eur_m": 56,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.07168000000000001,
-      "p_reach_qf": 0.01768,
-      "p_reach_sf": 0.0028799999999999997,
-      "p_reach_final": 0.0005600000000000001,
+      "p_reach_r16": 0.07276,
+      "p_reach_qf": 0.02172,
+      "p_reach_sf": 0.0031600000000000005,
+      "p_reach_final": 0.00047999999999999996,
       "p_champion": 4e-05,
-      "p_third_place": 0.00032,
+      "p_third_place": 0.0005200000000000001,
       "p_champion_p05": 0.0,
       "p_champion_p95": 0.00015999999999999999,
+      "p_finish_1st_group": 0.0,
+      "p_finish_2nd_group": 1.0,
+      "p_finish_3rd_group": 0.0,
+      "p_finish_4th_group": 0.0
+    },
+    {
+      "team": "South Africa",
+      "group": "A",
+      "elo": 1663.3656788926153,
+      "fifa_pts": 1385.0,
+      "squad_value_eur_m": 46,
+      "p_advance_groups": 1.0,
+      "p_reach_r16": 0.24559999999999998,
+      "p_reach_qf": 0.03876,
+      "p_reach_sf": 0.00468,
+      "p_reach_final": 0.0006000000000000001,
+      "p_champion": 0.0,
+      "p_third_place": 0.0007999999999999998,
+      "p_champion_p05": 0.0,
+      "p_champion_p95": 0.0,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
       "p_finish_3rd_group": 0.0,
@@ -831,6 +811,26 @@
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 1.0
+    },
+    {
+      "team": "Bosnia and Herzegovina",
+      "group": "B",
+      "elo": 1663.565376458217,
+      "fifa_pts": 1380.0,
+      "squad_value_eur_m": 149,
+      "p_advance_groups": 1.0,
+      "p_reach_r16": 0.297,
+      "p_reach_qf": 0.06704,
+      "p_reach_sf": 0.00528,
+      "p_reach_final": 0.00092,
+      "p_champion": 0.0,
+      "p_third_place": 0.0008399999999999999,
+      "p_champion_p05": 0.0,
+      "p_champion_p95": 0.0,
+      "p_finish_1st_group": 0.0,
+      "p_finish_2nd_group": 0.0,
+      "p_finish_3rd_group": 1.0,
+      "p_finish_4th_group": 0.0
     },
     {
       "team": "Qatar",
@@ -878,13 +878,13 @@
       "elo": 1848.0944339789598,
       "fifa_pts": 1503.34,
       "squad_value_eur_m": 177,
-      "p_advance_groups": 0.046,
-      "p_reach_r16": 0.01524,
-      "p_reach_qf": 0.00464,
-      "p_reach_sf": 0.0014399999999999999,
-      "p_reach_final": 0.0003200000000000001,
+      "p_advance_groups": 0.00132,
+      "p_reach_r16": 0.00052,
+      "p_reach_qf": 0.0002,
+      "p_reach_sf": 0.0,
+      "p_reach_final": 0.0,
       "p_champion": 0.0,
-      "p_third_place": 0.00024000000000000003,
+      "p_third_place": 0.0,
       "p_champion_p05": 0.0,
       "p_champion_p95": 0.0,
       "p_finish_1st_group": 0.0,
@@ -1038,19 +1038,19 @@
       "elo": 1769.5662824706146,
       "fifa_pts": 1395.0,
       "squad_value_eur_m": 20,
-      "p_advance_groups": 0.00544,
-      "p_reach_r16": 0.0014,
-      "p_reach_qf": 0.00048000000000000007,
-      "p_reach_sf": 8e-05,
-      "p_reach_final": 4e-05,
+      "p_advance_groups": 0.0032800000000000004,
+      "p_reach_r16": 0.00056,
+      "p_reach_qf": 8e-05,
+      "p_reach_sf": 0.0,
+      "p_reach_final": 0.0,
       "p_champion": 0.0,
       "p_third_place": 0.0,
       "p_champion_p05": 0.0,
       "p_champion_p95": 0.0,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 0.0,
-      "p_finish_3rd_group": 0.01588,
-      "p_finish_4th_group": 0.9841200000000001
+      "p_finish_3rd_group": 0.016120000000000002,
+      "p_finish_4th_group": 0.9838800000000001
     },
     {
       "team": "Uzbekistan",
@@ -1058,19 +1058,19 @@
       "elo": 1821.1873713877346,
       "fifa_pts": 1458.73,
       "squad_value_eur_m": 70,
-      "p_advance_groups": 0.00756,
-      "p_reach_r16": 0.00208,
-      "p_reach_qf": 0.00056,
-      "p_reach_sf": 0.00012000000000000002,
+      "p_advance_groups": 0.00388,
+      "p_reach_r16": 0.00124,
+      "p_reach_qf": 0.0004,
+      "p_reach_sf": 8e-05,
       "p_reach_final": 0.0,
       "p_champion": 0.0,
-      "p_third_place": 0.00012000000000000002,
+      "p_third_place": 0.0,
       "p_champion_p05": 0.0,
       "p_champion_p95": 0.0,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 0.0,
-      "p_finish_3rd_group": 0.38048000000000004,
-      "p_finish_4th_group": 0.61952
+      "p_finish_3rd_group": 0.37176,
+      "p_finish_4th_group": 0.62824
     },
     {
       "team": "Ghana",
@@ -1079,17 +1079,17 @@
       "fifa_pts": 1335.0,
       "squad_value_eur_m": 231,
       "p_advance_groups": 1.0,
-      "p_reach_r16": 0.1508,
-      "p_reach_qf": 0.02636,
-      "p_reach_sf": 0.0035199999999999997,
-      "p_reach_final": 0.00048000000000000007,
+      "p_reach_r16": 0.14832,
+      "p_reach_qf": 0.024799999999999996,
+      "p_reach_sf": 0.00284,
+      "p_reach_final": 0.00036,
       "p_champion": 0.0,
-      "p_third_place": 0.00036,
+      "p_third_place": 0.0002,
       "p_champion_p05": 0.0,
       "p_champion_p95": 0.0,
-      "p_finish_1st_group": 0.08084,
-      "p_finish_2nd_group": 0.29508,
-      "p_finish_3rd_group": 0.62408,
+      "p_finish_1st_group": 0.08031999999999999,
+      "p_finish_2nd_group": 0.29644000000000004,
+      "p_finish_3rd_group": 0.62324,
       "p_finish_4th_group": 0.0
     },
     {
@@ -1098,10 +1098,10 @@
       "elo": 1821.1853415407156,
       "fifa_pts": 1539.15,
       "squad_value_eur_m": 35,
-      "p_advance_groups": 0.01056,
-      "p_reach_r16": 0.00216,
-      "p_reach_qf": 0.00112,
-      "p_reach_sf": 0.00012000000000000002,
+      "p_advance_groups": 0.010520000000000002,
+      "p_reach_r16": 0.00172,
+      "p_reach_qf": 0.0006000000000000001,
+      "p_reach_sf": 8e-05,
       "p_reach_final": 0.0,
       "p_champion": 0.0,
       "p_third_place": 0.0,
@@ -1109,8 +1109,8 @@
       "p_champion_p95": 0.0,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 0.0,
-      "p_finish_3rd_group": 0.01692,
-      "p_finish_4th_group": 0.98308
+      "p_finish_3rd_group": 0.01788,
+      "p_finish_4th_group": 0.9821199999999999
     }
   ],
   "match_predictions": [
@@ -1594,15 +1594,15 @@
       "altitude_m": 5,
       "climate": "mild",
       "stage": "group",
-      "lam_home": 1.486431360244751,
+      "lam_home": 1.4785277843475342,
       "lam_away": 0.8960546851158142,
-      "p_home_win": 0.4686909789400659,
-      "p_draw": 0.29801991690716756,
-      "p_away_win": 0.23328910415276677,
+      "p_home_win": 0.46690395965846954,
+      "p_draw": 0.29886323371826407,
+      "p_away_win": 0.23423280662326654,
       "elo_home": 1947.8221218411256,
       "elo_away": 1804.7078878615778,
       "effective_elo_home": 1924.8561586842113,
-      "effective_elo_away": 1816.6631006204295,
+      "effective_elo_away": 1821.5359969382841,
       "home_travel_km": 0,
       "away_travel_km": 0,
       "home_rest_days": 30,
@@ -1673,7 +1673,7 @@
       "p_away_win": 0.1890311672228844,
       "elo_home": 1892.5951409551615,
       "elo_away": 1720.060920393785,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1701.8552228537021,
       "home_travel_km": 0,
       "away_travel_km": 0,
@@ -2458,15 +2458,15 @@
       "altitude_m": 30,
       "climate": "warm_dry_indoor",
       "stage": "group",
-      "lam_home": 1.4894596338272095,
+      "lam_home": 1.5281593799591064,
       "lam_away": 1.105121374130249,
-      "p_home_win": 0.4297488252334347,
-      "p_draw": 0.28828863306778324,
-      "p_away_win": 0.28196254169878204,
+      "p_home_win": 0.4382475209838981,
+      "p_draw": 0.2848832543174952,
+      "p_away_win": 0.276869224698607,
       "elo_home": 1947.8221218411256,
       "elo_away": 1892.5951409551615,
       "effective_elo_home": 1918.6437586842114,
-      "effective_elo_away": 1872.933726778096,
+      "effective_elo_away": 1868.0608304602413,
       "home_travel_km": 1553.1,
       "away_travel_km": 0,
       "home_rest_days": 6,
@@ -2538,7 +2538,7 @@
       "elo_home": 1720.060920393785,
       "elo_away": 1804.7078878615778,
       "effective_elo_home": 1694.8612228537022,
-      "effective_elo_away": 1815.8807006204295,
+      "effective_elo_away": 1820.753596938284,
       "home_travel_km": 1748.5,
       "away_travel_km": 195.6,
       "home_rest_days": 6,
@@ -3430,22 +3430,29 @@
       "altitude_m": 5,
       "climate": "mild",
       "stage": "group",
-      "lam_home": 1.0293545722961426,
-      "lam_away": 1.2969850301742554,
-      "p_home_win": 0.29050871075079493,
-      "p_draw": 0.3103216543452897,
-      "p_away_win": 0.3991696349039153,
+      "lam_home": 1.0347501039505005,
+      "lam_away": 1.2047085762023926,
+      "p_home_win": 0.3054239771958673,
+      "p_draw": 0.31881529405451264,
+      "p_away_win": 0.3757607287496199,
       "elo_home": 1804.7078878615778,
       "elo_away": 1892.5951409551615,
-      "effective_elo_home": 1815.8807006204295,
-      "effective_elo_away": 1866.721326778096,
+      "effective_elo_home": 1820.753596938284,
+      "effective_elo_away": 1861.8484304602414,
       "home_travel_km": 195.6,
       "away_travel_km": 1553.1,
       "home_rest_days": 5,
       "away_rest_days": 5,
       "home_travel_penalty": -0.7824,
       "away_travel_penalty": -6.2124,
-      "locked_score": null
+      "locked_score": {
+        "home_score": 1,
+        "away_score": 1,
+        "home_pens": null,
+        "away_pens": null,
+        "winner": null,
+        "status": "FT"
+      }
     },
     {
       "m": 66,
@@ -4617,9 +4624,9 @@
   },
   "annex_c_misses": 0,
   "concentration": {
-    "top1_champion_p": 0.24928,
-    "top2_combined": 0.4726,
-    "top5_combined": 0.71972
+    "top1_champion_p": 0.25111999999999995,
+    "top2_combined": 0.47768,
+    "top5_combined": 0.7178399999999999
   },
   "model_caveats": [
     "Probabilities are Monte Carlo frequencies, not point forecasts.",
@@ -4670,10 +4677,10 @@
     "Spain": 4.816389121825564,
     "Cape Verde": 25.438707186886358,
     "Belgium": -4.4568747340561075,
-    "Egypt": 23.70294655805813,
+    "Egypt": 28.5758428759127,
     "Saudi Arabia": 4.2953672434832635,
     "Uruguay": -30.0,
-    "Iran": -7.246071824002023,
+    "Iran": -12.118968141856596,
     "New Zealand": -12.0,
     "France": 30.0,
     "Senegal": -12.0,
@@ -4757,9 +4764,10 @@
     61,
     63,
     64,
+    65,
     66
   ],
-  "input_hash": "c8389ff662c7f3db",
+  "input_hash": "655e7b937f1082c4",
   "grand_cap_applied": {
     "Czechia": {
       "raw_elo": -45.87,
@@ -5272,10 +5280,10 @@
     {
       "home": "Algeria",
       "away": "Egypt",
-      "lambda_home": 1.220847725868225,
+      "lambda_home": 1.220412790775299,
       "lambda_away": 1.0824599862098694,
       "effective_elo_home": 1851.8199577078979,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Algeria",
@@ -5320,10 +5328,10 @@
     {
       "home": "Algeria",
       "away": "Iran",
-      "lambda_home": 1.0223954916000366,
+      "lambda_home": 1.0607306957244873,
       "lambda_away": 1.3815575242042542,
       "effective_elo_home": 1851.8199577078979,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Algeria",
@@ -5648,10 +5656,10 @@
     {
       "home": "Argentina",
       "away": "Egypt",
-      "lambda_home": 2.339956045150757,
+      "lambda_home": 2.2680572271347046,
       "lambda_away": 0.43654555082321167,
       "effective_elo_home": 2209.7407966931164,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Argentina",
@@ -5696,10 +5704,10 @@
     {
       "home": "Argentina",
       "away": "Iran",
-      "lambda_home": 2.3081541061401367,
-      "lambda_away": 0.5721640139818192,
+      "lambda_home": 2.311806082725525,
+      "lambda_away": 0.5535885989665985,
       "effective_elo_home": 2209.7407966931164,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Argentina",
@@ -6024,10 +6032,10 @@
     {
       "home": "Australia",
       "away": "Egypt",
-      "lambda_home": 1.2985751628875732,
-      "lambda_away": 0.9408552050590515,
+      "lambda_home": 1.2971518635749817,
+      "lambda_away": 0.9467378258705139,
       "effective_elo_home": 1879.2317098381998,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Australia",
@@ -6072,10 +6080,10 @@
     {
       "home": "Australia",
       "away": "Iran",
-      "lambda_home": 1.211485743522644,
-      "lambda_away": 1.1742202043533325,
+      "lambda_home": 1.2317928671836853,
+      "lambda_away": 1.155491292476654,
       "effective_elo_home": 1879.2317098381998,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Australia",
@@ -6401,9 +6409,9 @@
       "home": "Austria",
       "away": "Egypt",
       "lambda_home": 1.3142622709274292,
-      "lambda_away": 1.0114151537418365,
+      "lambda_away": 1.0348933339118958,
       "effective_elo_home": 1887.0362170405633,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Austria",
@@ -6448,10 +6456,10 @@
     {
       "home": "Austria",
       "away": "Iran",
-      "lambda_home": 1.2118864059448242,
-      "lambda_away": 1.1823574304580688,
+      "lambda_home": 1.2552635669708252,
+      "lambda_away": 1.1279933452606201,
       "effective_elo_home": 1887.0362170405633,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Austria",
@@ -6776,10 +6784,10 @@
     {
       "home": "Belgium",
       "away": "Egypt",
-      "lambda_home": 1.458918273448944,
+      "lambda_home": 1.4549664855003357,
       "lambda_away": 0.8878699839115143,
       "effective_elo_home": 1924.8561586842113,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Belgium",
@@ -6827,7 +6835,7 @@
       "lambda_home": 1.4838373064994812,
       "lambda_away": 1.0927013158798218,
       "effective_elo_home": 1924.8561586842113,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Belgium",
@@ -7152,10 +7160,10 @@
     {
       "home": "Bosnia and Herzegovina",
       "away": "Egypt",
-      "lambda_home": 0.8503355383872986,
+      "lambda_home": 0.8540026843547821,
       "lambda_away": 1.4532592296600342,
       "effective_elo_home": 1658.8495107557594,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Bosnia and Herzegovina",
@@ -7200,10 +7208,10 @@
     {
       "home": "Bosnia and Herzegovina",
       "away": "Iran",
-      "lambda_home": 0.7577269077301025,
+      "lambda_home": 0.8256362974643707,
       "lambda_away": 1.7510693669319153,
       "effective_elo_home": 1658.8495107557594,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Bosnia and Herzegovina",
@@ -7528,10 +7536,10 @@
     {
       "home": "Brazil",
       "away": "Egypt",
-      "lambda_home": 1.8208932280540466,
-      "lambda_away": 0.7810236811637878,
+      "lambda_home": 1.826741635799408,
+      "lambda_away": 0.7815486490726471,
       "effective_elo_home": 2057.984903289677,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Brazil",
@@ -7577,9 +7585,9 @@
       "home": "Brazil",
       "away": "Iran",
       "lambda_home": 1.8077794313430786,
-      "lambda_away": 0.9186928272247314,
+      "lambda_away": 0.9066909551620483,
       "effective_elo_home": 2057.984903289677,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Brazil",
@@ -7904,10 +7912,10 @@
     {
       "home": "Canada",
       "away": "Egypt",
-      "lambda_home": 1.2735337018966675,
-      "lambda_away": 0.9775700569152832,
+      "lambda_home": 1.2721733450889587,
+      "lambda_away": 0.9835938513278961,
       "effective_elo_home": 1880.8523964905542,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Canada",
@@ -7952,10 +7960,10 @@
     {
       "home": "Canada",
       "away": "Iran",
-      "lambda_home": 1.1965956091880798,
-      "lambda_away": 1.1832304000854492,
+      "lambda_home": 1.216194212436676,
+      "lambda_away": 1.1052929759025574,
       "effective_elo_home": 1880.8523964905542,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Canada",
@@ -8280,10 +8288,10 @@
     {
       "home": "Cape Verde",
       "away": "Egypt",
-      "lambda_home": 0.8383954763412476,
+      "lambda_home": 0.8419645130634308,
       "lambda_away": 1.4578211903572083,
       "effective_elo_home": 1660.9744563619045,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Cape Verde",
@@ -8328,10 +8336,10 @@
     {
       "home": "Cape Verde",
       "away": "Iran",
-      "lambda_home": 0.781574934720993,
+      "lambda_home": 0.8139361143112183,
       "lambda_away": 1.755513608455658,
       "effective_elo_home": 1660.9744563619045,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Cape Verde",
@@ -8656,10 +8664,10 @@
     {
       "home": "Colombia",
       "away": "Egypt",
-      "lambda_home": 1.8837897181510925,
+      "lambda_home": 1.8388715982437134,
       "lambda_away": 0.7520046532154083,
       "effective_elo_home": 2079.3161394863396,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Colombia",
@@ -8705,9 +8713,9 @@
       "home": "Colombia",
       "away": "Iran",
       "lambda_home": 1.8618255257606506,
-      "lambda_away": 0.8489814400672913,
+      "lambda_away": 0.8326305150985718,
       "effective_elo_home": 2079.3161394863396,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Colombia",
@@ -9032,10 +9040,10 @@
     {
       "home": "Croatia",
       "away": "Egypt",
-      "lambda_home": 1.49826318025589,
+      "lambda_home": 1.4929240942001343,
       "lambda_away": 0.9120557606220245,
       "effective_elo_home": 1960.8426163774816,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Croatia",
@@ -9080,10 +9088,10 @@
     {
       "home": "Croatia",
       "away": "Iran",
-      "lambda_home": 1.5224661827087402,
+      "lambda_home": 1.5234143733978271,
       "lambda_away": 1.0501846671104431,
       "effective_elo_home": 1960.8426163774816,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Croatia",
@@ -9408,10 +9416,10 @@
     {
       "home": "Curacao",
       "away": "Egypt",
-      "lambda_home": 0.6455649733543396,
-      "lambda_away": 1.875080406665802,
+      "lambda_home": 0.6427224576473236,
+      "lambda_away": 1.9076321721076965,
       "effective_elo_home": 1567.8638698146224,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Curacao",
@@ -9459,7 +9467,7 @@
       "lambda_home": 0.634749710559845,
       "lambda_away": 2.1277015209198,
       "effective_elo_home": 1567.8638698146224,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Curacao",
@@ -9784,10 +9792,10 @@
     {
       "home": "Czechia",
       "away": "Egypt",
-      "lambda_home": 1.0715675354003906,
-      "lambda_away": 1.3056946396827698,
+      "lambda_home": 1.0720373392105103,
+      "lambda_away": 1.3070239424705505,
       "effective_elo_home": 1759.8611272962464,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Czechia",
@@ -9832,10 +9840,10 @@
     {
       "home": "Czechia",
       "away": "Iran",
-      "lambda_home": 0.9893883168697357,
-      "lambda_away": 1.6071759462356567,
+      "lambda_home": 1.0138641595840454,
+      "lambda_away": 1.6081914901733398,
       "effective_elo_home": 1759.8611272962464,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Czechia",
@@ -10160,10 +10168,10 @@
     {
       "home": "DR Congo",
       "away": "Egypt",
-      "lambda_home": 0.9414176940917969,
+      "lambda_home": 0.9355665147304535,
       "lambda_away": 1.2766989469528198,
       "effective_elo_home": 1761.2002711758062,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "DR Congo",
@@ -10208,10 +10216,10 @@
     {
       "home": "DR Congo",
       "away": "Iran",
-      "lambda_home": 0.8835336267948151,
-      "lambda_away": 1.4262185096740723,
+      "lambda_home": 0.8954806625843048,
+      "lambda_away": 1.4062832593917847,
       "effective_elo_home": 1761.2002711758062,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "DR Congo",
@@ -10537,9 +10545,9 @@
       "home": "Ecuador",
       "away": "Egypt",
       "lambda_home": 1.536372184753418,
-      "lambda_away": 0.8775857985019684,
+      "lambda_away": 0.8884964883327484,
       "effective_elo_home": 2006.3667443807337,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Ecuador",
@@ -10584,10 +10592,10 @@
     {
       "home": "Ecuador",
       "away": "Iran",
-      "lambda_home": 1.4760007858276367,
+      "lambda_home": 1.4933688640594482,
       "lambda_away": 0.9823578298091888,
       "effective_elo_home": 2006.3667443807337,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Ecuador",
@@ -10801,136 +10809,136 @@
       "home": "Egypt",
       "away": "Algeria",
       "lambda_home": 1.0824599862098694,
-      "lambda_away": 1.220847725868225,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.220412790775299,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1851.8199577078979
     },
     {
       "home": "Egypt",
       "away": "Argentina",
       "lambda_home": 0.43654555082321167,
-      "lambda_away": 2.339956045150757,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 2.2680572271347046,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2209.7407966931164
     },
     {
       "home": "Egypt",
       "away": "Australia",
-      "lambda_home": 0.9408552050590515,
-      "lambda_away": 1.2985751628875732,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 0.9467378258705139,
+      "lambda_away": 1.2971518635749817,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1879.2317098381998
     },
     {
       "home": "Egypt",
       "away": "Austria",
-      "lambda_home": 1.0114151537418365,
+      "lambda_home": 1.0348933339118958,
       "lambda_away": 1.3142622709274292,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1887.0362170405633
     },
     {
       "home": "Egypt",
       "away": "Belgium",
       "lambda_home": 0.8878699839115143,
-      "lambda_away": 1.458918273448944,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.4549664855003357,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1924.8561586842113
     },
     {
       "home": "Egypt",
       "away": "Bosnia and Herzegovina",
       "lambda_home": 1.4532592296600342,
-      "lambda_away": 0.8503355383872986,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 0.8540026843547821,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1658.8495107557594
     },
     {
       "home": "Egypt",
       "away": "Brazil",
-      "lambda_home": 0.7810236811637878,
-      "lambda_away": 1.8208932280540466,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 0.7815486490726471,
+      "lambda_away": 1.826741635799408,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2057.984903289677
     },
     {
       "home": "Egypt",
       "away": "Canada",
-      "lambda_home": 0.9775700569152832,
-      "lambda_away": 1.2735337018966675,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 0.9835938513278961,
+      "lambda_away": 1.2721733450889587,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1880.8523964905542
     },
     {
       "home": "Egypt",
       "away": "Cape Verde",
       "lambda_home": 1.4578211903572083,
-      "lambda_away": 0.8383954763412476,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 0.8419645130634308,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1660.9744563619045
     },
     {
       "home": "Egypt",
       "away": "Colombia",
       "lambda_home": 0.7520046532154083,
-      "lambda_away": 1.8837897181510925,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.8388715982437134,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2079.3161394863396
     },
     {
       "home": "Egypt",
       "away": "Croatia",
       "lambda_home": 0.9120557606220245,
-      "lambda_away": 1.49826318025589,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.4929240942001343,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1960.8426163774816
     },
     {
       "home": "Egypt",
       "away": "Curacao",
-      "lambda_home": 1.875080406665802,
-      "lambda_away": 0.6455649733543396,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.9076321721076965,
+      "lambda_away": 0.6427224576473236,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1567.8638698146224
     },
     {
       "home": "Egypt",
       "away": "Czechia",
-      "lambda_home": 1.3056946396827698,
-      "lambda_away": 1.0715675354003906,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.3070239424705505,
+      "lambda_away": 1.0720373392105103,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1759.8611272962464
     },
     {
       "home": "Egypt",
       "away": "DR Congo",
       "lambda_home": 1.2766989469528198,
-      "lambda_away": 0.9414176940917969,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 0.9355665147304535,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1761.2002711758062
     },
     {
       "home": "Egypt",
       "away": "Ecuador",
-      "lambda_home": 0.8775857985019684,
+      "lambda_home": 0.8884964883327484,
       "lambda_away": 1.536372184753418,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2006.3667443807337
     },
     {
       "home": "Egypt",
       "away": "England",
-      "lambda_home": 0.7261467576026917,
+      "lambda_home": 0.7280665934085846,
       "lambda_away": 1.8885979056358337,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2103.0478950924803
     },
     {
       "home": "Egypt",
       "away": "France",
-      "lambda_home": 0.622105598449707,
-      "lambda_away": 2.2058541774749756,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 0.6316125392913818,
+      "lambda_away": 2.194331645965576,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2164.8996051211225
     },
     {
@@ -10938,71 +10946,71 @@
       "away": "Germany",
       "lambda_home": 0.7976262271404266,
       "lambda_away": 1.6630266904830933,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2014.207745519366
     },
     {
       "home": "Egypt",
       "away": "Ghana",
-      "lambda_home": 1.4619434475898743,
-      "lambda_away": 0.8508129119873047,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.50509774684906,
+      "lambda_away": 0.8311429917812347,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1653.9563384966139
     },
     {
       "home": "Egypt",
       "away": "Haiti",
       "lambda_home": 1.5423124432563782,
-      "lambda_away": 0.8280788362026215,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 0.8318585753440857,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1647.7886430352842
     },
     {
       "home": "Egypt",
       "away": "Iran",
-      "lambda_home": 1.0249653458595276,
-      "lambda_away": 1.3346318006515503,
-      "effective_elo_home": 1816.6631006204295,
-      "effective_elo_away": 1872.933726778096
+      "lambda_home": 1.0276631116867065,
+      "lambda_away": 1.2942219376564026,
+      "effective_elo_home": 1821.5359969382841,
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Egypt",
       "away": "Iraq",
       "lambda_home": 1.3135523200035095,
       "lambda_away": 0.8320020139217377,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1696.3773037908975
     },
     {
       "home": "Egypt",
       "away": "Ivory Coast",
-      "lambda_home": 1.08378666639328,
-      "lambda_away": 1.2606228590011597,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.1412103176116943,
+      "lambda_away": 1.2153117656707764,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1833.5470710500176
     },
     {
       "home": "Egypt",
       "away": "Japan",
-      "lambda_home": 0.9076961874961853,
-      "lambda_away": 1.4051411151885986,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 0.9089196026325226,
+      "lambda_away": 1.340323567390442,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1969.8599169164568
     },
     {
       "home": "Egypt",
       "away": "Jordan",
-      "lambda_home": 1.3773934245109558,
-      "lambda_away": 1.052147388458252,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.3927786946296692,
+      "lambda_away": 1.035832166671753,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1731.5613891251144
     },
     {
       "home": "Egypt",
       "away": "Mexico",
       "lambda_home": 0.8844168186187744,
-      "lambda_away": 1.481233835220337,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.4804251194000244,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1998.1276023270427
     },
     {
@@ -11010,23 +11018,23 @@
       "away": "Morocco",
       "lambda_home": 0.7978062629699707,
       "lambda_away": 1.5744814276695251,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2027.0806522002576
     },
     {
       "home": "Egypt",
       "away": "Netherlands",
-      "lambda_home": 0.7573473453521729,
+      "lambda_home": 0.7748943269252777,
       "lambda_away": 1.6889570951461792,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2043.565482388943
     },
     {
       "home": "Egypt",
       "away": "New Zealand",
-      "lambda_home": 1.37602037191391,
+      "lambda_home": 1.3787015080451965,
       "lambda_away": 0.9513332843780518,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1701.8552228537021
     },
     {
@@ -11034,23 +11042,23 @@
       "away": "Norway",
       "lambda_home": 0.7760681509971619,
       "lambda_away": 1.5985541939735413,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1991.9931703634961
     },
     {
       "home": "Egypt",
       "away": "Panama",
       "lambda_home": 1.1962324976921082,
-      "lambda_away": 1.0696278810501099,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.0719005465507507,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1791.579644000633
     },
     {
       "home": "Egypt",
       "away": "Paraguay",
-      "lambda_home": 0.9916207194328308,
-      "lambda_away": 1.2987109422683716,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 0.9942391514778137,
+      "lambda_away": 1.2567391991615295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1867.740248482773
     },
     {
@@ -11058,55 +11066,55 @@
       "away": "Portugal",
       "lambda_home": 0.798109620809555,
       "lambda_away": 1.700236976146698,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2048.786342647344
     },
     {
       "home": "Egypt",
       "away": "Qatar",
-      "lambda_home": 1.7439082264900208,
-      "lambda_away": 0.5566946268081665,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.7536556720733643,
+      "lambda_away": 0.5594007074832916,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1525.4826403981444
     },
     {
       "home": "Egypt",
       "away": "Saudi Arabia",
-      "lambda_home": 1.3308830261230469,
-      "lambda_away": 0.9135353863239288,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.338854968547821,
+      "lambda_away": 0.9084384441375732,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1680.1938684100867
     },
     {
       "home": "Egypt",
       "away": "Scotland",
-      "lambda_home": 1.0385517477989197,
-      "lambda_away": 1.2374541759490967,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.1025445461273193,
+      "lambda_away": 1.213243544101715,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1831.4499161228484
     },
     {
       "home": "Egypt",
       "away": "Senegal",
-      "lambda_home": 0.9948247075080872,
+      "lambda_home": 1.015829175710678,
       "lambda_away": 1.4136704802513123,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1887.4217063594333
     },
     {
       "home": "Egypt",
       "away": "South Africa",
-      "lambda_home": 1.4112327098846436,
-      "lambda_away": 0.7933336794376373,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.4140111207962036,
+      "lambda_away": 0.7719613313674927,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1656.0409249686204
     },
     {
       "home": "Egypt",
       "away": "South Korea",
-      "lambda_home": 1.0196968913078308,
-      "lambda_away": 1.2873663902282715,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.0223113894462585,
+      "lambda_away": 1.266189992427826,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1865.252814694604
     },
     {
@@ -11114,63 +11122,63 @@
       "away": "Spain",
       "lambda_home": 0.4367241710424423,
       "lambda_away": 2.58324658870697,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 2233.8949174997624
     },
     {
       "home": "Egypt",
       "away": "Sweden",
       "lambda_home": 1.3551165461540222,
-      "lambda_away": 1.099029302597046,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.0965569615364075,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1796.8978989477873
     },
     {
       "home": "Egypt",
       "away": "Switzerland",
       "lambda_home": 0.8786681890487671,
-      "lambda_away": 1.5285575985908508,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.5230944752693176,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1962.1503227185988
     },
     {
       "home": "Egypt",
       "away": "Tunisia",
-      "lambda_home": 1.3294956684112549,
-      "lambda_away": 0.9118194580078125,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_home": 1.3438708782196045,
+      "lambda_away": 0.9107614159584045,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1687.790031145238
     },
     {
       "home": "Egypt",
       "away": "Turkey",
       "lambda_home": 0.9049535393714905,
-      "lambda_away": 1.3892988562583923,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.3841629028320312,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1960.784720808239
     },
     {
       "home": "Egypt",
       "away": "United States",
       "lambda_home": 1.0880112051963806,
-      "lambda_away": 1.298915147781372,
-      "effective_elo_home": 1816.6631006204295,
+      "lambda_away": 1.297604739665985,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1853.2564587123582
     },
     {
       "home": "Egypt",
       "away": "Uruguay",
-      "lambda_home": 0.910033255815506,
+      "lambda_home": 0.9091643989086151,
       "lambda_away": 1.257495403289795,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1917.2856931995602
     },
     {
       "home": "Egypt",
       "away": "Uzbekistan",
-      "lambda_home": 1.1303852796554565,
+      "lambda_home": 1.1329970955848694,
       "lambda_away": 1.0491333901882172,
-      "effective_elo_home": 1816.6631006204295,
+      "effective_elo_home": 1821.5359969382841,
       "effective_elo_away": 1786.7247145490185
     },
     {
@@ -11297,9 +11305,9 @@
       "home": "England",
       "away": "Egypt",
       "lambda_home": 1.8885979056358337,
-      "lambda_away": 0.7261467576026917,
+      "lambda_away": 0.7280665934085846,
       "effective_elo_home": 2103.0478950924803,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "England",
@@ -11336,10 +11344,10 @@
     {
       "home": "England",
       "away": "Iran",
-      "lambda_home": 1.8241501450538635,
+      "lambda_home": 1.9530375003814697,
       "lambda_away": 0.8182993829250336,
       "effective_elo_home": 2103.0478950924803,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "England",
@@ -11672,10 +11680,10 @@
     {
       "home": "France",
       "away": "Egypt",
-      "lambda_home": 2.2058541774749756,
-      "lambda_away": 0.622105598449707,
+      "lambda_home": 2.194331645965576,
+      "lambda_away": 0.6316125392913818,
       "effective_elo_home": 2164.8996051211225,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "France",
@@ -11712,10 +11720,10 @@
     {
       "home": "France",
       "away": "Iran",
-      "lambda_home": 2.2801235914230347,
+      "lambda_home": 2.255563974380493,
       "lambda_away": 0.7924495935440063,
       "effective_elo_home": 2164.8996051211225,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "France",
@@ -12051,7 +12059,7 @@
       "lambda_home": 1.6630266904830933,
       "lambda_away": 0.7976262271404266,
       "effective_elo_home": 2014.207745519366,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Germany",
@@ -12091,7 +12099,7 @@
       "lambda_home": 1.5985373258590698,
       "lambda_away": 0.9219101071357727,
       "effective_elo_home": 2014.207745519366,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Germany",
@@ -12424,10 +12432,10 @@
     {
       "home": "Ghana",
       "away": "Egypt",
-      "lambda_home": 0.8508129119873047,
-      "lambda_away": 1.4619434475898743,
+      "lambda_home": 0.8311429917812347,
+      "lambda_away": 1.50509774684906,
       "effective_elo_home": 1653.9563384966139,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Ghana",
@@ -12464,10 +12472,10 @@
     {
       "home": "Ghana",
       "away": "Iran",
-      "lambda_home": 0.7433763444423676,
-      "lambda_away": 1.7748630046844482,
+      "lambda_home": 0.7595310211181641,
+      "lambda_away": 1.7744218707084656,
       "effective_elo_home": 1653.9563384966139,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Ghana",
@@ -12800,10 +12808,10 @@
     {
       "home": "Haiti",
       "away": "Egypt",
-      "lambda_home": 0.8280788362026215,
+      "lambda_home": 0.8318585753440857,
       "lambda_away": 1.5423124432563782,
       "effective_elo_home": 1647.7886430352842,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Haiti",
@@ -12840,10 +12848,10 @@
     {
       "home": "Haiti",
       "away": "Iran",
-      "lambda_home": 0.7202810943126678,
-      "lambda_away": 1.812048614025116,
+      "lambda_home": 0.749832272529602,
+      "lambda_away": 1.806450366973877,
       "effective_elo_home": 1647.7886430352842,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Haiti",
@@ -13057,32 +13065,32 @@
       "home": "Iran",
       "away": "Algeria",
       "lambda_home": 1.3815575242042542,
-      "lambda_away": 1.0223954916000366,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.0607306957244873,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1851.8199577078979
     },
     {
       "home": "Iran",
       "away": "Argentina",
-      "lambda_home": 0.5721640139818192,
-      "lambda_away": 2.3081541061401367,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 0.5535885989665985,
+      "lambda_away": 2.311806082725525,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2209.7407966931164
     },
     {
       "home": "Iran",
       "away": "Australia",
-      "lambda_home": 1.1742202043533325,
-      "lambda_away": 1.211485743522644,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.155491292476654,
+      "lambda_away": 1.2317928671836853,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1879.2317098381998
     },
     {
       "home": "Iran",
       "away": "Austria",
-      "lambda_home": 1.1823574304580688,
-      "lambda_away": 1.2118864059448242,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.1279933452606201,
+      "lambda_away": 1.2552635669708252,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1887.0362170405633
     },
     {
@@ -13090,55 +13098,55 @@
       "away": "Belgium",
       "lambda_home": 1.0927013158798218,
       "lambda_away": 1.4838373064994812,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1924.8561586842113
     },
     {
       "home": "Iran",
       "away": "Bosnia and Herzegovina",
       "lambda_home": 1.7510693669319153,
-      "lambda_away": 0.7577269077301025,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 0.8256362974643707,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1658.8495107557594
     },
     {
       "home": "Iran",
       "away": "Brazil",
-      "lambda_home": 0.9186928272247314,
+      "lambda_home": 0.9066909551620483,
       "lambda_away": 1.8077794313430786,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2057.984903289677
     },
     {
       "home": "Iran",
       "away": "Canada",
-      "lambda_home": 1.1832304000854492,
-      "lambda_away": 1.1965956091880798,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.1052929759025574,
+      "lambda_away": 1.216194212436676,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1880.8523964905542
     },
     {
       "home": "Iran",
       "away": "Cape Verde",
       "lambda_home": 1.755513608455658,
-      "lambda_away": 0.781574934720993,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 0.8139361143112183,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1660.9744563619045
     },
     {
       "home": "Iran",
       "away": "Colombia",
-      "lambda_home": 0.8489814400672913,
+      "lambda_home": 0.8326305150985718,
       "lambda_away": 1.8618255257606506,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2079.3161394863396
     },
     {
       "home": "Iran",
       "away": "Croatia",
       "lambda_home": 1.0501846671104431,
-      "lambda_away": 1.5224661827087402,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.5234143733978271,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1960.8426163774816
     },
     {
@@ -13146,55 +13154,55 @@
       "away": "Curacao",
       "lambda_home": 2.1277015209198,
       "lambda_away": 0.634749710559845,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1567.8638698146224
     },
     {
       "home": "Iran",
       "away": "Czechia",
-      "lambda_home": 1.6071759462356567,
-      "lambda_away": 0.9893883168697357,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.6081914901733398,
+      "lambda_away": 1.0138641595840454,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1759.8611272962464
     },
     {
       "home": "Iran",
       "away": "DR Congo",
-      "lambda_home": 1.4262185096740723,
-      "lambda_away": 0.8835336267948151,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.4062832593917847,
+      "lambda_away": 0.8954806625843048,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1761.2002711758062
     },
     {
       "home": "Iran",
       "away": "Ecuador",
       "lambda_home": 0.9823578298091888,
-      "lambda_away": 1.4760007858276367,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.4933688640594482,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2006.3667443807337
     },
     {
       "home": "Iran",
       "away": "Egypt",
-      "lambda_home": 1.3346318006515503,
-      "lambda_away": 1.0249653458595276,
-      "effective_elo_home": 1872.933726778096,
-      "effective_elo_away": 1816.6631006204295
+      "lambda_home": 1.2942219376564026,
+      "lambda_away": 1.0276631116867065,
+      "effective_elo_home": 1868.0608304602413,
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Iran",
       "away": "England",
       "lambda_home": 0.8182993829250336,
-      "lambda_away": 1.8241501450538635,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.9530375003814697,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2103.0478950924803
     },
     {
       "home": "Iran",
       "away": "France",
       "lambda_home": 0.7924495935440063,
-      "lambda_away": 2.2801235914230347,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 2.255563974380493,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2164.8996051211225
     },
     {
@@ -13202,23 +13210,23 @@
       "away": "Germany",
       "lambda_home": 0.9219101071357727,
       "lambda_away": 1.5985373258590698,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2014.207745519366
     },
     {
       "home": "Iran",
       "away": "Ghana",
-      "lambda_home": 1.7748630046844482,
-      "lambda_away": 0.7433763444423676,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.7744218707084656,
+      "lambda_away": 0.7595310211181641,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1653.9563384966139
     },
     {
       "home": "Iran",
       "away": "Haiti",
-      "lambda_home": 1.812048614025116,
-      "lambda_away": 0.7202810943126678,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.806450366973877,
+      "lambda_away": 0.749832272529602,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1647.7886430352842
     },
     {
@@ -13226,7 +13234,7 @@
       "away": "Iraq",
       "lambda_home": 1.5463095307350159,
       "lambda_away": 0.7882215678691864,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1696.3773037908975
     },
     {
@@ -13234,39 +13242,39 @@
       "away": "Ivory Coast",
       "lambda_home": 1.3373940587043762,
       "lambda_away": 1.092378556728363,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1833.5470710500176
     },
     {
       "home": "Iran",
       "away": "Japan",
       "lambda_home": 1.009777694940567,
-      "lambda_away": 1.295120656490326,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.3208153247833252,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1969.8599169164568
     },
     {
       "home": "Iran",
       "away": "Jordan",
-      "lambda_home": 1.706490695476532,
-      "lambda_away": 1.0170572996139526,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.7046476602554321,
+      "lambda_away": 1.023359775543213,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1731.5613891251144
     },
     {
       "home": "Iran",
       "away": "Mexico",
       "lambda_home": 0.9838630557060242,
-      "lambda_away": 1.4103665947914124,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.4130266308784485,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1998.1276023270427
     },
     {
       "home": "Iran",
       "away": "Morocco",
-      "lambda_home": 0.9287859797477722,
-      "lambda_away": 1.5208389163017273,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 0.9005461037158966,
+      "lambda_away": 1.526377022266388,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2027.0806522002576
     },
     {
@@ -13274,15 +13282,15 @@
       "away": "Netherlands",
       "lambda_home": 0.9186112582683563,
       "lambda_away": 1.7874504923820496,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2043.565482388943
     },
     {
       "home": "Iran",
       "away": "New Zealand",
-      "lambda_home": 1.7015216946601868,
+      "lambda_home": 1.6503835320472717,
       "lambda_away": 0.8833097815513611,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1701.8552228537021
     },
     {
@@ -13290,47 +13298,47 @@
       "away": "Norway",
       "lambda_home": 0.915706217288971,
       "lambda_away": 1.5395628213882446,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1991.9931703634961
     },
     {
       "home": "Iran",
       "away": "Panama",
-      "lambda_home": 1.4924110770225525,
-      "lambda_away": 1.0831327140331268,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.4830597043037415,
+      "lambda_away": 1.085224211215973,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1791.579644000633
     },
     {
       "home": "Iran",
       "away": "Paraguay",
       "lambda_home": 1.2160090208053589,
-      "lambda_away": 1.2064172625541687,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.2165769934654236,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1867.740248482773
     },
     {
       "home": "Iran",
       "away": "Portugal",
       "lambda_home": 0.9455238878726959,
-      "lambda_away": 1.780703604221344,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.7801634669303894,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2048.786342647344
     },
     {
       "home": "Iran",
       "away": "Qatar",
       "lambda_home": 2.0803771018981934,
-      "lambda_away": 0.5248123854398727,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 0.529412180185318,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1525.4826403981444
     },
     {
       "home": "Iran",
       "away": "Saudi Arabia",
-      "lambda_home": 1.691561222076416,
-      "lambda_away": 0.8137285113334656,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.6472139954566956,
+      "lambda_away": 0.8327634334564209,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1680.1938684100867
     },
     {
@@ -13338,31 +13346,31 @@
       "away": "Scotland",
       "lambda_home": 1.362395167350769,
       "lambda_away": 1.109380304813385,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1831.4499161228484
     },
     {
       "home": "Iran",
       "away": "Senegal",
-      "lambda_home": 1.181143343448639,
-      "lambda_away": 1.33599454164505,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.1378235816955566,
+      "lambda_away": 1.3834134340286255,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1887.4217063594333
     },
     {
       "home": "Iran",
       "away": "South Africa",
       "lambda_home": 1.6443670392036438,
-      "lambda_away": 0.7101224660873413,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 0.7490601539611816,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1656.0409249686204
     },
     {
       "home": "Iran",
       "away": "South Korea",
-      "lambda_home": 1.3005837202072144,
-      "lambda_away": 1.23512601852417,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.2999494671821594,
+      "lambda_away": 1.2477567791938782,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1865.252814694604
     },
     {
@@ -13370,7 +13378,7 @@
       "away": "Spain",
       "lambda_home": 0.4940100312232971,
       "lambda_away": 2.4261003732681274,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 2233.8949174997624
     },
     {
@@ -13378,7 +13386,7 @@
       "away": "Sweden",
       "lambda_home": 1.678249478340149,
       "lambda_away": 1.1422016024589539,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1796.8978989477873
     },
     {
@@ -13386,47 +13394,47 @@
       "away": "Switzerland",
       "lambda_home": 1.0392358303070068,
       "lambda_away": 1.5403497815132141,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1962.1503227185988
     },
     {
       "home": "Iran",
       "away": "Tunisia",
-      "lambda_home": 1.6612650752067566,
+      "lambda_home": 1.6569808721542358,
       "lambda_away": 0.8580054938793182,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1687.790031145238
     },
     {
       "home": "Iran",
       "away": "Turkey",
       "lambda_home": 1.040934979915619,
-      "lambda_away": 1.3937009572982788,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_away": 1.3945150971412659,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1960.784720808239
     },
     {
       "home": "Iran",
       "away": "United States",
-      "lambda_home": 1.509410321712494,
-      "lambda_away": 1.1827210187911987,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.448875069618225,
+      "lambda_away": 1.2236917614936829,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1853.2564587123582
     },
     {
       "home": "Iran",
       "away": "Uruguay",
-      "lambda_home": 1.0387299358844757,
-      "lambda_away": 1.3093498945236206,
-      "effective_elo_home": 1872.933726778096,
+      "lambda_home": 1.0361999571323395,
+      "lambda_away": 1.3594480752944946,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1917.2856931995602
     },
     {
       "home": "Iran",
       "away": "Uzbekistan",
-      "lambda_home": 1.3952020406723022,
+      "lambda_home": 1.39007967710495,
       "lambda_away": 1.0762682557106018,
-      "effective_elo_home": 1872.933726778096,
+      "effective_elo_home": 1868.0608304602413,
       "effective_elo_away": 1786.7247145490185
     },
     {
@@ -13555,7 +13563,7 @@
       "lambda_home": 0.8320020139217377,
       "lambda_away": 1.3135523200035095,
       "effective_elo_home": 1696.3773037908975,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Iraq",
@@ -13603,7 +13611,7 @@
       "lambda_home": 0.7882215678691864,
       "lambda_away": 1.5463095307350159,
       "effective_elo_home": 1696.3773037908975,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Iraq",
@@ -13928,10 +13936,10 @@
     {
       "home": "Ivory Coast",
       "away": "Egypt",
-      "lambda_home": 1.2606228590011597,
-      "lambda_away": 1.08378666639328,
+      "lambda_home": 1.2153117656707764,
+      "lambda_away": 1.1412103176116943,
       "effective_elo_home": 1833.5470710500176,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Ivory Coast",
@@ -13979,7 +13987,7 @@
       "lambda_home": 1.092378556728363,
       "lambda_away": 1.3373940587043762,
       "effective_elo_home": 1833.5470710500176,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Ivory Coast",
@@ -14304,10 +14312,10 @@
     {
       "home": "Japan",
       "away": "Egypt",
-      "lambda_home": 1.4051411151885986,
-      "lambda_away": 0.9076961874961853,
+      "lambda_home": 1.340323567390442,
+      "lambda_away": 0.9089196026325226,
       "effective_elo_home": 1969.8599169164568,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Japan",
@@ -14352,10 +14360,10 @@
     {
       "home": "Japan",
       "away": "Iran",
-      "lambda_home": 1.295120656490326,
+      "lambda_home": 1.3208153247833252,
       "lambda_away": 1.009777694940567,
       "effective_elo_home": 1969.8599169164568,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Japan",
@@ -14680,10 +14688,10 @@
     {
       "home": "Jordan",
       "away": "Egypt",
-      "lambda_home": 1.052147388458252,
-      "lambda_away": 1.3773934245109558,
+      "lambda_home": 1.035832166671753,
+      "lambda_away": 1.3927786946296692,
       "effective_elo_home": 1731.5613891251144,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Jordan",
@@ -14728,10 +14736,10 @@
     {
       "home": "Jordan",
       "away": "Iran",
-      "lambda_home": 1.0170572996139526,
-      "lambda_away": 1.706490695476532,
+      "lambda_home": 1.023359775543213,
+      "lambda_away": 1.7046476602554321,
       "effective_elo_home": 1731.5613891251144,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Jordan",
@@ -15056,10 +15064,10 @@
     {
       "home": "Mexico",
       "away": "Egypt",
-      "lambda_home": 1.481233835220337,
+      "lambda_home": 1.4804251194000244,
       "lambda_away": 0.8844168186187744,
       "effective_elo_home": 1998.1276023270427,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Mexico",
@@ -15104,10 +15112,10 @@
     {
       "home": "Mexico",
       "away": "Iran",
-      "lambda_home": 1.4103665947914124,
+      "lambda_home": 1.4130266308784485,
       "lambda_away": 0.9838630557060242,
       "effective_elo_home": 1998.1276023270427,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Mexico",
@@ -15435,7 +15443,7 @@
       "lambda_home": 1.5744814276695251,
       "lambda_away": 0.7978062629699707,
       "effective_elo_home": 2027.0806522002576,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Morocco",
@@ -15480,10 +15488,10 @@
     {
       "home": "Morocco",
       "away": "Iran",
-      "lambda_home": 1.5208389163017273,
-      "lambda_away": 0.9287859797477722,
+      "lambda_home": 1.526377022266388,
+      "lambda_away": 0.9005461037158966,
       "effective_elo_home": 2027.0806522002576,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Morocco",
@@ -15809,9 +15817,9 @@
       "home": "Netherlands",
       "away": "Egypt",
       "lambda_home": 1.6889570951461792,
-      "lambda_away": 0.7573473453521729,
+      "lambda_away": 0.7748943269252777,
       "effective_elo_home": 2043.565482388943,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Netherlands",
@@ -15859,7 +15867,7 @@
       "lambda_home": 1.7874504923820496,
       "lambda_away": 0.9186112582683563,
       "effective_elo_home": 2043.565482388943,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Netherlands",
@@ -16185,9 +16193,9 @@
       "home": "New Zealand",
       "away": "Egypt",
       "lambda_home": 0.9513332843780518,
-      "lambda_away": 1.37602037191391,
+      "lambda_away": 1.3787015080451965,
       "effective_elo_home": 1701.8552228537021,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "New Zealand",
@@ -16233,9 +16241,9 @@
       "home": "New Zealand",
       "away": "Iran",
       "lambda_home": 0.8833097815513611,
-      "lambda_away": 1.7015216946601868,
+      "lambda_away": 1.6503835320472717,
       "effective_elo_home": 1701.8552228537021,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "New Zealand",
@@ -16563,7 +16571,7 @@
       "lambda_home": 1.5985541939735413,
       "lambda_away": 0.7760681509971619,
       "effective_elo_home": 1991.9931703634961,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Norway",
@@ -16611,7 +16619,7 @@
       "lambda_home": 1.5395628213882446,
       "lambda_away": 0.915706217288971,
       "effective_elo_home": 1991.9931703634961,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Norway",
@@ -16936,10 +16944,10 @@
     {
       "home": "Panama",
       "away": "Egypt",
-      "lambda_home": 1.0696278810501099,
+      "lambda_home": 1.0719005465507507,
       "lambda_away": 1.1962324976921082,
       "effective_elo_home": 1791.579644000633,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Panama",
@@ -16984,10 +16992,10 @@
     {
       "home": "Panama",
       "away": "Iran",
-      "lambda_home": 1.0831327140331268,
-      "lambda_away": 1.4924110770225525,
+      "lambda_home": 1.085224211215973,
+      "lambda_away": 1.4830597043037415,
       "effective_elo_home": 1791.579644000633,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Panama",
@@ -17312,10 +17320,10 @@
     {
       "home": "Paraguay",
       "away": "Egypt",
-      "lambda_home": 1.2987109422683716,
-      "lambda_away": 0.9916207194328308,
+      "lambda_home": 1.2567391991615295,
+      "lambda_away": 0.9942391514778137,
       "effective_elo_home": 1867.740248482773,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Paraguay",
@@ -17360,10 +17368,10 @@
     {
       "home": "Paraguay",
       "away": "Iran",
-      "lambda_home": 1.2064172625541687,
+      "lambda_home": 1.2165769934654236,
       "lambda_away": 1.2160090208053589,
       "effective_elo_home": 1867.740248482773,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Paraguay",
@@ -17691,7 +17699,7 @@
       "lambda_home": 1.700236976146698,
       "lambda_away": 0.798109620809555,
       "effective_elo_home": 2048.786342647344,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Portugal",
@@ -17736,10 +17744,10 @@
     {
       "home": "Portugal",
       "away": "Iran",
-      "lambda_home": 1.780703604221344,
+      "lambda_home": 1.7801634669303894,
       "lambda_away": 0.9455238878726959,
       "effective_elo_home": 2048.786342647344,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Portugal",
@@ -18064,10 +18072,10 @@
     {
       "home": "Qatar",
       "away": "Egypt",
-      "lambda_home": 0.5566946268081665,
-      "lambda_away": 1.7439082264900208,
+      "lambda_home": 0.5594007074832916,
+      "lambda_away": 1.7536556720733643,
       "effective_elo_home": 1525.4826403981444,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Qatar",
@@ -18112,10 +18120,10 @@
     {
       "home": "Qatar",
       "away": "Iran",
-      "lambda_home": 0.5248123854398727,
+      "lambda_home": 0.529412180185318,
       "lambda_away": 2.0803771018981934,
       "effective_elo_home": 1525.4826403981444,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Qatar",
@@ -18440,10 +18448,10 @@
     {
       "home": "Saudi Arabia",
       "away": "Egypt",
-      "lambda_home": 0.9135353863239288,
-      "lambda_away": 1.3308830261230469,
+      "lambda_home": 0.9084384441375732,
+      "lambda_away": 1.338854968547821,
       "effective_elo_home": 1680.1938684100867,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Saudi Arabia",
@@ -18488,10 +18496,10 @@
     {
       "home": "Saudi Arabia",
       "away": "Iran",
-      "lambda_home": 0.8137285113334656,
-      "lambda_away": 1.691561222076416,
+      "lambda_home": 0.8327634334564209,
+      "lambda_away": 1.6472139954566956,
       "effective_elo_home": 1680.1938684100867,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Saudi Arabia",
@@ -18816,10 +18824,10 @@
     {
       "home": "Scotland",
       "away": "Egypt",
-      "lambda_home": 1.2374541759490967,
-      "lambda_away": 1.0385517477989197,
+      "lambda_home": 1.213243544101715,
+      "lambda_away": 1.1025445461273193,
       "effective_elo_home": 1831.4499161228484,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Scotland",
@@ -18867,7 +18875,7 @@
       "lambda_home": 1.109380304813385,
       "lambda_away": 1.362395167350769,
       "effective_elo_home": 1831.4499161228484,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Scotland",
@@ -19193,9 +19201,9 @@
       "home": "Senegal",
       "away": "Egypt",
       "lambda_home": 1.4136704802513123,
-      "lambda_away": 0.9948247075080872,
+      "lambda_away": 1.015829175710678,
       "effective_elo_home": 1887.4217063594333,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Senegal",
@@ -19240,10 +19248,10 @@
     {
       "home": "Senegal",
       "away": "Iran",
-      "lambda_home": 1.33599454164505,
-      "lambda_away": 1.181143343448639,
+      "lambda_home": 1.3834134340286255,
+      "lambda_away": 1.1378235816955566,
       "effective_elo_home": 1887.4217063594333,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Senegal",
@@ -19568,10 +19576,10 @@
     {
       "home": "South Africa",
       "away": "Egypt",
-      "lambda_home": 0.7933336794376373,
-      "lambda_away": 1.4112327098846436,
+      "lambda_home": 0.7719613313674927,
+      "lambda_away": 1.4140111207962036,
       "effective_elo_home": 1656.0409249686204,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "South Africa",
@@ -19616,10 +19624,10 @@
     {
       "home": "South Africa",
       "away": "Iran",
-      "lambda_home": 0.7101224660873413,
+      "lambda_home": 0.7490601539611816,
       "lambda_away": 1.6443670392036438,
       "effective_elo_home": 1656.0409249686204,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "South Africa",
@@ -19944,10 +19952,10 @@
     {
       "home": "South Korea",
       "away": "Egypt",
-      "lambda_home": 1.2873663902282715,
-      "lambda_away": 1.0196968913078308,
+      "lambda_home": 1.266189992427826,
+      "lambda_away": 1.0223113894462585,
       "effective_elo_home": 1865.252814694604,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "South Korea",
@@ -19992,10 +20000,10 @@
     {
       "home": "South Korea",
       "away": "Iran",
-      "lambda_home": 1.23512601852417,
-      "lambda_away": 1.3005837202072144,
+      "lambda_home": 1.2477567791938782,
+      "lambda_away": 1.2999494671821594,
       "effective_elo_home": 1865.252814694604,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "South Korea",
@@ -20323,7 +20331,7 @@
       "lambda_home": 2.58324658870697,
       "lambda_away": 0.4367241710424423,
       "effective_elo_home": 2233.8949174997624,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Spain",
@@ -20371,7 +20379,7 @@
       "lambda_home": 2.4261003732681274,
       "lambda_away": 0.4940100312232971,
       "effective_elo_home": 2233.8949174997624,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Spain",
@@ -20696,10 +20704,10 @@
     {
       "home": "Sweden",
       "away": "Egypt",
-      "lambda_home": 1.099029302597046,
+      "lambda_home": 1.0965569615364075,
       "lambda_away": 1.3551165461540222,
       "effective_elo_home": 1796.8978989477873,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Sweden",
@@ -20747,7 +20755,7 @@
       "lambda_home": 1.1422016024589539,
       "lambda_away": 1.678249478340149,
       "effective_elo_home": 1796.8978989477873,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Sweden",
@@ -21072,10 +21080,10 @@
     {
       "home": "Switzerland",
       "away": "Egypt",
-      "lambda_home": 1.5285575985908508,
+      "lambda_home": 1.5230944752693176,
       "lambda_away": 0.8786681890487671,
       "effective_elo_home": 1962.1503227185988,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Switzerland",
@@ -21123,7 +21131,7 @@
       "lambda_home": 1.5403497815132141,
       "lambda_away": 1.0392358303070068,
       "effective_elo_home": 1962.1503227185988,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Switzerland",
@@ -21448,10 +21456,10 @@
     {
       "home": "Tunisia",
       "away": "Egypt",
-      "lambda_home": 0.9118194580078125,
-      "lambda_away": 1.3294956684112549,
+      "lambda_home": 0.9107614159584045,
+      "lambda_away": 1.3438708782196045,
       "effective_elo_home": 1687.790031145238,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Tunisia",
@@ -21497,9 +21505,9 @@
       "home": "Tunisia",
       "away": "Iran",
       "lambda_home": 0.8580054938793182,
-      "lambda_away": 1.6612650752067566,
+      "lambda_away": 1.6569808721542358,
       "effective_elo_home": 1687.790031145238,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Tunisia",
@@ -21824,10 +21832,10 @@
     {
       "home": "Turkey",
       "away": "Egypt",
-      "lambda_home": 1.3892988562583923,
+      "lambda_home": 1.3841629028320312,
       "lambda_away": 0.9049535393714905,
       "effective_elo_home": 1960.784720808239,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Turkey",
@@ -21872,10 +21880,10 @@
     {
       "home": "Turkey",
       "away": "Iran",
-      "lambda_home": 1.3937009572982788,
+      "lambda_home": 1.3945150971412659,
       "lambda_away": 1.040934979915619,
       "effective_elo_home": 1960.784720808239,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Turkey",
@@ -22200,10 +22208,10 @@
     {
       "home": "United States",
       "away": "Egypt",
-      "lambda_home": 1.298915147781372,
+      "lambda_home": 1.297604739665985,
       "lambda_away": 1.0880112051963806,
       "effective_elo_home": 1853.2564587123582,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "United States",
@@ -22248,10 +22256,10 @@
     {
       "home": "United States",
       "away": "Iran",
-      "lambda_home": 1.1827210187911987,
-      "lambda_away": 1.509410321712494,
+      "lambda_home": 1.2236917614936829,
+      "lambda_away": 1.448875069618225,
       "effective_elo_home": 1853.2564587123582,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "United States",
@@ -22577,9 +22585,9 @@
       "home": "Uruguay",
       "away": "Egypt",
       "lambda_home": 1.257495403289795,
-      "lambda_away": 0.910033255815506,
+      "lambda_away": 0.9091643989086151,
       "effective_elo_home": 1917.2856931995602,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Uruguay",
@@ -22624,10 +22632,10 @@
     {
       "home": "Uruguay",
       "away": "Iran",
-      "lambda_home": 1.3093498945236206,
-      "lambda_away": 1.0387299358844757,
+      "lambda_home": 1.3594480752944946,
+      "lambda_away": 1.0361999571323395,
       "effective_elo_home": 1917.2856931995602,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Uruguay",
@@ -22953,9 +22961,9 @@
       "home": "Uzbekistan",
       "away": "Egypt",
       "lambda_home": 1.0491333901882172,
-      "lambda_away": 1.1303852796554565,
+      "lambda_away": 1.1329970955848694,
       "effective_elo_home": 1786.7247145490185,
-      "effective_elo_away": 1816.6631006204295
+      "effective_elo_away": 1821.5359969382841
     },
     {
       "home": "Uzbekistan",
@@ -23001,9 +23009,9 @@
       "home": "Uzbekistan",
       "away": "Iran",
       "lambda_home": 1.0762682557106018,
-      "lambda_away": 1.3952020406723022,
+      "lambda_away": 1.39007967710495,
       "effective_elo_home": 1786.7247145490185,
-      "effective_elo_away": 1872.933726778096
+      "effective_elo_away": 1868.0608304602413
     },
     {
       "home": "Uzbekistan",
@@ -23254,6 +23262,18 @@
       "p_draw": 0.28085885037678465,
       "p_away_win": 0.5179737278464179,
       "p_advance_match": 0.3415968469651897
+    },
+    {
+      "m": 88,
+      "stage": "r32",
+      "home": "Australia",
+      "away": "Egypt",
+      "lambda_home": 1.2971518635749817,
+      "lambda_away": 0.9467378258705139,
+      "p_home_win": 0.414511115940793,
+      "p_draw": 0.3155266634655269,
+      "p_away_win": 0.2699622205936801,
+      "p_advance_match": 0.5722744476735564
     }
   ]
 }
