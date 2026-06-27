@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T03:30:47.726764+00:00",
+  "generated_at": "2026-06-27T08:37:10.692437+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -131,26 +131,6 @@
       "total_net_elo_adjustment": -36.0,
       "players": [
         {
-          "name": "Z. Debast",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Leg Injury",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489377,
-          "auto_tier_suggestion": "tier_3_squad",
-          "auto_tier_components": {
-            "minutes_share": 0.277,
-            "ga90": 1.125,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 80,
-            "team_top_minutes": 289
-          }
-        },
-        {
           "name": "J. Doku",
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
@@ -187,6 +167,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 262,
+            "team_top_minutes": 289
+          }
+        },
+        {
+          "name": "Z. Debast",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Thigh Muscle Strain",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489377,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.277,
+            "ga90": 1.125,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 80,
             "team_top_minutes": 289
           }
         }
@@ -304,6 +304,78 @@
             "is_gk": false,
             "minutes": 726,
             "team_top_minutes": 1313
+          }
+        }
+      ]
+    },
+    "Cape Verde": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "S. Lopes Cabral",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Yellow Card",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489413,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.606,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 166,
+            "team_top_minutes": 274
+          }
+        }
+      ]
+    },
+    "Paraguay": {
+      "total_elo_adjustment": -42.0,
+      "total_net_elo_adjustment": -38.8,
+      "players": [
+        {
+          "name": "M. Almirón",
+          "tier": "tier_1_star",
+          "auto_tier_source": "whitelist_last",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -30.0,
+          "replacement_elo": -3.2,
+          "net_elo": -26.8,
+          "fixture_id": 1489411,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.925,
+            "ga90": 0.139,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 1292,
+            "team_top_minutes": 1397
+          }
+        },
+        {
+          "name": "D. Gómez",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Yellow Card",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489411,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.641,
+            "ga90": 0.301,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 896,
+            "team_top_minutes": 1397
           }
         }
       ]
@@ -470,8 +542,8 @@
       ]
     },
     "Egypt": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
+      "total_elo_adjustment": -24.0,
+      "total_net_elo_adjustment": -24.0,
       "players": [
         {
           "name": "Hossam Abdelmaguid",
@@ -490,6 +562,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 38,
+            "team_top_minutes": 341
+          }
+        },
+        {
+          "name": "Hamdi Fathy",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489414,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.762,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 260,
             "team_top_minutes": 341
           }
         }
@@ -542,30 +634,6 @@
         }
       ]
     },
-    "Cape Verde": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "S. Lopes Cabral",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Yellow Card",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489413,
-          "auto_tier_suggestion": null,
-          "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 180,
-            "floor": 200,
-            "minutes": 166
-          }
-        }
-      ]
-    },
     "Qatar": {
       "total_elo_adjustment": -24.0,
       "total_net_elo_adjustment": -24.0,
@@ -608,32 +676,6 @@
             "is_gk": false,
             "minutes": 343,
             "team_top_minutes": 1388
-          }
-        }
-      ]
-    },
-    "Paraguay": {
-      "total_elo_adjustment": -30.0,
-      "total_net_elo_adjustment": -26.8,
-      "players": [
-        {
-          "name": "M. Almirón",
-          "tier": "tier_1_star",
-          "auto_tier_source": "whitelist_last",
-          "status": "confirmed_out",
-          "reason": "Red Card",
-          "elo": -30.0,
-          "replacement_elo": -3.2,
-          "net_elo": -26.8,
-          "fixture_id": 1489411,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 0.925,
-            "ga90": 0.139,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 1292,
-            "team_top_minutes": 1397
           }
         }
       ]
@@ -688,7 +730,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 13,
+      "count": 17,
       "cases": [
         {
           "team": "Brazil",
@@ -701,6 +743,26 @@
           "fixture_id": 1489406
         },
         {
+          "team": "Uruguay",
+          "input": "G. de Arrascaeta",
+          "fixture_id": 1489398
+        },
+        {
+          "team": "Uruguay",
+          "input": "G. de Arrascaeta",
+          "fixture_id": 1489417
+        },
+        {
+          "team": "Uruguay",
+          "input": "R. Araújo",
+          "fixture_id": 1489398
+        },
+        {
+          "team": "Uruguay",
+          "input": "R. Araújo",
+          "fixture_id": 1489417
+        },
+        {
           "team": "Belgium",
           "input": "Z. Debast",
           "fixture_id": 1489395
@@ -711,24 +773,9 @@
           "fixture_id": 1489415
         },
         {
-          "team": "Uruguay",
-          "input": "G. de Arrascaeta",
-          "fixture_id": 1489398
-        },
-        {
-          "team": "Uruguay",
-          "input": "G. de Arrascaeta",
-          "fixture_id": 1489417
-        },
-        {
-          "team": "Uruguay",
-          "input": "R. Araújo",
-          "fixture_id": 1489398
-        },
-        {
-          "team": "Uruguay",
-          "input": "R. Araújo",
-          "fixture_id": 1489417
+          "team": "Brazil",
+          "input": "Raphinha",
+          "fixture_id": 1562344
         },
         {
           "team": "Japan",
@@ -736,9 +783,24 @@
           "fixture_id": 1539011
         },
         {
+          "team": "Germany",
+          "input": "N. Brown",
+          "fixture_id": 1565176
+        },
+        {
+          "team": "Germany",
+          "input": "N. Schlotterbeck",
+          "fixture_id": 1565176
+        },
+        {
           "team": "Algeria",
           "input": "M. Amoura",
           "fixture_id": 1489400
+        },
+        {
+          "team": "Paraguay",
+          "input": "D. Gómez",
+          "fixture_id": 1565176
         },
         {
           "team": "United States",
@@ -756,7 +818,7 @@
           "fixture_id": 1489408
         }
       ],
-      "message": "13 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Belgium/'Z. Debast' (+10 more)"
+      "message": "17 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+14 more)"
     }
   ]
 }
