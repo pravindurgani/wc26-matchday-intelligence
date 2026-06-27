@@ -1,38 +1,44 @@
 {
-  "generated_at": "2026-06-27T08:34:41.249026+00:00",
+  "generated_at": "2026-06-27T08:44:04.897099+00:00",
   "min_pp_threshold": 0.3,
   "top_movers_up": [
     {
       "team": "Argentina",
       "static": 0.196,
-      "live": 0.25111999999999995,
-      "delta_pp": 5.511999999999995
+      "live": 0.24824000000000002,
+      "delta_pp": 5.224000000000001
     },
     {
       "team": "Colombia",
       "static": 0.0516,
-      "live": 0.06008,
-      "delta_pp": 0.8480000000000001
+      "live": 0.06028,
+      "delta_pp": 0.868
+    },
+    {
+      "team": "France",
+      "static": 0.10999999999999999,
+      "live": 0.11816,
+      "delta_pp": 0.8160000000000014
     },
     {
       "team": "Netherlands",
       "static": 0.033,
-      "live": 0.03812,
-      "delta_pp": 0.512
+      "live": 0.0388,
+      "delta_pp": 0.58
     },
     {
       "team": "Morocco",
       "static": 0.02064,
-      "live": 0.025640000000000003,
-      "delta_pp": 0.5000000000000004
+      "live": 0.025,
+      "delta_pp": 0.4360000000000003
     }
   ],
   "top_movers_down": [
     {
       "team": "Spain",
       "static": 0.24051999999999998,
-      "live": 0.22656,
-      "delta_pp": -1.3959999999999972
+      "live": 0.22284,
+      "delta_pp": -1.7679999999999974
     },
     {
       "team": "Turkey",
@@ -43,8 +49,8 @@
     {
       "team": "Ecuador",
       "static": 0.0264,
-      "live": 0.01848,
-      "delta_pp": -0.792
+      "live": 0.016960000000000003,
+      "delta_pp": -0.9439999999999997
     },
     {
       "team": "Uruguay",
@@ -53,48 +59,48 @@
       "delta_pp": -0.776
     },
     {
-      "team": "England",
-      "static": 0.07496,
-      "live": 0.06816,
-      "delta_pp": -0.68
-    },
-    {
       "team": "Portugal",
       "static": 0.046560000000000004,
-      "live": 0.04192,
-      "delta_pp": -0.4640000000000005
+      "live": 0.04032,
+      "delta_pp": -0.6240000000000002
+    },
+    {
+      "team": "England",
+      "static": 0.07496,
+      "live": 0.07028,
+      "delta_pp": -0.46800000000000036
     },
     {
       "team": "Croatia",
       "static": 0.011519999999999999,
-      "live": 0.0076,
-      "delta_pp": -0.3919999999999999
+      "live": 0.007160000000000001,
+      "delta_pp": -0.4359999999999998
     },
     {
-      "team": "Japan",
-      "static": 0.01188,
-      "live": 0.00828,
-      "delta_pp": -0.3600000000000001
+      "team": "Switzerland",
+      "static": 0.012519999999999998,
+      "live": 0.00868,
+      "delta_pp": -0.3839999999999998
     },
     {
-      "team": "Germany",
-      "static": 0.02592,
-      "live": 0.02284,
-      "delta_pp": -0.30799999999999994
+      "team": "Iran",
+      "static": 0.00468,
+      "live": 0.0016799999999999999,
+      "delta_pp": -0.3
     }
   ],
   "all_movers": [
     {
       "team": "Argentina",
       "static": 0.196,
-      "live": 0.25111999999999995,
-      "delta_pp": 5.511999999999995
+      "live": 0.24824000000000002,
+      "delta_pp": 5.224000000000001
     },
     {
       "team": "Spain",
       "static": 0.24051999999999998,
-      "live": 0.22656,
-      "delta_pp": -1.3959999999999972
+      "live": 0.22284,
+      "delta_pp": -1.7679999999999974
     },
     {
       "team": "Turkey",
@@ -103,16 +109,22 @@
       "delta_pp": -1.244
     },
     {
-      "team": "Colombia",
-      "static": 0.0516,
-      "live": 0.06008,
-      "delta_pp": 0.8480000000000001
-    },
-    {
       "team": "Ecuador",
       "static": 0.0264,
-      "live": 0.01848,
-      "delta_pp": -0.792
+      "live": 0.016960000000000003,
+      "delta_pp": -0.9439999999999997
+    },
+    {
+      "team": "Colombia",
+      "static": 0.0516,
+      "live": 0.06028,
+      "delta_pp": 0.868
+    },
+    {
+      "team": "France",
+      "static": 0.10999999999999999,
+      "live": 0.11816,
+      "delta_pp": 0.8160000000000014
     },
     {
       "team": "Uruguay",
@@ -121,46 +133,46 @@
       "delta_pp": -0.776
     },
     {
-      "team": "England",
-      "static": 0.07496,
-      "live": 0.06816,
-      "delta_pp": -0.68
+      "team": "Portugal",
+      "static": 0.046560000000000004,
+      "live": 0.04032,
+      "delta_pp": -0.6240000000000002
     },
     {
       "team": "Netherlands",
       "static": 0.033,
-      "live": 0.03812,
-      "delta_pp": 0.512
+      "live": 0.0388,
+      "delta_pp": 0.58
+    },
+    {
+      "team": "England",
+      "static": 0.07496,
+      "live": 0.07028,
+      "delta_pp": -0.46800000000000036
     },
     {
       "team": "Morocco",
       "static": 0.02064,
-      "live": 0.025640000000000003,
-      "delta_pp": 0.5000000000000004
-    },
-    {
-      "team": "Portugal",
-      "static": 0.046560000000000004,
-      "live": 0.04192,
-      "delta_pp": -0.4640000000000005
+      "live": 0.025,
+      "delta_pp": 0.4360000000000003
     },
     {
       "team": "Croatia",
       "static": 0.011519999999999999,
-      "live": 0.0076,
-      "delta_pp": -0.3919999999999999
+      "live": 0.007160000000000001,
+      "delta_pp": -0.4359999999999998
     },
     {
-      "team": "Japan",
-      "static": 0.01188,
-      "live": 0.00828,
-      "delta_pp": -0.3600000000000001
+      "team": "Switzerland",
+      "static": 0.012519999999999998,
+      "live": 0.00868,
+      "delta_pp": -0.3839999999999998
     },
     {
-      "team": "Germany",
-      "static": 0.02592,
-      "live": 0.02284,
-      "delta_pp": -0.30799999999999994
+      "team": "Iran",
+      "static": 0.00468,
+      "live": 0.0016799999999999999,
+      "delta_pp": -0.3
     }
   ]
 }
