@@ -1,11 +1,32 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-28T01:43:38.264268+00:00",
+  "last_updated_utc": "2026-06-28T02:13:45.347697+00:00",
   "completed_matches_count": 70,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 71,
+      "home": "Algeria",
+      "away": "Austria",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 11,
+      "status": "LIVE",
+      "status_long": "First Half"
+    },
+    {
+      "m": 72,
+      "home": "Jordan",
+      "away": "Argentina",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 11,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 2,
   "warnings": []
 }
