@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-06-28T03:53:35.482502+00:00",
+  "generated_at": "2026-06-28T08:52:49.934653+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
   "net_elo_active": true,
   "auto_tier_active": false,
-  "teams_with_injuries": 19,
+  "teams_with_injuries": 20,
   "teams": {
     "Brazil": {
       "total_elo_adjustment": -60.0,
@@ -175,7 +175,7 @@
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
           "status": "confirmed_out",
-          "reason": "Thigh Muscle Strain",
+          "reason": "Injury",
           "elo": -12.0,
           "replacement_elo": null,
           "net_elo": -12.0,
@@ -376,6 +376,58 @@
             "is_gk": false,
             "minutes": 896,
             "team_top_minutes": 1397
+          }
+        }
+      ]
+    },
+    "South Africa": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "T. Mokoena",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Yellow Card",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489407,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.636,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 157,
+            "team_top_minutes": 247
+          }
+        }
+      ]
+    },
+    "England": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "R. James",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489422,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.437,
+            "ga90": 1.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 90,
+            "team_top_minutes": 206
           }
         }
       ]
@@ -608,32 +660,6 @@
         }
       ]
     },
-    "South Africa": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "T. Mokoena",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Yellow Card",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489407,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 0.636,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 157,
-            "team_top_minutes": 247
-          }
-        }
-      ]
-    },
     "Qatar": {
       "total_elo_adjustment": -24.0,
       "total_net_elo_adjustment": -24.0,
@@ -730,7 +756,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 17,
+      "count": 18,
       "cases": [
         {
           "team": "Brazil",
@@ -778,6 +804,11 @@
           "fixture_id": 1562344
         },
         {
+          "team": "England",
+          "input": "R. James",
+          "fixture_id": 1567307
+        },
+        {
           "team": "Japan",
           "input": "T. Kubo",
           "fixture_id": 1539011
@@ -818,7 +849,7 @@
           "fixture_id": 1489408
         }
       ],
-      "message": "17 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+14 more)"
+      "message": "18 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+15 more)"
     }
   ]
 }
