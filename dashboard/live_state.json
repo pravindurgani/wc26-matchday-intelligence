@@ -1,6 +1,6 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-28T02:44:22.180816+00:00",
+  "last_updated_utc": "2026-06-28T02:54:29.998139+00:00",
   "completed_matches_count": 70,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
@@ -10,11 +10,11 @@
       "m": 71,
       "home": "Algeria",
       "away": "Austria",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 1,
-      "elapsed": 41,
+      "elapsed": 45,
       "status": "LIVE",
-      "status_long": "First Half"
+      "status_long": "Halftime"
     },
     {
       "m": 72,
@@ -22,7 +22,7 @@
       "away": "Argentina",
       "home_score": 0,
       "away_score": 2,
-      "elapsed": 41,
+      "elapsed": 45,
       "status": "LIVE",
       "status_long": "First Half"
     }
