@@ -23,8 +23,10 @@ WINDOW_HOUR_FROM = "0"
 WINDOW_HOUR_TO = "23"
 # 24h coverage. Some fixtures kick off 22-23 UTC and finish 00-02 UTC —
 # the previous 04-23 window left those FT locks uncovered. Quiet-hours
-# ticks early-exit via the churn-skip guard (no commit, no deploy), so
-# extending the window costs nothing.
+# ticks short-circuit in run_live_update.py when no FT advances are
+# detected (a Vercel deploy still fires because last_updated_utc is
+# bumped every tick — see 2026-06-28 heartbeat change), so extending the
+# window costs at most a handful of small deploys per quiet hour.
 
 # Secrets (DO NOT put in this file). Set via:
 #   wrangler secret put GH_TOKEN

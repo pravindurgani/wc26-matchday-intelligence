@@ -393,43 +393,17 @@ def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
         "in_play_count": len(in_play), # convenient summary
         "warnings": warnings or [],
     }
-    # Deploy-churn guard WITH HEARTBEAT: if every field except last_updated_utc
-    # is identical to what's already on disk, preserve the old timestamp so
-    # the file's bytes don't change and git-add skips the commit. This keeps
-    # the Vercel deploy budget comfortable during quiet ticks (Pro = unlimited
-    # per day, Hobby = 100/day; the math below is sized for the Hobby case).
-    #
-    # HEARTBEAT_MAX_AGE caps how long we'll preserve a stale timestamp. The
-    # dashboard's staleness UI in app.js:357-363 flips to STALE when the
-    # timestamp is >90 min old (mode=live, in_play=[]). Without a heartbeat,
-    # natural tournament off-windows (multi-hour gaps between matches) cause
-    # the deploy-churn guard to keep writing identical bytes for hours, the
-    # file stays committed at its first off-window timestamp, and the
-    # dashboard shouts STALE on a perfectly healthy pipeline.
-    #
-    # 30 min heartbeat → ~2 forced refreshes per hour during quiet windows,
-    # 3× margin against the 90-min staleness threshold. Worst-case extra
-    # deploys: ~30/day during off-windows (well within any Vercel plan budget).
-    HEARTBEAT_MAX_AGE_SECS = 30 * 60
-    try:
-        existing = json.loads((DASH / "live_state.json").read_text())
-        a = {k: v for k, v in state.items() if k != "last_updated_utc"}
-        b = {k: v for k, v in existing.items() if k != "last_updated_utc"}
-        if a == b and existing.get("last_updated_utc"):
-            try:
-                existing_ts = datetime.fromisoformat(existing["last_updated_utc"])
-                if existing_ts.tzinfo is None:
-                    existing_ts = existing_ts.replace(tzinfo=timezone.utc)
-                age_secs = (datetime.now(timezone.utc) - existing_ts).total_seconds()
-                if age_secs < HEARTBEAT_MAX_AGE_SECS:
-                    # Fresh enough — preserve to skip the deploy.
-                    state["last_updated_utc"] = existing["last_updated_utc"]
-                # else: fall through with the new timestamp → heartbeat write.
-            except (ValueError, TypeError):
-                # Malformed existing timestamp — write fresh, don't preserve.
-                pass
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
-        pass
+    # KNOCKOUT HEARTBEAT (2026-06-28): every successful tick now bumps
+    # last_updated_utc unconditionally, even when no other field changed.
+    # The previous 30-min preserve window (kept here in git history for
+    # context) overlapped the spreadsheet's STALE_MINUTES=25 threshold:
+    # during quiet stretches the deploy-churn guard would skip 2-3 ticks
+    # and the Apps Script engine in wc26-engine-gs flipped to
+    # "PAUSED · stale feed" before the next heartbeat fired. For the
+    # knockout window we'd rather pay the small Vercel deploy cost than
+    # risk a false-PAUSED on the matchday log. Dashboard staleness UI
+    # (app.js:389) still uses its own 30/90-min thresholds; this bump
+    # keeps them both green during natural off-windows.
     atomic_write_json(DASH / "live_state.json", state)
     return state
 
