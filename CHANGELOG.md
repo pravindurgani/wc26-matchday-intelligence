@@ -4,6 +4,32 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] — 2026-06-28 — "Knockout heartbeat"
+
+Knockout-window operability patch. Resolves a false-PAUSED interaction
+between the `live_state` deploy-churn guard and the Apps Script engine's
+`STALE_MINUTES = 25` threshold; supersedes the "live_state churn skip"
+behaviour listed under 3.0.0 (history preserved above).
+
+### Changed
+- `scripts/live/run_live_update.py:write_live_state` now bumps
+  `last_updated_utc` on every successful tick. The previous 30-min
+  preserve window (`HEARTBEAT_MAX_AGE_SECS`) overlapped the spreadsheet's
+  25-min stale threshold and caused the engine to flip to
+  "PAUSED · stale feed" between genuinely-quiet ticks. The small extra
+  Vercel deploy cost is worth a true heartbeat.
+- `dashboard/app.js` staleness comment updated to match (the 30/90-min
+  client-side thresholds are unchanged).
+
+### Added
+- `*/30 * * * *` schedule trigger on `live-matchday.yml` as a backup
+  safety net for the knockout window. Cloudflare Worker remains the
+  primary scheduler (every 10 min via `workflow_dispatch`); the schedule
+  only fills in if the Worker dies.
+- Engine `v2.3.15` (wc26-engine-gs): `applyTailTrapGuardsToGroups` is
+  now wired into `installEngine` so tail-trap guards apply on install
+  rather than only on the first refresh.
+
 ## [3.0.0] — 2026-06-25 — "World Cup ready"
 
 Tournament-ready release: full simulation pipeline, live matchday intelligence
@@ -73,6 +99,7 @@ Initial public-ready release of the WC26 simulator.
 - Dashboard (`dashboard/`) with light/dark theme and p05/p95 ranges over 5
   seeds.
 
+[3.0.1]: https://github.com/pravindurgani/wc26-matchday-intelligence/releases/tag/v3.0.1
 [3.0.0]: https://github.com/pravindurgani/wc26-matchday-intelligence/releases/tag/v3.0.0
 [2.0.0]: https://github.com/pravindurgani/wc26-matchday-intelligence/releases/tag/v2.0.0
 [1.0.0]: https://github.com/pravindurgani/wc26-matchday-intelligence/releases/tag/v1.0.0

@@ -53,7 +53,9 @@ git show main:dashboard/app.js                          | grep "typeof Chart"
 ```
 
 You should see:
-- both `*/10 * 10-30 6 *` and `*/10 * 1-20 7 *` window-crons on `live-matchday.yml`
+- the sparse `*/30 * * * *` backup `schedule:` on `live-matchday.yml`
+  (primary scheduling is the Cloudflare Worker `workflow_dispatch` every
+  10 min; this schedule is the safety net for when the Worker drops)
 - both `0 */3 10-30 6 *` and `0 */3 1-20 7 *` on `matchday-intel-slow.yml`
 - **no `FEATURE_REF:` line** anywhere on main (the personal-branch checkout trick must be gone)
 - `_vercel/insights` tag on `index.html` (and `methodology.html`, `appendix.html`)

@@ -142,7 +142,7 @@ async function init() {
 
   safe(() => initTooltips(),                                    'initTooltips');
   safe(() => renderLastUpdated(primary, liveState, 0, matchdayIntel), 'renderLastUpdated');
-  safe(() => renderLiveStatusBar(liveState),                    'renderLiveStatusBar');
+  safe(() => renderLiveStatusBar(liveState, primary),           'renderLiveStatusBar');
   safe(() => renderLiveStrip(liveState),                        'renderLiveStrip');
   safe(() => renderHero(primary, liveState, liveDelta),         'renderHero');
   safe(() => renderStatsStrip(primary, cal),                    'renderStatsStrip');
@@ -256,7 +256,7 @@ function applyLiveUpdate({ liveState, liveDelta, livePred, fetchFailures = 0 }) 
   };
   safe(() => renderLastUpdated(primary, liveState, fetchFailures, window._matchdayIntel),
        'renderLastUpdated');
-  safe(() => renderLiveStatusBar(liveState),              'renderLiveStatusBar');
+  safe(() => renderLiveStatusBar(liveState, primary),     'renderLiveStatusBar');
   safe(() => renderLiveStrip(liveState),                  'renderLiveStrip');
   safe(() => renderHero(primary, liveState, liveDelta),   'renderHero');
   // R12 D1: re-call the stats-strip + storylines + interesting + compare
@@ -379,11 +379,11 @@ function renderLastUpdated(data, liveState, fetchFailures = 0, matchdayIntel = n
   // Staleness thresholds keyed on mode AND in_play: live ticks arrive on a
   // ~10-min cron (live-matchday.yml). During play we expect every tick to
   // change something (in_play minute / score), so 30 min = ~3 missed ticks =
-  // hard signal the pipeline is wedged. Between matches the deploy-churn
-  // guard in write_live_state() intentionally freezes last_updated_utc when
-  // the payload is byte-identical (no in_play, no FT advances, no warning
-  // shifts) — so we widen the threshold to 90 min (~9 ticks) to absorb
-  // genuinely quiet off-windows without painting a false STALE. Pre-tournament
+  // hard signal the pipeline is wedged. Between matches every successful
+  // tick still bumps last_updated_utc (the old deploy-churn guard was
+  // removed 2026-06-28 to avoid false-PAUSED in the Apps Script engine), so
+  // 90 min (~9 ticks) here absorbs the */30 backup-cron fallback window if
+  // the CF Worker drops without painting a false STALE. Pre-tournament
   // data regenerates daily — only warn after 30h.
   const hasLiveMatch = Array.isArray(liveState?.in_play) && liveState.in_play.length > 0;
   const staleAfterMs = isLive
@@ -561,19 +561,20 @@ function renderLiveStrip(liveState) {
   strip.hidden = false;
 }
 
-function renderLiveStatusBar(liveState) {
+function renderLiveStatusBar(liveState, data) {
   if (!liveState) return;
   const banner = document.getElementById('live-status');
   if (!banner) return;
   const isLive = liveState.mode === 'live';
   const providerActive = liveState.provider_mode === 'active';
+  const totalMatches = data?.tournament?.total_matches || (data?.match_predictions || []).length;
   banner.classList.toggle('is-live', isLive);
   banner.classList.toggle('is-pre', !isLive);
   banner.innerHTML = `
     <span class="live-dot" aria-hidden="true"></span>
     <span class="live-mode">${isLive ? 'Live-adjusted' : 'Pre-tournament static'}</span>
     <span class="live-meta">
-      ${liveState.completed_matches_count} of 104 matches locked ·
+      ${liveState.completed_matches_count} of ${totalMatches} matches locked ·
       provider: ${escapeHtml(providerLabel(liveState.source))}${providerActive ? '' : ' (no live API key configured)'}${
         isLive ? '' : ' · live updates activate once kickoff begins on 11 Jun 2026'
       }
@@ -617,10 +618,14 @@ function renderHero(data, liveState, liveDelta) {
   }
 
   const isLive = liveState?.mode === 'live';
+  // Total fixture count comes from the predictions payload, never hardcoded —
+  // group-stage + knockout structure may change between revisions, and the
+  // copy below must stay in sync with whatever match_predictions actually ships.
+  const totalMatches = data.tournament?.total_matches || (data.match_predictions || []).length;
   document.getElementById('mode-label').textContent = isLive ? 'Live-adjusted' : 'Pre-tournament';
   document.getElementById('mode-sub').textContent = isLive
-    ? `${liveState.completed_matches_count} of 104 matches locked`
-    : 'Pre-kickoff · 0 of 104 matches locked';
+    ? `${liveState.completed_matches_count} of ${totalMatches} matches locked`
+    : `Pre-kickoff · 0 of ${totalMatches} matches locked`;
 }
 
 // P1-I: rank dark horses by champion probability *outside the top-6 by
@@ -756,9 +761,10 @@ function renderMovers(data, liveState, liveDelta) {
   // but no significant movers". Pre-R12 both showed the same "No matches
   // have finished yet" copy, even when N completed_matches > 0.
   const matchesDone = liveState?.completed_matches_count || 0;
+  const totalMatches = data?.tournament?.total_matches || (data?.match_predictions || []).length;
   if (!isLive || movers.length === 0) {
     const heading = matchesDone > 0
-      ? `Movers below threshold (${matchesDone} of 104 matches locked).`
+      ? `Movers below threshold (${matchesDone} of ${totalMatches} matches locked).`
       : 'No matches have finished yet.';
     const sub = matchesDone > 0
       ? ' All champion-probability shifts on the locked matches were under the 0.3pp display threshold. Larger movers will surface as upset results come in.'
@@ -1331,7 +1337,7 @@ function renderMatches(data, liveState) {
     if (countEl) countEl.textContent = `${filtered.length} of ${total}`;
 
     if (!filtered.length) {
-      list.innerHTML = `<div class="empty-state" style="grid-column: 1/-1"><strong>No matches found.</strong> Try clearing filters or switching to "All 104".</div>`;
+      list.innerHTML = `<div class="empty-state" style="grid-column: 1/-1"><strong>No matches found.</strong> Try clearing filters or switching to "All ${data.match_predictions.length}".</div>`;
       return;
     }
 

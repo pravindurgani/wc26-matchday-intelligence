@@ -26,14 +26,21 @@ This repo is the standalone home for **https://wc26-matchday-intelligence.vercel
 Two redundant schedulers:
 
 1. **Cloudflare Worker** (`wc26-dispatcher.pdurgani6.workers.dev`):
-   reliable cron, fires every 10 min, gates on tournament window
-   2026-06-11 → 2026-07-19 and UTC hours 04–23.
+   reliable cron, fires every 10 min via `workflow_dispatch`, gates on
+   tournament window 2026-06-11 → 2026-07-19 (24h coverage so 22-02 UTC
+   late kickoffs are caught). This is the **primary** scheduler.
 2. **GitHub Actions native `schedule:`** in `live-matchday.yml`:
-   `*/10 * 11-30 6 *` + `*/10 * 1-19 7 *` — backup scheduler in case
-   the CF Worker is interrupted.
+   `*/30 * * * *` — sparse backup that only fills in if the CF Worker
+   stops dispatching. GitHub schedules are load-shed during peak hours,
+   so treat the cadence as best-effort; combined with the CF Worker we
+   expect a refresh every 10 min in the normal case and at worst every
+   30-45 min if the Worker is down.
 
 Both dispatch the same workflow. GitHub Actions' `concurrency: wc26-live`
-group de-dupes any overlap.
+group de-dupes any overlap. Every successful tick now bumps
+`last_updated_utc` (the previous deploy-churn guard was removed
+2026-06-28 to keep the Apps Script engine's stale-feed detector green
+during quiet stretches).
 
 ## Failure / debug paths
 

@@ -41,7 +41,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=()" },
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" }
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-pp8bYN4vcgCJojQAEgbzI4pP3GmrLWJw6ZZt+twLEdI=' 'sha256-SufcAQw38kNBIXJM3SkiE9Q4w7hy9XCF5mHPATQoN4g=' 'sha256-9j5yHYm0XYjzrqZT9tpWylReOxGe3R0MGCSiWLkFqMs=' 'sha256-2V1zQCDWaB2hasgkVvKwIkWadZDlZLjJZgkSY+Xr+vM='; style-src-elem 'self' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" }
       ]
     }
   ]

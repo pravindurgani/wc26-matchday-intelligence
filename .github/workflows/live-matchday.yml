@@ -30,9 +30,15 @@ on:
   # and is load-shed during peak hours anyway. The CF Worker is more
   # reliable AND deduplicates implicitly (single dispatcher).
   #
-  # If the CF Worker goes down for an extended period, re-add a
-  # `*/30 * * * *` schedule here as a sparse safety net — but the
-  # Worker's free tier easily covers the tournament.
+  # 2026-06-28: re-added the sparse `*/30 * * * *` schedule as a
+  # backup safety net for the knockout window. Primary scheduling is
+  # still the CF Worker (every 10 min); this schedule only fills in if
+  # the Worker dies and stops dispatching. GitHub Actions schedules
+  # are load-shed during peak hours, so treat the cadence as best-effort
+  # — combined with the CF Worker we expect a refresh every 10 min in
+  # the normal case and at worst every 30-45 min if the Worker is down.
+  schedule:
+    - cron: '*/30 * * * *'
   workflow_dispatch:
     inputs:
       provider:
