@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-29T03:59:03.590100+00:00",
+  "generated_at": "2026-06-29T11:02:00.645507+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -2579,18 +2579,18 @@
     {
       "team": "South Africa",
       "match_id": null,
-      "total_elo_adjustment": -12.96,
-      "raw_sum_before_aggregate_cap": -12.96,
+      "total_elo_adjustment": -24.96,
+      "raw_sum_before_aggregate_cap": -24.96,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -12.0,
-          "capped_elo": -12.0,
+          "raw_elo": -24.0,
+          "capped_elo": -24.0,
           "cap_used": 25.0,
-          "n_players": 1,
+          "n_players": 2,
           "source": "api_football"
         },
         {
