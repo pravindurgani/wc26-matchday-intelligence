@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-29T03:54:16.802542+00:00",
+  "generated_at": "2026-06-29T04:04:11.702666+00:00",
   "n_simulations_per_seed": 5000,
   "n_seeds": 5,
   "n_simulations_total": 25000,
@@ -4815,7 +4815,7 @@
     71,
     72
   ],
-  "input_hash": "7a0c7fd383910734",
+  "input_hash": "2660a5436a93bd5a",
   "grand_cap_applied": {
     "Czechia": {
       "raw_elo": -45.87,
@@ -5145,32 +5145,6 @@
       "away_grand_cap_hit": false,
       "climate_static_h_zeroed_by_forecast": false,
       "climate_static_a_zeroed_by_forecast": false
-    },
-    {
-      "match_id": 71,
-      "home_match_total_intel": -10.29,
-      "away_match_total_intel": -2.76,
-      "home_match_scoped_delta": 0.0,
-      "away_match_scoped_delta": 0.0,
-      "home_intel_bonus_applied": 0.0,
-      "away_intel_bonus_applied": 0.0,
-      "home_grand_cap_hit": false,
-      "away_grand_cap_hit": false,
-      "climate_static_h_zeroed_by_forecast": true,
-      "climate_static_a_zeroed_by_forecast": true
-    },
-    {
-      "match_id": 72,
-      "home_match_total_intel": -7.59,
-      "away_match_total_intel": 8.64,
-      "home_match_scoped_delta": 0.0,
-      "away_match_scoped_delta": 0.0,
-      "home_intel_bonus_applied": 0.0,
-      "away_intel_bonus_applied": 0.0,
-      "home_grand_cap_hit": false,
-      "away_grand_cap_hit": false,
-      "climate_static_h_zeroed_by_forecast": true,
-      "climate_static_a_zeroed_by_forecast": true
     }
   ],
   "knock_lambdas_table": [
