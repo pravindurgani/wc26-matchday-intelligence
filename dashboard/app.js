@@ -1244,6 +1244,32 @@ function renderInteresting(data) {
 }
 
 // ---- MATCHES ----
+function resolvedMatchPredictions(data) {
+  const matches = Array.isArray(data?.match_predictions) ? data.match_predictions : [];
+  const koRows = Array.isArray(data?.match_predictions_ko) ? data.match_predictions_ko : [];
+  if (!koRows.length) return matches;
+
+  const teamByName = new Map((data.team_predictions || []).map(t => [t.team, t]));
+  const koByM = new Map(koRows.filter(k => k?.m != null).map(k => [k.m, k]));
+
+  return matches.map(m => {
+    const ko = koByM.get(m.m);
+    if (!ko) return m;
+    const home = ko.home || m.home;
+    const away = ko.away || m.away;
+    return {
+      ...m,
+      ...ko,
+      home,
+      away,
+      lam_home: ko.lambda_home ?? ko.lam_home ?? m.lam_home,
+      lam_away: ko.lambda_away ?? ko.lam_away ?? m.lam_away,
+      elo_home: ko.elo_home ?? m.elo_home ?? teamByName.get(home)?.elo,
+      elo_away: ko.elo_away ?? m.elo_away ?? teamByName.get(away)?.elo,
+    };
+  });
+}
+
 function renderMatches(data, liveState) {
   const list = document.getElementById('matches-list');
   const groupSel = document.getElementById('f-group');
@@ -1255,20 +1281,21 @@ function renderMatches(data, liveState) {
   const countEl = document.getElementById('filter-count');
   const toggleButtons = document.querySelectorAll('.match-view-toggle button');
   const chips = document.querySelectorAll('#venue-chips .chip');
+  const matches = resolvedMatchPredictions(data);
 
   while (groupSel.options.length > 1) groupSel.remove(1);
   while (dateSel.options.length > 1) dateSel.remove(1);
   while (venueSel.options.length > 1) venueSel.remove(1);
   // P1-D: group dropdown stays group-only (A–L). Dates + venues span all
   // fixtures including knockouts, so visitors can jump to e.g. "28 Jun".
-  const groupOnly = data.match_predictions.filter(m => (m.stage || 'group') === 'group');
+  const groupOnly = matches.filter(m => (m.stage || 'group') === 'group');
   [...new Set(groupOnly.map(m => m.group))].sort().forEach(g => {
     const o = document.createElement('option'); o.value = g; o.textContent = `Group ${g}`; groupSel.appendChild(o);
   });
-  [...new Set(data.match_predictions.map(m => m.date).filter(Boolean))].sort().forEach(d => {
+  [...new Set(matches.map(m => m.date).filter(Boolean))].sort().forEach(d => {
     const o = document.createElement('option'); o.value = d; o.textContent = d; dateSel.appendChild(o);
   });
-  [...new Set(data.match_predictions.map(m => m.venue).filter(Boolean))].sort().forEach(v => {
+  [...new Set(matches.map(m => m.venue).filter(Boolean))].sort().forEach(v => {
     const o = document.createElement('option'); o.value = v; o.textContent = v; venueSel.appendChild(o);
   });
 
@@ -1279,7 +1306,7 @@ function renderMatches(data, liveState) {
     // P1-C: always include the most-recent locked results in the Featured
     // tab. Without this, the morning after the opener visitors see no
     // result anywhere above the fold unless they tap "All 104".
-    const all = data.match_predictions.slice().sort(
+    const all = matches.slice().sort(
       (a, b) => ((a.date || '') + (a.time || '')).localeCompare((b.date || '') + (b.time || '')));
     const locked = all.filter(m => m.locked_score);
     // P1-D: keep Featured focused on stuff with simulated probabilities or
@@ -1311,7 +1338,7 @@ function renderMatches(data, liveState) {
     const userFilterActive = q || g !== 'all' || d !== 'all' || vn !== 'all' || close || chip !== 'all';
 
     let pool = userFilterActive || view === 'all'
-      ? data.match_predictions : featuredMatches();
+      ? matches : featuredMatches();
 
     let filtered = pool.filter(m => {
       if (g !== 'all' && m.group !== g) return false;
@@ -1333,11 +1360,11 @@ function renderMatches(data, liveState) {
       return true;
     });
 
-    const total = view === 'all' || userFilterActive ? data.match_predictions.length : featuredMatches().length;
+    const total = view === 'all' || userFilterActive ? matches.length : featuredMatches().length;
     if (countEl) countEl.textContent = `${filtered.length} of ${total}`;
 
     if (!filtered.length) {
-      list.innerHTML = `<div class="empty-state" style="grid-column: 1/-1"><strong>No matches found.</strong> Try clearing filters or switching to "All ${data.match_predictions.length}".</div>`;
+      list.innerHTML = `<div class="empty-state" style="grid-column: 1/-1"><strong>No matches found.</strong> Try clearing filters or switching to "All ${matches.length}".</div>`;
       return;
     }
 
@@ -1414,7 +1441,9 @@ function renderMatches(data, liveState) {
           <div class="pa" style="width:${pa}%" title="${escapeHtml(awayName)} win">${pa}%</div>
         </div>
         <div class="match-meta">
-          <span>Model Elo ${Math.round(m.elo_home)} vs ${Math.round(m.elo_away)}</span>
+          <span>${Number.isFinite(m.elo_home) && Number.isFinite(m.elo_away)
+            ? `Model Elo ${Math.round(m.elo_home)} vs ${Math.round(m.elo_away)}`
+            : 'Knockout 90-min model'}</span>
           <span>Predicted: <strong>${escapeHtml(winner)}</strong></span>
         </div>` : `
         <div class="match-meta muted small">

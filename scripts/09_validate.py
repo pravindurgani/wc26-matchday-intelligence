@@ -38,6 +38,39 @@ def check(name, ok, detail=""):
     return 1 if ok else 0
 
 
+def _ko_sidecar_mirror_errors(payload):
+    """Return mismatches between match_predictions_ko and match_predictions."""
+    ko_rows = payload.get("match_predictions_ko") or []
+    if not ko_rows:
+        return []
+    main_by_m = {
+        row.get("m"): row
+        for row in payload.get("match_predictions", []) or []
+        if row.get("m") is not None
+    }
+    errors = []
+
+    def _close(a, b, tol=1e-12):
+        return isinstance(a, (int, float)) and isinstance(b, (int, float)) \
+            and abs(float(a) - float(b)) <= tol
+
+    for ko in ko_rows:
+        m_num = ko.get("m")
+        main = main_by_m.get(m_num)
+        if main is None:
+            errors.append(f"M{m_num}: missing from match_predictions")
+            continue
+        for key in ("home", "away", "p_home_win", "p_draw", "p_away_win",
+                    "p_advance_match"):
+            if main.get(key) != ko.get(key):
+                errors.append(f"M{m_num}: {key} mismatch")
+        if not _close(main.get("lam_home"), ko.get("lambda_home")):
+            errors.append(f"M{m_num}: lam_home mismatch")
+        if not _close(main.get("lam_away"), ko.get("lambda_away")):
+            errors.append(f"M{m_num}: lam_away mismatch")
+    return errors
+
+
 def main():
     print("== Pre-launch validation ==\n")
     total = passed = 0
@@ -146,6 +179,30 @@ def main():
             "Σ invariant (strict, 1e-6) — dashboard mirror", False,
             f"file missing: {_e}",
         )
+
+    # 2d. R32 contract: the dashboard renders `match_predictions`, while
+    # export_ko_advance writes the resolved KO sidecar `match_predictions_ko`.
+    # If the sidecar is populated but the main rows still carry slot labels
+    # ("2A", "3C/D/E/F/H/I"), R32 cards show "Bracket TBD" even though the
+    # backend resolved the bracket. Pin the mirror on both canonical and
+    # dashboard artifacts.
+    for label, path in (
+        ("canonical", STRICT_PREDICTIONS_PATH),
+        ("dashboard mirror", _dash_live),
+    ):
+        try:
+            blob = json.loads(Path(path).read_text())
+            errs = _ko_sidecar_mirror_errors(blob)
+            total += 1; passed += check(
+                f"KO sidecar mirrored into match_predictions — {label}",
+                not errs,
+                "; ".join(errs[:3]) if errs else "",
+            )
+        except Exception as _e:
+            total += 1; passed += check(
+                f"KO sidecar mirrored into match_predictions — {label}",
+                False, f"{type(_e).__name__}: {_e}",
+            )
     # P1-D: match_predictions is now group + knockout fixtures (104). Filter
     # to stage=='group' for the 72-fixture invariant; total should be 104.
     _mps = pred["match_predictions"]

@@ -437,6 +437,92 @@ def build_ko_advance_entries(predictions: dict, bracket: dict,
     return out
 
 
+def merge_ko_entries_into_match_predictions(predictions: dict,
+                                            entries: list[dict]) -> None:
+    """Overlay resolved KO rows onto the dashboard's canonical match list.
+
+    The dashboard renders `match_predictions` for the fixture grid. The
+    post-processor also exposes the raw KO export under `match_predictions_ko`
+    for downstream consumers, but resolved teams must be mirrored into
+    `match_predictions` so the public card grid does not keep showing bracket
+    placeholders like "2A vs 2B" after the group stage is complete.
+    """
+    if not entries:
+        return
+
+    matches = predictions.get("match_predictions")
+    if not isinstance(matches, list):
+        return
+
+    entries_by_m = {
+        entry.get("m"): entry
+        for entry in entries
+        if entry.get("m") is not None
+    }
+    if not entries_by_m:
+        return
+
+    team_elo = {
+        row.get("team"): row.get("elo")
+        for row in predictions.get("team_predictions", []) or []
+        if row.get("team") is not None
+    }
+
+    seen: set[int] = set()
+    merged_matches: list[dict] = []
+    for row in matches:
+        entry = entries_by_m.get(row.get("m"))
+        if entry is None:
+            merged_matches.append(row)
+            continue
+
+        seen.add(entry["m"])
+        home = entry["home"]
+        away = entry["away"]
+        merged = dict(row)
+        merged.update({
+            "stage": entry.get("stage", row.get("stage")),
+            "home": home,
+            "away": away,
+            "lambda_home": entry.get("lambda_home"),
+            "lambda_away": entry.get("lambda_away"),
+            "lam_home": entry.get("lambda_home"),
+            "lam_away": entry.get("lambda_away"),
+            "p_home_win": entry.get("p_home_win"),
+            "p_draw": entry.get("p_draw"),
+            "p_away_win": entry.get("p_away_win"),
+            "p_advance_match": entry.get("p_advance_match"),
+            "elo_home": team_elo.get(home, row.get("elo_home")),
+            "elo_away": team_elo.get(away, row.get("elo_away")),
+        })
+        merged_matches.append(merged)
+
+    for entry in entries:
+        if entry.get("m") in seen:
+            continue
+        home = entry.get("home")
+        away = entry.get("away")
+        merged_matches.append({
+            "m": entry.get("m"),
+            "stage": entry.get("stage"),
+            "group": str(entry.get("stage", "KO")).upper(),
+            "home": home,
+            "away": away,
+            "lambda_home": entry.get("lambda_home"),
+            "lambda_away": entry.get("lambda_away"),
+            "lam_home": entry.get("lambda_home"),
+            "lam_away": entry.get("lambda_away"),
+            "p_home_win": entry.get("p_home_win"),
+            "p_draw": entry.get("p_draw"),
+            "p_away_win": entry.get("p_away_win"),
+            "p_advance_match": entry.get("p_advance_match"),
+            "elo_home": team_elo.get(home),
+            "elo_away": team_elo.get(away),
+        })
+
+    predictions["match_predictions"] = merged_matches
+
+
 # --------------------------------------------------------------------------
 # CLI plumbing. Atomic write via tempfile + os.replace (same pattern as
 # scripts/03_simulate.py:1274-1280) so a kill mid-write doesn't leave a
@@ -482,6 +568,7 @@ def export(in_path: Path, out_path: Path,
     entries = build_ko_advance_entries(predictions, bracket, completed_idx,
                                        cfg_data, annex_c)
     predictions["match_predictions_ko"] = entries
+    merge_ko_entries_into_match_predictions(predictions, entries)
 
     _atomic_write_json(out_path, predictions)
 

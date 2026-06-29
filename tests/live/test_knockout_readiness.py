@@ -477,11 +477,10 @@ class TestKnockoutWDL90MinSemantics:
 
 # ---------------------------------------------------------------------------
 # 4) Knockout predictions exported to JSON — verify the dashboard's data
-#    contract. Currently match_predictions only carries group stage 1..72;
-#    knockout fixtures live in the `bracket` block with slot codes (no
-#    per-pair probabilities pre-resolution). This is a hard assertion of
-#    today's contract — a swap that silently injects partial knockout
-#    rows would break the Matches view's null-guarding.
+#    contract. Pre-resolution KO fixtures may remain slot placeholders in
+#    match_predictions. Once export_ko_advance resolves a KO sidecar row,
+#    the matching match_predictions row must mirror it because the dashboard
+#    renders match_predictions for the public fixture grid.
 # ---------------------------------------------------------------------------
 class TestPredictionsLiveKnockoutContract:
     @pytest.fixture
@@ -514,38 +513,32 @@ class TestPredictionsLiveKnockoutContract:
                 f"group m={m['m']} WDL sums to {s:.6f}, not 1.0"
             )
 
-    def test_knockout_match_p_triples_intentionally_absent(self, predictions: dict) -> None:
-        """Today the knockout placeholder rows (if any) under
-        match_predictions carry slot labels ("1A", "3A/B/C/D/F") rather
-        than concrete teams, so no per-pair WDL probabilities are
-        exported. The dashboard renders TBD for these slots. If this
-        changes (real teams + concrete probabilities pre-resolution),
-        the dashboard's null-guards need to be revisited — flag the
-        contract change here so it can't ship silently."""
+    def test_resolved_knockout_sidecar_is_mirrored_into_match_predictions(
+        self, predictions: dict,
+    ) -> None:
+        """Resolved KO sidecar rows must overwrite the public match rows.
+
+        The dashboard renders `match_predictions`, not the sidecar alone.
+        If `match_predictions_ko` is populated while the main M73+ rows still
+        say "2A vs 2B", the UI shows stale "Bracket TBD" cards.
+        """
         mp = predictions.get("match_predictions") or []
-        ko = [m for m in mp if isinstance(m.get("m"), int) and m["m"] >= 73]
-        # Either zero KO rows (current state) OR rows that carry slot
-        # labels and no team-resolved WDL triple.
-        for m in ko:
-            home = m.get("home") or ""
-            away = m.get("away") or ""
-            # A slot label like "1A" or "3A/B/C/D/F" or "TBD" — accept
-            # any value that's NOT a real country name (no probabilities
-            # should accompany those).
-            slot_label = (
-                home == "TBD" or away == "TBD"
-                or "/" in home or "/" in away
-                or home == m.get("slot_a") or away == m.get("slot_b")
+        main_by_m = {m.get("m"): m for m in mp if isinstance(m.get("m"), int)}
+        sidecar = predictions.get("match_predictions_ko") or []
+        for ko in sidecar:
+            m_num = ko["m"]
+            main = main_by_m.get(m_num)
+            assert main is not None, f"KO sidecar M{m_num} missing main row"
+            assert main["home"] == ko["home"]
+            assert main["away"] == ko["away"]
+            assert main.get("slot_a") and main.get("slot_b"), (
+                f"M{m_num} must preserve original bracket slot metadata"
             )
-            has_wdl = (
-                "p_home_win" in m and "p_draw" in m and "p_away_win" in m
-            )
-            if has_wdl and not slot_label:
-                # Locked result OR an unexpected new export — make it loud.
-                assert m.get("locked_score") is not None, (
-                    f"knockout m={m['m']} carries WDL but is not locked "
-                    f"and not a slot placeholder — contract drift"
-                )
+            for key in ("p_home_win", "p_draw", "p_away_win",
+                        "p_advance_match"):
+                assert main[key] == ko[key], f"M{m_num} {key} mismatch"
+            assert main["lam_home"] == ko["lambda_home"]
+            assert main["lam_away"] == ko["lambda_away"]
 
 
 # ---------------------------------------------------------------------------

@@ -71,7 +71,10 @@ def _real_team_predictions() -> list[dict]:
         "New Zealand", "Panama", "Haiti", "Curacao", "Ecuador",
     ]
     assert len(teams) == 48
-    return [{"team": t, "p_champion": 1.0 / 48} for t in teams]
+    return [
+        {"team": t, "p_champion": 1.0 / 48, "elo": 2200 - i}
+        for i, t in enumerate(teams)
+    ]
 
 
 def _write_min_results(tmp: Path) -> Path:
@@ -254,6 +257,59 @@ def test_single_resolved_ko_writes_one_entry(tmp_path: Path) -> None:
 
     # Range sanity.
     assert 0.0 <= e["p_advance_match"] <= 1.0
+
+
+def test_export_mirrors_resolved_ko_into_match_predictions(tmp_path: Path) -> None:
+    payload = _feed_with_one_resolved_ko("Argentina", "Brazil")
+    payload["team_predictions"] = _real_team_predictions()
+    payload["match_predictions"] = [{
+        "m": 89,
+        "stage": "r16",
+        "date": "2026-07-04",
+        "venue": "X",
+        "slot_a": "W73",
+        "slot_b": "W74",
+        "home": "W73",
+        "away": "W74",
+        "locked_score": None,
+    }]
+
+    in_path = tmp_path / "predictions_live.json"
+    in_path.write_text(json.dumps(payload))
+    out_path = tmp_path / "predictions_live.out.json"
+
+    bracket_path = tmp_path / "bracket.json"
+    bracket_path.write_text(json.dumps(
+        _bracket_with_one_resolved_r16("Argentina", "Brazil")))
+    results_path = _write_min_results(tmp_path)
+    cfg_path = tmp_path / "cfg.json"
+    cfg_path.write_text(json.dumps({"groups": {}, "group_stage_schedule": [],
+                                    "fifa_rankings_june_2026": {}}))
+    annex_path = tmp_path / "annex.json"
+    annex_path.write_text(json.dumps({"table": {}}))
+
+    result = export(in_path=in_path, out_path=out_path,
+                    bracket_path=bracket_path, results_path=results_path,
+                    cfg_path=cfg_path, annex_c_path=annex_path)
+
+    ko = result["match_predictions_ko"][0]
+    match = next(m for m in result["match_predictions"] if m["m"] == 89)
+    assert len([m for m in result["match_predictions"] if m["m"] == 89]) == 1
+    assert len(result["match_predictions"]) == 1
+    assert match["home"] == "Argentina"
+    assert match["away"] == "Brazil"
+    assert match["slot_a"] == "W73"
+    assert match["slot_b"] == "W74"
+    assert match["date"] == "2026-07-04"
+    assert match["venue"] == "X"
+    assert match["lam_home"] == ko["lambda_home"]
+    assert match["lam_away"] == ko["lambda_away"]
+    assert match["p_home_win"] == ko["p_home_win"]
+    assert match["p_draw"] == ko["p_draw"]
+    assert match["p_away_win"] == ko["p_away_win"]
+    assert match["p_advance_match"] == ko["p_advance_match"]
+    assert match["elo_home"] == 2200
+    assert match["elo_away"] == 2199
 
 
 # --------------------------------------------------------------------------
