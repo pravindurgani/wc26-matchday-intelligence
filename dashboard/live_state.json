@@ -1,6 +1,6 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-06-29T10:54:09.504912+00:00",
+  "last_updated_utc": "2026-06-29T11:04:14.525175+00:00",
   "completed_matches_count": 72,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
@@ -10,7 +10,7 @@
   "warnings": [
     {
       "type": "matchday_consolidated_stale",
-      "message": "matchday_intelligence.json is 6.7h older than results_2026.json (threshold 6.0h = 2 slow-cron ticks). Slow workflow has stalled; fast-tick is applying stale matchday adjustments."
+      "message": "matchday_intelligence.json is 6.9h older than results_2026.json (threshold 6.0h = 2 slow-cron ticks). Slow workflow has stalled; fast-tick is applying stale matchday adjustments."
     }
   ]
 }
