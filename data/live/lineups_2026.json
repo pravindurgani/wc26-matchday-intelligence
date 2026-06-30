@@ -1,8 +1,27 @@
 {
-  "generated_at": "2026-06-30T19:59:45.990814+00:00",
+  "generated_at": "2026-06-30T22:16:24.182842+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [],
-  "warnings": []
+  "warnings": [
+    {
+      "type": "unresolved_slot",
+      "match_id": 77,
+      "home": "1I",
+      "away": "3C/D/F/G/H"
+    },
+    {
+      "type": "unresolved_slot",
+      "match_id": 78,
+      "home": "2E",
+      "away": "2I"
+    },
+    {
+      "type": "unresolved_slot",
+      "match_id": 79,
+      "home": "1A",
+      "away": "3C/E/F/H/I"
+    }
+  ]
 }
