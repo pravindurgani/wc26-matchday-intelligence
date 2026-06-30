@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-30T03:41:01.816944+00:00",
+  "generated_at": "2026-06-30T09:36:50.862145+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -472,6 +472,52 @@
         }
       ]
     },
+    "Germany": {
+      "total_elo_adjustment": -24.0,
+      "total_net_elo_adjustment": -24.0,
+      "players": [
+        {
+          "name": "N. Brown",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Adductor Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489410,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.589,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 212,
+            "team_top_minutes": 360
+          }
+        },
+        {
+          "name": "N. Schlotterbeck",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Ligament Stretching",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489410,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 1.0,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 360,
+            "team_top_minutes": 360
+          }
+        }
+      ]
+    },
     "England": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -570,52 +616,6 @@
             "is_gk": false,
             "minutes": 112,
             "team_top_minutes": 1181
-          }
-        }
-      ]
-    },
-    "Germany": {
-      "total_elo_adjustment": -24.0,
-      "total_net_elo_adjustment": -24.0,
-      "players": [
-        {
-          "name": "N. Brown",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Adductor Injury",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489410,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 0.589,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 212,
-            "team_top_minutes": 360
-          }
-        },
-        {
-          "name": "N. Schlotterbeck",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Ligament Stretching",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489410,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 1.0,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 360,
-            "team_top_minutes": 360
           }
         }
       ]
@@ -814,6 +814,16 @@
           "fixture_id": 1489408
         },
         {
+          "team": "Japan",
+          "input": "T. Kubo",
+          "fixture_id": 1539011
+        },
+        {
+          "team": "Germany",
+          "input": "N. Brown",
+          "fixture_id": 1565176
+        },
+        {
           "team": "Belgium",
           "input": "Z. Debast",
           "fixture_id": 1489395
@@ -839,19 +849,9 @@
           "fixture_id": 1567307
         },
         {
-          "team": "Japan",
-          "input": "T. Kubo",
-          "fixture_id": 1539011
-        },
-        {
           "team": "Senegal",
           "input": "É. Mendy",
           "fixture_id": 1567308
-        },
-        {
-          "team": "Germany",
-          "input": "N. Brown",
-          "fixture_id": 1565176
         },
         {
           "team": "Germany",
