@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-07-01T07:06:40.167115+00:00",
+  "generated_at": "2026-07-01T11:54:52.586809+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
   "net_elo_active": true,
   "auto_tier_active": false,
-  "teams_with_injuries": 20,
+  "teams_with_injuries": 21,
   "teams": {
     "Brazil": {
       "total_elo_adjustment": -60.0,
@@ -518,32 +518,6 @@
         }
       ]
     },
-    "England": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "R. James",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Hamstring Injury",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489422,
-          "auto_tier_suggestion": "tier_3_squad",
-          "auto_tier_components": {
-            "minutes_share": 0.437,
-            "ga90": 1.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 90,
-            "team_top_minutes": 206
-          }
-        }
-      ]
-    },
     "Senegal": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -564,6 +538,92 @@
             "team_top_minutes": 184,
             "floor": 200,
             "minutes": 153
+          }
+        }
+      ]
+    },
+    "Bosnia and Herzegovina": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "T. Muharemović",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539009,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "reason": "zero_minutes"
+          }
+        }
+      ]
+    },
+    "Sweden": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "I. Hien",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539002,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 170,
+            "floor": 200,
+            "minutes": 109
+          }
+        }
+      ]
+    },
+    "England": {
+      "total_elo_adjustment": -24.0,
+      "total_net_elo_adjustment": -24.0,
+      "players": [
+        {
+          "name": "R. James",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489422,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.437,
+            "ga90": 1.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 90,
+            "team_top_minutes": 206
+          }
+        },
+        {
+          "name": "J. Quansah",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Sprained Ankle",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1567307,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "reason": "zero_minutes"
           }
         }
       ]
@@ -705,27 +765,6 @@
         }
       ]
     },
-    "Bosnia and Herzegovina": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "T. Muharemović",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Red Card",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1539009,
-          "auto_tier_suggestion": "tier_3_squad",
-          "auto_tier_components": {
-            "reason": "zero_minutes"
-          }
-        }
-      ]
-    },
     "Qatar": {
       "total_elo_adjustment": -24.0,
       "total_net_elo_adjustment": -24.0,
@@ -776,7 +815,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 22,
+      "count": 23,
       "cases": [
         {
           "team": "Brazil",
@@ -839,6 +878,16 @@
           "fixture_id": 1567308
         },
         {
+          "team": "Senegal",
+          "input": "É. Mendy",
+          "fixture_id": 1567308
+        },
+        {
+          "team": "United States",
+          "input": "C. Roldan",
+          "fixture_id": 1539012
+        },
+        {
           "team": "Brazil",
           "input": "Raphinha",
           "fixture_id": 1562344
@@ -849,14 +898,14 @@
           "fixture_id": 1567307
         },
         {
-          "team": "Senegal",
-          "input": "É. Mendy",
-          "fixture_id": 1567308
-        },
-        {
           "team": "Germany",
           "input": "N. Schlotterbeck",
           "fixture_id": 1565176
+        },
+        {
+          "team": "Egypt",
+          "input": "Hamdi Fathy",
+          "fixture_id": 1565178
         },
         {
           "team": "South Africa",
@@ -879,17 +928,12 @@
           "fixture_id": 1565176
         },
         {
-          "team": "United States",
-          "input": "C. Roldan",
-          "fixture_id": 1539012
-        },
-        {
           "team": "Canada",
           "input": "I. Koné",
           "fixture_id": 1561329
         }
       ],
-      "message": "22 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+19 more)"
+      "message": "23 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+20 more)"
     }
   ]
 }
