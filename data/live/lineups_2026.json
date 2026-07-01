@@ -1,8 +1,15 @@
 {
-  "generated_at": "2026-07-01T19:42:56.138197+00:00",
+  "generated_at": "2026-07-01T22:15:02.381866+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
   "lineups": [],
-  "warnings": []
+  "warnings": [
+    {
+      "type": "unresolved_slot",
+      "match_id": 80,
+      "home": "1L",
+      "away": "3E/H/I/J/K"
+    }
+  ]
 }
