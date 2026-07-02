@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T06:33:45.666872+00:00",
+  "generated_at": "2026-07-02T11:28:14.924399+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -81,8 +81,8 @@
       ]
     },
     "United States": {
-      "total_elo_adjustment": -42.0,
-      "total_net_elo_adjustment": -32.4,
+      "total_elo_adjustment": -66.0,
+      "total_net_elo_adjustment": -56.4,
       "players": [
         {
           "name": "C. Pulišić",
@@ -105,15 +105,35 @@
           }
         },
         {
-          "name": "C. Roldan",
+          "name": "M. McKenzie",
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
           "status": "confirmed_out",
-          "reason": "Muscle bruise",
+          "reason": "Bruised Foot",
           "elo": -12.0,
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1562586,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.694,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 163,
+            "team_top_minutes": 235
+          }
+        },
+        {
+          "name": "C. Roldan",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539012,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
             "minutes_share": 0.477,
@@ -121,6 +141,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 112,
+            "team_top_minutes": 235
+          }
+        },
+        {
+          "name": "F. Balogun",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Red Card",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1570715,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.817,
+            "ga90": 0.469,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 192,
             "team_top_minutes": 235
           }
         }
@@ -175,7 +215,7 @@
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
           "status": "confirmed_out",
-          "reason": "Injury",
+          "reason": "Leg Injury",
           "elo": -12.0,
           "replacement_elo": null,
           "net_elo": -12.0,
@@ -518,30 +558,6 @@
         }
       ]
     },
-    "Senegal": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "É. Mendy",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Twisted Knee",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1539074,
-          "auto_tier_suggestion": null,
-          "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 184,
-            "floor": 200,
-            "minutes": 153
-          }
-        }
-      ]
-    },
     "Bosnia and Herzegovina": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -559,30 +575,6 @@
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
             "reason": "zero_minutes"
-          }
-        }
-      ]
-    },
-    "Sweden": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "I. Hien",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Muscle Bruise",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1539002,
-          "auto_tier_suggestion": null,
-          "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 170,
-            "floor": 200,
-            "minutes": 109
           }
         }
       ]
@@ -628,6 +620,54 @@
         }
       ]
     },
+    "Sweden": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "I. Hien",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539002,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 170,
+            "floor": 200,
+            "minutes": 109
+          }
+        }
+      ]
+    },
+    "Senegal": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "É. Mendy",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Knee Contusion",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539074,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 184,
+            "floor": 200,
+            "minutes": 153
+          }
+        }
+      ]
+    },
     "Switzerland": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -637,7 +677,7 @@
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
           "status": "confirmed_out",
-          "reason": "Calf Muscle Strain",
+          "reason": "Injury",
           "elo": -12.0,
           "replacement_elo": null,
           "net_elo": -12.0,
@@ -815,7 +855,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 23,
+      "count": 24,
       "cases": [
         {
           "team": "Brazil",
@@ -863,6 +903,11 @@
           "fixture_id": 1565176
         },
         {
+          "team": "England",
+          "input": "R. James",
+          "fixture_id": 1567307
+        },
+        {
           "team": "Belgium",
           "input": "Z. Debast",
           "fixture_id": 1489395
@@ -878,24 +923,14 @@
           "fixture_id": 1567308
         },
         {
-          "team": "Senegal",
-          "input": "É. Mendy",
-          "fixture_id": 1567308
-        },
-        {
-          "team": "United States",
-          "input": "C. Roldan",
-          "fixture_id": 1539012
-        },
-        {
           "team": "Brazil",
           "input": "Raphinha",
           "fixture_id": 1562344
         },
         {
-          "team": "England",
-          "input": "R. James",
-          "fixture_id": 1567307
+          "team": "Senegal",
+          "input": "É. Mendy",
+          "fixture_id": 1567308
         },
         {
           "team": "Germany",
@@ -928,12 +963,22 @@
           "fixture_id": 1565176
         },
         {
+          "team": "United States",
+          "input": "C. Roldan",
+          "fixture_id": 1562586
+        },
+        {
           "team": "Canada",
           "input": "I. Koné",
           "fixture_id": 1561329
+        },
+        {
+          "team": "Canada",
+          "input": "I. Koné",
+          "fixture_id": 1567824
         }
       ],
-      "message": "23 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+20 more)"
+      "message": "24 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+21 more)"
     }
   ]
 }
