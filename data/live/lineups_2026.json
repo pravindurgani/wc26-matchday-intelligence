@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T22:01:49.709668+00:00",
+  "generated_at": "2026-07-03T02:09:47.451399+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
@@ -7,9 +7,15 @@
   "warnings": [
     {
       "type": "unresolved_slot",
-      "match_id": 83,
-      "home": "2K",
-      "away": "2L"
+      "match_id": 84,
+      "home": "1H",
+      "away": "2J"
+    },
+    {
+      "type": "unresolved_slot",
+      "match_id": 85,
+      "home": "1B",
+      "away": "3E/F/G/I/J"
     }
   ]
 }
