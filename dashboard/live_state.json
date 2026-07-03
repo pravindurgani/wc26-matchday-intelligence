@@ -1,69 +1,16 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-03T16:22:39.440245+00:00",
+  "last_updated_utc": "2026-07-03T16:31:19.363523+00:00",
   "completed_matches_count": 85,
-  "simulation_rerun_this_tick": true,
+  "simulation_rerun_this_tick": false,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [],
   "in_play_count": 0,
   "warnings": [
     {
-      "type": "unmapped_provider_fixture",
-      "severity": "critical",
-      "provider": "api_football",
-      "count": 6,
-      "message": "6 provider fixture(s) inside the tournament window could not be mapped to internal match ids \u2014 their results are NOT being ingested. KO auto-extension could not place them: check provider_fixture_map.json coverage and TEAM_ALIAS for the names below, or rebuild via scripts/live/build_provider_fixture_map.py --provider api_football --write.",
-      "fixtures": [
-        {
-          "fixture_id": "1567824",
-          "home": "Canada",
-          "away": "Morocco",
-          "date": "2026-07-04",
-          "status": "NS",
-          "round": "Round of 16"
-        },
-        {
-          "fixture_id": "1569870",
-          "home": "Paraguay",
-          "away": "France",
-          "date": "2026-07-04",
-          "status": "NS",
-          "round": "Round of 16"
-        },
-        {
-          "fixture_id": "1568100",
-          "home": "Brazil",
-          "away": "Norway",
-          "date": "2026-07-05",
-          "status": "NS",
-          "round": "Round of 16"
-        },
-        {
-          "fixture_id": "1570714",
-          "home": "Mexico",
-          "away": "England",
-          "date": "2026-07-06",
-          "status": "NS",
-          "round": "Round of 16"
-        },
-        {
-          "fixture_id": "1576756",
-          "home": "Portugal",
-          "away": "Spain",
-          "date": "2026-07-06",
-          "status": "NS",
-          "round": "Round of 16"
-        },
-        {
-          "fixture_id": "1570715",
-          "home": "USA",
-          "away": "Belgium",
-          "date": "2026-07-07",
-          "status": "NS",
-          "round": "Round of 16"
-        }
-      ]
+      "type": "sim_failure",
+      "message": "Live simulation failed (1/3); previous predictions_live.json retained. Last stderr:  here would silently push the wrong team through the rest of the simulated bracket. Likely causes: the sim's group/third-place tiebreaker resolved differently than the provider's official standings, a stale or mis-keyed record in data/live/results_2026.json, or a provider team-name alias missing from fetch_results.TEAM_ALIAS. Refusing to continue \u2014 fix the upstream data. (Fail-loud is intentional: the CI circuit breaker absorbs repeated failures; a warning would let a corrupted bracket publish.)"
     }
   ]
 }
