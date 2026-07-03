@@ -11,3 +11,6 @@ scipy>=1.11
 # Provider fetchers (fetch_results, fetch_injuries, fetch_lineups,
 # fetch_match_stats, fetch_weather) all hit external HTTPS APIs.
 requests>=2.31
+
+# Test runner used by GitHub Actions test.yml.
+pytest>=8.0
