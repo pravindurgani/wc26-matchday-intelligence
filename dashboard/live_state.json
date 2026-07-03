@@ -1,6 +1,6 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-03T16:41:11.798090+00:00",
+  "last_updated_utc": "2026-07-03T16:51:07.495566+00:00",
   "completed_matches_count": 85,
   "simulation_rerun_this_tick": false,
   "source": "api_football",
@@ -10,7 +10,7 @@
   "warnings": [
     {
       "type": "sim_failure",
-      "message": "Live simulation failed (2/3); previous predictions_live.json retained. Last stderr:  here would silently push the wrong team through the rest of the simulated bracket. Likely causes: the sim's group/third-place tiebreaker resolved differently than the provider's official standings, a stale or mis-keyed record in data/live/results_2026.json, or a provider team-name alias missing from fetch_results.TEAM_ALIAS. Refusing to continue \u2014 fix the upstream data. (Fail-loud is intentional: the CI circuit breaker absorbs repeated failures; a warning would let a corrupted bracket publish.)"
+      "message": "Live simulation failed (3/3); previous predictions_live.json retained. Last stderr:  here would silently push the wrong team through the rest of the simulated bracket. Likely causes: the sim's group/third-place tiebreaker resolved differently than the provider's official standings, a stale or mis-keyed record in data/live/results_2026.json, or a provider team-name alias missing from fetch_results.TEAM_ALIAS. Refusing to continue \u2014 fix the upstream data. (Fail-loud is intentional: the CI circuit breaker absorbs repeated failures; a warning would let a corrupted bracket publish.)"
     }
   ]
 }
