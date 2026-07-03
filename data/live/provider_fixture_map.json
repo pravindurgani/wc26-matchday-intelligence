@@ -507,8 +507,146 @@
       "home": "Jordan",
       "away": "Argentina",
       "date": "2026-06-28"
+    },
+    {
+      "match_id": 73,
+      "provider_fixture_id": "1561329",
+      "home": "South Africa",
+      "away": "Canada",
+      "date": "2026-06-28",
+      "phase": "r32"
+    },
+    {
+      "match_id": 74,
+      "provider_fixture_id": "1565176",
+      "home": "Germany",
+      "away": "Paraguay",
+      "date": "2026-06-29",
+      "phase": "r32"
+    },
+    {
+      "match_id": 75,
+      "provider_fixture_id": "1562345",
+      "home": "Netherlands",
+      "away": "Morocco",
+      "date": "2026-06-29",
+      "phase": "r32"
+    },
+    {
+      "match_id": 76,
+      "provider_fixture_id": "1562344",
+      "home": "Brazil",
+      "away": "Japan",
+      "date": "2026-06-29",
+      "phase": "r32"
+    },
+    {
+      "match_id": 77,
+      "provider_fixture_id": "1565177",
+      "home": "France",
+      "away": "Sweden",
+      "date": "2026-06-30",
+      "phase": "r32"
+    },
+    {
+      "match_id": 78,
+      "provider_fixture_id": "1564789",
+      "home": "Ivory Coast",
+      "away": "Norway",
+      "date": "2026-06-30",
+      "phase": "r32"
+    },
+    {
+      "match_id": 79,
+      "provider_fixture_id": "1567306",
+      "home": "Mexico",
+      "away": "Ecuador",
+      "date": "2026-06-30",
+      "phase": "r32"
+    },
+    {
+      "match_id": 80,
+      "provider_fixture_id": "1567307",
+      "home": "England",
+      "away": "DR Congo",
+      "date": "2026-07-01",
+      "phase": "r32"
+    },
+    {
+      "match_id": 81,
+      "provider_fixture_id": "1562586",
+      "home": "United States",
+      "away": "Bosnia and Herzegovina",
+      "date": "2026-07-01",
+      "phase": "r32"
+    },
+    {
+      "match_id": 82,
+      "provider_fixture_id": "1567308",
+      "home": "Belgium",
+      "away": "Senegal",
+      "date": "2026-07-01",
+      "phase": "r32"
+    },
+    {
+      "match_id": 83,
+      "provider_fixture_id": "1567309",
+      "home": "Portugal",
+      "away": "Croatia",
+      "date": "2026-07-02",
+      "phase": "r32"
+    },
+    {
+      "match_id": 84,
+      "provider_fixture_id": "1567311",
+      "home": "Spain",
+      "away": "Austria",
+      "date": "2026-07-02",
+      "phase": "r32"
+    },
+    {
+      "match_id": 85,
+      "provider_fixture_id": "1567312",
+      "home": "Switzerland",
+      "away": "Algeria",
+      "date": "2026-07-02",
+      "phase": "r32"
+    },
+    {
+      "match_id": 86,
+      "provider_fixture_id": "1565179",
+      "home": "Argentina",
+      "away": "Cape Verde",
+      "date": "2026-07-03",
+      "phase": "r32"
+    },
+    {
+      "match_id": 87,
+      "provider_fixture_id": "1567310",
+      "home": "Colombia",
+      "away": "Ghana",
+      "date": "2026-07-03",
+      "phase": "r32"
+    },
+    {
+      "match_id": 88,
+      "provider_fixture_id": "1565178",
+      "home": "Australia",
+      "away": "Egypt",
+      "date": "2026-07-03",
+      "phase": "r32"
     }
   ],
   "unmapped_internal_count": 0,
-  "unmapped_provider_count": 0
+  "unmapped_provider_count": 0,
+  "extended_at": "2026-07-03T16:21:03.313734+00:00",
+  "extended_by": "fetch_results.knockout_auto_extension",
+  "coverage": {
+    "group_mapped": 72,
+    "group_total": 72,
+    "knockout_mapped": 16,
+    "knockout_total": 32,
+    "total_mapped": 88,
+    "total_expected": 104
+  }
 }

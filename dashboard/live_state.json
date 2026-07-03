@@ -1,11 +1,69 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-03T16:14:06.991469+00:00",
-  "completed_matches_count": 72,
+  "last_updated_utc": "2026-07-03T16:22:39.440245+00:00",
+  "completed_matches_count": 85,
   "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [],
   "in_play_count": 0,
-  "warnings": []
+  "warnings": [
+    {
+      "type": "unmapped_provider_fixture",
+      "severity": "critical",
+      "provider": "api_football",
+      "count": 6,
+      "message": "6 provider fixture(s) inside the tournament window could not be mapped to internal match ids \u2014 their results are NOT being ingested. KO auto-extension could not place them: check provider_fixture_map.json coverage and TEAM_ALIAS for the names below, or rebuild via scripts/live/build_provider_fixture_map.py --provider api_football --write.",
+      "fixtures": [
+        {
+          "fixture_id": "1567824",
+          "home": "Canada",
+          "away": "Morocco",
+          "date": "2026-07-04",
+          "status": "NS",
+          "round": "Round of 16"
+        },
+        {
+          "fixture_id": "1569870",
+          "home": "Paraguay",
+          "away": "France",
+          "date": "2026-07-04",
+          "status": "NS",
+          "round": "Round of 16"
+        },
+        {
+          "fixture_id": "1568100",
+          "home": "Brazil",
+          "away": "Norway",
+          "date": "2026-07-05",
+          "status": "NS",
+          "round": "Round of 16"
+        },
+        {
+          "fixture_id": "1570714",
+          "home": "Mexico",
+          "away": "England",
+          "date": "2026-07-06",
+          "status": "NS",
+          "round": "Round of 16"
+        },
+        {
+          "fixture_id": "1576756",
+          "home": "Portugal",
+          "away": "Spain",
+          "date": "2026-07-06",
+          "status": "NS",
+          "round": "Round of 16"
+        },
+        {
+          "fixture_id": "1570715",
+          "home": "USA",
+          "away": "Belgium",
+          "date": "2026-07-07",
+          "status": "NS",
+          "round": "Round of 16"
+        }
+      ]
+    }
+  ]
 }
