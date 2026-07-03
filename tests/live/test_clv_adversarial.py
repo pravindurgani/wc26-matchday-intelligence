@@ -8,7 +8,7 @@ The Google Apps Script refresher
 is hard to unit-test directly (SpreadsheetApp + cell formulas). We mirror the
 *observable* arithmetic in Python so we can stress-test the contract:
 
-  CLV% per row  = (E - F) / F     where E = model_odds, F = closing_odds
+  CLV% per row  = (E - F) / F     where E = taken_odds, F = closing_odds
   rolling 20-bet = AVERAGE(...) over last CLV_ROLLING_WINDOW rows, ignoring
                    blanks (Sheets AVERAGE behavior); the spreadsheet wraps
                    it in IFERROR(...,"") so any error swallows the window.
@@ -48,12 +48,13 @@ Cell = Union[float, str]  # numeric or "" (blank)
 
 
 # ---------------------------------------------------------------------------
-# Math mirrors (kept deliberately literal — match the .gs:912-932 wiring)
+# Math mirrors (kept deliberately literal — match the .gs formula wiring)
 # ---------------------------------------------------------------------------
-def model_odds_from_prob(p: float) -> Cell:
-    """Mirror of refreshCLV:869 — modelOdds = 1/p iff finite & >0, else ''.
+def odds_from_prob(p: float) -> Cell:
+    """Convenience helper for tests that want odds implied by a probability.
 
-    NaN, inf, 0, negative all collapse to '' (the gate the .gs already has).
+    CLV no longer uses model fair odds directly; this helper just keeps the
+    numeric test cases readable.
     """
     try:
         if not math.isfinite(p):
@@ -65,39 +66,33 @@ def model_odds_from_prob(p: float) -> Cell:
     return 1.0 / p
 
 
-def clv_pct_cell(model_odds: Cell, closing_odds: Cell) -> Cell:
+def clv_pct_cell(taken_odds: Cell, closing_odds: Cell) -> Cell:
     """Mirror of the per-row formula written at refreshCLV (post-fix).
 
-    Sheets formula (hardened — see refreshCLV.gs:925-928):
-        =IF(OR(E="",F="",NOT(ISNUMBER(F)),F<=0),"", (E-F)/F)
+    Sheets formula (hardened — see refreshCLV):
+        =IF(OR(E="",F="",NOT(ISNUMBER(E)),NOT(ISNUMBER(F)),E<=0,F<=0),"", (E-F)/F)
 
     The F<=0 gate pre-validates closing_odds so a bad operator entry
     surfaces as a blank CLV cell rather than #DIV/0! cascading through
     the IFERROR-wrapped rolling-window and collapsing the entire window.
     """
-    if model_odds == _BLANK or closing_odds == _BLANK:
+    if taken_odds == _BLANK or closing_odds == _BLANK:
         return _BLANK
     try:
         f = float(closing_odds)
-        e = float(model_odds)
+        e = float(taken_odds)
     except (TypeError, ValueError):
         # Sheets NOT(ISNUMBER(F)) gate fires → CLV cell is blank.
         return _BLANK
-    # Pre-validated F>0: a non-positive closing odds becomes blank, NOT
-    # an error token. This is the post-fix behavior at refreshCLV.gs:925.
-    if not math.isfinite(f) or f <= 0:
+    # Pre-validated E/F>0: non-positive odds become blank, NOT
+    # an error token. This is the post-fix behavior at refreshCLV.
+    if not math.isfinite(e) or e <= 0 or not math.isfinite(f) or f <= 0:
         return _BLANK
-    if not math.isfinite(e):
-        # e=inf produces inf/inf → NaN; treat as blank (no useful signal).
-        v = (e - f) / f
-        if math.isnan(v):
-            return _BLANK
-        return v
     return (e - f) / f
 
 
 def rolling_avg_cell(window: Sequence[Cell]) -> Cell:
-    """Mirror of refreshCLV rolling window (post-fix, refreshCLV.gs:930-940).
+    """Mirror of refreshCLV rolling window (post-fix, refreshCLV).
 
     Sheets formula (hardened):
         =IFERROR(
@@ -169,39 +164,28 @@ def status_pill(rolling: Cell) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Pick-scope gate — mirrors the H/D/A/HOME/DRAW/AWAY/1/X/2 dispatch at
-# refreshCLV:864-869. Anything else collapses to NaN → modelOdds = "".
+# Pick-scope gate — mirrors the Apps Script _isOneXTwoPick_ whitelist.
 # ---------------------------------------------------------------------------
-_VALID_1X2 = {"H", "HOME", "1", "D", "DRAW", "X", "A", "AWAY", "2"}
+_VALID_1X2 = {
+    "H", "HOME", "1", "HOME WIN",
+    "D", "DRAW", "X",
+    "A", "AWAY", "2", "AWAY WIN",
+}
 
 
 def pick_in_1x2_scope(pick: str) -> bool:
     return pick.strip().upper() in _VALID_1X2
 
 
-def model_odds_for_pick(
-    pick: str, p_home: float, p_draw: float, p_away: float
-) -> Cell:
-    pu = pick.strip().upper()
-    if pu in {"H", "HOME", "1"}:
-        return model_odds_from_prob(p_home)
-    if pu in {"D", "DRAW", "X"}:
-        return model_odds_from_prob(p_draw)
-    if pu in {"A", "AWAY", "2"}:
-        return model_odds_from_prob(p_away)
-    # Out-of-scope picks (Over 2.5, BTTS Yes, etc.) → no model odds.
-    return _BLANK
-
-
 # ---------------------------------------------------------------------------
 # Happy path — sanity check the mirror itself
 # ---------------------------------------------------------------------------
 def test_happy_path_positive_clv() -> None:
-    """Model gives 2.50, closing settles at 2.20 → CLV ≈ +0.1364.
+    """Taken odds 2.50, closing settles at 2.20 → CLV ≈ +0.1364.
 
     n=1 < CLV_ROLLING_WINDOW so the status pill tags the partial window.
     """
-    e = model_odds_from_prob(0.40)  # 2.50
+    e = odds_from_prob(0.40)  # 2.50
     clv = clv_pct_cell(e, 2.20)
     assert clv == pytest.approx((2.5 - 2.2) / 2.2)
     pill = status_pill(rolling_avg_cell([clv]))
@@ -209,11 +193,11 @@ def test_happy_path_positive_clv() -> None:
 
 
 def test_happy_path_negative_clv() -> None:
-    """Model 2.00, closing 2.20 → CLV ≈ −0.0909 (below close).
+    """Taken odds 2.00, closing 2.20 → CLV ≈ −0.0909 (below close).
 
     n=1 < CLV_ROLLING_WINDOW so the partial-window tag fires.
     """
-    e = model_odds_from_prob(0.50)
+    e = odds_from_prob(0.50)
     clv = clv_pct_cell(e, 2.20)
     assert clv < 0
     pill = status_pill(rolling_avg_cell([clv]))
@@ -224,20 +208,20 @@ def test_happy_path_negative_clv() -> None:
 # Closing-odds boundary cases
 # ---------------------------------------------------------------------------
 def test_closing_odds_zero_yields_blank_clv_cell() -> None:
-    """FIXED (was 'yields #DIV/0!'): post-patch refreshCLV.gs:925-928 now
+    """FIXED (was 'yields #DIV/0!'): post-patch refreshCLV now
     pre-validates F>0 in the per-row formula (NOT(ISNUMBER(F)) or F<=0
     short-circuits to ''). So a 0.0 closing odds yields a blank CLV cell,
     NOT a #DIV/0! error token. The rolling-window average then aggregates
     the 19 good rows cleanly instead of being collapsed by IFERROR.
     """
-    e = model_odds_from_prob(0.40)
+    e = odds_from_prob(0.40)
     clv = clv_pct_cell(e, 0.0)
     assert clv == _BLANK, (
         f"closing_odds=0 must yield blank CLV cell after pre-validation, "
         f"got {clv!r}"
     )
     # Mix one bad row with 19 good rows — the 19 good rows still aggregate.
-    good_val = clv_pct_cell(model_odds_from_prob(0.40), 2.20)
+    good_val = clv_pct_cell(odds_from_prob(0.40), 2.20)
     window = [good_val] * 19 + [clv]
     out = rolling_avg_cell(window)
     # n=19 < CLV_ROLLING_WINDOW → partial-window label fires.
@@ -254,10 +238,10 @@ def test_closing_odds_zero_no_longer_collapses_rolling_window() -> None:
     it like any other blank, and the partial-window n-aware label
     surfaces the actual sample size.
     """
-    e = model_odds_from_prob(0.40)
+    e = odds_from_prob(0.40)
     clv = clv_pct_cell(e, 0.0)
     # The bad row is blank — rolling window still aggregates other rows.
-    good_val = clv_pct_cell(model_odds_from_prob(0.40), 2.20)
+    good_val = clv_pct_cell(odds_from_prob(0.40), 2.20)
     window = [good_val, clv, good_val]
     out = rolling_avg_cell(window)
     # n=2 effective → string label fires; the average is non-blank and
@@ -275,7 +259,7 @@ def test_closing_odds_text_inf_yields_blank_after_isnumber_gate() -> None:
     'inf' to a float (Python is more permissive than Sheets), so the
     F<=0 gate doesn't catch it — but isfinite() does, and the cell goes
     blank. Real Sheets refuses 'inf' as text via NOT(ISNUMBER(F))."""
-    e = model_odds_from_prob(0.40)
+    e = odds_from_prob(0.40)
     clv = clv_pct_cell(e, "inf")
     assert clv == _BLANK, (
         f"expected blank CLV cell for 'inf' (non-finite), got {clv!r}"
@@ -286,7 +270,7 @@ def test_closing_odds_text_inf_yields_blank_after_isnumber_gate() -> None:
 def test_closing_odds_truly_unparseable_text_yields_blank() -> None:
     """FIXED: post-patch unparseable text → NOT(ISNUMBER(F)) fires → cell
     is blank. No error token, no IFERROR-collapsed rolling window."""
-    e = model_odds_from_prob(0.40)
+    e = odds_from_prob(0.40)
     clv = clv_pct_cell(e, "abc")
     assert clv == _BLANK, (
         f"expected blank CLV cell for 'abc' (unparseable), got {clv!r}"
@@ -298,7 +282,7 @@ def test_closing_implied_prob_equal_one_no_juice() -> None:
     """closing_odds = 1.0 (implied prob = 100%) → degenerate but arithmetic
     is still defined. CLV = E - 1. Recorded silently — operator's problem.
     Status pill carries the n<CLV_ROLLING_WINDOW tag because n=1."""
-    e = model_odds_from_prob(0.40)  # 2.50
+    e = odds_from_prob(0.40)  # 2.50
     clv = clv_pct_cell(e, 1.0)
     assert clv == pytest.approx(1.5)  # numerically valid, semantically nuts
     assert (
@@ -311,7 +295,7 @@ def test_closing_implied_prob_above_one_negative_juice() -> None:
     """closing_odds = 0.95 (implied prob 105%) → arb / book error. No
     validation; treated as ordinary number. SILENT. Status pill carries
     the n<CLV_ROLLING_WINDOW tag because n=1."""
-    e = model_odds_from_prob(0.40)
+    e = odds_from_prob(0.40)
     clv = clv_pct_cell(e, 0.95)
     # CLV is positive (and inflated) — no warning fires.
     assert clv > 0
@@ -322,42 +306,38 @@ def test_closing_implied_prob_above_one_negative_juice() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Model-probability boundary cases
+# Taken-odds boundary cases
 # ---------------------------------------------------------------------------
-def test_model_prob_zero_yields_blank_odds() -> None:
-    """LOUD: p=0 → 1/p undefined → modelOdds gated to '' at refreshCLV:869.
-    Downstream CLV cell is blank, status pill is blank. Safe."""
-    assert model_odds_from_prob(0.0) == _BLANK
+def test_taken_odds_blank_yields_blank_clv() -> None:
+    """LOUD: missing taken odds → downstream CLV cell and pill are blank."""
     assert clv_pct_cell(_BLANK, 2.20) == _BLANK
 
 
-def test_model_prob_one_certainty() -> None:
-    """p=1.0 → modelOdds = 1.0. CLV = (1 - closing)/closing. Numerics fine."""
-    e = model_odds_from_prob(1.0)
-    assert e == pytest.approx(1.0)
-    assert clv_pct_cell(e, 2.20) < 0  # taking 1.0 on a 2.20 close is bad
+def test_taken_odds_one_degenerate_but_numeric() -> None:
+    """Taken odds = 1.0. CLV = (1 - closing)/closing. Numerics fine."""
+    assert clv_pct_cell(1.0, 2.20) < 0  # taking 1.0 on a 2.20 close is bad
 
 
-def test_model_prob_nan_yields_blank_odds() -> None:
-    """LOUD: NaN gated by isFinite() at refreshCLV:869."""
-    assert model_odds_from_prob(float("nan")) == _BLANK
+def test_taken_odds_nan_yields_blank_clv() -> None:
+    """LOUD: NaN is gated by the finite-number mirror."""
+    assert clv_pct_cell(float("nan"), 2.20) == _BLANK
 
 
-def test_model_prob_negative_yields_blank_odds() -> None:
-    """LOUD: p<0 gated by p>0 check at refreshCLV:869."""
-    assert model_odds_from_prob(-0.05) == _BLANK
+def test_taken_odds_negative_yields_blank_clv() -> None:
+    """LOUD: odds <= 0 is gated before CLV division."""
+    assert clv_pct_cell(-0.05, 2.20) == _BLANK
 
 
 # ---------------------------------------------------------------------------
 # Rolling-window behavior
 # ---------------------------------------------------------------------------
 def test_rolling_window_with_only_one_bet() -> None:
-    """FIXED: post-patch refreshCLV.gs:930-940 wraps the rolling AVERAGE
+    """FIXED: post-patch refreshCLV wraps the rolling AVERAGE
     with an IF(COUNT(window)<CLV_ROLLING_WINDOW, "n=K: <avg>", AVERAGE())
     branch. So a 1-cell window now emits 'n=1: <avg>' as a STRING — the
     operator can't mistake a single-sample partial window for a full
     20-bet edge signal. The numeric value is recoverable from the tail."""
-    clv = clv_pct_cell(model_odds_from_prob(0.40), 2.20)
+    clv = clv_pct_cell(odds_from_prob(0.40), 2.20)
     out = rolling_avg_cell([clv])
     assert isinstance(out, str), (
         f"expected partial-window string label for n=1, got {out!r}"
@@ -372,7 +352,7 @@ def test_rolling_window_one_bet_flags_insufficient_sample() -> None:
     """FIXED (was xfail): post-patch the rolling window emits an n-aware
     label whenever COUNT < CLV_ROLLING_WINDOW. So a 1-bet window is no
     longer a bare float that masquerades as a 20-bet edge."""
-    clv = clv_pct_cell(model_odds_from_prob(0.40), 2.20)
+    clv = clv_pct_cell(odds_from_prob(0.40), 2.20)
     out = rolling_avg_cell([clv])
     assert not isinstance(out, float), (
         f"post-fix: n=1 window must NOT return a bare float, got {out!r}"
@@ -384,10 +364,10 @@ def test_negative_clv_streak_over_20_no_clipping() -> None:
     """LOUD-correct: 25 consecutive losses to the close → rolling avg
     stays negative (last 20 used). No clipping at zero."""
     losing_bets = [
-        clv_pct_cell(model_odds_from_prob(0.50), 2.50)  # model 2.0 < close 2.5
+        clv_pct_cell(odds_from_prob(0.50), 2.50)  # took 2.0 < close 2.5
         for _ in range(25)
     ]
-    # Slice the window to the last CLV_ROLLING_WINDOW per refreshCLV:924.
+    # Slice the window to the last CLV_ROLLING_WINDOW per refreshCLV.
     window = losing_bets[-CLV_ROLLING_WINDOW:]
     avg = rolling_avg_cell(window)
     assert isinstance(avg, float)
@@ -398,7 +378,7 @@ def test_negative_clv_streak_over_20_no_clipping() -> None:
 def test_rolling_window_blanks_ignored() -> None:
     """AVERAGE skips blanks (per Sheets semantics). Confirm mirror matches.
     n=2 effective < CLV_ROLLING_WINDOW → partial-window label fires."""
-    good = clv_pct_cell(model_odds_from_prob(0.40), 2.20)
+    good = clv_pct_cell(odds_from_prob(0.40), 2.20)
     window = [good, _BLANK, _BLANK, good]
     out = rolling_avg_cell(window)
     assert isinstance(out, str) and out.startswith("n=2: ")
@@ -409,7 +389,7 @@ def test_rolling_window_blanks_ignored() -> None:
 def test_rolling_window_text_ignored() -> None:
     """AVERAGE skips text (non-error). Confirm mirror matches.
     n=2 effective < CLV_ROLLING_WINDOW → partial-window label fires."""
-    good = clv_pct_cell(model_odds_from_prob(0.40), 2.20)
+    good = clv_pct_cell(odds_from_prob(0.40), 2.20)
     window = [good, "pending", good]
     out = rolling_avg_cell(window)
     assert isinstance(out, str) and out.startswith("n=2: ")
@@ -421,7 +401,8 @@ def test_rolling_window_text_ignored() -> None:
 # Scope: 1X2 only — picks outside scope must be excluded from CLV
 # ---------------------------------------------------------------------------
 @pytest.mark.parametrize(
-    "pick", ["H", "D", "A", "HOME", "DRAW", "AWAY", "1", "X", "2", "x"]
+    "pick",
+    ["H", "D", "A", "HOME", "DRAW", "AWAY", "HOME WIN", "AWAY WIN", "1", "X", "2", "x"],
 )
 def test_1x2_picks_in_scope(pick: str) -> None:
     assert pick_in_1x2_scope(pick)
@@ -437,22 +418,11 @@ def test_non_1x2_picks_out_of_scope(pick: str) -> None:
     assert not pick_in_1x2_scope(pick)
 
 
-def test_out_of_scope_pick_yields_blank_model_odds() -> None:
-    """LOUD-ish: an O/U pick has no I/J/K probability → model_odds = '' →
-    CLV cell is blank. The bad pick does not pollute the rolling avg.
-    HOWEVER, the row IS still written to the CLV sheet (refreshCLV:899-910
-    does not pre-filter by scope) so the operator sees a row with no
-    numbers, which is mildly confusing but not numerically dangerous."""
-    e = model_odds_for_pick("Over 2.5", 0.40, 0.30, 0.30)
-    assert e == _BLANK
-    assert clv_pct_cell(e, 2.20) == _BLANK
-
-
 def test_out_of_scope_pick_is_pre_filtered() -> None:
-    """FIXED (was xfail): post-patch refreshCLV.gs:854 now filters
+    """FIXED (was xfail): post-patch refreshCLV now filters
     `if (!_isOneXTwoPick_(pick)) continue;` BEFORE pushing to placedRows.
     Out-of-scope picks (O/U, BTTS, Correct Score) no longer occupy CLV
-    rows with blank model_odds / inflate the placed-bet count in the
+    rows with blank taken_odds / inflate the placed-bet count in the
     status message.
 
     We assert the post-fix behavior: an Over 2.5 pick passed through
@@ -466,7 +436,7 @@ def test_out_of_scope_pick_is_pre_filtered() -> None:
     placed = _placed_rows_from_bets(bets)
     assert placed == [], (
         "post-fix: out-of-scope Over 2.5 pick must be excluded from "
-        "placedRows entirely, not appear with blank model_odds. "
+        "placedRows entirely, not appear with blank taken_odds. "
         f"Got placed={placed!r}"
     )
 
@@ -475,12 +445,12 @@ def test_out_of_scope_pick_is_pre_filtered() -> None:
 # Dedup / idempotency — same (#m, pick) twice
 # ---------------------------------------------------------------------------
 def _placed_rows_from_bets(bets: Iterable[dict]) -> List[dict]:
-    """Mirror of refreshCLV:850-879 — collect placed rows from Bets!AW:AY.
+    """Mirror of refreshCLV — collect placed rows from Bets snapshots + odds.
 
     Post-fix invariants (refreshCLV.gs hardening):
       * 1X2-scope gate: out-of-scope picks (O/U, BTTS, CS) are filtered
         BEFORE placedRows.push so they don't inflate the placed-bet count
-        with blank-modelOdds rows.
+        with non-1X2 rows.
       * Dedup on (#m, pick): duplicate Bets rows for the same key are
         collapsed (first occurrence wins) so the rolling avg can't
         silently double-count the same bet.
@@ -508,12 +478,57 @@ def _placed_rows_from_bets(bets: Iterable[dict]) -> List[dict]:
         if key in seen:
             continue
         seen.add(key)
-        out.append({"m": m, "pick": pick, "stake": b.get("snap_stake")})
+        backed = _positive_odds(b.get("backed_odds"))
+        picked = _positive_odds(b.get("picked_odds"))
+        out.append({
+            "m": m,
+            "pick": pick,
+            "stake": b.get("snap_stake"),
+            "taken_odds": backed if backed != _BLANK else picked,
+        })
     return out
 
 
+def _positive_odds(v: object) -> Cell:
+    try:
+        x = float(v)
+    except (TypeError, ValueError):
+        return _BLANK
+    return x if math.isfinite(x) and x > 0 else _BLANK
+
+
+def test_taken_odds_prefers_logged_backed_odds() -> None:
+    bets = [
+        {
+            "m": 7,
+            "snap_decision": "BET",
+            "snap_pick": "H",
+            "snap_stake": 100,
+            "backed_odds": 2.60,
+            "picked_odds": 2.70,
+        },
+    ]
+    placed = _placed_rows_from_bets(bets)
+    assert placed[0]["taken_odds"] == pytest.approx(2.60)
+
+
+def test_taken_odds_falls_back_to_engine_pick_for_legacy_rows() -> None:
+    bets = [
+        {
+            "m": 7,
+            "snap_decision": "BET",
+            "snap_pick": "H",
+            "snap_stake": 100,
+            "backed_odds": "",
+            "picked_odds": 2.70,
+        },
+    ]
+    placed = _placed_rows_from_bets(bets)
+    assert placed[0]["taken_odds"] == pytest.approx(2.70)
+
+
 def test_dedup_same_m_pick_collapses_after_fix() -> None:
-    """FIXED: post-patch refreshCLV.gs:851-861 maintains a seenKeys Set
+    """FIXED: post-patch refreshCLV maintains a seenKeys Set
     keyed on (#m, pick). Duplicate Bets rows for the same key are
     collapsed (first occurrence wins) so the rolling avg can no longer
     silently double-count the same bet."""
@@ -557,7 +572,7 @@ def test_dedup_does_not_collapse_distinct_picks_for_same_match() -> None:
 
 
 def test_idempotency_rerun_preserves_operator_typed_close() -> None:
-    """LOUD-correct: refreshCLV is documented idempotent (refreshCLV:823-824
+    """LOUD-correct: refreshCLV is documented idempotent
     'matches existing rows by (#m, pick) so the operator's typed closing
     odds survive subsequent refreshes'). Confirm mirror reflects that."""
     # Mirror: dict keyed by (#m, pick) — re-running rebuilds rows but reads
@@ -602,7 +617,7 @@ def test_stake_negative_still_records_bet() -> None:
 # Snapshot-block scope check — confirms placement gate
 # ---------------------------------------------------------------------------
 def test_empty_pick_excluded() -> None:
-    """LOUD: empty snapPick → row skipped (refreshCLV:854 `if (!pick) continue;`)"""
+    """LOUD: empty snapPick → row skipped."""
     bets = [
         {"m": 7, "snap_decision": "BET", "snap_pick": "", "snap_stake": 100},
     ]
@@ -618,7 +633,7 @@ def test_non_bet_decision_excluded() -> None:
 
 
 def test_non_finite_match_no_excluded() -> None:
-    """LOUD: m=NaN → row skipped (refreshCLV:857 `if (!isFinite(m)) continue;`)"""
+    """LOUD: m=NaN → row skipped."""
     bets = [
         {"m": float("nan"), "snap_decision": "BET", "snap_pick": "H"},
     ]

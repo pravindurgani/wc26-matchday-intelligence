@@ -292,6 +292,18 @@ def test_clv_header_note_scopes_to_1x2():
         f"CLV scope note not found in _seedCLVHeaders_: {note!r}"
 
 
+def test_clv_uses_taken_odds_not_model_fair_odds():
+    """CLV must compare odds actually taken vs close, not model fair odds."""
+    src = _src()
+    body = re.search(r"function refreshCLV\(\)\s*\{(.*?)\n\}", src, re.DOTALL)
+    assert body, "refreshCLV body not extractable"
+    text = body.group(1)
+    assert "BETS_COL.backedOdds" in text
+    assert "BETS_COL.pickedOdds" in text
+    assert "takenOdds" in text
+    assert "modelOdds" not in text
+
+
 def test_refresh_goal_grid_uses_b8_not_b7():
     """Item #6B: goal markets get their own edge knob at Method!$B$8 so
     O/U + BTTS thresholds can be tuned independently of 1X2 (Method!$B$7).
