@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T13:46:45.009011+00:00",
+  "generated_at": "2026-07-03T16:20:40.233817+00:00",
   "schema_version": 1,
   "source": "fetch_results_events",
   "cap_used": 8.0,
@@ -147,12 +147,86 @@
       "cap_used": 8.0,
       "confidence": "high",
       "source": "fetch_results_events"
+    },
+    {
+      "match_id": 74,
+      "team": "Paraguay",
+      "player": "Diego Gomez",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        4,
+        60
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 89,
+      "team": "Paraguay",
+      "player": "Matías Galarza",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        32,
+        74
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 91,
+      "team": "Brazil",
+      "player": "Casemiro",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        6,
+        76
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 91,
+      "team": "Brazil",
+      "player": "Danilo",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        51,
+        76
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 94,
+      "team": "United States",
+      "player": "F. Balogun",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        81
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
     }
   ],
   "warnings": [],
   "summary": {
-    "n_completed_matches": 72,
-    "n_with_events": 72,
-    "n_suspensions": 10
+    "n_completed_matches": 85,
+    "n_with_events": 85,
+    "n_suspensions": 15
   }
 }
