@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T19:06:21.486904+00:00",
+  "generated_at": "2026-07-03T21:59:46.636975+00:00",
   "schema_version": 1,
   "source": "fetch_results_events",
   "cap_used": 8.0,
@@ -221,12 +221,27 @@
       "cap_used": 8.0,
       "confidence": "high",
       "source": "fetch_results_events"
+    },
+    {
+      "match_id": 88,
+      "team": "Egypt",
+      "player": "Y. Ibrahim",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        65,
+        86
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
     }
   ],
   "warnings": [],
   "summary": {
-    "n_completed_matches": 85,
-    "n_with_events": 85,
-    "n_suspensions": 15
+    "n_completed_matches": 86,
+    "n_with_events": 86,
+    "n_suspensions": 16
   }
 }

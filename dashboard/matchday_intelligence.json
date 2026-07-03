@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T19:06:55.303476+00:00",
+  "generated_at": "2026-07-03T22:01:12.070401+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1248,6 +1248,32 @@
           "capped_elo": 0.48,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        }
+      ]
+    },
+    {
+      "team": "Egypt",
+      "match_id": 88,
+      "total_elo_adjustment": -3.0,
+      "raw_sum_before_aggregate_cap": -3.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "suspension",
+          "raw_elo": -3.0,
+          "per_player_capped_elo": -3.0,
+          "cap_used": 8.0,
+          "player": "Y. Ibrahim",
+          "reason": "accumulated_yellows",
+          "evidence_match_ids": [
+            65,
+            86
+          ],
+          "confidence": "high",
+          "source": "fetch_results_events",
+          "capped_elo": -3.0,
+          "cap_reason": "per_player"
         }
       ]
     },
@@ -3762,9 +3788,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 214,
+    "total_active_components": 215,
     "teams_affected": 48,
-    "matches_affected": 21,
+    "matches_affected": 22,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T19:06:21.115249+00:00",
+  "generated_at": "2026-07-03T21:59:46.269435+00:00",
   "schema_version": 1,
   "cap_used": 8.0,
   "min_matches_for_bonus": 20,
@@ -1185,6 +1185,20 @@
       "home_team": "Switzerland",
       "away_team": "Algeria",
       "referee_name": "Yael Falcon Perez, Argentina",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "ref_not_in_baseline",
+      "notes": null
+    },
+    {
+      "match_id": 86,
+      "home_team": "Australia",
+      "away_team": "Egypt",
+      "referee_name": "Gustavo Tejera, Uruguay",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "raw_home_elo": 0.0,
