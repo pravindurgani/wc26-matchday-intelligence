@@ -174,3 +174,44 @@ def load_knockout_fixtures(path: Path = BRACKET_PATH) -> list[dict]:
         )
         _KO_DEFAULT_TIME_WARNED.update(new_missing)
     return out
+
+
+# ── Round-label classifier ──────────────────────────────────────────────────
+# A.6 (2026-07-03): canonical home moved here from
+# build_provider_fixture_map.py so fetch_results.py's knockout map
+# auto-extension can classify provider rounds WITHOUT importing the builder
+# (the builder imports fetch_results — importing it back would be circular).
+# build_provider_fixture_map re-exports this name, so its existing importers
+# (tests/live/test_knockout_fixture_map.py) are unaffected.
+#
+# Confirmed via A.0 probe against Euro 2024 + WC 2022:
+#   "Round of 16", "Quarter-finals", "Semi-finals", "Final", "3rd Place Final"
+# WC2026 introduces a Round of 32 (48-team format) — API-Football has not
+# exposed this round before, so we accept multiple plausible labels.
+# Substring + lowercase matching tolerates capitalisation drift.
+# A.6 also accepts football-data.org stage enums directly (LAST_32, LAST_16,
+# QUARTER_FINALS, SEMI_FINALS, THIRD_PLACE, FINAL) so callers holding the
+# raw football-data `stage` field don't each need their own translation
+# table. GROUP_STAGE matches none of the branches → None, as required.
+def classify_round(round_label: str | None) -> str | None:
+    """Map a provider round label to our internal phase code, or None for group/unknown.
+
+    Phase codes: r32, r16, qf, sf, third_place, final.
+    """
+    if not round_label:
+        return None
+    rl = round_label.lower()
+    # Most specific first: "3rd Place Final" must beat "Final".
+    if "3rd place" in rl or "third place" in rl or "third_place" in rl:
+        return "third_place"
+    if "round of 32" in rl or "1/16" in rl or "last_32" in rl or "last 32" in rl:
+        return "r32"
+    if "round of 16" in rl or "1/8" in rl or "last_16" in rl or "last 16" in rl:
+        return "r16"
+    if "quarter" in rl:
+        return "qf"
+    if "semi" in rl:
+        return "sf"
+    if "final" in rl:  # bare "Final" — must come after the more specific checks above
+        return "final"
+    return None  # group stage or unknown

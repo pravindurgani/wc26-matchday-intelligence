@@ -419,7 +419,7 @@ section h2 {
   margin: 0 0 14px;
   background: color-mix(in srgb, var(--danger, #ef4444) 8%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--danger, #ef4444) 35%, var(--border));
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius);
   font-size: 13px;
 }
 .live-strip[hidden] { display: none; }
@@ -1579,44 +1579,61 @@ section#contenders .card > .filter-row {
 }
 
 /* ─── B.7 Matchday Intelligence ───────────────────────────────────────── */
+/* Theme-token pass: this block originally referenced tokens that don't
+   exist in :root (--bg-elev / --text-muted / --mono), so every rule fell
+   through to hardcoded light-scheme fallbacks and broke dark mode (light
+   grey chips, dim greens/reds). Now uses the same semantic tokens as the
+   rest of the page so both themes render correctly. */
 .matchday-intel-card { padding: 18px 20px; }
 .md-caps { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 10px; }
 .md-cap {
-  font: 500 11px / 1 var(--mono, system-ui);
+  font: 500 11px / 1 var(--font-mono);
   padding: 4px 8px;
   border-radius: 999px;
-  background: var(--bg-elev, #f4f4f5);
-  color: var(--text-muted, #71717a);
-  border: 1px solid var(--border, #e5e7eb);
+  background: var(--surface-elev);
+  color: var(--text-2);
+  border: 1px solid var(--border);
 }
-.md-cap.strong { background: var(--text); color: var(--bg, #fff); border-color: transparent; }
+.md-cap.strong { background: var(--text); color: var(--bg); border-color: transparent; }
 .md-feeds { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .md-feed {
-  font: 600 11px / 1 system-ui;
+  font: 600 11px / 1 var(--font);
   padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid var(--border, #e5e7eb);
+  border: 1px solid var(--border);
 }
-.md-feed.on  { background: rgba(34, 197, 94, .12); color: #16a34a; border-color: rgba(34, 197, 94, .3); }
-.md-feed.off { background: rgba(148, 163, 184, .12); color: #64748b; border-color: rgba(148, 163, 184, .3); }
+.md-feed.on {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+}
+.md-feed.off {
+  background: color-mix(in srgb, var(--text-3) 12%, transparent);
+  color: var(--text-3);
+  border-color: color-mix(in srgb, var(--text-3) 30%, transparent);
+}
 .md-summary { margin-bottom: 12px; }
 .md-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
 .md-table th, .md-table td {
   padding: 8px 10px;
-  border-bottom: 1px solid var(--border, #e5e7eb);
+  border-bottom: 1px solid var(--border);
   text-align: left;
   font-size: 13px;
 }
-.md-table th { font-weight: 600; color: var(--text-muted, #71717a); }
-.md-delta.pos { color: #16a34a; font-weight: 600; }
-.md-delta.neg { color: #dc2626; font-weight: 600; }
+.md-table th { font-weight: 600; color: var(--text-2); }
+/* Numeric column follows the site-wide convention: right-aligned
+   tabular-nums (the global `.num` rule at the top supplies the font). */
+.md-table th.num, .md-table td.num { text-align: right; }
+.md-delta.pos { color: var(--success); font-weight: 600; }
+.md-delta.neg { color: var(--danger); font-weight: 600; }
 .md-cap-flag {
   display: inline-block; margin-left: 4px;
-  font: 600 9px / 1 system-ui; text-transform: uppercase;
+  font: 600 9px / 1 var(--font); text-transform: uppercase;
   padding: 2px 4px; border-radius: 3px;
-  background: rgba(234, 88, 12, .15); color: #c2410c;
+  background: color-mix(in srgb, var(--warning) 15%, transparent);
+  color: var(--warning);
 }
 .md-empty { padding: 12px 0; }
 .md-warnings { margin-top: 10px; }
-.md-warnings summary { cursor: pointer; font-weight: 600; color: var(--text-muted, #71717a); }
+.md-warnings summary { cursor: pointer; font-weight: 600; color: var(--text-2); }
 .md-warnings ul { margin: 6px 0 0 18px; padding: 0; }

@@ -4,14 +4,27 @@ S7 — KO advance-prob export post-processor.
 Background
 ----------
 For each KO match (m ≥ 73) with both teams resolved, derive
-    p_advance_match = p_home_win + 0.5 * p_draw
-from the same NB(α)-marginal × Dixon-Coles-τ joint matrix the production
-sim uses for the 90-min WDL (build_score_matrix at
-scripts/03_simulate.py:186-208). The 0.5 split is the documented FIFA
-penalty-shootout 50/50 assumption — already implicit in
-scripts/03_simulate.py:292-312 (`resolve_knockout`); this script just
-exposes it as a per-match field so the outright KO-market sheet can price
-without leaning on the 90-min WDL triple (which over-prices draws).
+    p_advance_match = p_home_win + p_draw * P(home wins ET+pens | 90' draw)
+where the 90-min WDL comes from the same NB(α)-marginal × Dixon-Coles-τ
+joint matrix the production sim uses (build_score_matrix at
+scripts/03_simulate.py:186-208), and the draw mass is split with the SAME
+tie-break model the sim actually plays in `resolve_knockout`
+(scripts/03_simulate.py:334-355):
+
+    1. 30-min extra time: independent Poisson goals at λ/ET_LAMBDA_DIVISOR
+       (λ/3) per side — this favors the stronger side, NOT 50/50;
+    2. if still level, penalties via the Elo logistic
+       P(home) = 1 / (1 + 10 ** ((elo_a - elo_h) / PEN_ELO_SLOPE)),
+       using the sim-emitted effective Elos from `knock_lambdas_table`.
+
+R17 P2 history: this field used to be `p_home_win + 0.5 * p_draw` under a
+docstring claiming the 50/50 split was "already implicit" in
+resolve_knockout. That claim was false — the sim's ET-at-λ/3 + Elo-pens
+model tilts the draw mass toward the favorite, so the published number
+underpriced favorites by ~2-5pp on the dashboard. The closed form below
+now matches the sim's model exactly (constants imported from
+scripts/constants.py — no magic numbers); for two equal-strength sides it
+degenerates to the old p_home + 0.5*p_draw.
 
 Why a post-processor (not a sim-core change)
 -------------------------------------------
@@ -88,7 +101,13 @@ from check_invariants import (  # noqa: E402
 # max_g 10 → 15). Pre-R13 the export silently truncated the NB tail at
 # 10, publishing KO advance probabilities that diverged from the
 # production sim's 16×16 by up to 2.2pp at the high-λ tail.
-from constants import DC_RHO, MAX_G, NB_ALPHA  # noqa: E402
+from constants import (  # noqa: E402
+    DC_RHO,
+    ET_LAMBDA_DIVISOR,
+    MAX_G,
+    NB_ALPHA,
+    PEN_ELO_SLOPE,
+)
 FLOOR = 1e-12
 
 DEFAULT_IN = PROC / "predictions_live.json"
@@ -171,6 +190,68 @@ def _wdl_from_matrix(M: list[list[float]]) -> tuple[float, float, float]:
     p_draw = sum(M[h][a] for h in range(n) for a in range(n) if h == a)
     p_away = sum(M[h][a] for h in range(n) for a in range(n) if h < a)
     return p_home, p_draw, p_away
+
+
+# --------------------------------------------------------------------------
+# R17 P2: closed-form tie-break model — the exact model resolve_knockout
+# (scripts/03_simulate.py:334-355) plays when 90 minutes end level:
+# 30-min ET at independent Poisson(λ/ET_LAMBDA_DIVISOR) per side, then a
+# penalty shootout via the PEN_ELO_SLOPE Elo logistic. Constants imported
+# from scripts/constants.py — the same symbols the sim consumes.
+# --------------------------------------------------------------------------
+def _poisson_pmf(k: int, lam: float) -> float:
+    """Plain Poisson pmf via lgamma (numerically stable). The sim's ET uses
+    rng.poisson — plain Poisson, NOT the NB/DC 90-min joint — so the closed
+    form must too."""
+    if k < 0:
+        return 0.0
+    if lam <= 0.0:
+        return 1.0 if k == 0 else 0.0
+    return math.exp(k * math.log(lam) - lam - _log_gamma(k + 1))
+
+
+def _et_pens_home_advance_prob(lam_h: float, lam_a: float,
+                               eff_elo_h: float | None,
+                               eff_elo_a: float | None,
+                               pen_elo_slope: float = PEN_ELO_SLOPE,
+                               max_g: int = MAX_G) -> float:
+    """P(home advances | 90-min draw) under the sim's tie-break model.
+
+    Mirrors resolve_knockout (scripts/03_simulate.py:334-355): since the
+    90-min score is level, the ET winner is decided purely by the two
+    independent Poisson(λ/3) ET goal counts; a level ET goes to penalties,
+    where P(home) = 1 / (1 + 10 ** ((elo_a - elo_h) / PEN_ELO_SLOPE)) on
+    the same effective Elos the sim passes into the shootout.
+
+    `lam_h`/`lam_a` are the FULL-match λs (the division by
+    ET_LAMBDA_DIVISOR happens here, exactly as in the sim). Truncation at
+    max_g leaves < 1e-12 tail mass at λ/3 ≤ 2.4; marginals are renormalised
+    so the three ET outcomes sum to exactly 1 (same convention as the
+    90-min matrix floor+renorm).
+
+    If either effective Elo is missing (legacy knock_lambdas_table rows),
+    the shootout falls back to 50/50 — the ET tilt still applies.
+    For λ_h == λ_a and equal Elos this returns exactly 0.5, so
+    p_advance_match degenerates to the historical p_home + 0.5 * p_draw.
+    """
+    lh = lam_h / ET_LAMBDA_DIVISOR
+    la = lam_a / ET_LAMBDA_DIVISOR
+    ph = [_poisson_pmf(k, lh) for k in range(max_g + 1)]
+    pa = [_poisson_pmf(k, la) for k in range(max_g + 1)]
+    s_ph, s_pa = sum(ph), sum(pa)
+    ph = [x / s_ph for x in ph]
+    pa = [x / s_pa for x in pa]
+    p_et_home = sum(ph[h] * pa[a]
+                    for h in range(max_g + 1)
+                    for a in range(max_g + 1) if h > a)
+    p_et_draw = sum(ph[k] * pa[k] for k in range(max_g + 1))
+    if eff_elo_h is None or eff_elo_a is None:
+        p_pens_home = 0.5
+    else:
+        # Verbatim logistic from scripts/03_simulate.py:350.
+        p_pens_home = 1.0 / (1.0 + 10.0 ** ((eff_elo_a - eff_elo_h)
+                                            / pen_elo_slope))
+    return p_et_home + p_et_draw * p_pens_home
 
 
 # --------------------------------------------------------------------------
@@ -363,8 +444,18 @@ def _iter_bracket_rows(bracket: dict) -> Iterable[tuple[str, dict]]:
         yield "final", ft["final"]
 
 
-def _lambda_lookup(table: list[dict]) -> dict[tuple[str, str], tuple[float, float]]:
+def _lambda_lookup(
+    table: list[dict],
+) -> dict[tuple[str, str], tuple[float, float, float | None, float | None]]:
     """Index `knock_lambdas_table` by (home, away) for O(1) lookup.
+
+    Each value is (lambda_home, lambda_away, effective_elo_home,
+    effective_elo_away). The λs feed the 90-min matrix AND the ET-at-λ/3
+    leg of the draw-split; the effective Elos feed the penalty logistic —
+    they are the SAME symmetrized Elos the sim passes into
+    resolve_knockout, so the closed form prices the shootout identically.
+    Elos are None-tolerant for legacy tables (pre-S7 rows without the
+    effective_elo_* fields) — the pens leg then falls back to 50/50.
 
     The sim emits the FULL directed table — entries for both (A, B) and
     (B, A). The advance-prob computation is order-sensitive (we want
@@ -373,7 +464,7 @@ def _lambda_lookup(table: list[dict]) -> dict[tuple[str, str], tuple[float, floa
     will miss and the KO match will be silently skipped — caught by
     test_ko_advance_export.test_knock_lambdas_table_full_coverage.
     """
-    out: dict[tuple[str, str], tuple[float, float]] = {}
+    out: dict[tuple[str, str], tuple[float, float, float | None, float | None]] = {}
     for row in table or []:
         h = row.get("home")
         a = row.get("away")
@@ -381,7 +472,13 @@ def _lambda_lookup(table: list[dict]) -> dict[tuple[str, str], tuple[float, floa
         la = row.get("lambda_away")
         if h is None or a is None or lh is None or la is None:
             continue
-        out[(h, a)] = (float(lh), float(la))
+        eh = row.get("effective_elo_home")
+        ea = row.get("effective_elo_away")
+        out[(h, a)] = (
+            float(lh), float(la),
+            float(eh) if eh is not None else None,
+            float(ea) if ea is not None else None,
+        )
     return out
 
 
@@ -392,6 +489,13 @@ def build_ko_advance_entries(predictions: dict, bracket: dict,
     both teams resolved (e.g. during group stage)."""
     lam_table = _lambda_lookup(predictions.get("knock_lambdas_table") or [])
     group_slots = _resolve_group_slots(completed_idx, cfg_data, annex_c)
+    # R17 P2: pen slope — prefer the config block the sim serialises into
+    # the payload (the value the run actually used), fall back to the
+    # canonical constant. Both resolve to scripts/constants.PEN_ELO_SLOPE
+    # today; the config path guards against a future tuning of DEFAULTS
+    # reaching the feed before this module is redeployed.
+    pen_slope = float((predictions.get("config") or {})
+                      .get("pen_elo_slope", PEN_ELO_SLOPE))
     base_ctx = {
         "completed_idx": completed_idx,
         "group_slots": group_slots,
@@ -415,13 +519,17 @@ def build_ko_advance_entries(predictions: dict, bracket: dict,
         lams = lam_table.get((home, away))
         if lams is None:
             continue
-        lam_h, lam_a = lams
+        lam_h, lam_a, eff_elo_h, eff_elo_a = lams
         M = _build_nb_dc_matrix(lam_h, lam_a)
         p_home, p_draw, p_away = _wdl_from_matrix(M)
-        # 90-min + FIFA penalty-shootout 50/50 split (already baked into
-        # scripts/03_simulate.py:292-312 `resolve_knockout`). Documented
-        # in CORRECTIONS.md / round-5 audit — no threshold change here.
-        p_advance = p_home + 0.5 * p_draw
+        # R17 P2: split the draw mass with the sim's ACTUAL tie-break model
+        # (ET at Poisson λ/3 → Elo-logistic pens; resolve_knockout at
+        # scripts/03_simulate.py:334-355) instead of the old 50/50 prior,
+        # which underpriced favorites by ~2-5pp. For equal λs + equal Elos
+        # p_tiebreak_home is exactly 0.5 and this reduces to the old form.
+        p_tiebreak_home = _et_pens_home_advance_prob(
+            lam_h, lam_a, eff_elo_h, eff_elo_a, pen_slope)
+        p_advance = p_home + p_draw * p_tiebreak_home
         out.append({
             "m": m_num,
             "stage": stage,
@@ -429,9 +537,15 @@ def build_ko_advance_entries(predictions: dict, bracket: dict,
             "away": away,
             "lambda_home": lam_h,
             "lambda_away": lam_a,
+            # Effective Elos (sim-symmetrized, from knock_lambdas_table) so
+            # downstream consumers/tests can re-derive the tie-break split.
+            "effective_elo_home": eff_elo_h,
+            "effective_elo_away": eff_elo_a,
             "p_home_win": p_home,
             "p_draw": p_draw,
             "p_away_win": p_away,
+            # P(home advances | 90-min draw) — the ET+pens draw-split.
+            "p_tiebreak_home_win": p_tiebreak_home,
             "p_advance_match": p_advance,
         })
     return out

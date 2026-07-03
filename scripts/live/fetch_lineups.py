@@ -82,6 +82,12 @@ from lineup_adjustments import (  # noqa: E402
 from _knockout import (  # noqa: E402
     is_placeholder_slot, load_knockout_fixtures,
 )
+# KO-phase fix (2026-07-03): resolve bracket slot codes into real team
+# names from locked results (export_ko_advance's resolver, shared glue in
+# _ko_slot_resolution). Without this, every KO row kept its slot code,
+# the per-fixture `is_placeholder_slot` guard skipped it, and no KO
+# lineup was ever polled.
+from _ko_slot_resolution import resolve_schedule_slots  # noqa: E402
 # R11 E4: name-aware side resolution. See build_lineup_entry docstring.
 from fetch_results import normalize_team  # noqa: E402
 
@@ -117,7 +123,7 @@ def _http_get_json(url: str, headers: dict, timeout: int = 15) -> dict:
     return http_get_json(url, headers, timeout=timeout)
 
 
-def _load_schedule() -> list[dict]:
+def _load_schedule(results_path: Path | None = None) -> list[dict]:
     """Load group + knockout schedule, enriching each entry with `_tz`
     (IANA zone resolved via venue_city_map + host_cities[].tz). Entries
     whose venue lacks a tz field fall through to legacy local-as-UTC
@@ -126,13 +132,22 @@ def _load_schedule() -> list[dict]:
     Round 6 R32-critical fix: pre-Round 6 this loaded ONLY
     `group_stage_schedule`, so no knockout fixture ever entered the
     lineup-poll window. Now we merge `knockout_bracket_2026.json` rows
-    too. Placeholder slot codes ("1A", "W74") stay in the schedule so
-    the kickoff window is contiguous; the per-fixture poll in main()
-    skips them via `is_placeholder_slot` until results land.
+    too.
+
+    KO-phase fix (2026-07-03): merged knockout rows are post-processed
+    via `resolve_schedule_slots`, which rewrites placeholder slot codes
+    ("1A", "W74", "3A/B/C/D/F") into real team names wherever locked
+    results (default data/live/results_2026.json; override with
+    `results_path` for tests) allow — resolved KO fixtures now actually
+    get lineup-polled. Genuinely-unknown slots keep their codes so the
+    kickoff window stays contiguous and the per-fixture poll in main()
+    still skips them via `is_placeholder_slot` until results land.
     """
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
     sched = list(cfg.get("group_stage_schedule", []) or [])
     sched.extend(load_knockout_fixtures(RAW / "knockout_bracket_2026.json"))
+    resolve_schedule_slots(sched, results_path=results_path,
+                           config_path=RAW / "wc2026_config.json")
     venue_city_map = cfg.get("venue_city_map", {}) or {}
     city_to_tz = {hc["city"]: hc.get("tz")
                   for hc in (cfg.get("host_cities") or [])}
@@ -392,7 +407,9 @@ def main() -> int:
             # codes (e.g. "1A", "W74") can't have a meaningful lineup poll
             # — we don't know which national team will fill the slot.
             # Skip until results lock in; the cron re-runs and will pick
-            # it up once the bracket is resolved.
+            # it up once the bracket is resolved. (KO-phase fix 2026-07-03:
+            # _load_schedule now resolves slots from locked results, so
+            # this guard only fires for genuinely-unknown fixtures.)
             if (is_placeholder_slot(sched.get("home"))
                     or is_placeholder_slot(sched.get("away"))):
                 warnings.append({"type": "unresolved_slot",

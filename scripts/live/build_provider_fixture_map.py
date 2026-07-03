@@ -40,36 +40,13 @@ from fetch_results import (  # noqa: E402
     APIFOOTBALL_BASE, FOOTBALLDATA_BASE,
 )
 
-
 # ── Round-label classifier ────────────────────────────────────────────────
-# Confirmed via A.0 probe against Euro 2024 + WC 2022:
-#   "Round of 16", "Quarter-finals", "Semi-finals", "Final", "3rd Place Final"
-# WC2026 introduces a Round of 32 (48-team format) — API-Football has not
-# exposed this round before, so we accept multiple plausible labels.
-# Substring + lowercase matching tolerates capitalisation drift.
-# Hoisted to module scope so tests can import it.
-def classify_round(round_label: str | None) -> str | None:
-    """Map a provider round label to our internal phase code, or None for group/unknown.
-
-    Phase codes: r32, r16, qf, sf, third_place, final.
-    """
-    if not round_label:
-        return None
-    rl = round_label.lower()
-    # Most specific first: "3rd Place Final" must beat "Final".
-    if "3rd place" in rl or "third place" in rl:
-        return "third_place"
-    if "round of 32" in rl or "1/16" in rl:
-        return "r32"
-    if "round of 16" in rl or "1/8" in rl:
-        return "r16"
-    if "quarter" in rl:
-        return "qf"
-    if "semi" in rl:
-        return "sf"
-    if "final" in rl:  # bare "Final" — must come after the more specific checks above
-        return "final"
-    return None  # group stage or unknown
+# A.6 (2026-07-03): canonical definition moved to scripts/live/_knockout.py
+# so fetch_results.py's knockout map auto-extension can classify rounds
+# without importing this builder (which imports fetch_results — circular).
+# Re-exported here for back-compat: tests/live/test_knockout_fixture_map.py
+# and any operator tooling import it from this module.
+from _knockout import classify_round  # noqa: E402, F401
 
 
 def fetch_apifootball_fixtures(api_key: str, league_id: str, season: str) -> list[dict]:

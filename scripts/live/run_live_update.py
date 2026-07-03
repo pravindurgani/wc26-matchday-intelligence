@@ -236,10 +236,27 @@ def get_live_predictions_locked_count() -> int:
         return -1
 
 
+# Hash-gate fix (2026-07-03): per-row fields excluded from the input hash.
+# These are pure fetch-time metadata — fetch_results.py re-stamps
+# `updated_at` on EVERY completed row on EVERY fetch (fetch_results.py:999
+# and the preservation branch at :1473), even for matches locked weeks ago.
+# Hashing them meant compute_input_hash() changed every tick regardless of
+# real input movement, so the early-exit gate could never fire and every
+# 10-min tick burned a full 25k-tourney re-sim (~9 min on GHA runners).
+# Scores / status / pens / events still churn the hash — only the volatile
+# timestamp is excluded.
+VOLATILE_ROW_FIELDS = frozenset({"updated_at"})
+
+
 def compute_input_hash() -> str:
     """H1: SHA-256 over (results.completed_matches + matchday_intelligence.generated_at
     + live_team_state.last_updated). Detects score corrections and intel refreshes
     that the bare match-count check would miss.
+
+    Volatile per-row fetch timestamps are excluded (see VOLATILE_ROW_FIELDS)
+    so the hash reflects simulation INPUTS, not fetcher metadata. The stored
+    comparison value is stamped by stamp_input_hash() with this same
+    function, so compare/stamp can never drift apart.
     """
     h = hashlib.sha256()
     # Completed matches (sorted by match number → stable)
@@ -248,6 +265,8 @@ def compute_input_hash() -> str:
         try:
             data = json.loads(res.read_text())
             cm = sorted(data.get("completed_matches", []), key=lambda m: m.get("m", 0))
+            cm = [{k: v for k, v in m.items() if k not in VOLATILE_ROW_FIELDS}
+                  if isinstance(m, dict) else m for m in cm]
             h.update(json.dumps(cm, sort_keys=True, separators=(",", ":")).encode("utf-8"))
         except Exception:
             h.update(b"results_unreadable")
@@ -292,6 +311,41 @@ def read_last_input_hash() -> str:
         return str(json.loads(p.read_text()).get("input_hash", ""))
     except Exception:
         return ""
+
+
+def stamp_input_hash() -> bool:
+    """Persist the gate's memory: recompute the input hash and write it into
+    the canonical data/processed/predictions_live.json (atomic
+    read-modify-write). Returns True when the stamp landed.
+
+    Hash-gate fix (2026-07-03): 03_simulate.py stamps its own input_hash at
+    write time, but that computation includes the volatile per-row
+    `updated_at` timestamps this module now excludes (VOLATILE_ROW_FIELDS) —
+    comparing our hash against the sim's would never match. Re-stamping here
+    with compute_input_hash() itself makes the gate self-contained: the value
+    read_last_input_hash() sees next tick was produced by the exact function
+    that will do the comparison. Called AFTER update_team_state (whose
+    last_updated bump is part of the hashed payload) and only on a fully
+    clean tick, so a failed Σ-gate or KO export leaves the old hash in place
+    and the next tick re-simulates + re-validates.
+
+    Failure here is non-fatal by design: a missed stamp degrades to the
+    pre-fix behavior (re-sim next tick), never to a wrongly-skipped sim.
+    """
+    p = PROC / "predictions_live.json"
+    if not p.exists():
+        return False
+    try:
+        payload = json.loads(p.read_text())
+        if not isinstance(payload, dict):
+            return False
+        payload["input_hash"] = compute_input_hash()
+        atomic_write_json(p, payload)
+        return True
+    except Exception as e:
+        print(f"[run_live_update] could not stamp input_hash "
+              f"({type(e).__name__}: {e}) — next tick will re-simulate")
+        return False
 
 
 def detect_provider_source() -> tuple[str, str]:
@@ -728,6 +782,17 @@ def main() -> int:
         }]
         write_live_state(mode, new_count, sim_rerun=True,
                          warnings=warns_with_gate)
+
+    # Hash-gate fix (2026-07-03): persist the gate's memory LAST, and only on
+    # a fully-clean tick (sim OK + KO export OK + Σ-gate OK). On any failure
+    # the previous hash stays in place, so the next tick re-simulates and
+    # re-runs the failed stage — preserving the R11 D3 "next tick re-runs"
+    # recovery promise. The stamped file is committed by live-matchday.yml
+    # (data/processed/predictions_live.json joined the commit allow-list in
+    # the same fix), which is what lets a CI tick actually skip: pre-fix the
+    # checkout always contained the 29-Jun hash and every tick re-simmed.
+    if validate_rc == 0 and rc_ko == 0:
+        stamp_input_hash()
 
     print(f"[run_live_update] DONE — locked {new_count} matches")
     if delta and delta.get("top_movers_up"):

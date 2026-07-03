@@ -106,6 +106,15 @@ jobs:
       - name: Fetch results with events (refresh for referee + suspensions)
         if: steps.gate.outputs.skip != 'true'
         env:
+          # 2026-07-03: FOOTBALL_PROVIDER was missing from this step's env, so
+          # fetch_results.get_provider_name() (reads FOOTBALL_PROVIDER, then
+          # WC_RESULTS_SOURCE, then defaults to "mock") resolved to "mock" and
+          # the 3h event-enrichment fetch was a silent no-op — the key alone
+          # never selects the provider. Mirror the fast workflow's provider
+          # resolution: repo var FOOTBALL_PROVIDER with WC_RESULTS_SOURCE as
+          # the back-compat alias.
+          FOOTBALL_PROVIDER: ${{ vars.FOOTBALL_PROVIDER }}
+          WC_RESULTS_SOURCE: ${{ vars.WC_RESULTS_SOURCE }}
           API_FOOTBALL_KEY:  ${{ secrets.API_FOOTBALL_KEY }}
           WC_APIFOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}

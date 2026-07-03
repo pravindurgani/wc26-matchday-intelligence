@@ -63,6 +63,7 @@ RAW = ROOT / "data" / "raw"
 sys.path.insert(0, str(ROOT))
 from scripts.live._schema_watchdog import assert_shape  # noqa: E402
 from scripts.live._knockout import load_knockout_fixtures  # noqa: E402  # R9 P4
+from scripts.live._knockout import classify_round  # noqa: E402  # A.6
 _SCHEMA_BASELINE_DIR = ROOT / "data" / "live" / "_provider_schemas"
 
 LOCKED_STATUSES = {"FT", "AET", "PEN"}
@@ -490,8 +491,305 @@ def load_fixture_map() -> dict | None:
         return None
 
 
-def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
-    """Fetch WC2026 fixtures from API-Football v3, normalise to our schema."""
+# ─── A.6 — KNOCKOUT FIXTURE-MAP AUTO-EXTENSION (2026-07-03) ─────────────────
+# Root cause of the R32 freeze (2026-06-28 → 2026-07-03), a four-link chain:
+#   1. data/live/provider_fixture_map.json was generated 2026-06-09 by the
+#      pre-A.1 builder — 72 group ids only, no KO ids, no `coverage` block.
+#   2. live-matchday.yml's rebuild Trigger 2 read `.coverage.knockout_total
+#      // 0` from that legacy map → `0 -lt 0` never true → never rebuilt.
+#   3. The per-fixture fallback below (date±1 + home + away vs the schedule)
+#      can never match a KO fixture: bracket rows carry slot codes ("1A",
+#      "W74", "3A/B/C/D/F"), not team names, so every provider R32 fixture
+#      fell into `unmapped` and was dropped.
+#   4. The drop was silent operationally: the KO-window CRITICAL message went
+#      to stderr only — never into results_2026.json warnings — so
+#      live_state.json showed zero warnings while completed_matches froze
+#      at 72.
+#
+# Fix: extend the map in-process from the fixtures payload the adapter has
+# ALREADY fetched this tick (zero extra API calls, no manual steps).
+# Internal bracket slots are resolved to team names from locked results via
+# export_ko_advance's resolver (group ranks + Annex C third-place routing +
+# W/L codes — the same single source of truth the KO advance-prob export
+# uses). Provider KO fixtures are then matched by stage + unordered team
+# pair + date±1, with the same TEAM_ALIAS normalisation used at fetch time.
+# Matched ids are persisted to provider_fixture_map.json (already in the
+# workflow's commit allow-list) so later ticks take the O(1) map path.
+# Rounds bootstrap sequentially: R32 resolves from the group results already
+# on disk; R16 resolves once R32 results lock; and so on through the final.
+#
+# Unmapped fixtures inside the tournament window now emit a structured
+# warning via build_unmapped_warnings — surfaced in results_2026.json →
+# live_state.json → dashboard. Never stderr-only again.
+
+# _knockout.load_knockout_fixtures stage tags ("3rd") vs builder phase codes
+# ("third_place") — bridge the two vocabularies.
+_PHASE_TO_STAGE = {
+    "r32": "r32", "r16": "r16", "qf": "qf", "sf": "sf",
+    "third_place": "3rd", "final": "final",
+}
+
+
+def _dates_within_one_day(a: str | None, b: str | None) -> bool:
+    """±1 day tolerance — same UTC↔local rollover window the fuzzy fallback
+    uses (NA evening matches roll past midnight UTC)."""
+    if not a or not b:
+        return False
+    if a[:10] == b[:10]:
+        return True
+    from datetime import date as _date
+    try:
+        da, db = _date.fromisoformat(a[:10]), _date.fromisoformat(b[:10])
+    except ValueError:
+        return False
+    return abs((da - db).days) <= 1
+
+
+def _resolved_bracket_rows() -> list[dict]:
+    """load_knockout_fixtures() rows annotated with `resolved_home` /
+    `resolved_away` team names (None while the feeding results are still
+    unknown). Never raises: a resolver failure degrades to unresolved rows,
+    the extension no-ops, and the loud unmapped warning downstream fires."""
+    rows = load_knockout_fixtures()
+    if not rows:
+        return []
+    for row in rows:
+        row["resolved_home"] = None
+        row["resolved_away"] = None
+    try:
+        from scripts.live.export_ko_advance import (  # noqa: PLC0415
+            _build_completed_index, _resolve_group_slots, _resolve_slot,
+        )
+        cfg = json.loads((RAW / "wc2026_config.json").read_text())
+        annex_path = RAW / "annex_c_third_place_table_2026.json"
+        annex_c = json.loads(annex_path.read_text()) if annex_path.exists() else {}
+        completed_idx = _build_completed_index(LIVE / "results_2026.json")
+        group_slots = _resolve_group_slots(completed_idx, cfg, annex_c)
+    except Exception as e:
+        print(f"[fetch_results] WARN: KO bracket resolution unavailable — "
+              f"{type(e).__name__}: {e}")
+        return rows
+    for row in rows:
+        ctx = {"completed_idx": completed_idx, "group_slots": group_slots,
+               "r32_match_num": row["m"]}
+        try:
+            row["resolved_home"] = _resolve_slot(row.get("home"), ctx)
+            row["resolved_away"] = _resolve_slot(row.get("away"), ctx)
+        except Exception as e:
+            print(f"[fetch_results] WARN: KO slot resolution failed for "
+                  f"m={row.get('m')} — {type(e).__name__}: {e}")
+    return rows
+
+
+def extend_fixture_map_with_knockouts(
+    provider_rows: list[dict],
+    provider: str,
+    write: bool = True,
+) -> dict[str, int]:
+    """Return {provider_fixture_id: internal_m} for newly-mapped KO fixtures.
+
+    `provider_rows` is the minimal normalised view of the fixtures payload
+    the adapter already holds: [{"id", "home", "away", "date", "round"}],
+    with home/away already normalize_team()'d. A provider fixture maps to a
+    bracket row iff its classified stage matches, its unordered team pair
+    equals the row's resolved pair, and the dates agree within ±1 day.
+    Single-elimination guarantees a team appears at most once per round, so
+    (stage, pair) is unique on both sides — no positional guessing, no
+    cross-wired ids (a mis-mapped id would write a real score into the
+    WRONG match: validate_match skips the team cross-check for m>=73).
+
+    Persists the extended map atomically when `write` is True, recomputing
+    the builder-shaped `coverage` block so the workflow's bootstrap-rebuild
+    trigger sees truthful numbers. Never raises: any failure returns {} and
+    the caller's unmapped path emits the loud warning instead."""
+    try:
+        candidates = []
+        for r in provider_rows:
+            pfid = str(r.get("id") or "")
+            phase = classify_round(r.get("round"))
+            if not pfid or phase is None:
+                continue
+            candidates.append((pfid, phase, r))
+        if not candidates:
+            return {}
+
+        map_path = LIVE / "provider_fixture_map.json"
+        doc: dict = {}
+        if map_path.exists():
+            try:
+                doc = json.loads(map_path.read_text())
+            except Exception as e:
+                print(f"[fetch_results] WARN: fixture map unreadable for KO "
+                      f"extension ({e}) — starting a fresh map skeleton")
+                doc = {}
+        if doc.get("provider") and doc.get("provider") != provider:
+            # Never graft one provider's fixture ids onto another provider's
+            # map — the workflow's provider-mismatch trigger rebuilds instead.
+            print(f"[fetch_results] KO map extension skipped: map provider="
+                  f"{doc.get('provider')!r} != active provider {provider!r}")
+            return {}
+        fixtures = [f for f in doc.get("fixtures", []) if isinstance(f, dict)]
+        known_ids = {str(f.get("provider_fixture_id")) for f in fixtures}
+        used_ms = set()
+        for f in fixtures:
+            mid = f.get("match_id") or f.get("m")
+            if mid is not None:
+                used_ms.add(int(mid))
+
+        pending = [(pfid, phase, r) for (pfid, phase, r) in candidates
+                   if pfid not in known_ids]
+        if not pending:
+            return {}
+
+        by_stage_pair: dict[tuple[str, tuple[str, str]], dict] = {}
+        for row in _resolved_bracket_rows():
+            h, a = row.get("resolved_home"), row.get("resolved_away")
+            if not h or not a or int(row["m"]) in used_ms:
+                continue
+            by_stage_pair[(row["stage"], tuple(sorted((h, a))))] = row
+
+        added: dict[str, int] = {}
+        new_records: list[dict] = []
+        # Deterministic claim order (PYTHONHASHSEED-independent): sort by
+        # (date, provider id) so re-runs on the same payload map identically.
+        for pfid, phase, r in sorted(pending,
+                                     key=lambda t: (t[2].get("date") or "", t[0])):
+            stage = _PHASE_TO_STAGE.get(phase, phase)
+            pair = tuple(sorted((r.get("home") or "", r.get("away") or "")))
+            row = by_stage_pair.get((stage, pair))
+            if row is None or not _dates_within_one_day(r.get("date"), row.get("date")):
+                continue
+            if int(row["m"]) in used_ms:
+                continue  # first claim wins — a dup provider row can't fork
+            used_ms.add(int(row["m"]))
+            added[pfid] = int(row["m"])
+            new_records.append({
+                "match_id": int(row["m"]),
+                "provider_fixture_id": pfid,
+                "home": r.get("home"),
+                "away": r.get("away"),
+                "date": row.get("date"),
+                "phase": phase,
+            })
+        if not added:
+            return {}
+
+        ms = sorted(added.values())
+        print(f"[fetch_results] KO map auto-extension: +{len(added)} fixtures "
+              f"(m={ms}) write={write}")
+        if write:
+            fixtures.extend(new_records)
+            fixtures.sort(key=lambda x: int(x.get("match_id") or x.get("m") or 0))
+            doc["fixtures"] = fixtures
+            doc.setdefault("provider", provider)
+            doc["extended_at"] = datetime.now(timezone.utc).isoformat()
+            doc["extended_by"] = "fetch_results.knockout_auto_extension"
+            ko_total = len(load_knockout_fixtures()) or 32
+            n_group = sum(1 for f in fixtures
+                          if int(f.get("match_id") or f.get("m") or 0) <= 72)
+            n_ko = len(fixtures) - n_group
+            doc["coverage"] = {
+                "group_mapped": n_group,
+                "group_total": 72,
+                "knockout_mapped": n_ko,
+                "knockout_total": ko_total,
+                "total_mapped": len(fixtures),
+                "total_expected": 72 + ko_total,
+            }
+            atomic_write_json(map_path, doc)
+        return added
+    except Exception as e:
+        print(f"[fetch_results] WARN: KO map auto-extension failed — "
+              f"{type(e).__name__}: {e}")
+        return {}
+
+
+def _known_team_set() -> set[str]:
+    """All 48 canonical WC2026 team names (from config groups)."""
+    try:
+        cfg = json.loads((RAW / "wc2026_config.json").read_text())
+        teams: set[str] = set()
+        for g_teams in (cfg.get("groups") or {}).values():
+            teams.update(g_teams)
+        return teams
+    except Exception:
+        return set()
+
+
+def _tournament_window() -> tuple[str, str]:
+    """(first, last) fixture date of WC2026, derived from config + bracket so
+    a schedule change never silently narrows the warning window. Falls back
+    to the published 2026-06-11 → 2026-07-19 window."""
+    lo, hi = "2026-06-11", "2026-07-19"
+    try:
+        cfg = json.loads((RAW / "wc2026_config.json").read_text())
+        dates = [s.get("date") for s in cfg.get("group_stage_schedule", [])
+                 if s.get("date")]
+        dates += [r.get("date") for r in load_knockout_fixtures() if r.get("date")]
+        if dates:
+            lo, hi = min(dates), max(dates)
+    except Exception:
+        pass
+    return lo, hi
+
+
+def build_unmapped_warnings(unmapped: list[dict], provider: str) -> list[dict]:
+    """A.6: structured warning for unmapped provider fixtures inside the
+    tournament window — lands in results_2026.json → live_state.json →
+    dashboard. Pre-fix the only signal was a stderr print (link 4 of the
+    R32-freeze chain).
+
+    A fixture is warn-worthy when its date falls inside the window AND it is
+    either already meaningful (locked/live status — a real result is being
+    dropped RIGHT NOW) or both team names resolve to known WC2026 teams
+    (the pairing exists but we failed to place it — alias drift or bracket-
+    resolution disagreement). Pre-draw KO fixtures carrying provider
+    placeholder names ("Winner Group A") stay quiet: they are expected to be
+    unmappable until the bracket resolves and would spam every group-stage
+    tick otherwise."""
+    lo, hi = _tournament_window()
+    known = _known_team_set()
+    noisy: list[dict] = []
+    for u in unmapped:
+        d = (u.get("date") or "")[:10]
+        if not (lo <= d <= hi):
+            continue
+        raw_status = (u.get("status") or "").upper()
+        canon = (APIFOOTBALL_STATUS_MAP.get(raw_status)
+                 or FOOTBALLDATA_STATUS_MAP.get(raw_status)
+                 or raw_status)
+        live_or_locked = canon in LOCKED_STATUSES or canon == "LIVE"
+        home = normalize_team(u.get("home") or "")
+        away = normalize_team(u.get("away") or "")
+        teams_known = bool(known) and home in known and away in known
+        if live_or_locked or teams_known:
+            noisy.append(dict(u))
+    if not noisy:
+        return []
+    return [{
+        "type": "unmapped_provider_fixture",
+        "severity": "critical",
+        "provider": provider,
+        "count": len(noisy),
+        "message": (
+            f"{len(noisy)} provider fixture(s) inside the tournament window "
+            f"could not be mapped to internal match ids — their results are "
+            f"NOT being ingested. KO auto-extension could not place them: "
+            f"check provider_fixture_map.json coverage and TEAM_ALIAS for "
+            f"the names below, or rebuild via scripts/live/"
+            f"build_provider_fixture_map.py --provider {provider} --write."
+        ),
+        "fixtures": noisy[:8],
+    }]
+
+
+def fetch_api_football(api_key: str, dry_run: bool = False,
+                       warnings_sink: list | None = None) -> list[dict]:
+    """Fetch WC2026 fixtures from API-Football v3, normalise to our schema.
+
+    A.6: `warnings_sink` (optional, append-only) receives structured
+    warnings — currently unmapped-tournament-fixture alerts — that main()
+    folds into results_2026.json's warnings array."""
     headers = {"x-apisports-key": api_key, "Accept": "application/json"}
 
     # League + season come from the fixture map (preferred) or env (override)
@@ -569,6 +867,22 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
               "team+date matching. Run scripts/live/build_provider_fixture_map.py to "
               "create a deterministic map.")
 
+    # A.6: auto-extend the map with knockout fixture ids present in THIS
+    # payload — zero extra API calls, no manual rebuild step. See the block
+    # comment above extend_fixture_map_with_knockouts for the root-cause
+    # chain this closes (R32 freeze, 2026-06-28 → 2026-07-03).
+    map_rows = [{
+        "id": str((f.get("fixture") or {}).get("id", "")),
+        "home": normalize_team((((f.get("teams") or {}).get("home")) or {}).get("name", "")),
+        "away": normalize_team((((f.get("teams") or {}).get("away")) or {}).get("name", "")),
+        "date": ((f.get("fixture") or {}).get("date") or "")[:10],
+        "round": (f.get("league") or {}).get("round", ""),
+    } for f in response]
+    added = extend_fixture_map_with_knockouts(
+        map_rows, provider="api_football", write=not dry_run)
+    if added:
+        fixture_map.update(added)
+
     # Load our schedule for fuzzy fallback + date validation
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
     # R9 P4 A2: extend with KO bracket so KO match IDs (m=73..104) can be
@@ -620,7 +934,8 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
                 m_id = cand["m"]
         if m_id is None:
             unmapped.append({"fixture_id": provider_fixture_id, "home": home_raw,
-                             "away": away_raw, "date": date, "status": short})
+                             "away": away_raw, "date": date, "status": short,
+                             "round": (f.get("league") or {}).get("round", "")})
             continue
 
         sched = schedule_by_id.get(m_id)
@@ -701,6 +1016,12 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
                   f"or KO results will not lock. Sample:", file=sys.stderr)
             for u in ko_unmapped[:5]:
                 print(f"  KO-unmapped: {u}", file=sys.stderr)
+        # A.6: the stderr print above is invisible to the dashboard — ALSO
+        # emit a structured warning that main() writes into results_2026.json
+        # (→ live_state.json). This is what makes the drop non-silent.
+        if warnings_sink is not None:
+            warnings_sink.extend(
+                build_unmapped_warnings(unmapped, provider="api_football"))
 
     return out
 
@@ -709,7 +1030,8 @@ def fetch_api_football(api_key: str, dry_run: bool = False) -> list[dict]:
 FOOTBALLDATA_BASE = "https://api.football-data.org/v4"
 
 
-def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
+def fetch_football_data(token: str, dry_run: bool = False,
+                        warnings_sink: list | None = None) -> list[dict]:
     """Fetch WC2026 fixtures from football-data.org, normalise to our schema.
 
     Free tier:
@@ -750,6 +1072,22 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
             print(f"  fixture: {m.get('utcDate', '?')[:16]} {home} vs {away}  status={m.get('status')}")
 
     fixture_map = load_fixture_map() or {}
+
+    # A.6: auto-extend the map with knockout fixture ids present in THIS
+    # payload (see fetch_api_football — same fix, football-data flavour).
+    # classify_round accepts football-data stage enums (LAST_32, …) directly.
+    map_rows = [{
+        "id": str(m.get("id", "")),
+        "home": normalize_team(((m.get("homeTeam") or {}).get("name")) or ""),
+        "away": normalize_team(((m.get("awayTeam") or {}).get("name")) or ""),
+        "date": (m.get("utcDate") or "")[:10],
+        "round": m.get("stage") or "",
+    } for m in matches_raw]
+    added = extend_fixture_map_with_knockouts(
+        map_rows, provider="football_data", write=not dry_run)
+    if added:
+        fixture_map.update(added)
+
     cfg = json.loads((RAW / "wc2026_config.json").read_text())
     # R9 P4 A2: extend with KO bracket (same closure as fetch_apifootball above).
     ko_schedule = load_knockout_fixtures()
@@ -789,7 +1127,8 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
 
         if m_id is None:
             unmapped.append({"id": provider_id, "home": home, "away": away,
-                             "date": date, "status": raw_status})
+                             "date": date, "status": raw_status,
+                             "round": m.get("stage") or ""})
             continue
         sched = schedule_by_id.get(m_id)
         if not sched:
@@ -858,6 +1197,10 @@ def fetch_football_data(token: str, dry_run: bool = False) -> list[dict]:
                   f"or KO results will not lock.", file=sys.stderr)
             for u in ko_unmapped[:5]:
                 print(f"  KO-unmapped: {u}", file=sys.stderr)
+        # A.6: structured warning → results_2026.json → live_state.json.
+        if warnings_sink is not None:
+            warnings_sink.extend(
+                build_unmapped_warnings(unmapped, provider="football_data"))
 
     return out
 
@@ -942,6 +1285,11 @@ def main() -> int:
         return 1
 
     matches: list[dict] = []
+    # A.6: adapter-level structured warnings (unmapped tournament-window
+    # fixtures). Folded into warnings_list below so they land in
+    # results_2026.json and flow to live_state.json via the orchestrator's
+    # get_results_warnings() — the pre-fix path was stderr-only.
+    adapter_warnings: list[dict] = []
     try:
         if src == "mock":
             matches = fetch_mock()
@@ -952,7 +1300,8 @@ def main() -> int:
                 matches = fetch_mock()
                 src = "mock"
             else:
-                matches = fetch_api_football(key, dry_run=args.dry_run)
+                matches = fetch_api_football(key, dry_run=args.dry_run,
+                                             warnings_sink=adapter_warnings)
         elif src in ("football_data", "footballdata"):
             token = get_football_data_token()
             if not token:
@@ -960,7 +1309,8 @@ def main() -> int:
                 matches = fetch_mock()
                 src = "mock"
             else:
-                matches = fetch_football_data(token, dry_run=args.dry_run)
+                matches = fetch_football_data(token, dry_run=args.dry_run,
+                                              warnings_sink=adapter_warnings)
                 src = "football_data"
         elif src == "sportmonks":
             token = get_sportmonks_token()
@@ -1029,11 +1379,25 @@ def main() -> int:
         seen_m.add(m["m"])
         valid.append(m)
 
+    # A.6: adapter warnings join the per-match status warnings. They ride
+    # every write path below — the happy write, the shrink-refusal preserve
+    # (existing["warnings"] = warnings_list), and they disarm the
+    # nothing-useful preserve guard (`not warnings_list`), so an unmapped
+    # alert can never be swallowed by a preservation branch.
+    warnings_list.extend(adapter_warnings)
+
     print(f"[fetch_results] valid={len(valid)} rejected={len(rejected)} warnings={len(warnings_list)}")
     for m, why in rejected[:5]:
         print(f"  ✗ M{m.get('m', '?')}: {why}")
     for w in warnings_list[:5]:
-        print(f"  ⚠ M{w['m']}: {w['status']} {('· ' + w['note']) if w['note'] else ''}")
+        # A.6: warnings_list now mixes per-match status warnings ({m, status,
+        # note}) with adapter-level typed warnings ({type, message, ...}) —
+        # print defensively for both shapes.
+        if "type" in w:
+            print(f"  ⚠ {w['type']}: {str(w.get('message', ''))[:140]}")
+        else:
+            print(f"  ⚠ M{w.get('m', '?')}: {w.get('status', '?')} "
+                  f"{('· ' + w['note']) if w.get('note') else ''}")
 
     out_path = LIVE / "results_2026.json"
 

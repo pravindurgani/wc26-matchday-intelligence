@@ -76,6 +76,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _knockout import (  # noqa: E402
     is_placeholder_slot, load_knockout_fixtures,
 )
+# KO-phase fix (2026-07-03): resolve bracket slot codes into real team
+# names from locked results (export_ko_advance's resolver, shared glue in
+# _ko_slot_resolution). Without this, every KO row stayed a placeholder,
+# `next_match_for_team` skipped all of m=73..104, and a red card in a KO
+# match imposed no next-match ban.
+from _ko_slot_resolution import resolve_schedule_slots  # noqa: E402
 # R12 A1: normalize player names on yellow-accumulation join keys. Pre-R12
 # `yellow_counter[(team, player)]` used the raw provider event string. When
 # API-Football emits the same player as "R. Jiménez" in one match and
@@ -131,7 +137,8 @@ def _read_json(path: Path, default=None):
 
 
 def load_schedule(path: Path = SCHEDULE_PATH,
-                  bracket_path: Path = BRACKET_PATH) -> list[dict]:
+                  bracket_path: Path = BRACKET_PATH,
+                  results_path: Path | None = None) -> list[dict]:
     """Return group + knockout schedule rows sorted by match_id.
 
     Round 6 R32-critical fix: prior to this version `load_schedule` read
@@ -143,10 +150,15 @@ def load_schedule(path: Path = SCHEDULE_PATH,
     Group rows keep their original shape but pick up `stage="group"` so
     callers can detect stage transitions uniformly. Knockout rows are
     loaded via `_knockout.load_knockout_fixtures` with `stage` ∈ {"r32",
-    "r16", "qf", "sf", "3rd", "final"}; `home`/`away` may be unresolved
-    slot codes (e.g. "1A", "W74") until results lock in — those rows are
-    still present so the schedule is contiguous, and
-    `next_match_for_team` skips them via `is_placeholder_slot`.
+    "r16", "qf", "sf", "3rd", "final"}.
+
+    KO-phase fix (2026-07-03): knockout rows are then post-processed via
+    `resolve_schedule_slots`, which rewrites placeholder slot codes
+    ("1A", "W74", "3A/B/C/D/F") into real team names wherever locked
+    results in `results_path` (default data/live/results_2026.json)
+    allow — so `next_match_for_team` can finally land bans on resolved
+    KO fixtures. Genuinely-unknown slots keep their codes and are still
+    skipped via `is_placeholder_slot`, exactly as before.
     """
     cfg = _read_json(path, default={}) or {}
     group = cfg.get("group_stage_schedule") or []
@@ -161,6 +173,8 @@ def load_schedule(path: Path = SCHEDULE_PATH,
             tagged.setdefault("stage", "group")
             merged.append(tagged)
     merged.extend(load_knockout_fixtures(bracket_path))
+    resolve_schedule_slots(merged, results_path=results_path,
+                           config_path=path)
     return sorted(merged, key=lambda r: int(r.get("m", 0)))
 
 
@@ -461,7 +475,8 @@ def _attach_elo(suspensions: list[dict]) -> list[dict]:
 
 def build_payload(results_path: Path = LIVE / "results_2026.json",
                   schedule_path: Path = SCHEDULE_PATH,
-                  now_iso: str | None = None) -> dict:
+                  now_iso: str | None = None,
+                  bracket_path: Path = BRACKET_PATH) -> dict:
     now = now_iso or _now_iso()
     results = _read_json(results_path, default=None)
     warnings: list[dict] = []
@@ -485,7 +500,12 @@ def build_payload(results_path: Path = LIVE / "results_2026.json",
             },
         }
     completed = results.get("completed_matches") or []
-    schedule = load_schedule(schedule_path)
+    # KO-phase fix (2026-07-03): pass results_path through so the slot
+    # resolver derives W/L winners and group ranks from the SAME results
+    # snapshot the suspensions are built from (and so fixture-driven tests
+    # stay hermetic). bracket_path likewise flows to the KO loader.
+    schedule = load_schedule(schedule_path, bracket_path=bracket_path,
+                             results_path=results_path)
     # The group-stage config is the load-bearing input; the knockout
     # bracket is a Round 6 add-on. If the group config is missing OR
     # gives us no rows, fire the existing schedule_missing warning even

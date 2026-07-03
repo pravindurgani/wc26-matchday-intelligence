@@ -13,12 +13,18 @@ compatibility_date = "2026-06-10"
 [triggers]
 crons = ["*/10 * * * *"]
 
-# Tunable knobs without re-deploying. Override per environment as needed.
+# Tunable knobs without a code change. NOTE: [vars] edits still require a
+# `wrangler deploy` to reach the live Worker — nothing in this directory
+# self-deploys.
 [vars]
 WORKFLOW = "live-matchday.yml"
 REF = "main"
 WINDOW_START_UTC_DATE = "2026-06-11"
-WINDOW_END_UTC_DATE = "2026-07-19"
+# 2026-07-03 knockout fix: end date 2026-07-19 → 2026-07-20 so the 19 Jul
+# final's FT lock is still dispatched when ET + pens (or a delayed kickoff)
+# push the finish past midnight UTC. The workflow's own date gate
+# (live-matchday.yml END 2026-07-21 00:00 UTC) remains the backstop.
+WINDOW_END_UTC_DATE = "2026-07-20"
 WINDOW_HOUR_FROM = "0"
 WINDOW_HOUR_TO = "23"
 # 24h coverage. Some fixtures kick off 22-23 UTC and finish 00-02 UTC —

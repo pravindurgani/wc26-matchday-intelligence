@@ -18,14 +18,24 @@
 //               "live-matchday.yml")
 //   REF         branch to dispatch on (default: "main")
 //   WINDOW_START_UTC_DATE  earliest date to fire (default: "2026-06-11")
-//   WINDOW_END_UTC_DATE    latest date to fire   (default: "2026-07-19")
-//   WINDOW_HOUR_FROM       first UTC hour to fire (default: 4)
+//   WINDOW_END_UTC_DATE    latest date to fire   (default: "2026-07-20")
+//   WINDOW_HOUR_FROM       first UTC hour to fire (default: 0)
 //   WINDOW_HOUR_TO         last UTC hour to fire  (default: 23)
 //
-// Why a window? Match action runs 11–23 UTC; daily-baseline at 05 UTC.
-// Outside that range the dispatch is a no-op anyway (orchestrator
-// early-exits on identical input hash), but skipping saves Actions
-// minutes + Vercel deploys. Easy to widen by editing vars.
+// Window edges (2026-07-03 knockout fix): the hour window is now the full
+// 0–23 UTC day and the end date runs through 20 Jul. The old 04–23 UTC
+// window missed FT locks from late-running matches — several US venues
+// kick off 00:00–03:00 UTC, and extra time + penalties push finishes past
+// midnight — and the old 2026-07-19 end date would have dropped the 19 Jul
+// final's FT lock the moment it ran long. Quiet-hour dispatches are cheap:
+// the orchestrator early-exits on an identical input hash. The workflow's
+// own date gate (live-matchday.yml, END 2026-07-21 00:00 UTC) stays the
+// backstop authority on the window.
+//
+// ⚠ DEPLOY REQUIRED: edits to this file (and wrangler.toml) do NOT
+// self-deploy — the live Worker keeps running the previously-uploaded
+// code until you run `cd cf-worker && wrangler deploy` (see README.md
+// step 3). Do this before the R16 late slate.
 
 export default {
   async scheduled(event, env, ctx) {
@@ -33,9 +43,12 @@ export default {
     const ymd = now.toISOString().slice(0, 10);          // "2026-06-11"
     const hour = now.getUTCHours();                       // 0..23
 
+    // Defaults match wrangler.toml [vars]: full 0-23 UTC day through 20 Jul
+    // (2026-07-03 knockout fix — see header comment for why the 04-23 UTC /
+    // 19 Jul window dropped late-running matches and a long final).
     const startDate = env.WINDOW_START_UTC_DATE || "2026-06-11";
-    const endDate   = env.WINDOW_END_UTC_DATE   || "2026-07-19";
-    const hourFrom  = parseInt(env.WINDOW_HOUR_FROM ?? "4", 10);
+    const endDate   = env.WINDOW_END_UTC_DATE   || "2026-07-20";
+    const hourFrom  = parseInt(env.WINDOW_HOUR_FROM ?? "0", 10);
     const hourTo    = parseInt(env.WINDOW_HOUR_TO   ?? "23", 10);
 
     if (ymd < startDate || ymd > endDate) {
@@ -89,8 +102,8 @@ export default {
         ref: env.REF || "main",
         window: {
           start: env.WINDOW_START_UTC_DATE || "2026-06-11",
-          end: env.WINDOW_END_UTC_DATE || "2026-07-19",
-          hours: `${env.WINDOW_HOUR_FROM ?? 4}-${env.WINDOW_HOUR_TO ?? 23} UTC`,
+          end: env.WINDOW_END_UTC_DATE || "2026-07-20",
+          hours: `${env.WINDOW_HOUR_FROM ?? 0}-${env.WINDOW_HOUR_TO ?? 23} UTC`,
         },
         now_utc: new Date().toISOString(),
       }, null, 2),

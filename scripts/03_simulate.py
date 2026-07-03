@@ -65,6 +65,11 @@ MODELS = ROOT / "models"
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "scripts" / "live"))   # B.1: for apply_matchday_adjustments
 from tiebreakers import rank_group, rank_third_placed
+# R17 P2: knockout tie-break constants live in scripts/constants.py (single
+# source of truth) because scripts/live/export_ko_advance.py must price the
+# draw mass of `p_advance_match` with the EXACT model resolve_knockout plays
+# (ET at Poisson λ/3 + Elo-logistic penalties), not a 50/50 prior.
+from constants import ET_LAMBDA_DIVISOR, PEN_ELO_SLOPE
 
 HOST_COUNTRIES = {"Mexico", "United States", "Canada"}
 # P2: South Africa added — Johannesburg sits at ~1750m, so the SAFA squad
@@ -91,7 +96,7 @@ DEFAULTS = dict(
     altitude_penalty_scale=25.0, # Elo penalty for un-adapted teams at 2240m
     heat_penalty=15.0,           # Elo penalty for European/temperate teams in hot venues
     squad_value_cap=20.0,        # max ±Elo from squad-value prior
-    pen_elo_slope=600.0,         # higher = penalties become more random (closer to 50/50)
+    pen_elo_slope=PEN_ELO_SLOPE,  # (=600.0) higher = penalties become more random (closer to 50/50)
     nb_dispersion=5.0,           # Negative Binomial dispersion (lower = more upset variance — empirically tuned)
     dc_rho=-0.13,                # Dixon-Coles τ parameter (negative boosts low-score draws)
     squad_value_cap_override=10.0,  # reduced from 20 — squad value should nudge, not double Elo's job
@@ -340,9 +345,10 @@ def resolve_knockout(mat_90, lam_h, lam_a, elo_h, elo_a, cfg, rng):
         h, a = sample_from_matrix(mat_90, rng)
     if h != a:
         return h, a, "90"
-    # 30-min ET — independent Poisson at 1/3 rates
-    eh = int(rng.poisson(lam_h / 3))
-    ea = int(rng.poisson(lam_a / 3))
+    # 30-min ET — independent Poisson at 1/3 rates (ET_LAMBDA_DIVISOR=3.0;
+    # shared with export_ko_advance's closed-form draw-split, R17 P2)
+    eh = int(rng.poisson(lam_h / ET_LAMBDA_DIVISOR))
+    ea = int(rng.poisson(lam_a / ET_LAMBDA_DIVISOR))
     h += eh; a += ea
     if h != a:
         return h, a, "et"
@@ -354,8 +360,35 @@ def resolve_knockout(mat_90, lam_h, lam_a, elo_h, elo_a, cfg, rng):
         return h, a + 1, "pens"
 
 
+def _canonical_team_name(name):
+    """Best-effort provider-alias → canonical team-name mapping.
+
+    Locked results are written by scripts/live/fetch_results.py, which
+    normalize_team()'s every provider name at ingestion, so in production
+    this is a no-op. It exists as defense-in-depth for operator hand-edits
+    of data/live/results_2026.json that carry a raw alias ("USA",
+    "Korea Republic") — the same rationale as the R13 A2 loader
+    re-normalization in apply_matchday_adjustments. Lazily imports the
+    alias table so the simulator does not depend on the live-fetch module
+    unless a name actually needs reconciling; falls back to identity in
+    minimal test environments where fetch_results isn't importable.
+    """
+    try:
+        from fetch_results import normalize_team  # scripts/live on sys.path
+    except Exception:
+        return name
+    try:
+        return normalize_team(name)
+    except Exception:
+        return name
+
+
 def decide_knockout(team_a, team_b, m_num, locked, mat, lam_h, lam_a, e_h, e_a, cfg, rng):
-    """Return (home_score, away_score, winner_name) for one knockout match.
+    """Return (score_a, score_b, winner_name) for one knockout match.
+
+    `score_a`/`score_b` are oriented to the (team_a, team_b) calling
+    convention — team_a's goals first — even when the provider listed the
+    pairing in the opposite home/away order.
 
     A.3: collapses post-tournament uncertainty by using the REAL result for
     locked knockout matches (FT/AET/PEN) instead of re-simulating them.
@@ -364,6 +397,20 @@ def decide_knockout(team_a, team_b, m_num, locked, mat, lam_h, lam_a, e_h, e_a, 
     times after the match already happened.
 
     Locked-match handling:
+      - R17 P1: when the locked record carries the provider's `home`/`away`
+        team names (fetch_results stores them canonically), the winner is
+        resolved BY NAME, never by position. The old positional decode
+        (`winner == "home"` → team_a) silently advanced the WRONG team
+        whenever the sim's own bracket resolution of the slot pairing
+        disagreed with the provider's actual home/away order — tiebreaker
+        edge cases, or a provider listing the fixture the other way round —
+        and the corrupted bracket then propagated through every later round.
+      - R17 P1: if the locked pairing (after alias normalization) is not the
+        SAME two teams the sim resolved for this slot, raise RuntimeError.
+        Fail-loud is intentional: a warning would let a corrupted bracket
+        publish; the CI circuit breaker absorbs repeated failures.
+      - Legacy locked records without `home`/`away` names (pre-R17 results
+        files) fall back to the old positional decode — backward compat.
       - The `winner` field stored by fetch_results (A.2) is the source of
         truth — it correctly reflects shootout outcomes that score
         comparison alone can't decode (0-0 (3-0 pens) reads as 0-0).
@@ -378,6 +425,70 @@ def decide_knockout(team_a, team_b, m_num, locked, mat, lam_h, lam_a, e_h, e_a, 
         h = lk["home_score"]
         a = lk["away_score"]
         w = lk.get("winner")
+        lk_home = lk.get("home")
+        lk_away = lk.get("away")
+        if lk_home and lk_away:
+            # R17 P1: name-verified, name-resolved locked branch.
+            if {lk_home, lk_away} != {team_a, team_b}:
+                # Names may be operator-edited aliases — re-normalize
+                # before concluding the pairing genuinely differs.
+                lk_home = _canonical_team_name(lk_home)
+                lk_away = _canonical_team_name(lk_away)
+            if {lk_home, lk_away} != {team_a, team_b}:
+                raise RuntimeError(
+                    f"[decide_knockout] locked knockout m={m_num}: provider "
+                    f"pairing {lk_home!r} vs {lk_away!r} (results_2026.json) "
+                    f"does not match the simulator's bracket resolution "
+                    f"{team_a!r} vs {team_b!r}. Advancing a positional "
+                    f"winner here would silently push the wrong team "
+                    f"through the rest of the simulated bracket. Likely "
+                    f"causes: the sim's group/third-place tiebreaker "
+                    f"resolved differently than the provider's official "
+                    f"standings, a stale or mis-keyed record in "
+                    f"data/live/results_2026.json, or a provider team-name "
+                    f"alias missing from fetch_results.TEAM_ALIAS. Refusing "
+                    f"to continue — fix the upstream data. (Fail-loud is "
+                    f"intentional: the CI circuit breaker absorbs repeated "
+                    f"failures; a warning would let a corrupted bracket "
+                    f"publish.)"
+                )
+            # Orient the returned scores to the (team_a, team_b) calling
+            # convention regardless of the provider's home/away order.
+            if lk_home == team_a:
+                s_a, s_b = h, a
+            else:
+                s_a, s_b = a, h
+            # Winner BY NAME: "home"/"away" refer to the provider's own
+            # home/away sides, so map through the locked names — never
+            # through slot position.
+            if w == "home":
+                return s_a, s_b, (team_a if lk_home == team_a else team_b)
+            if w == "away":
+                return s_a, s_b, (team_a if lk_away == team_a else team_b)
+            # No winner field — same tied/score-comparison handling as the
+            # legacy branch below, but resolved by name.
+            if h == a:
+                raise RuntimeError(
+                    f"[decide_knockout] locked knockout m={m_num} {team_a} vs "
+                    f"{team_b} is tied ({h}-{a}) but has no `winner` field. "
+                    f"This is unrecoverable — refusing to silently assign a "
+                    f"winner. Edit data/live/results_2026.json to add "
+                    f"'winner': 'home' or 'away' for this match. Fetch path "
+                    f"normally populates this via API-Football "
+                    f"teams.{{home,away}}.winner — verify the provider feed "
+                    f"isn't dropping it."
+                )
+            won = lk_home if h > a else lk_away
+            print(f"[decide_knockout] WARN: locked knockout m={m_num} "
+                  f"{team_a} vs {team_b} has no `winner` field; decided by "
+                  f"score comparison ({h}-{a}) → {won}",
+                  file=sys.stderr)
+            return s_a, s_b, (team_a if won == team_a else team_b)
+        # Legacy locked record WITHOUT provider team names (pre-R17 results
+        # files): positional decode is all the data allows — provider order
+        # is assumed to match bracket-slot order. New records always carry
+        # names (load_completed_matches preserves them), so this path only
+        # serves backward compatibility with older results_2026.json.
         if w == "home":
             return h, a, team_a
         if w == "away":
@@ -766,6 +877,15 @@ def load_completed_matches(path):
     simulator can lock knockout matches correctly. For group fixtures
     these fields are None and behavior is unchanged. For knockouts,
     `winner` ("home"/"away") is the source of truth — see decide_knockout().
+
+    R17 P1: also preserves the provider's `home`/`away` team names
+    (canonical — fetch_results normalize_team()'s them at ingestion).
+    Without them, decide_knockout() could only decode `winner` "home"/
+    "away" POSITIONALLY against the sim's own slot resolution, silently
+    advancing the wrong team whenever the two disagreed. The names make
+    the pairing verifiable and the winner resolvable by name. They also
+    let the P1-D knockout_predictions export show real team names on
+    locked KO cards instead of falling back to slot codes.
     """
     if not path.exists():
         return {}
@@ -773,6 +893,8 @@ def load_completed_matches(path):
     out = {}
     for m in d.get("completed_matches", []):
         out[m["m"]] = {
+            "home": m.get("home"),
+            "away": m.get("away"),
             "home_score": m["home_score"],
             "away_score": m["away_score"],
             "home_pens": m.get("home_pens"),
@@ -1403,10 +1525,12 @@ def main():
         or x.get("climate_static_h_zeroed_by_forecast")
         or x.get("climate_static_a_zeroed_by_forecast")
     ]
-    # S7 (Round 7): export symmetrized knockout λ table so the
-    # `scripts/live/export_ko_advance.py` post-processor can derive
-    # `p_advance_match = p_home_win + 0.5*p_draw` (90-min + 50/50 penalty
-    # shootout assumption) for KO fixtures (m ≥ 73) once both teams resolve.
+    # S7 (Round 7), R17 P2: export symmetrized knockout λ table (+ effective
+    # Elos) so the `scripts/live/export_ko_advance.py` post-processor can
+    # derive `p_advance_match = p_home_win + p_draw * P(win ET+pens)` for KO
+    # fixtures (m ≥ 73) once both teams resolve — the draw mass is split
+    # with the same ET-at-λ/3 + Elo-logistic-pens model resolve_knockout
+    # plays, hence both λs and effective Elos must travel together.
     # Purely additive: serialises ctx["knock_lambdas"] (already computed at
     # :956-980 for every team-pair) — no sim behavior change. Pre-resolution
     # post-processor writes nothing; once an R32 winner locks, the table is

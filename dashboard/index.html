@@ -225,8 +225,8 @@
       <div class="card">
         <div class="filter-row">
           <label class="search-label">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="search" id="team-search" placeholder="Search team…" autocomplete="off" />
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="team-search" placeholder="Search team…" autocomplete="off" aria-label="Search team" />
           </label>
           <label>Group <select id="team-group"><option value="all">All</option></select></label>
           <label>Region <select id="team-region">
@@ -282,7 +282,7 @@
       <div class="section-head">
         <div>
           <h2>Most interesting matches</h2>
-          <p class="section-desc">Auto-curated picks from the 72 group-stage fixtures. Click a card to jump to the full match panel.</p>
+          <p class="section-desc">Auto-curated picks from the upcoming fixtures — group stage through the final. Click a card to jump to the full match panel.</p>
         </div>
       </div>
       <div id="interesting-grid" class="interesting-grid"></div>
@@ -292,7 +292,7 @@
       <div class="section-head">
         <div>
           <h2>Match predictions</h2>
-          <p class="section-desc">Goal-model expected scorelines for every group fixture. Bars = W/D/L probabilities. λ = expected goals per side.</p>
+          <p class="section-desc">Goal-model expected scorelines for every fixture — group stage and knockouts. Bars = 90-minute W/D/L probabilities. λ = expected goals per side.</p>
         </div>
         <div class="section-controls match-view-toggle" role="tablist">
           <button data-view="featured" class="active" role="tab" aria-selected="true">Featured</button>
@@ -302,8 +302,8 @@
 
       <div class="filter-row">
         <label class="search-label">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="search" id="match-search" placeholder="Search team or venue…" autocomplete="off" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="match-search" placeholder="Search team or venue…" autocomplete="off" aria-label="Search team or venue" />
         </label>
         <label>Group <select id="f-group"><option value="all">All</option></select></label>
         <label>Date <select id="f-date"><option value="all">All</option></select></label>

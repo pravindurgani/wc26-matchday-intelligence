@@ -1,6 +1,9 @@
 name: Live matchday refresh
 
-# Polls every 10 minutes during the tournament window (11 Jun → 19 Jul 2026).
+# Polls every 10 minutes during the tournament window (11 Jun → 19 Jul 2026;
+# the date gate runs through the whole of 20 Jul UTC because late-running
+# matches — pens/delays, and several US venues kicking off 00:00-03:00 UTC —
+# plus the 19 Jul final going long all finish past midnight UTC).
 # The orchestrator exits fast if no match has changed to a final state —
 # only re-simulates when something genuinely happened.
 #
@@ -108,7 +111,11 @@ jobs:
           NOW=$(date -u +%s)
           # Start 24h early so the first kickoff is already covered by an active loop.
           START=$(date -u -d '2026-06-10 00:00:00' +%s 2>/dev/null || python -c "import datetime;print(int(datetime.datetime(2026,6,10).timestamp()))")
-          END=$(date -u -d '2026-07-20 00:00:00' +%s 2>/dev/null || python -c "import datetime;print(int(datetime.datetime(2026,7,20).timestamp()))")
+          # End 24h late (final kicks off 19 Jul): extra time + pens or a
+          # delayed kickoff pushes FT past midnight UTC, and several US-venue
+          # kickoffs land 00:00-03:00 UTC anyway — keep the gate open through
+          # the whole of 20 Jul UTC so those FT locks are still ingested.
+          END=$(date -u -d '2026-07-21 00:00:00' +%s 2>/dev/null || python -c "import datetime;print(int(datetime.datetime(2026,7,21).timestamp()))")
           if [ $NOW -lt $START ] || [ $NOW -gt $END ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "Outside tournament window — exiting."
@@ -155,28 +162,46 @@ jobs:
           if [ "$CURRENT_PROVIDER" != "$PROVIDER" ]; then
             PROVIDER_MISMATCH="yes"
           fi
-          # ── Trigger 2 (A.5): knockout draw has resolved — the map only has
-          # group fixtures and the live state indicates the group stage is
-          # finishing (>= 48 matches locked, i.e. matchday 3 well underway).
-          # Rebuild proactively so M73-M104 get mapped before R32 kicks off.
+          # ── Trigger 2 (A.5, rewired A.6 2026-07-03): bootstrap/repair rebuild.
+          # The original trigger was dead code: it read `.coverage.knockout_total
+          # // 0` from the CURRENT map, but the 2026-06-09 map predates the A.1
+          # builder and has no `coverage` block at all → knockout_total=0 →
+          # `0 -lt 0` never true → the map was never rebuilt and every R32
+          # result was silently dropped (dashboard froze at 72 matches,
+          # 2026-06-28 → 2026-07-03).
+          #
+          # Fixes:
+          #   - knockout_total defaults to 32 (the FIFA WC2026 KO bracket size)
+          #     so a legacy/pre-A.1 map no longer disarms the trigger.
+          #   - The rebuild additionally requires an `unmapped_provider_fixture`
+          #     warning on the last published live_state.json. Primary KO
+          #     mapping is now IN-PROCESS (fetch_results.py auto-extends the
+          #     map from the fixtures payload it already fetched — zero extra
+          #     API calls); this step is the belt-and-braces fallback for when
+          #     that path visibly fails (e.g. our bracket resolution disagrees
+          #     with FIFA's after a drawing of lots — the builder's
+          #     round+chronological pairing doesn't need team names). Gating on
+          #     the warning keeps the full /fixtures refetch off the happy path
+          #     so we never burn one provider call per tick for days.
           KNOCKOUT_MAPPED=$(jq -r '.coverage.knockout_mapped // 0' "$MAP" 2>/dev/null || echo "0")
-          KNOCKOUT_TOTAL=$(jq -r '.coverage.knockout_total // 0' "$MAP" 2>/dev/null || echo "0")
+          KNOCKOUT_TOTAL=$(jq -r '.coverage.knockout_total // 32' "$MAP" 2>/dev/null || echo "32")
           COMPLETED=$(jq -r '.completed_matches_count // 0' dashboard/live_state.json 2>/dev/null || echo "0")
+          UNMAPPED_WARNED=$(jq -r '[.warnings[]? | select(.type == "unmapped_provider_fixture")] | length' dashboard/live_state.json 2>/dev/null || echo "0")
           KNOCKOUT_NEEDED="no"
-          if [ "$KNOCKOUT_MAPPED" -lt "$KNOCKOUT_TOTAL" ] && [ "$COMPLETED" -ge 48 ]; then
+          if [ "$KNOCKOUT_MAPPED" -lt "$KNOCKOUT_TOTAL" ] && [ "$COMPLETED" -ge 48 ] && [ "$UNMAPPED_WARNED" -gt 0 ]; then
             KNOCKOUT_NEEDED="yes"
           fi
 
           if [ "$PROVIDER_MISMATCH" = "no" ] && [ "$KNOCKOUT_NEEDED" = "no" ]; then
             echo "Fixture map up-to-date "
             echo "  provider: have='$CURRENT_PROVIDER' want='$PROVIDER' (match)"
-            echo "  knockout: $KNOCKOUT_MAPPED/$KNOCKOUT_TOTAL mapped, $COMPLETED group matches locked"
+            echo "  knockout: $KNOCKOUT_MAPPED/$KNOCKOUT_TOTAL mapped, $COMPLETED matches locked, $UNMAPPED_WARNED unmapped-fixture warnings"
             exit 0
           fi
 
           echo "Rebuilding fixture map:"
           [ "$PROVIDER_MISMATCH" = "yes" ] && echo "  reason: provider mismatch (have='$CURRENT_PROVIDER' want='$PROVIDER')"
-          [ "$KNOCKOUT_NEEDED" = "yes" ] && echo "  reason: knockout draw should be resolvable ($COMPLETED matches locked, $KNOCKOUT_MAPPED/$KNOCKOUT_TOTAL knockouts mapped)"
+          [ "$KNOCKOUT_NEEDED" = "yes" ] && echo "  reason: in-process KO auto-extension flagged $UNMAPPED_WARNED unmapped fixture warning(s) ($COMPLETED matches locked, $KNOCKOUT_MAPPED/$KNOCKOUT_TOTAL knockouts mapped)"
 
           # Back up the current map so we can roll back if rebuild yields fewer group fixtures.
           if [ -f "$MAP" ]; then cp "$MAP" "${MAP}.bak"; fi
@@ -199,6 +224,7 @@ jobs:
           exit 0
 
       - name: Run live update orchestrator
+        id: orchestrator
         if: steps.gate.outputs.skip != 'true'
         env:
           FOOTBALL_PROVIDER: ${{ steps.provider.outputs.provider }}
@@ -237,12 +263,29 @@ jobs:
           # sim crash, rc=other) bubbles up unchanged.
           if [ "$rc" -eq 2 ]; then
             echo "::warning::run_live_update returned 2 (soft skip) — live_state.json warning will be published this tick."
-            exit 0
+            rc=0
           fi
-          exit "$rc"
+          # CB-PERSISTENCE FIX (2026-07-03): never fail THIS step on rc!=0.
+          # Pre-fix `exit "$rc"` failed the step, the commit step below never
+          # ran, and the circuit-breaker increment written to
+          # data/live/circuit_breaker_state.json plus the sim_failure warning
+          # in dashboard/live_state.json were LOST — the next tick checked out
+          # CB=0 from origin, so CB_THRESHOLD=3 could never trip via CI and
+          # the operator never saw the warning. Instead: record rc as a step
+          # output, exit 0 so the commit step ships the failure state, and let
+          # the final "Surface orchestrator failure" step turn the run red.
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::run_live_update exited rc=$rc — continuing so the commit step can persist circuit-breaker state + warnings; the final step will fail the job."
+          fi
+          exit 0
 
       - name: Commit updated JSON (if changed)
-        if: steps.gate.outputs.skip != 'true' && github.event.inputs.dry_run != 'true'
+        # `always()` is part of the CB-persistence fix (2026-07-03): the step
+        # must run even if an earlier step hard-failed, so a sim-failure tick
+        # still commits the circuit-breaker increment + sim_failure warning.
+        # The original gate/dry-run guards are preserved verbatim after it.
+        if: always() && steps.gate.outputs.skip != 'true' && github.event.inputs.dry_run != 'true'
         env:
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
@@ -253,10 +296,18 @@ jobs:
           # consecutive_failures persists across ticks (pre-R11 the file was in
           # .gitignore + missing from this list, so CB_THRESHOLD=3 escalation
           # never crossed a tick boundary — every cron-run started from 0).
+          # 2026-07-03 (hash-gate fix): include the CANONICAL
+          # data/processed/predictions_live.json. The input-hash early-exit
+          # gate (run_live_update.py read_last_input_hash) reads `input_hash`
+          # from this file, but it was never committed (last landed 29 Jun) —
+          # every CI tick compared against that stale hash, never matched, and
+          # re-ran the full 25k sim (~9 min) even when nothing changed,
+          # brushing the 600s CF-Worker dispatch interval.
           git add dashboard/predictions.json \
                   dashboard/predictions_live.json \
                   dashboard/live_state.json \
                   dashboard/live_delta.json \
+                  data/processed/predictions_live.json \
                   data/live/results_2026.json \
                   data/live/live_team_state.json \
                   data/live/provider_fixture_map.json \
@@ -277,16 +328,15 @@ jobs:
           # second pusher doesn't 403 with non-fast-forward and silently
           # drop its update.
           #
-          # --autostash is LOAD-BEARING: the simulator at 03_simulate.py:1217
-          # writes data/processed/predictions_live.json (canonical output),
-          # which run_live_update.py:506 then copies to dashboard/. The
-          # canonical file in data/processed/ stays modified in the working
-          # tree because it's not in the git-add allow-list above (we only
-          # publish the dashboard/ copy). Without --autostash, `git pull
-          # --rebase` refuses with "you have unstaged changes" and falls
-          # through to the push, which then 403s if origin moved. Don't
-          # remove the flag without first adding data/processed/*.json to
-          # the allow-list.
+          # --autostash: historically LOAD-BEARING because the canonical
+          # data/processed/predictions_live.json (written by 03_simulate.py)
+          # stayed dirty in the working tree — it was missing from the git-add
+          # allow-list, and `git pull --rebase` refuses to run with unstaged
+          # changes, falling through to a push that 403s if origin moved.
+          # As of 2026-07-03 that file IS in the allow-list above (hash-gate
+          # fix), so the tree should be clean here — keep the flag anyway as
+          # belt-and-braces against any other stray artifact a step leaves
+          # behind; dropping it re-opens the silent push-race.
           #
           # Main IS production for this repo — push back to main.
           BRANCH="main"
@@ -308,6 +358,19 @@ jobs:
             exit 1
           fi
           exit 0
+
+      - name: Surface orchestrator failure (after CB state committed)
+        # CB-persistence fix (2026-07-03), final half: the orchestrator step
+        # exits 0 even on failure so the commit step above can persist the
+        # circuit-breaker increment + sim_failure warning to origin. Re-raise
+        # the failure HERE, after the commit, so the run still shows red in
+        # the Actions UI and a human investigating sees the real rc.
+        if: always() && steps.gate.outputs.skip != 'true' && steps.orchestrator.outputs.rc != '' && steps.orchestrator.outputs.rc != '0'
+        env:
+          ORCH_RC: ${{ steps.orchestrator.outputs.rc }}
+        run: |
+          echo "::error::run_live_update exited rc=${ORCH_RC} this tick. Circuit-breaker state + warnings were committed above; failing the job so the run shows red."
+          exit 1
 
       # Vercel deploy on commit happens automatically via the Git integration
       # connected to this repo. The previous CLI deploy step was removed

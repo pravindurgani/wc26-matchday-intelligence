@@ -158,6 +158,35 @@ class TestMatchdayIntelSlowWorkflow(unittest.TestCase):
             ),
         )
 
+    def test_fetch_results_step_sets_football_provider(self):
+        """2026-07-03 fix: the 'Fetch results with events' step set
+        API_FOOTBALL_KEY but NOT FOOTBALL_PROVIDER, so
+        fetch_results.get_provider_name() (FOOTBALL_PROVIDER →
+        WC_RESULTS_SOURCE → 'mock') resolved to 'mock' and the 3h
+        event-enrichment fetch was a silent no-op — suspensions built
+        from an eventless snapshot every tick. The key alone never
+        selects a provider; the step env must carry the provider var
+        (plus its back-compat alias) exactly like the fast workflow."""
+        steps = _matchday_job_steps()
+        idx = _find_step_index_for_script(steps, "fetch_results.py")
+        self.assertGreaterEqual(idx, 0)
+        env = steps[idx].get("env") or {}
+        self.assertIn(
+            "FOOTBALL_PROVIDER", env,
+            msg=(
+                "fetch_results step env missing FOOTBALL_PROVIDER — "
+                "get_provider_name() falls back to 'mock' and the "
+                "--with-events enrichment fetches nothing"
+            ),
+        )
+        self.assertIn(
+            "WC_RESULTS_SOURCE", env,
+            msg="back-compat provider alias missing from step env",
+        )
+        self.assertIn("vars.FOOTBALL_PROVIDER", str(env["FOOTBALL_PROVIDER"]),
+                      msg="provider must come from the repo variable, "
+                          "mirroring live-matchday.yml's resolution order")
+
     def test_git_add_includes_three_new_outputs(self):
         """The commit step's git add allow-list must include the three
         producer outputs. Without this the workflow runs the producers

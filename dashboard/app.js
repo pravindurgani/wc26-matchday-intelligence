@@ -33,9 +33,12 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
   const cur = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
   document.documentElement.dataset.theme = cur;
   localStorage.setItem('wc26-theme', cur);
-  if (window._charts) window._charts.forEach(c => c.destroy());
+  if (window._charts) window._charts.forEach(c => { try { c.destroy(); } catch {} });
   window._charts = [];
-  if (window._data) renderAllCharts(window._data, window._cal);
+  // Rebuild from the live-adjusted primary dataset when available —
+  // window._data is the pre-tournament baseline and goes stale mid-tournament.
+  const chartData = window._primary || window._data;
+  if (chartData) renderAllCharts(chartData, window._cal);
 });
 
 const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -295,9 +298,11 @@ let _livePollTimer = null;
 let _lastLiveTimestamp = null;
 
 function startLivePolling(intervalMs = 60_000) {
-  // Seed last-seen ts from whatever was loaded at boot.
-  _lastLiveTimestamp =
-    document.querySelector('#last-updated')?.getAttribute('title') || null;
+  // Seed last-seen ts from the boot fetch. (Reading it back off the DOM
+  // title attribute broke whenever boot rendered a STALE/WARN pill — the
+  // title then carries prose, never matches the timestamp, and the first
+  // tick did a full re-render for nothing.)
+  _lastLiveTimestamp = _lastFetchedTs || null;
 
   const tick = async () => {
     if (document.hidden) return;          // pause when tab not visible
@@ -486,7 +491,18 @@ function renderLastUpdated(data, liveState, fetchFailures = 0, matchdayIntel = n
     const msg = w.message ? `: ${w.message}` : '';
     el.title = `Pipeline warning${msg}. Type: ${w.type || 'unknown'}${more}`;
   } else {
-    el.textContent = base;
+    // Relative age alongside the absolute stamp — "how fresh is this?"
+    // without doing timezone maths in your head. Guarded against invalid
+    // timestamps (NaN age) and clock skew (negative age → "just now").
+    let rel = '';
+    if (Number.isFinite(ageMs)) {
+      const mins = Math.max(0, Math.floor(ageMs / 60_000));
+      rel = mins < 1 ? ' · just now'
+          : mins < 60 ? ` · ${mins}m ago`
+          : mins < 2880 ? ` · ${Math.round(mins / 60)}h ago`
+          : ` · ${Math.round(mins / 1440)}d ago`;
+    }
+    el.textContent = base + rel;
     el.title = ts;
   }
 }
@@ -527,6 +543,9 @@ function formatLockedScore(ls) {
   if (status === 'PEN' && ls.home_pens != null && ls.away_pens != null) {
     return `${base} (${ls.home_pens}-${ls.away_pens} pens)`;
   }
+  // PEN without shootout sub-scores (provider dropped them): still flag
+  // that the tie was decided on penalties rather than showing a bare draw.
+  if (status === 'PEN') return `${base} (pens)`;
   if (status === 'AET') return `${base} AET`;
   return base;
 }
@@ -838,6 +857,9 @@ function renderContenders(data, liveDelta, travel) {
   // index 0 — preserve it and remove only the dynamically-appended
   // group options (indices 1..N). Mirrors renderMatches' clearing
   // pattern at app.js:1241.
+  // Preserve the user's group filter across live-tick re-renders — removing
+  // the selected <option> silently resets the select back to "All".
+  const prevGroupSel = groupSel ? groupSel.value : 'all';
   if (groupSel) {
     while (groupSel.options.length > 1) groupSel.remove(1);
   }
@@ -845,6 +867,9 @@ function renderContenders(data, liveDelta, travel) {
     const o = document.createElement('option'); o.value = g; o.textContent = `Group ${g}`;
     if (groupSel) groupSel.appendChild(o);
   });
+  if (groupSel && [...groupSel.options].some(o => o.value === prevGroupSel)) {
+    groupSel.value = prevGroupSel;
+  }
 
   const deltaMap = {};
   if (liveDelta?.all_movers) liveDelta.all_movers.forEach(m => deltaMap[m.team] = m.delta_pp);
@@ -852,18 +877,25 @@ function renderContenders(data, liveDelta, travel) {
   const travelDelta = {};
   (travel?.all_diffs || []).forEach(d => travelDelta[d.team] = d.delta_pp);
 
-  const expanded = new Set();
-  let sortKey = 'p_champion';
-  let sortDir = 'desc';
+  // R15: persistent UI state. Live ticks re-run this render fn (R12 D1);
+  // pre-R15 sort/expanded/show-all lived in per-render closure locals, so
+  // every tick silently reset them AND the bound-once listeners (R12 D2)
+  // kept mutating the FIRST render's dead closure — column sorting and
+  // "Show all 48" went inert after the first live tick. All mutable UI
+  // state now lives on window._contendersState; handlers read it at event
+  // time, paint() reads it at paint time.
+  const st = window._contendersState = Object.assign(
+    { expanded: new Set(), sortKey: 'p_champion', sortDir: 'desc', showAll: false },
+    window._contendersState || {});
 
   function sortFn(a, b) {
-    if (sortKey === 'rank') return all.indexOf(a) - all.indexOf(b);
-    if (sortKey === 'team') return a.team.localeCompare(b.team) * (sortDir === 'asc' ? 1 : -1);
-    if (sortKey === 'group') return a.group.localeCompare(b.group) * (sortDir === 'asc' ? 1 : -1);
-    const va = a[sortKey], vb = b[sortKey];
+    if (st.sortKey === 'rank') return all.indexOf(a) - all.indexOf(b);
+    if (st.sortKey === 'team') return a.team.localeCompare(b.team) * (st.sortDir === 'asc' ? 1 : -1);
+    if (st.sortKey === 'group') return a.group.localeCompare(b.group) * (st.sortDir === 'asc' ? 1 : -1);
+    const va = a[st.sortKey], vb = b[st.sortKey];
     if (va == null) return 1;
     if (vb == null) return -1;
-    return (vb - va) * (sortDir === 'desc' ? 1 : -1);
+    return (vb - va) * (st.sortDir === 'desc' ? 1 : -1);
   }
 
   function rowHtml(t, displayIdx, opensDrawer) {
@@ -874,7 +906,7 @@ function renderContenders(data, liveDelta, travel) {
     const delta = deltaMap[t.team];
     const deltaHtml = delta != null && Math.abs(delta) > 0.01
       ? `<span class="row-delta ${delta > 0 ? 'pos' : 'neg'}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}pp</span>` : '';
-    const isOpen = expanded.has(t.team);
+    const isOpen = st.expanded.has(t.team);
     const expander = opensDrawer
       ? `<svg class="row-expander" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>` : '';
     const rank = all.indexOf(t) + 1;
@@ -958,7 +990,6 @@ function renderContenders(data, liveDelta, travel) {
     </td></tr>`;
   }
 
-  let showAll = false;
   const btn = document.getElementById('toggle-all-teams');
 
   function paint() {
@@ -975,7 +1006,7 @@ function renderContenders(data, liveDelta, travel) {
     filtered = filtered.slice().sort(sortFn);
 
     const filterActive = q || g !== 'all' || r !== 'all';
-    if (!filterActive && !showAll) filtered = filtered.slice(0, 20);
+    if (!filterActive && !st.showAll) filtered = filtered.slice(0, 20);
 
     if (countEl) countEl.textContent = `${filtered.length} of ${all.length}`;
 
@@ -989,11 +1020,11 @@ function renderContenders(data, liveDelta, travel) {
     filtered.forEach((t, i) => {
       const opensDrawer = topVisible.has(t.team);
       rows.push(rowHtml(t, i, opensDrawer));
-      if (opensDrawer && expanded.has(t.team)) rows.push(drawerHtml(t));
+      if (opensDrawer && st.expanded.has(t.team)) rows.push(drawerHtml(t));
     });
     tbody.innerHTML = rows.join('');
 
-    if (btn) btn.textContent = (showAll || filterActive) ? `Show top 20` : `Show all ${all.length}`;
+    if (btn) btn.textContent = (st.showAll || filterActive) ? `Show top 20` : `Show all ${all.length}`;
     paintHeaderSort();
   }
 
@@ -1001,10 +1032,10 @@ function renderContenders(data, liveDelta, travel) {
     headerCells.forEach(th => {
       th.classList.remove('sort-asc', 'sort-desc');
       // P2-a11y: live aria-sort reflects state for assistive tech.
-      const isActive = th.dataset.sort === sortKey;
+      const isActive = th.dataset.sort === st.sortKey;
       th.setAttribute('aria-sort',
-        isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none');
-      if (isActive) th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+        isActive ? (st.sortDir === 'asc' ? 'ascending' : 'descending') : 'none');
+      if (isActive) th.classList.add(st.sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
     });
   }
 
@@ -1012,12 +1043,10 @@ function renderContenders(data, liveDelta, travel) {
   // don't stack handlers. Pre-R12 24h of an idle tab = ~1440 stacked
   // handlers per element; one click triggered paint() N times, scroll
   // jank cascaded. The `_r12Bound` marker is set on the persistent DOM
-  // node the first time we bind; subsequent re-renders skip. State
-  // (sortKey/sortDir/expanded/showAll) lives in the renderContenders
-  // closure — but we need to read it through a window-level handle so
-  // re-renders' handlers see the latest state. Move handler state to
-  // window._contendersState so the bound handlers always read fresh.
-  window._contendersState = { paint, expanded, sortKey, sortDir };
+  // node the first time we bind; subsequent re-renders skip. Handlers
+  // read window._contendersState at event time so they always drive the
+  // freshest paint() over the freshest data (R15).
+  st.paint = paint;
   if (!tbody._r12Bound) {
     tbody._r12Bound = true;
     tbody.addEventListener('click', (e) => {
@@ -1031,7 +1060,7 @@ function renderContenders(data, liveDelta, travel) {
         navigator.clipboard?.writeText(url).then(() => {
           const old = copyBtn.textContent; copyBtn.textContent = 'Copied!';
           setTimeout(() => { copyBtn.textContent = old; }, 1500);
-        });
+        }).catch(() => { /* clipboard permission denied — leave label as-is */ });
         return;
       }
       const tr = e.target.closest('tr.team-row');
@@ -1048,8 +1077,8 @@ function renderContenders(data, liveDelta, travel) {
     // P2-a11y: keyboard reachable + announced as a sortable column.
     th.setAttribute('tabindex', '0');
     th.setAttribute('role', 'columnheader');
-    th.setAttribute('aria-sort', th.dataset.sort === sortKey
-      ? (sortDir === 'asc' ? 'ascending' : 'descending')
+    th.setAttribute('aria-sort', th.dataset.sort === st.sortKey
+      ? (st.sortDir === 'asc' ? 'ascending' : 'descending')
       : 'none');
     th.setAttribute('aria-label', `Sort by ${th.textContent.trim()}`);
     if (th._r12Bound) return;
@@ -1064,8 +1093,6 @@ function renderContenders(data, liveDelta, travel) {
         state.sortKey = key;
         state.sortDir = th.dataset.sortDefault || (['team', 'group', 'rank'].includes(key) ? 'asc' : 'desc');
       }
-      // Mirror back into local closure for the current paint() call
-      sortKey = state.sortKey; sortDir = state.sortDir;
       state.paint();
     };
     th.addEventListener('click', doSort);
@@ -1076,19 +1103,24 @@ function renderContenders(data, liveDelta, travel) {
 
   if (btn && !btn._r12Bound) {
     btn._r12Bound = true;
-    btn.addEventListener('click', () => { showAll = !showAll; paint(); });
+    btn.addEventListener('click', () => {
+      const s = window._contendersState;
+      if (!s) return;
+      s.showAll = !s.showAll;
+      s.paint();
+    });
   }
   if (searchEl && !searchEl._r12Bound) {
     searchEl._r12Bound = true;
-    searchEl.addEventListener('input', () => paint());
+    searchEl.addEventListener('input', () => window._contendersState?.paint());
   }
   if (groupSel && !groupSel._r12Bound) {
     groupSel._r12Bound = true;
-    groupSel.addEventListener('change', () => paint());
+    groupSel.addEventListener('change', () => window._contendersState?.paint());
   }
   if (regionSel && !regionSel._r12Bound) {
     regionSel._r12Bound = true;
-    regionSel.addEventListener('change', () => paint());
+    regionSel.addEventListener('change', () => window._contendersState?.paint());
   }
   if (resetBtn && !resetBtn._r12Bound) {
     resetBtn._r12Bound = true;
@@ -1096,20 +1128,22 @@ function renderContenders(data, liveDelta, travel) {
       if (searchEl) searchEl.value = '';
       if (groupSel) groupSel.value = 'all';
       if (regionSel) regionSel.value = 'all';
-      sortKey = 'p_champion'; sortDir = 'desc';
-      paint();
+      const s = window._contendersState;
+      if (!s) return;
+      s.sortKey = 'p_champion'; s.sortDir = 'desc';
+      s.paint();
     });
   }
 
   // Expose for deep link
   window._openContenderDrawer = (team) => {
     if (!all.some(t => t.team === team)) return false;
-    expanded.add(team);
+    st.expanded.add(team);
     if (searchEl) searchEl.value = '';
     if (groupSel) groupSel.value = 'all';
     if (regionSel) regionSel.value = 'all';
-    sortKey = 'p_champion'; sortDir = 'desc';
-    showAll = true;
+    st.sortKey = 'p_champion'; st.sortDir = 'desc';
+    st.showAll = true;
     paint();
     return true;
   };
@@ -1147,30 +1181,37 @@ function renderGroups(data) {
 function renderInteresting(data) {
   const grid = document.getElementById('interesting-grid');
   if (!grid) return;
-  // P1-D: knockout fixtures have no p_home_win/p_away_win pre-resolution.
-  // The "interesting" picks are group-stage-only.
-  // R10 Q1 (B1): also exclude past group matches. Pre-R10 the filter only
-  // checked stage+typeof, so locked group matches (which retain their
-  // pre-tournament probabilities in the data file) continued to surface
-  // as "Closest match"/"Most likely draw"/"Biggest upset" cards through
-  // the entire KO phase — stale and contradictory to the played result
-  // operators could see one section below. todayIso uses UTC because the
-  // dataset's `date` field is calendar-date in tournament/UTC reference.
+  // R15 (was P1-D group-only): auto-curated picks now cover the WHOLE
+  // tournament. Pool = upcoming fixtures with real simulated probabilities:
+  // group rows pre-lock, plus knockout rows once match_predictions_ko has
+  // resolved actual teams into them (slot placeholders like "W74" / "1A"
+  // stay excluded via resolvedTeams). Locked results and past dates drop
+  // out so cards never contradict a played result one section below
+  // (R10 Q1 rationale). todayIso uses UTC because the dataset's `date`
+  // field is calendar-date in tournament/UTC reference.
   const todayIso = new Date().toISOString().slice(0, 10);
-  const ms = (data.match_predictions || []).filter(
-    m => (m.stage || 'group') === 'group'
-         && typeof m.p_home_win === 'number'
+  const resolvedTeams = m => {
+    if ((m.stage || 'group') === 'group') return true;
+    return !!(m.home && m.away
+      && (!m.slot_a || m.home !== m.slot_a)
+      && (!m.slot_b || m.away !== m.slot_b));
+  };
+  const ms = resolvedMatchPredictions(data).filter(
+    m => typeof m.p_home_win === 'number'
+         && !m.locked_score
+         && resolvedTeams(m)
          && (m.date || '') >= todayIso);
 
-  // R10 Q1: once the group stage is over, ms is empty — guard the card
-  // builders below (which dereference closest.p_home_win etc.) and hide
-  // the section gracefully instead of TypeErroring the whole render.
+  // Guard the card builders below (which dereference closest.p_home_win
+  // etc.) and hide the section gracefully instead of TypeErroring the
+  // whole render. Happens between rounds while next-round slots are
+  // still unresolved.
   if (ms.length === 0) {
     // R12 MED: anchor the prose to the matches grid so the reader can
-    // actually scroll to where "knockouts below" lives — the dashboard
-    // has no dedicated bracket section, so the matches grid is where
-    // KO entries surface.
-    grid.innerHTML = '<div class="interesting-empty" style="opacity:0.6;padding:1rem;">All group matches complete — see knockouts in the <a href="#matches">fixtures grid below</a>.</div>';
+    // actually scroll to where results + upcoming fixtures live — the
+    // dashboard has no dedicated bracket section, so the matches grid
+    // is where KO entries surface.
+    grid.innerHTML = '<div class="interesting-empty" style="opacity:0.6;padding:1rem;">No upcoming fixtures to curate right now — next-round matchups appear here as soon as their teams are decided. Results live in the <a href="#matches">fixtures grid below</a>.</div>';
     return;
   }
 
@@ -1185,27 +1226,40 @@ function renderInteresting(data) {
   const mostLikelyDraw = ms.slice().sort((a,b) => b.p_draw - a.p_draw)[0];
   const biggestMismatch = ms.slice().sort((a,b) =>
     Math.max(b.p_home_win, b.p_away_win) - Math.max(a.p_home_win, a.p_away_win))[0];
-  // Biggest upset potential: largest Elo gap with non-trivial underdog chance
-  const upset = ms.slice().sort((a,b) => {
+  // Biggest upset potential: largest Elo gap with non-trivial underdog
+  // chance. Knockout rows only carry Elo when the roster lookup resolved
+  // (see resolvedMatchPredictions) — filter first so a missing rating
+  // can't NaN the comparator.
+  const eloMs = ms.filter(m => Number.isFinite(m.elo_home) && Number.isFinite(m.elo_away));
+  const upset = eloMs.slice().sort((a,b) => {
     const aGap = Math.abs(a.elo_home - a.elo_away);
     const bGap = Math.abs(b.elo_home - b.elo_away);
     const aUnder = Math.min(a.p_home_win, a.p_away_win);
     const bUnder = Math.min(b.p_home_win, b.p_away_win);
     return (bGap * bUnder) - (aGap * aUnder);
   })[0];
-  // Group decider: high entropy + late date
-  const groupDates = {};
-  ms.forEach(m => {
-    if (!groupDates[m.group] || m.date > groupDates[m.group]) groupDates[m.group] = m.date;
-  });
-  const groupDecider = ms.slice().sort((a,b) => {
-    const aFinal = a.date === groupDates[a.group] ? 1 : 0;
-    const bFinal = b.date === groupDates[b.group] ? 1 : 0;
-    if (aFinal !== bFinal) return bFinal - aFinal;
-    const aEnt = -[a.p_home_win, a.p_draw, a.p_away_win].reduce((s,p) => s + (p > 0 ? p*Math.log(p) : 0), 0);
-    const bEnt = -[b.p_home_win, b.p_draw, b.p_away_win].reduce((s,p) => s + (p > 0 ? p*Math.log(p) : 0), 0);
-    return bEnt - aEnt;
-  })[0];
+  // Group decider: high entropy + late date. Only exists while group
+  // fixtures remain in the pool — the card is dropped during knockouts.
+  const groupMs = ms.filter(m => (m.stage || 'group') === 'group');
+  let groupDecider = null;
+  if (groupMs.length) {
+    const groupDates = {};
+    groupMs.forEach(m => {
+      if (!groupDates[m.group] || m.date > groupDates[m.group]) groupDates[m.group] = m.date;
+    });
+    groupDecider = groupMs.slice().sort((a,b) => {
+      const aFinal = a.date === groupDates[a.group] ? 1 : 0;
+      const bFinal = b.date === groupDates[b.group] ? 1 : 0;
+      if (aFinal !== bFinal) return bFinal - aFinal;
+      const aEnt = -[a.p_home_win, a.p_draw, a.p_away_win].reduce((s,p) => s + (p > 0 ? p*Math.log(p) : 0), 0);
+      const bEnt = -[b.p_home_win, b.p_draw, b.p_away_win].reduce((s,p) => s + (p > 0 ? p*Math.log(p) : 0), 0);
+      return bEnt - aEnt;
+    })[0];
+  }
+
+  // In a knockout a 90-min "draw" means extra time — relabel that card
+  // when the pick is a KO fixture so the copy can't read as nonsense.
+  const drawIsKO = (mostLikelyDraw.stage || 'group') !== 'group';
 
   const cards = [
     { label: 'Closest match', m: closest,
@@ -1214,19 +1268,19 @@ function renderInteresting(data) {
     { label: 'Highest expected goals', m: highestGoals,
       stat: `${(highestGoals.lam_home + highestGoals.lam_away).toFixed(2)} expected goals`,
       tone: 'gold' },
-    { label: 'Most likely draw', m: mostLikelyDraw,
-      stat: `${(mostLikelyDraw.p_draw*100).toFixed(0)}% chance of a draw`,
+    { label: drawIsKO ? 'Most likely to need extra time' : 'Most likely draw', m: mostLikelyDraw,
+      stat: `${(mostLikelyDraw.p_draw*100).toFixed(0)}% chance of a ${drawIsKO ? '90-min draw' : 'draw'}`,
       tone: 'neutral' },
     { label: 'Biggest mismatch', m: biggestMismatch,
       stat: `${(Math.max(biggestMismatch.p_home_win, biggestMismatch.p_away_win)*100).toFixed(0)}% favourite`,
       tone: 'warning' },
-    { label: 'Biggest upset potential', m: upset,
+    upset ? { label: 'Biggest upset potential', m: upset,
       stat: `${Math.round(Math.abs(upset.elo_home - upset.elo_away))} Elo gap · ${(Math.min(upset.p_home_win, upset.p_away_win)*100).toFixed(0)}% underdog`,
-      tone: 'danger' },
-    { label: 'Most decisive group game', m: groupDecider,
+      tone: 'danger' } : null,
+    groupDecider ? { label: 'Most decisive group game', m: groupDecider,
       stat: `Group ${groupDecider.group} · ${groupDecider.date}`,
-      tone: 'success' },
-  ];
+      tone: 'success' } : null,
+  ].filter(Boolean);
 
   grid.innerHTML = cards.map(c => `
     <a class="interesting-card tone-${c.tone}" href="#match-${c.m.m}">
@@ -1283,6 +1337,9 @@ function renderMatches(data, liveState) {
   const chips = document.querySelectorAll('#venue-chips .chip');
   const matches = resolvedMatchPredictions(data);
 
+  // Preserve user-picked filter values across live-tick re-renders —
+  // removing a selected <option> silently resets the select to "All".
+  const prevFilterVals = { g: groupSel.value, d: dateSel.value, v: venueSel.value };
   while (groupSel.options.length > 1) groupSel.remove(1);
   while (dateSel.options.length > 1) dateSel.remove(1);
   while (venueSel.options.length > 1) venueSel.remove(1);
@@ -1298,9 +1355,20 @@ function renderMatches(data, liveState) {
   [...new Set(matches.map(m => m.venue).filter(Boolean))].sort().forEach(v => {
     const o = document.createElement('option'); o.value = v; o.textContent = v; venueSel.appendChild(o);
   });
+  const restoreSel = (sel, v) => {
+    if (v && v !== 'all' && [...sel.options].some(o => o.value === v)) sel.value = v;
+  };
+  restoreSel(groupSel, prevFilterVals.g);
+  restoreSel(dateSel, prevFilterVals.d);
+  restoreSel(venueSel, prevFilterVals.v);
 
-  let view = 'featured';
-  let chip = 'all';
+  // R15: persistent view state (same rationale as window._contendersState —
+  // per-render closure locals reset on every live tick AND the bound-once
+  // listeners kept driving the first render's dead paint() over stale
+  // boot-time matches).
+  const st = window._matchesState = Object.assign(
+    { view: 'featured', chip: 'all' },
+    window._matchesState || {});
 
   function featuredMatches() {
     // P1-C: always include the most-recent locked results in the Featured
@@ -1320,6 +1388,7 @@ function renderMatches(data, liveState) {
   }
 
   function chipMatches(m) {
+    const chip = st.chip;
     if (chip === 'all') return true;
     if (chip.startsWith('country:')) return m.venue_country === chip.split(':')[1];
     if (chip === 'hot') return (m.climate || '').includes('hot');
@@ -1335,9 +1404,9 @@ function renderMatches(data, liveState) {
     const q = (searchEl?.value || '').trim().toLowerCase();
     const g = groupSel.value, d = dateSel.value, vn = venueSel.value;
     const close = closeOnly?.checked;
-    const userFilterActive = q || g !== 'all' || d !== 'all' || vn !== 'all' || close || chip !== 'all';
+    const userFilterActive = q || g !== 'all' || d !== 'all' || vn !== 'all' || close || st.chip !== 'all';
 
-    let pool = userFilterActive || view === 'all'
+    let pool = userFilterActive || st.view === 'all'
       ? matches : featuredMatches();
 
     let filtered = pool.filter(m => {
@@ -1360,7 +1429,7 @@ function renderMatches(data, liveState) {
       return true;
     });
 
-    const total = view === 'all' || userFilterActive ? matches.length : featuredMatches().length;
+    const total = st.view === 'all' || userFilterActive ? matches.length : featuredMatches().length;
     if (countEl) countEl.textContent = `${filtered.length} of ${total}`;
 
     if (!filtered.length) {
@@ -1413,6 +1482,18 @@ function renderMatches(data, liveState) {
       const homeDot  = homeIsSlot ? '' : confedDotHtml(homeName);
       const awayDot  = awayIsSlot ? '' : confedDotHtml(awayName);
 
+      // Knockout rows ship p_advance_match (home side's probability of
+      // going through incl. extra time + penalties). Use it for the
+      // prediction line — "Predicted: Draw" is meaningless in a knockout,
+      // and the 90-min W/D/L split alone under-states the favourite.
+      // Robust to absence: older payloads without the field keep the
+      // original predicted-outcome copy.
+      const padv = (stage !== 'group' && typeof m.p_advance_match === 'number')
+        ? m.p_advance_match : null;
+      const predictedHtml = padv != null
+        ? `Advances: <strong>${escapeHtml(padv >= 0.5 ? homeName : awayName)}</strong> (${fmt0(padv >= 0.5 ? padv : 1 - padv)})`
+        : `Predicted: <strong>${escapeHtml(winner)}</strong>`;
+
       const headLabel = (stage === 'group')
         ? `M${m.m} · Grp ${escapeHtml(m.group)}`
         : `M${m.m} · ${escapeHtml(STAGE_LABEL[stage]?.(m) || stage)}`;
@@ -1437,14 +1518,14 @@ function renderMatches(data, liveState) {
         ${hasProbs ? `
         <div class="prob-bar">
           <div class="ph" style="width:${ph}%" title="${escapeHtml(homeName)} win">${ph}%</div>
-          <div class="pd" style="width:${pd}%" title="Draw">${pd}%</div>
+          <div class="pd" style="width:${pd}%" title="${stage !== 'group' ? 'Draw after 90 min' : 'Draw'}">${pd}%</div>
           <div class="pa" style="width:${pa}%" title="${escapeHtml(awayName)} win">${pa}%</div>
         </div>
         <div class="match-meta">
           <span>${Number.isFinite(m.elo_home) && Number.isFinite(m.elo_away)
             ? `Model Elo ${Math.round(m.elo_home)} vs ${Math.round(m.elo_away)}`
             : 'Knockout 90-min model'}</span>
-          <span>Predicted: <strong>${escapeHtml(winner)}</strong></span>
+          <span>${predictedHtml}</span>
         </div>` : `
         <div class="match-meta muted small">
           <span>Bracket TBD — teams resolve as group stage completes.</span>
@@ -1460,8 +1541,10 @@ function renderMatches(data, liveState) {
     btn.addEventListener('click', () => {
       toggleButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
       btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
-      view = btn.dataset.view;
-      paint();
+      const s = window._matchesState;
+      if (!s) return;
+      s.view = btn.dataset.view;
+      s.paint();
     });
   });
 
@@ -1471,30 +1554,32 @@ function renderMatches(data, liveState) {
     c.addEventListener('click', () => {
       chips.forEach(x => x.classList.remove('active'));
       c.classList.add('active');
-      chip = c.dataset.chip;
-      paint();
+      const s = window._matchesState;
+      if (!s) return;
+      s.chip = c.dataset.chip;
+      s.paint();
     });
   });
 
   if (groupSel && !groupSel._r12BoundMatches) {
     groupSel._r12BoundMatches = true;
-    groupSel.addEventListener('change', paint);
+    groupSel.addEventListener('change', () => window._matchesState?.paint());
   }
   if (dateSel && !dateSel._r12BoundMatches) {
     dateSel._r12BoundMatches = true;
-    dateSel.addEventListener('change', paint);
+    dateSel.addEventListener('change', () => window._matchesState?.paint());
   }
   if (venueSel && !venueSel._r12BoundMatches) {
     venueSel._r12BoundMatches = true;
-    venueSel.addEventListener('change', paint);
+    venueSel.addEventListener('change', () => window._matchesState?.paint());
   }
   if (searchEl && !searchEl._r12BoundMatches) {
     searchEl._r12BoundMatches = true;
-    searchEl.addEventListener('input', paint);
+    searchEl.addEventListener('input', () => window._matchesState?.paint());
   }
   if (closeOnly && !closeOnly._r12BoundMatches) {
     closeOnly._r12BoundMatches = true;
-    closeOnly.addEventListener('change', paint);
+    closeOnly.addEventListener('change', () => window._matchesState?.paint());
   }
   if (resetBtn && !resetBtn._r12BoundMatches) {
     resetBtn._r12BoundMatches = true;
@@ -1502,16 +1587,41 @@ function renderMatches(data, liveState) {
       if (searchEl) searchEl.value = '';
       groupSel.value = 'all'; dateSel.value = 'all'; venueSel.value = 'all';
       if (closeOnly) closeOnly.checked = false;
-      chip = 'all';
+      const s = window._matchesState;
+      if (!s) return;
+      s.chip = 'all';
       chips.forEach(c => c.classList.toggle('active', c.dataset.chip === 'all'));
-      view = 'featured';
+      s.view = 'featured';
       toggleButtons.forEach(b => { b.classList.toggle('active', b.dataset.view === 'featured'); b.setAttribute('aria-selected', b.dataset.view === 'featured' ? 'true' : 'false'); });
-      paint();
+      s.paint();
     });
   }
 
   // Expose for deep-link
-  window._setMatchGroup = (g) => { groupSel.value = g; chip = 'all'; chips.forEach(c => c.classList.toggle('active', c.dataset.chip === 'all')); view = 'all'; toggleButtons.forEach(b => { b.classList.toggle('active', b.dataset.view === 'all'); b.setAttribute('aria-selected', b.dataset.view === 'all' ? 'true' : 'false'); }); paint(); };
+  window._setMatchGroup = (g) => { groupSel.value = g; st.chip = 'all'; chips.forEach(c => c.classList.toggle('active', c.dataset.chip === 'all')); st.view = 'all'; toggleButtons.forEach(b => { b.classList.toggle('active', b.dataset.view === 'all'); b.setAttribute('aria-selected', b.dataset.view === 'all' ? 'true' : 'false'); }); paint(); };
+
+  // Register the fresh paint + sync DOM active states with the persisted
+  // view (a live tick re-render must not visually flip the user back to
+  // "Featured" while leaving the old tab highlighted, or vice versa).
+  st.paint = paint;
+  toggleButtons.forEach(b => {
+    const on = b.dataset.view === st.view;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  chips.forEach(c => c.classList.toggle('active', c.dataset.chip === st.chip));
+  // Deep-link helper: reveal a specific match card (#match-N) by switching
+  // to the All view when it isn't part of the Featured subset.
+  st.showMatch = (mid) => {
+    if (document.getElementById('match-' + mid)) return;
+    st.view = 'all';
+    toggleButtons.forEach(b => {
+      const on = b.dataset.view === 'all';
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    paint();
+  };
 
   paint();
 }
@@ -1537,16 +1647,19 @@ function renderCompare(data, travel) {
   // option-append loop did not clear first — 32 team options got pushed
   // every tick → 3840 duplicate <option> nodes per 2h of live window,
   // jank + DOM-bloat memory leak on long sessions.
+  // Preserve the user's picks across live-tick re-renders; fall back to
+  // the top-2 favourites on first paint (or if a picked team vanished).
+  const prevA = a.value, prevB = b.value;
   a.replaceChildren();
   b.replaceChildren();
   teams.forEach(t => {
     const o1 = document.createElement('option'); o1.value = t.team; o1.textContent = t.team; a.appendChild(o1);
     const o2 = document.createElement('option'); o2.value = t.team; o2.textContent = t.team; b.appendChild(o2);
   });
-  // Default to top-2 favourites
   const sortedByChamp = _tp.slice().sort((x,y) => y.p_champion - x.p_champion);
-  a.value = sortedByChamp[0]?.team || teams[0].team;
-  b.value = sortedByChamp[1]?.team || teams[1].team;
+  const hasTeam = v => !!v && _tp.some(t => t.team === v);
+  a.value = hasTeam(prevA) ? prevA : (sortedByChamp[0]?.team || teams[0].team);
+  b.value = hasTeam(prevB) ? prevB : (sortedByChamp[1]?.team || teams[1].team);
 
   const travelKm = (travel?.total_group_travel_km_by_team) || {};
   const travelDelta = {};
@@ -1602,12 +1715,16 @@ function renderCompare(data, travel) {
   // R12 D2: bind-once guards. renderCompare also called via applyLiveUpdate
   // (R12 D1) — without these guards every tick would add a `change`
   // handler, eventually firing paint() N times per dropdown change.
-  if (!a._r12Bound) { a._r12Bound = true; a.addEventListener('change', paint); }
-  if (!b._r12Bound) { b._r12Bound = true; b.addEventListener('change', paint); }
+  // R15: route the bound-once handlers through window._compareState so
+  // they always drive the freshest paint() (post-tick closures go stale).
+  window._compareState = { paint };
+  if (!a._r12Bound) { a._r12Bound = true; a.addEventListener('change', () => window._compareState?.paint()); }
+  if (!b._r12Bound) { b._r12Bound = true; b.addEventListener('change', () => window._compareState?.paint()); }
   if (swap && !swap._r12Bound) {
     swap._r12Bound = true;
     swap.addEventListener('click', () => {
-      const tmp = a.value; a.value = b.value; b.value = tmp; paint();
+      const tmp = a.value; a.value = b.value; b.value = tmp;
+      window._compareState?.paint();
     });
   }
 
@@ -1687,6 +1804,20 @@ function applyDeepLink() {
         document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } catch (e) { console.warn('[deep-link] compare handler:', e); }
+  }
+
+  // '#match-N' (interesting-match cards link here): the card may live
+  // outside the Featured subset — flip the fixtures grid to the All view
+  // first, then scroll to it.
+  if (p.section && /^match-\d+$/.test(p.section)) {
+    try {
+      if (!document.getElementById(p.section) && window._matchesState?.showMatch) {
+        window._matchesState.showMatch(p.section.slice(6));
+      }
+      setTimeout(() => {
+        document.getElementById(p.section)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    } catch (e) { console.warn('[deep-link] match handler:', e); }
   }
 }
 
@@ -1943,13 +2074,13 @@ function renderMatchdayIntelligence(intel) {
         return `<tr>
           <td>${confedDotHtml(a.team)}${escapeHtml(a.team)}</td>
           <td class="muted">${matchLabel}</td>
-          <td class="md-delta ${sign}">${a.total_elo_adjustment > 0 ? '+' : ''}${a.total_elo_adjustment.toFixed(1)} Elo ${capFlag}</td>
+          <td class="md-delta num ${sign}">${a.total_elo_adjustment > 0 ? '+' : ''}${a.total_elo_adjustment.toFixed(1)} Elo ${capFlag}</td>
           <td class="muted small">${escapeHtml(types)}</td>
         </tr>`;
       })
       .join('');
     table = `<table class="md-table">
-      <thead><tr><th>Team</th><th>Scope</th><th>Adjustment</th><th>Layers</th></tr></thead>
+      <thead><tr><th>Team</th><th>Scope</th><th class="num">Adjustment</th><th>Layers</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
   }
@@ -1966,29 +2097,32 @@ function renderMatchdayIntelligence(intel) {
 
 init().catch(err => {
   // M11: inherit the theme so a JSON outage doesn't flash white-on-dark.
-  // Variables come from styles.css :root rules — same fallback colour
-  // tokens used by the rest of the app.
+  // Uses the REAL styles.css tokens (--text/--text-2/--surface) — the old
+  // --fg/--fg-muted/--bg-panel names don't exist in :root, so in light
+  // theme every one fell through to its dark-scheme fallback and rendered
+  // near-invisible light-grey text on a white page. Literal fallbacks stay
+  // dark-scheme for the styles.css-failed-too case (page default is dark).
   document.body.innerHTML = `
     <div style="
       padding: 40px;
       min-height: 100vh;
       background: var(--bg, #0b0e14);
-      color: var(--fg, #e7ecf3);
-      font-family: var(--font-sans, system-ui);
+      color: var(--text, #e7ecf3);
+      font-family: var(--font, system-ui);
       font-size: 14px;
       line-height: 1.5;
     ">
       <h2 style="color: var(--danger, #ff6b6b); margin: 0 0 12px;">Could not load data</h2>
-      <p style="color: var(--fg-muted, #9ba3b4); margin: 0 0 16px;">
+      <p style="color: var(--text-2, #9ba3b4); margin: 0 0 16px;">
         The dashboard couldn't fetch <code>predictions.json</code>. The page will retry on reload.
       </p>
       <pre style="
-        background: var(--bg-panel, #141821);
+        background: var(--surface, #141821);
         border: 1px solid var(--border, #20242e);
         border-radius: 6px;
         padding: 12px;
         overflow: auto;
-        color: var(--fg-muted, #9ba3b4);
+        color: var(--text-2, #9ba3b4);
         font-size: 12px;
       ">${escapeHtml(err.stack || err)}</pre>
     </div>`;

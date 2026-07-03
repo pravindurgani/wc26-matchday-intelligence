@@ -5,7 +5,10 @@ Covers the four invariants for scripts/live/export_ko_advance.py:
 
   1. End-to-end on a synthetic feed with 1 resolved KO match + 31
      placeholders → exactly 1 entry in match_predictions_ko with
-     p_advance_match ≈ p_home_win + 0.5 * p_draw.
+     p_advance_match = p_home_win + p_draw * P(win ET+pens | draw),
+     the ET-at-λ/3 + Elo-logistic-pens draw-split matching the sim's
+     resolve_knockout model (R17 P2 — was p_home + 0.5*p_draw, which
+     underpriced favorites).
 
   2. Idempotency: running the post-processor twice on the same input
      produces byte-identical output (no duplication, no compounding).
@@ -40,6 +43,7 @@ from check_invariants import check_invariants  # noqa: E402
 
 from scripts.live.export_ko_advance import (  # noqa: E402
     _build_nb_dc_matrix,
+    _et_pens_home_advance_prob,
     _wdl_from_matrix,
     build_ko_advance_entries,
     export,
@@ -238,11 +242,24 @@ def test_single_resolved_ko_writes_one_entry(tmp_path: Path) -> None:
     assert e["away"] == "Brazil"
     assert e["stage"] == "r16"
 
-    # p_advance_match must equal p_home_win + 0.5 * p_draw to floating-point.
-    expected_adv = e["p_home_win"] + 0.5 * e["p_draw"]
+    # R17 P2: p_advance_match must equal p_home + p_draw * P(win ET+pens)
+    # to floating-point — the draw mass split with the sim's actual
+    # tie-break model (ET at λ/3 + Elo pens), NOT the old 50/50 prior.
+    # Fixture: λ 1.6/1.1, effective Elos 1700/1500 (favorite home side).
+    p_tb = _et_pens_home_advance_prob(1.6, 1.1, 1700.0, 1500.0)
+    expected_adv = e["p_home_win"] + e["p_draw"] * p_tb
     assert abs(e["p_advance_match"] - expected_adv) < 1e-12, (
         f"p_advance_match drift: {e['p_advance_match']} vs "
         f"{expected_adv} (Δ={abs(e['p_advance_match'] - expected_adv):.3e})"
+    )
+    # The emitted tie-break split must be the same number.
+    assert abs(e["p_tiebreak_home_win"] - p_tb) < 1e-12
+    # And the favorite must be priced ABOVE the old 50/50 formula (the
+    # R17 P2 bug: favorites were underpriced ~2-5pp).
+    old_5050 = e["p_home_win"] + 0.5 * e["p_draw"]
+    assert e["p_advance_match"] > old_5050, (
+        f"favorite must beat the 50/50 split: new={e['p_advance_match']} "
+        f"old={old_5050}"
     )
 
     # And the WDL must equal the NB+DC matrix at the same (lam_h, lam_a).
@@ -253,10 +270,105 @@ def test_single_resolved_ko_writes_one_entry(tmp_path: Path) -> None:
     assert abs(e["p_away_win"] - truth_a) < 1e-12
 
     # And p_advance_match must agree with the closed-form right-hand side.
-    assert abs(e["p_advance_match"] - (truth_h + 0.5 * truth_d)) < 1e-12
+    assert abs(e["p_advance_match"] - (truth_h + truth_d * p_tb)) < 1e-12
 
     # Range sanity.
     assert 0.0 <= e["p_advance_match"] <= 1.0
+    assert 0.0 <= e["p_tiebreak_home_win"] <= 1.0
+
+
+# --------------------------------------------------------------------------
+# R17 P2: draw-split model properties. Sanity anchors from the audit:
+# equal-strength sides must degenerate to the old 50/50 formula; a +200
+# Elo favorite must exceed it; legacy λ tables without effective Elos
+# must still export (pens leg falls back to 50/50, ET tilt preserved).
+# --------------------------------------------------------------------------
+def _entries_for_table(table: list[dict], home: str, away: str) -> list[dict]:
+    """Run build_ko_advance_entries on a one-pair synthetic payload."""
+    payload = {
+        "team_predictions": _minimal_team_predictions(),
+        "match_predictions": [],
+        "knock_lambdas_table": table,
+    }
+    return build_ko_advance_entries(
+        predictions=payload,
+        bracket=_bracket_with_one_resolved_r16(home, away),
+        completed_idx={},
+        cfg_data={"groups": {}, "group_stage_schedule": [],
+                  "fifa_rankings_june_2026": {}},
+        annex_c={"table": {}},
+    )
+
+
+def test_equal_teams_reduce_to_fifty_fifty_split() -> None:
+    """Two equal-λ, equal-Elo sides: P(win ET+pens|draw) is exactly 0.5,
+    so p_advance_match ≈ p_home_win + 0.5 * p_draw (the audit's symmetry
+    anchor for the R17 P2 model)."""
+    table = [{
+        "home": "Argentina", "away": "Brazil",
+        "lambda_home": 1.3, "lambda_away": 1.3,
+        "effective_elo_home": 1800.0, "effective_elo_away": 1800.0,
+    }]
+    entries = _entries_for_table(table, "Argentina", "Brazil")
+    assert len(entries) == 1
+    e = entries[0]
+    assert abs(e["p_tiebreak_home_win"] - 0.5) < 1e-12
+    assert abs(e["p_advance_match"]
+               - (e["p_home_win"] + 0.5 * e["p_draw"])) < 1e-12
+
+
+def test_plus_200_elo_favorite_exceeds_fifty_fifty_split() -> None:
+    """A +200-Elo favorite (with the correspondingly higher λ) must be
+    priced ABOVE p_home + 0.5*p_draw: both the ET-at-λ/3 leg and the
+    Elo-pens logistic tilt the draw mass its way. The audit measured the
+    old formula underpricing favorites by ~2-5pp."""
+    table = [{
+        "home": "Argentina", "away": "Brazil",
+        "lambda_home": 1.6, "lambda_away": 1.1,
+        "effective_elo_home": 1900.0, "effective_elo_away": 1700.0,
+    }]
+    entries = _entries_for_table(table, "Argentina", "Brazil")
+    assert len(entries) == 1
+    e = entries[0]
+    old_5050 = e["p_home_win"] + 0.5 * e["p_draw"]
+    edge = e["p_advance_match"] - old_5050
+    assert edge > 0.005, (
+        f"+200 Elo favorite must exceed the 50/50 split materially; "
+        f"edge={edge:.4f}"
+    )
+    assert edge < 0.10, f"edge implausibly large: {edge:.4f}"
+    # Mirror image: the underdog direction must be priced below 50/50 by
+    # the same mass (complementarity of the two advance probs).
+    table_rev = [{
+        "home": "Brazil", "away": "Argentina",
+        "lambda_home": 1.1, "lambda_away": 1.6,
+        "effective_elo_home": 1700.0, "effective_elo_away": 1900.0,
+    }]
+    e_rev = _entries_for_table(table_rev, "Brazil", "Argentina")[0]
+    assert abs((e["p_advance_match"] + e_rev["p_advance_match"]) - 1.0) < 1e-9, (
+        "home/away advance probabilities of the same matchup must sum to 1"
+    )
+
+
+def test_legacy_lambda_table_without_elos_still_exports() -> None:
+    """Pre-S7 knock_lambdas_table rows had no effective_elo_* fields.
+    Backward compat: the entry must still export — the pens leg falls back
+    to 50/50 while the ET-at-λ/3 leg still favors the higher-λ side."""
+    table = [{
+        "home": "Argentina", "away": "Brazil",
+        "lambda_home": 1.6, "lambda_away": 1.1,
+        # no effective_elo_home / effective_elo_away
+    }]
+    entries = _entries_for_table(table, "Argentina", "Brazil")
+    assert len(entries) == 1
+    e = entries[0]
+    assert e["effective_elo_home"] is None
+    assert e["effective_elo_away"] is None
+    # Matches the helper's None-Elo behavior exactly...
+    p_tb = _et_pens_home_advance_prob(1.6, 1.1, None, None)
+    assert abs(e["p_tiebreak_home_win"] - p_tb) < 1e-12
+    # ...and the ET tilt alone still prices the favorite above 50/50.
+    assert e["p_advance_match"] > e["p_home_win"] + 0.5 * e["p_draw"]
 
 
 def test_export_mirrors_resolved_ko_into_match_predictions(tmp_path: Path) -> None:

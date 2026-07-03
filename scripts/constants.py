@@ -24,3 +24,22 @@ DC_RHO: float = -0.13
 NB_ALPHA: float = 5.0
 """Negative-binomial dispersion (``nb_dispersion`` in
 ``scripts/03_simulate.py`` ``DEFAULTS``)."""
+
+PEN_ELO_SLOPE: float = 600.0
+"""Penalty-shootout Elo logistic slope (``pen_elo_slope`` in
+``scripts/03_simulate.py`` ``DEFAULTS``, which imports this symbol):
+
+    P(home wins shootout) = 1 / (1 + 10 ** ((elo_away - elo_home) / SLOPE))
+
+Consumed by ``resolve_knockout`` in the Monte Carlo sim and by the
+closed-form draw-split in ``scripts/live/export_ko_advance.py`` (R17 P2:
+the published ``p_advance_match`` must price the draw mass with the SAME
+tie-break model the sim actually plays, not a 50/50 prior)."""
+
+ET_LAMBDA_DIVISOR: float = 3.0
+"""Extra time is 30 minutes = 1/3 of regulation, so knockout ET goals are
+sampled at Poisson(λ / ET_LAMBDA_DIVISOR) per side (``resolve_knockout``
+in ``scripts/03_simulate.py``, which imports this symbol). Reused by the
+closed-form ET goal matrix in ``scripts/live/export_ko_advance.py``.
+Kept as 3.0 (not 1/3 factor) so ``lam / ET_LAMBDA_DIVISOR`` is bit-
+identical to the sim's historical ``lam / 3``."""

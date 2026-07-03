@@ -293,44 +293,80 @@ def test_js_replica_equals_analytical_poisson_dc(match):
 # ============================================================ S7 KO ADVANCE
 # (C) For every KO match exported into match_predictions_ko (m ≥ 73,
 #     both teams resolved), the recorded `p_advance_match` must equal
-#     W + 0.5*D evaluated on the SAME analytical NB+DC matrix used in
-#     test (A). This pins the post-processor in
-#     scripts/live/export_ko_advance.py to the same closed-form math.
+#         W + D * P(win ET+pens | draw)
+#     with (W, D) evaluated on the SAME analytical NB+DC matrix used in
+#     test (A), and the draw-split evaluated with the sim's actual
+#     tie-break model (R17 P2): 30-min ET at independent
+#     Poisson(λ/ET_LAMBDA_DIVISOR) per side, then penalties via the
+#     PEN_ELO_SLOPE Elo logistic on the entry's effective Elos. The
+#     truth side below re-derives that split via scipy.stats.poisson —
+#     an independent route from the export's lgamma implementation.
+#     (Pre-R17 this pinned W + 0.5*D, the 50/50 prior the sim never
+#     actually played — favorites were underpriced ~2-5pp.)
 #
-#     Today the test passes trivially (zero KO matches resolved during
-#     group stage → match_predictions_ko is empty). After R32 the test
-#     becomes load-bearing — any drift in the export's λ→matrix→advance
-#     pipeline shows up here at 1e-9, the same tolerance we use for the
-#     90-min WDL agreement.
+#     Post-R32 (groups complete) the feed carries 16 resolved R32
+#     entries, so this test is load-bearing — any drift in the export's
+#     λ→matrix→advance pipeline shows up here at 1e-9, the same
+#     tolerance we use for the 90-min WDL agreement.
 KO_ADVANCE_TOL = 1e-9
+
+# Tie-break constants — canonical declarations in scripts/constants.py
+# (the same symbols 03_simulate.py and export_ko_advance.py import).
+import sys as _sys
+_sys.path.insert(0, str(REPO / "scripts"))
+from constants import ET_LAMBDA_DIVISOR, PEN_ELO_SLOPE  # noqa: E402
 
 
 def _ko_advance_entries():
     """Resolved KO entries (if any) from the feed's match_predictions_ko
-    block. Pre-R32 this is empty — the test below short-circuits."""
+    block. Empty pre-R32 — the test below then short-circuits."""
     feed = json.loads(FEED.read_text())
     return feed.get("match_predictions_ko") or []
+
+
+def _tiebreak_home_truth(lam_h: float, lam_a: float,
+                         eff_h, eff_a,
+                         max_g: int = MAX_G) -> float:
+    """P(home advances | 90' draw): scipy re-derivation of the sim's
+    resolve_knockout tie-break (ET at λ/3, then Elo-logistic pens).
+    None Elos (legacy λ-table rows) fall back to a 50/50 shootout,
+    mirroring export_ko_advance._et_pens_home_advance_prob."""
+    ph = [float(poisson.pmf(k, lam_h / ET_LAMBDA_DIVISOR))
+          for k in range(max_g + 1)]
+    pa = [float(poisson.pmf(k, lam_a / ET_LAMBDA_DIVISOR))
+          for k in range(max_g + 1)]
+    s_ph, s_pa = sum(ph), sum(pa)
+    ph = [x / s_ph for x in ph]
+    pa = [x / s_pa for x in pa]
+    p_et_home = sum(ph[h] * pa[a]
+                    for h in range(max_g + 1)
+                    for a in range(max_g + 1) if h > a)
+    p_et_draw = sum(ph[k] * pa[k] for k in range(max_g + 1))
+    if eff_h is None or eff_a is None:
+        p_pens_home = 0.5
+    else:
+        p_pens_home = 1.0 / (1.0 + 10.0 ** ((float(eff_a) - float(eff_h))
+                                            / PEN_ELO_SLOPE))
+    return p_et_home + p_et_draw * p_pens_home
 
 
 def test_ko_advance_agreement():
     """Every match_predictions_ko entry must satisfy:
 
-        p_advance_match ≈ W + 0.5 * D
+        p_advance_match ≈ W + D * P(win ET+pens | draw)
 
     where (W, D) come from build_score_matrix(lam_home, lam_away) using
-    the production NB(α=5.0) + DC(τ=−0.13) joint. This is the same
-    matrix the sim uses for the 90-min WDL — so the export and the sim
-    are pinned together.
+    the production NB(α=5.0) + DC(τ=−0.13) joint, and the draw-split is
+    the sim's ET+pens tie-break (R17 P2). This pins the export and the
+    sim together on both the 90-min matrix AND the tie-break model.
 
-    Pre-R32: the loop has 0 iterations and the test passes by definition.
-    Once R16+ matchups resolve, every (home, away) pair gets validated.
+    Post-R32 every resolved (home, away) pair in the feed is validated.
     """
     entries = _ko_advance_entries()
     for e in entries:
         lam_h = float(e["lambda_home"])
         lam_a = float(e["lambda_away"])
         nb_h, nb_d, nb_a = wdl_nb_dc(lam_h, lam_a)
-        expected_adv = nb_h + 0.5 * nb_d
         # Per-WDL agreement (same 1e-9 bar as test A).
         for label, feed_v, truth_v in (("p_home_win", e["p_home_win"], nb_h),
                                        ("p_draw", e["p_draw"], nb_d),
@@ -340,11 +376,23 @@ def test_ko_advance_agreement():
                 f"diverges (feed={feed_v}, nb_dc={truth_v}, "
                 f"|Δ|={abs(feed_v - truth_v):.3e})"
             )
-        # Advance-prob agreement against W + 0.5*D directly.
+        # R17 P2 draw-split agreement — recompute from the entry's own
+        # λs + effective Elos (None-tolerant for legacy entries).
+        p_tb_truth = _tiebreak_home_truth(
+            lam_h, lam_a,
+            e.get("effective_elo_home"), e.get("effective_elo_away"))
+        if "p_tiebreak_home_win" in e:
+            assert abs(e["p_tiebreak_home_win"] - p_tb_truth) < KO_ADVANCE_TOL, (
+                f"KO m={e['m']} {e['home']}->{e['away']}: p_tiebreak_home_win "
+                f"diverges (feed={e['p_tiebreak_home_win']}, "
+                f"truth={p_tb_truth}, "
+                f"|Δ|={abs(e['p_tiebreak_home_win'] - p_tb_truth):.3e})"
+            )
+        expected_adv = nb_h + nb_d * p_tb_truth
         assert abs(e["p_advance_match"] - expected_adv) < KO_ADVANCE_TOL, (
             f"KO m={e['m']} {e['home']}->{e['away']}: p_advance_match "
             f"diverges (feed={e['p_advance_match']}, expected={expected_adv}, "
             f"|Δ|={abs(e['p_advance_match'] - expected_adv):.3e})"
         )
-        # Range check — the 90-min + 50/50 split must stay in [0, 1].
+        # Range check — 90-min + tie-break split must stay in [0, 1].
         assert 0.0 <= e["p_advance_match"] <= 1.0

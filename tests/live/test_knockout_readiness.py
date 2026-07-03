@@ -393,17 +393,21 @@ class TestKnockoutWDL90MinSemantics:
     For knockouts the model intentionally exports the 90-min triple
     (p_home_90, p_draw_90, p_away_90) — the user prices goal-line and
     correct-score markets with this. ADVANCE probability for outright
-    markets requires a separate tie-break model: with no information,
-    a 50/50 split on the draw component is the standard prior:
+    markets requires a separate tie-break model. The uninformed prior
+    splits the draw mass 50/50:
 
         p_advance_home = p_home_90 + 0.5 * p_draw_90
         p_advance_away = p_away_90 + 0.5 * p_draw_90
 
-    The simulator implements this 50/50 split inside `resolve_knockout`
-    (scripts/03_simulate.py L292-312: 30-min ET sample → penalties via
-    a small Elo-edge model) but does NOT expose advance probability as
-    a sheet function. GOAL_GRID's ah0 stays 90-min P(home_win), exactly
-    as designed.
+    R17 P2 correction: the simulator does NOT play a 50/50 split —
+    `resolve_knockout` (scripts/03_simulate.py:334-355) samples 30-min
+    ET at Poisson λ/3 (favors the stronger side) and then penalties via
+    the PEN_ELO_SLOPE Elo logistic. The published per-match advance
+    field (`p_advance_match`, scripts/live/export_ko_advance.py) prices
+    the draw mass with that same ET+pens model. The 50/50 formula below
+    is used ONLY as an arithmetic reference point in these tests —
+    GOAL_GRID's ah0 stays 90-min P(home_win) and does not expose
+    advance probability as a sheet function, exactly as designed.
     """
 
     def test_wdl_from_matrix_sums_to_one_with_positive_draw(self) -> None:

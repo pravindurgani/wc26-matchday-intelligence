@@ -49,9 +49,14 @@ This file closes both gaps:
     end-to-end CLI on a synthetic resolved-KO fixture (Argentina vs
     Brazil, λ=(1.6, 1.1)) and asserts the emitted p_home_win, p_draw,
     p_away_win, p_advance_match all match values computed via the
-    production sim's matrix at ≤1e-12. This gives the KO-advance
-    pipeline a real cross-module check pre-R32, replacing the vacuous
-    "passes by definition" coverage.
+    production sim's matrix at ≤1e-12 — with p_advance_match checked
+    against the R17 P2 draw-split (ET at Poisson λ/ET_LAMBDA_DIVISOR +
+    PEN_ELO_SLOPE Elo-logistic pens, i.e. the model resolve_knockout
+    actually plays), re-derived here via scipy.stats.poisson so the
+    truth route stays independent of the export's lgamma
+    implementation. This gives the KO-advance pipeline a real
+    cross-module check pre-R32, replacing the vacuous "passes by
+    definition" coverage.
 
 If any test here fails, investigate: cfg["nb_dispersion"] drift,
 cfg["dc_rho"] drift, the floor constant in either side, max_g mismatch,
@@ -69,6 +74,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from scipy.stats import poisson
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "scripts"
@@ -292,6 +298,27 @@ def _feed_with_one_resolved_ko(home: str, away: str,
     }
 
 
+def _sim_truth_tiebreak(lam_h: float, lam_a: float,
+                        eff_h: float, eff_a: float) -> float:
+    """P(home advances | 90' draw) — independent re-derivation of the
+    resolve_knockout tie-break (scripts/03_simulate.py:334-355) via
+    scipy.stats.poisson. Constants come from the SIM side (the module
+    under audit imports them from scripts/constants.py), the math route
+    is scipy — so a drift in either the export's lgamma Poisson or its
+    Elo logistic fails here loudly."""
+    ks = np.arange(PROD_MAX_G + 1)
+    ph = poisson.pmf(ks, lam_h / sim.ET_LAMBDA_DIVISOR)
+    pa = poisson.pmf(ks, lam_a / sim.ET_LAMBDA_DIVISOR)
+    ph = ph / ph.sum()
+    pa = pa / pa.sum()
+    joint = np.outer(ph, pa)
+    p_et_home = float(np.tril(joint, -1).sum())   # rows (home) > cols (away)
+    p_et_draw = float(np.trace(joint))
+    p_pens_home = 1.0 / (1.0 + 10.0 ** ((eff_a - eff_h)
+                                        / sim.DEFAULTS["pen_elo_slope"]))
+    return p_et_home + p_et_draw * p_pens_home
+
+
 def _write_min_results(tmp: Path) -> Path:
     p = tmp / "results_2026.json"
     p.write_text(json.dumps({
@@ -354,7 +381,14 @@ def test_end_to_end_export_matches_sim_truth(tmp_path: Path,
         lam_h, lam_a, SIM_CFG, use_dispersion=True, max_g=PROD_MAX_G
     )
     p_h_truth, p_d_truth, p_a_truth = sim.wdl_from_matrix(M_sim)
-    p_adv_truth = p_h_truth + 0.5 * p_d_truth
+    # R17 P2: the draw mass is split with the tie-break model the sim's
+    # resolve_knockout actually plays (ET at Poisson λ/ET_LAMBDA_DIVISOR,
+    # then PEN_ELO_SLOPE Elo-logistic pens on the fixture's effective
+    # Elos 1700/1500), re-derived here via scipy.stats.poisson so the
+    # truth route is independent of the export's lgamma implementation.
+    # Was `p_h + 0.5 * p_d` pre-R17 — the 50/50 prior the sim never used.
+    p_tb_truth = _sim_truth_tiebreak(lam_h, lam_a, 1700.0, 1500.0)
+    p_adv_truth = p_h_truth + p_d_truth * p_tb_truth
 
     # Cross-module equality at ≤1e-12 per channel.
     assert abs(e["p_home_win"] - p_h_truth) < CELL_TOL, (
