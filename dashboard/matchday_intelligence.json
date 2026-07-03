@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T06:27:05.998584+00:00",
+  "generated_at": "2026-07-03T11:28:24.983789+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -17,18 +17,18 @@
     {
       "team": "Algeria",
       "match_id": null,
-      "total_elo_adjustment": -10.29,
-      "raw_sum_before_aggregate_cap": -10.29,
+      "total_elo_adjustment": -22.29,
+      "raw_sum_before_aggregate_cap": -22.29,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -12.0,
-          "capped_elo": -12.0,
+          "raw_elo": -24.0,
+          "capped_elo": -24.0,
           "cap_used": 25.0,
-          "n_players": 1,
+          "n_players": 2,
           "source": "api_football"
         },
         {
@@ -136,18 +136,18 @@
     {
       "team": "Australia",
       "match_id": null,
-      "total_elo_adjustment": -13.89,
-      "raw_sum_before_aggregate_cap": -13.89,
+      "total_elo_adjustment": -25.89,
+      "raw_sum_before_aggregate_cap": -25.89,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -12.0,
-          "capped_elo": -12.0,
+          "raw_elo": -24.0,
+          "capped_elo": -24.0,
           "cap_used": 25.0,
-          "n_players": 1,
+          "n_players": 2,
           "source": "api_football"
         },
         {
@@ -1028,18 +1028,18 @@
     {
       "team": "Egypt",
       "match_id": null,
-      "total_elo_adjustment": -21.69,
-      "raw_sum_before_aggregate_cap": -21.69,
+      "total_elo_adjustment": -22.69,
+      "raw_sum_before_aggregate_cap": -22.69,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -24.0,
-          "capped_elo": -24.0,
+          "raw_elo": -36.0,
+          "capped_elo": -25.0,
           "cap_used": 25.0,
-          "n_players": 2,
+          "n_players": 3,
           "source": "api_football"
         },
         {
@@ -2978,18 +2978,18 @@
     {
       "team": "Switzerland",
       "match_id": null,
-      "total_elo_adjustment": -7.5,
-      "raw_sum_before_aggregate_cap": -7.5,
+      "total_elo_adjustment": -19.5,
+      "raw_sum_before_aggregate_cap": -19.5,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -12.0,
-          "capped_elo": -12.0,
+          "raw_elo": -24.0,
+          "capped_elo": -24.0,
           "cap_used": 25.0,
-          "n_players": 1,
+          "n_players": 2,
           "source": "api_football"
         },
         {
