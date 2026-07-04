@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-04T06:13:12.728805+00:00",
+  "generated_at": "2026-07-04T10:50:47.194952+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -684,6 +684,112 @@
         }
       ]
     },
+    "Egypt": {
+      "total_elo_adjustment": -60.0,
+      "total_net_elo_adjustment": -60.0,
+      "players": [
+        {
+          "name": "Hossam Abdelmaguid",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Suspension Through Sports Court",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489414,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.111,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 38,
+            "team_top_minutes": 341
+          }
+        },
+        {
+          "name": "Hamdi Fathy",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489414,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.762,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 260,
+            "team_top_minutes": 341
+          }
+        },
+        {
+          "name": "Mohanad Lasheen",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Yellow Card",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1565178,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.889,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 303,
+            "team_top_minutes": 341
+          }
+        },
+        {
+          "name": "Ahmed Abou El Fotouh",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring Muscle Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489377,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.707,
+            "ga90": 0.373,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 241,
+            "team_top_minutes": 341
+          }
+        },
+        {
+          "name": "Mohamed Abdelmonem",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Ankle Problems",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1565178,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.282,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 96,
+            "team_top_minutes": 341
+          }
+        }
+      ]
+    },
     "Sweden": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -817,72 +923,6 @@
         }
       ]
     },
-    "Egypt": {
-      "total_elo_adjustment": -36.0,
-      "total_net_elo_adjustment": -36.0,
-      "players": [
-        {
-          "name": "Hossam Abdelmaguid",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Suspension Through Sports Court",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489414,
-          "auto_tier_suggestion": "tier_3_squad",
-          "auto_tier_components": {
-            "minutes_share": 0.111,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 38,
-            "team_top_minutes": 341
-          }
-        },
-        {
-          "name": "Mohanad Lasheen",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Yellow Card",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1565178,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 0.889,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 303,
-            "team_top_minutes": 341
-          }
-        },
-        {
-          "name": "Hamdi Fathy",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Muscle Bruise",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489414,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 0.762,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 260,
-            "team_top_minutes": 341
-          }
-        }
-      ]
-    },
     "Qatar": {
       "total_elo_adjustment": -24.0,
       "total_net_elo_adjustment": -24.0,
@@ -933,7 +973,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 28,
+      "count": 34,
       "cases": [
         {
           "team": "Brazil",
@@ -986,6 +1026,21 @@
           "fixture_id": 1567307
         },
         {
+          "team": "Egypt",
+          "input": "Hossam Abdelmaguid",
+          "fixture_id": 1565178
+        },
+        {
+          "team": "Egypt",
+          "input": "Hamdi Fathy",
+          "fixture_id": 1565178
+        },
+        {
+          "team": "Paraguay",
+          "input": "D. Gómez",
+          "fixture_id": 1565176
+        },
+        {
           "team": "Belgium",
           "input": "Z. Debast",
           "fixture_id": 1489395
@@ -999,6 +1054,11 @@
           "team": "Belgium",
           "input": "Z. Debast",
           "fixture_id": 1567308
+        },
+        {
+          "team": "Belgium",
+          "input": "Z. Debast",
+          "fixture_id": 1570715
         },
         {
           "team": "Brazil",
@@ -1032,12 +1092,17 @@
         },
         {
           "team": "Egypt",
-          "input": "Hossam Abdelmaguid",
-          "fixture_id": 1565178
+          "input": "Ahmed Abou El Fotouh",
+          "fixture_id": 1489396
         },
         {
           "team": "Egypt",
-          "input": "Hamdi Fathy",
+          "input": "Ahmed Abou El Fotouh",
+          "fixture_id": 1489414
+        },
+        {
+          "team": "Egypt",
+          "input": "Ahmed Abou El Fotouh",
           "fixture_id": 1565178
         },
         {
@@ -1056,14 +1121,19 @@
           "fixture_id": 1489400
         },
         {
-          "team": "Paraguay",
-          "input": "D. Gómez",
-          "fixture_id": 1565176
+          "team": "United States",
+          "input": "M. McKenzie",
+          "fixture_id": 1570715
         },
         {
           "team": "United States",
           "input": "C. Roldan",
           "fixture_id": 1562586
+        },
+        {
+          "team": "United States",
+          "input": "C. Roldan",
+          "fixture_id": 1570715
         },
         {
           "team": "Canada",
@@ -1076,7 +1146,7 @@
           "fixture_id": 1567824
         }
       ],
-      "message": "28 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+25 more)"
+      "message": "34 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+31 more)"
     }
   ]
 }

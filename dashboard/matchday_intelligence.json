@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-04T06:13:55.636104+00:00",
+  "generated_at": "2026-07-04T10:51:30.559222+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1213,10 +1213,10 @@
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -36.0,
+          "raw_elo": -60.0,
           "capped_elo": -25.0,
           "cap_used": 25.0,
-          "n_players": 3,
+          "n_players": 5,
           "source": "api_football"
         },
         {
