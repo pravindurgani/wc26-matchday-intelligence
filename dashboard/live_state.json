@@ -1,16 +1,154 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-04T11:41:10.111229+00:00",
-  "completed_matches_count": 85,
-  "simulation_rerun_this_tick": false,
+  "last_updated_utc": "2026-07-04T11:47:18.825466+00:00",
+  "completed_matches_count": 88,
+  "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [],
   "in_play_count": 0,
   "warnings": [
     {
-      "type": "circuit_breaker",
-      "message": "Circuit breaker tripped after 3 consecutive failures. Manual intervention required: reset by deleting /home/runner/work/wc26-matchday-intelligence/wc26-matchday-intelligence/data/live/circuit_breaker_state.json."
+      "type": "mapped_fixture_rekeyed",
+      "severity": "warning",
+      "provider": "api_football",
+      "count": 12,
+      "message": "12 already-mapped knockout fixture(s) in provider_fixture_map.json failed name verification against the bracket resolution and were re-keyed (1562344: m74\u2192m76, 1565176: m75\u2192m74, 1562345: m76\u2192m75, 1564789: m77\u2192m78, 1565177: m78\u2192m77, 1567308: m81\u2192m82, 1562586: m82\u2192m81, 1567309: m84\u2192m83, 1567311: m83\u2192m84, 1565178: m86\u2192m88, 1565179: m87\u2192m86, 1567310: m88\u2192m87). Results now ingest under the corrected internal ids. Typical root cause: a positional (chronological) map rebuild \u2014 FIFA match numbering within a date is not UTC-kickoff order.",
+      "fixtures": [
+        {
+          "provider_fixture_id": "1562344",
+          "old_m": 74,
+          "new_m": 76,
+          "home": "Brazil",
+          "away": "Japan",
+          "date": "2026-06-29",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1565176",
+          "old_m": 75,
+          "new_m": 74,
+          "home": "Germany",
+          "away": "Paraguay",
+          "date": "2026-06-29",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1562345",
+          "old_m": 76,
+          "new_m": 75,
+          "home": "Netherlands",
+          "away": "Morocco",
+          "date": "2026-06-29",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1564789",
+          "old_m": 77,
+          "new_m": 78,
+          "home": "Ivory Coast",
+          "away": "Norway",
+          "date": "2026-06-30",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1565177",
+          "old_m": 78,
+          "new_m": 77,
+          "home": "France",
+          "away": "Sweden",
+          "date": "2026-06-30",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1567308",
+          "old_m": 81,
+          "new_m": 82,
+          "home": "Belgium",
+          "away": "Senegal",
+          "date": "2026-07-01",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1562586",
+          "old_m": 82,
+          "new_m": 81,
+          "home": "United States",
+          "away": "Bosnia and Herzegovina",
+          "date": "2026-07-01",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1567309",
+          "old_m": 84,
+          "new_m": 83,
+          "home": "Portugal",
+          "away": "Croatia",
+          "date": "2026-07-02",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1567311",
+          "old_m": 83,
+          "new_m": 84,
+          "home": "Spain",
+          "away": "Austria",
+          "date": "2026-07-02",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1565178",
+          "old_m": 86,
+          "new_m": 88,
+          "home": "Australia",
+          "away": "Egypt",
+          "date": "2026-07-03",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1565179",
+          "old_m": 87,
+          "new_m": 86,
+          "home": "Argentina",
+          "away": "Cape Verde",
+          "date": "2026-07-03",
+          "stage": "r32"
+        },
+        {
+          "provider_fixture_id": "1567310",
+          "old_m": 88,
+          "new_m": 87,
+          "home": "Colombia",
+          "away": "Ghana",
+          "date": "2026-07-03",
+          "stage": "r32"
+        }
+      ]
+    },
+    {
+      "type": "unmapped_provider_fixture",
+      "severity": "critical",
+      "provider": "api_football",
+      "count": 2,
+      "message": "2 provider fixture(s) inside the tournament window could not be mapped to internal match ids \u2014 their results are NOT being ingested. KO auto-extension could not place them: check provider_fixture_map.json coverage and TEAM_ALIAS for the names below, or rebuild via scripts/live/build_provider_fixture_map.py --provider api_football --write.",
+      "fixtures": [
+        {
+          "fixture_id": "1576804",
+          "home": "Argentina",
+          "away": "Egypt",
+          "date": "2026-07-07",
+          "status": "NS",
+          "round": "Round of 16"
+        },
+        {
+          "fixture_id": "1576805",
+          "home": "Switzerland",
+          "away": "Colombia",
+          "date": "2026-07-07",
+          "status": "NS",
+          "round": "Round of 16"
+        }
+      ]
     }
   ]
 }
