@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-07-04T13:06:10.504965+00:00",
+  "generated_at": "2026-07-04T15:57:01.367853+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 90,
+      "home": "Canada",
+      "away": "Morocco",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 51274,
+          "name": "Maxime Crépeau",
+          "number": 16,
+          "pos": "G"
+        },
+        {
+          "id": 78547,
+          "name": "Alistair Johnston",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 327738,
+          "name": "Luc De Fougerolles",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 407017,
+          "name": "Moise Bombito",
+          "number": 15,
+          "pos": "D"
+        },
+        {
+          "id": 50816,
+          "name": "Richie Laryea",
+          "number": 22,
+          "pos": "D"
+        },
+        {
+          "id": 51016,
+          "name": "Tajon Buchanan",
+          "number": 17,
+          "pos": "M"
+        },
+        {
+          "id": 416901,
+          "name": "Niko Sigur",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 35570,
+          "name": "Stephen Eustaquio",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 362145,
+          "name": "Ali Ahmed",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 8489,
+          "name": "Jonathan David",
+          "number": 10,
+          "pos": "F"
+        },
+        {
+          "id": 351587,
+          "name": "Tani Oluwaseyi",
+          "number": 12,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 2701,
+          "name": "Yassine Bounou",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 9,
+          "name": "Achraf Hakimi",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 18814,
+          "name": "Issa Diop",
+          "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 326183,
+          "name": "Redouane Halhal",
+          "number": 25,
+          "pos": "D"
+        },
+        {
+          "id": 545,
+          "name": "Noussair Mazraoui",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 438688,
+          "name": "Ayyoub Bouaddi",
+          "number": 6,
+          "pos": "M"
+        },
+        {
+          "id": 277003,
+          "name": "Neil El Aynaoui",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 744,
+          "name": "Brahim Díaz",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 129678,
+          "name": "Azzedine Ounahi",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 340573,
+          "name": "Bilal El Khannouss",
+          "number": 23,
+          "pos": "M"
+        },
+        {
+          "id": 161897,
+          "name": "Ismael Saibari",
+          "number": 11,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-07-04T15:57:01.367833+00:00"
+    }
+  ],
   "warnings": []
 }
