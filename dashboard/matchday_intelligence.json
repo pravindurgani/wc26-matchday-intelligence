@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T22:01:12.070401+00:00",
+  "generated_at": "2026-07-04T06:13:55.636104+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -768,8 +768,8 @@
     {
       "team": "Colombia",
       "match_id": null,
-      "total_elo_adjustment": 9.6,
-      "raw_sum_before_aggregate_cap": 9.6,
+      "total_elo_adjustment": 14.73,
+      "raw_sum_before_aggregate_cap": 14.73,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -815,6 +815,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 2.85,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 88,
+          "raw_elo": 5.13,
+          "capped_elo_per_match": 5.13,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 5.13,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1252,32 +1267,6 @@
       ]
     },
     {
-      "team": "Egypt",
-      "match_id": 88,
-      "total_elo_adjustment": -3.0,
-      "raw_sum_before_aggregate_cap": -3.0,
-      "aggregate_cap_applied": false,
-      "aggregate_cap": 35.0,
-      "components": [
-        {
-          "type": "suspension",
-          "raw_elo": -3.0,
-          "per_player_capped_elo": -3.0,
-          "cap_used": 8.0,
-          "player": "Y. Ibrahim",
-          "reason": "accumulated_yellows",
-          "evidence_match_ids": [
-            65,
-            86
-          ],
-          "confidence": "high",
-          "source": "fetch_results_events",
-          "capped_elo": -3.0,
-          "cap_reason": "per_player"
-        }
-      ]
-    },
-    {
       "team": "England",
       "match_id": null,
       "total_elo_adjustment": -9.72,
@@ -1569,8 +1558,8 @@
     {
       "team": "Ghana",
       "match_id": null,
-      "total_elo_adjustment": -6.33,
-      "raw_sum_before_aggregate_cap": -6.33,
+      "total_elo_adjustment": -11.46,
+      "raw_sum_before_aggregate_cap": -11.46,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1616,6 +1605,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -1.95,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 88,
+          "raw_elo": -5.13,
+          "capped_elo_per_match": -5.13,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -5.13,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -3788,9 +3792,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 215,
+    "total_active_components": 216,
     "teams_affected": 48,
-    "matches_affected": 22,
+    "matches_affected": 21,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {

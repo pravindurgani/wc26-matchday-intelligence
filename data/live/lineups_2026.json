@@ -1,56 +1,8 @@
 {
-  "generated_at": "2026-07-03T22:00:39.930347+00:00",
+  "generated_at": "2026-07-04T06:13:40.557173+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [
-    {
-      "match_id": 86,
-      "home": "Argentina",
-      "away": "Cape Verde",
-      "home_team_adjustment_elo": 0.0,
-      "away_team_adjustment_elo": 0.0,
-      "home_adjustment_reason": null,
-      "away_adjustment_reason": null,
-      "baseline_source": "none:first_recorded_xi",
-      "home_xi": [],
-      "away_xi": [],
-      "captured_at": "2026-07-03T22:00:39.683394+00:00"
-    },
-    {
-      "match_id": 87,
-      "home": "Colombia",
-      "away": "Ghana",
-      "home_team_adjustment_elo": 0.0,
-      "away_team_adjustment_elo": 0.0,
-      "home_adjustment_reason": null,
-      "away_adjustment_reason": null,
-      "baseline_source": "none:first_recorded_xi",
-      "home_xi": [],
-      "away_xi": [],
-      "captured_at": "2026-07-03T22:00:39.930326+00:00"
-    }
-  ],
-  "warnings": [
-    {
-      "type": "lineup_side_unrecognized",
-      "match_id": 86,
-      "message": "unrecognized lineup side 'Australia' for M86 (expected 'Argentina' or 'Cape Verde')"
-    },
-    {
-      "type": "lineup_side_unrecognized",
-      "match_id": 86,
-      "message": "unrecognized lineup side 'Egypt' for M86 (expected 'Argentina' or 'Cape Verde')"
-    },
-    {
-      "type": "lineup_side_unrecognized",
-      "match_id": 87,
-      "message": "unrecognized lineup side 'Argentina' for M87 (expected 'Colombia' or 'Ghana')"
-    },
-    {
-      "type": "lineup_side_unrecognized",
-      "match_id": 87,
-      "message": "unrecognized lineup side 'Cape Verde Islands' for M87 (expected 'Colombia' or 'Ghana')"
-    }
-  ]
+  "lineups": [],
+  "warnings": []
 }
