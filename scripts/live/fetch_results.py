@@ -528,6 +528,16 @@ _PHASE_TO_STAGE = {
     "r32": "r32", "r16": "r16", "qf": "qf", "sf": "sf",
     "third_place": "3rd", "final": "final",
 }
+_STAGE_TO_PHASE = {v: k for k, v in _PHASE_TO_STAGE.items()}
+
+# A.7: bracket dependency order. A stage's slot resolution is derived from
+# the RESULTS of strictly earlier stages (r16 slots are "W74"-style codes
+# resolved from locked r32 records). If name-verification finds mis-keyed
+# entries at rank N, every resolution at rank > N is derived from those very
+# (still-on-disk, still-wrong) records and must not be trusted this tick.
+# "3rd" and "final" share a rank — both resolve from SF results, not from
+# each other.
+_STAGE_RANK = {"r32": 0, "r16": 1, "qf": 2, "sf": 3, "3rd": 4, "final": 4}
 
 
 def _dates_within_one_day(a: str | None, b: str | None) -> bool:
@@ -581,10 +591,31 @@ def _resolved_bracket_rows() -> list[dict]:
     return rows
 
 
+def _map_coverage_block(fixtures: list[dict]) -> dict:
+    """Builder-shaped `coverage` audit block recomputed from `fixtures`.
+
+    The workflow's bootstrap-rebuild trigger reads these fields — every
+    in-process map write (KO auto-extension AND the A.7 self-heal) must
+    keep them truthful or the trigger arms/disarms on stale numbers."""
+    ko_total = len(load_knockout_fixtures()) or 32
+    n_group = sum(1 for f in fixtures
+                  if int(f.get("match_id") or f.get("m") or 0) <= 72)
+    n_ko = len(fixtures) - n_group
+    return {
+        "group_mapped": n_group,
+        "group_total": 72,
+        "knockout_mapped": n_ko,
+        "knockout_total": ko_total,
+        "total_mapped": len(fixtures),
+        "total_expected": 72 + ko_total,
+    }
+
+
 def extend_fixture_map_with_knockouts(
     provider_rows: list[dict],
     provider: str,
     write: bool = True,
+    skip_stages: frozenset | set = frozenset(),
 ) -> dict[str, int]:
     """Return {provider_fixture_id: internal_m} for newly-mapped KO fixtures.
 
@@ -608,6 +639,12 @@ def extend_fixture_map_with_knockouts(
             pfid = str(r.get("id") or "")
             phase = classify_round(r.get("round"))
             if not pfid or phase is None:
+                continue
+            if _PHASE_TO_STAGE.get(phase, phase) in skip_stages:
+                # A.7: this stage's slot resolution is derived from results
+                # the self-heal just proved mis-keyed on disk — extending it
+                # this tick would re-key fresh fixtures against poisoned
+                # resolution. It heals on the next tick instead.
                 continue
             candidates.append((pfid, phase, r))
         if not candidates:
@@ -684,24 +721,247 @@ def extend_fixture_map_with_knockouts(
             doc.setdefault("provider", provider)
             doc["extended_at"] = datetime.now(timezone.utc).isoformat()
             doc["extended_by"] = "fetch_results.knockout_auto_extension"
-            ko_total = len(load_knockout_fixtures()) or 32
-            n_group = sum(1 for f in fixtures
-                          if int(f.get("match_id") or f.get("m") or 0) <= 72)
-            n_ko = len(fixtures) - n_group
-            doc["coverage"] = {
-                "group_mapped": n_group,
-                "group_total": 72,
-                "knockout_mapped": n_ko,
-                "knockout_total": ko_total,
-                "total_mapped": len(fixtures),
-                "total_expected": 72 + ko_total,
-            }
+            doc["coverage"] = _map_coverage_block(fixtures)
             atomic_write_json(map_path, doc)
         return added
     except Exception as e:
         print(f"[fetch_results] WARN: KO map auto-extension failed — "
               f"{type(e).__name__}: {e}")
         return {}
+
+
+# ─── A.7 — KNOCKOUT MAP SELF-HEAL (2026-07-03, 16:31Z incident) ─────────────
+# At 16:22Z the A.6 extension mapped all 16 R32 provider fixtures correctly
+# BY NAME. At 16:31Z the workflow's bootstrap-rebuild trigger fired (6 R16
+# fixtures could not map yet) and ran build_provider_fixture_map.py --write,
+# whose knockout pairing was POSITIONAL (round + chronological order). FIFA
+# match numbering within a date is NOT UTC-chronological (venue-local
+# kickoff order ≠ UTC order), so the rebuild re-keyed already-correct R32
+# entries WRONG (m74/75/76 rotated, m77/78, m81/82, m83/84 swapped) and the
+# next fetch ingested real scores under the wrong internal ids. The
+# decide_knockout name-verification guard in 03_simulate.py then correctly
+# refused to advance a locked pairing that contradicted the sim's bracket
+# resolution — every tick failed, climbing the circuit breaker.
+#
+# The builder is now name-first (see build_provider_fixture_map.
+# assign_knockout_ids), but a wrong map can still reach disk (manual edit,
+# historical commit, future regression). This self-heal makes the fetch
+# path verify EVERY already-mapped KO row by name before ingesting under
+# it, re-keying mis-mapped entries with the SAME matcher the A.6 extension
+# uses — a wrong committed map heals within one tick, zero manual action.
+def heal_mismapped_knockouts(
+    provider_rows: list[dict],
+    fixture_map: dict[str, int],
+    provider: str,
+    write: bool = True,
+) -> tuple[dict[str, int], set[str], list[dict], set[str]]:
+    """Verify already-mapped knockout provider fixtures BY NAME; re-key.
+
+    For each provider fixture already mapped to m>=73 whose provider team
+    pair is real (both names in the WC26 team set after TEAM_ALIAS
+    normalisation) and whose internal slot pair is resolvable from on-disk
+    results (export_ko_advance resolver via _resolved_bracket_rows), assert
+    the unordered normalized pairs (and stages) match. Mismatched entries
+    are re-keyed via the extension's matcher (stage + unordered pair +
+    date±1); un-re-keyable ones are dropped from this tick's ingestion so
+    the existing critical unmapped warning fires instead.
+
+    Stage gating: stages are verified bottom-up (r32 → final). The first
+    stage with corrections/drops marks every LATER stage suspect — their
+    slot resolution is derived from the very results this heal just proved
+    mis-keyed on disk — so verification (and, via the returned set, the
+    A.6 extension) skips them this tick. They heal on the next tick, after
+    this tick re-ingested the corrected records.
+
+    Returns (corrections {pfid: new_m}, dropped_pfids, warnings,
+    suspect_stages). Corrections are persisted to provider_fixture_map.json
+    through the same atomic write path as the extension when `write` is
+    True (--dry-run passes False). Never raises: any failure returns
+    no-ops and the tick proceeds exactly as before A.7."""
+    try:
+        if not fixture_map:
+            return {}, set(), [], set()
+        known = _known_team_set()
+        if not known:
+            return {}, set(), [], set()  # cannot judge "real" names — no-op
+        map_path = LIVE / "provider_fixture_map.json"
+        doc: dict = {}
+        if map_path.exists():
+            try:
+                doc = json.loads(map_path.read_text())
+            except Exception:
+                doc = {}
+        if doc.get("provider") and doc.get("provider") != provider:
+            # Foreign-provider map — ids aren't ours to judge. The
+            # workflow's provider-mismatch trigger owns that rebuild.
+            return {}, set(), [], set()
+        rows = _resolved_bracket_rows()
+        if not rows:
+            return {}, set(), [], set()  # resolver degraded — cannot verify
+        rows_by_m = {int(r["m"]): r for r in rows}
+        by_stage_pair: dict[tuple[str, tuple[str, str]], dict] = {}
+        for row in rows:
+            h, a = row.get("resolved_home"), row.get("resolved_away")
+            if h and a:
+                by_stage_pair[(row["stage"], tuple(sorted((h, a))))] = row
+
+        # Mapped KO provider fixtures with REAL (non-placeholder) team pairs.
+        candidates: list[tuple[str, int, str, tuple[str, str], dict]] = []
+        for r in provider_rows:
+            pfid = str(r.get("id") or "")
+            if not pfid or pfid not in fixture_map:
+                continue
+            try:
+                mapped_m = int(fixture_map[pfid])
+            except (TypeError, ValueError):
+                continue
+            if mapped_m < 73:
+                continue
+            phase = classify_round(r.get("round"))
+            if phase is None:
+                continue  # can't derive a stage — nothing safe to verify
+            h = r.get("home") or ""
+            a = r.get("away") or ""
+            if not h or not a or h == a or h not in known or a not in known:
+                continue  # TBD/placeholder names — nothing to verify against
+            stage = _PHASE_TO_STAGE.get(phase, phase)
+            candidates.append((pfid, mapped_m, stage,
+                               tuple(sorted((h, a))), r))
+        if not candidates:
+            return {}, set(), [], set()
+
+        # Deterministic order: stage rank (bottom-up), then (date, pfid) —
+        # matches the extension's (date, id) claim order within a stage.
+        candidates.sort(key=lambda t: (_STAGE_RANK.get(t[2], 99),
+                                       (t[4].get("date") or ""), t[0]))
+
+        verified_ms: set[int] = set()
+        floating: list[tuple[str, int, str, tuple[str, str], dict]] = []
+        suspect_stages: set[str] = set()
+        first_issue_rank: int | None = None
+        for pfid, mapped_m, stage, pair, r in candidates:
+            rank = _STAGE_RANK.get(stage, 99)
+            if first_issue_rank is not None and rank > first_issue_rank:
+                continue  # stage gated — resolution upstream is suspect
+            row = rows_by_m.get(mapped_m)
+            if row is None:
+                continue  # mapped outside the bracket — downstream
+                # "m not in schedule" guard already rejects it loudly
+            rh, ra = row.get("resolved_home"), row.get("resolved_away")
+            if not rh or not ra:
+                continue  # slot pair not resolvable yet — cannot verify
+            if row.get("stage") == stage and tuple(sorted((rh, ra))) == pair:
+                verified_ms.add(mapped_m)
+                continue
+            floating.append((pfid, mapped_m, stage, pair, r))
+            if first_issue_rank is None or rank < first_issue_rank:
+                first_issue_rank = rank
+        if first_issue_rank is not None:
+            suspect_stages = {s for s, rk in _STAGE_RANK.items()
+                              if rk > first_issue_rank}
+        if not floating:
+            return {}, set(), [], set()
+
+        # Ids held by entries we did NOT positively refute stay blocked
+        # (they may be correct-but-unverifiable); ids of floating entries
+        # are freed for reassignment — a pure permutation (today's incident)
+        # re-keys completely in one pass.
+        floating_ms = {t[1] for t in floating}
+        blocked: set[int] = set()
+        for v in fixture_map.values():
+            try:
+                iv = int(v)
+            except (TypeError, ValueError):
+                continue
+            if iv >= 73 and iv not in floating_ms:
+                blocked.add(iv)
+        blocked |= verified_ms
+
+        corrections: dict[str, int] = {}
+        rekeyed: list[dict] = []
+        dropped: set[str] = set()
+        for pfid, old_m, stage, pair, r in floating:
+            target = by_stage_pair.get((stage, pair))
+            if (target is None
+                    or not _dates_within_one_day(r.get("date"),
+                                                 target.get("date"))
+                    or int(target["m"]) in blocked):
+                dropped.add(pfid)
+                continue
+            new_m = int(target["m"])
+            blocked.add(new_m)
+            corrections[pfid] = new_m
+            rekeyed.append({
+                "provider_fixture_id": pfid,
+                "old_m": old_m,
+                "new_m": new_m,
+                "home": r.get("home"),
+                "away": r.get("away"),
+                "date": target.get("date"),
+                "stage": stage,
+            })
+
+        warnings_out: list[dict] = []
+        if rekeyed:
+            moves = ", ".join(f"{d['provider_fixture_id']}: "
+                              f"m{d['old_m']}→m{d['new_m']}" for d in rekeyed)
+            print(f"[fetch_results] KO map self-heal: re-keyed {len(rekeyed)} "
+                  f"mis-mapped fixture(s) by name ({moves}) write={write}")
+            warnings_out.append({
+                "type": "mapped_fixture_rekeyed",
+                "severity": "warning",
+                "provider": provider,
+                "count": len(rekeyed),
+                "message": (
+                    f"{len(rekeyed)} already-mapped knockout fixture(s) in "
+                    f"provider_fixture_map.json failed name verification "
+                    f"against the bracket resolution and were re-keyed "
+                    f"({moves}). Results now ingest under the corrected "
+                    f"internal ids. Typical root cause: a positional "
+                    f"(chronological) map rebuild — FIFA match numbering "
+                    f"within a date is not UTC-kickoff order."
+                ),
+                "fixtures": rekeyed,
+            })
+        if dropped:
+            print(f"[fetch_results] KO map self-heal: {len(dropped)} mapped "
+                  f"fixture(s) failed name verification and could NOT be "
+                  f"re-keyed — dropped from this tick's ingestion (the "
+                  f"critical unmapped warning fires): {sorted(dropped)}",
+                  file=sys.stderr)
+        if suspect_stages:
+            print(f"[fetch_results] KO map self-heal: stages "
+                  f"{sorted(suspect_stages)} skipped this tick — their slot "
+                  f"resolution derives from records the heal just re-keyed; "
+                  f"they re-verify next tick against corrected results.")
+
+        if write and corrections:
+            fixtures = [f for f in doc.get("fixtures", [])
+                        if isinstance(f, dict)]
+            det = {d["provider_fixture_id"]: d for d in rekeyed}
+            for f in fixtures:
+                pfid = str(f.get("provider_fixture_id"))
+                if pfid in corrections:
+                    d = det[pfid]
+                    f["match_id"] = corrections[pfid]
+                    f.pop("m", None)
+                    f["home"] = d["home"]
+                    f["away"] = d["away"]
+                    f["date"] = d["date"]
+                    f["phase"] = _STAGE_TO_PHASE.get(d["stage"], d["stage"])
+            fixtures.sort(key=lambda x: int(x.get("match_id")
+                                            or x.get("m") or 0))
+            doc["fixtures"] = fixtures
+            doc.setdefault("provider", provider)
+            doc["healed_at"] = datetime.now(timezone.utc).isoformat()
+            doc["healed_by"] = "fetch_results.knockout_map_self_heal"
+            doc["coverage"] = _map_coverage_block(fixtures)
+            atomic_write_json(map_path, doc)
+        return corrections, dropped, warnings_out, suspect_stages
+    except Exception as e:
+        print(f"[fetch_results] WARN: KO map self-heal failed — "
+              f"{type(e).__name__}: {e}")
+        return {}, set(), [], set()
 
 
 def _known_team_set() -> set[str]:
@@ -878,8 +1138,22 @@ def fetch_api_football(api_key: str, dry_run: bool = False,
         "date": ((f.get("fixture") or {}).get("date") or "")[:10],
         "round": (f.get("league") or {}).get("round", ""),
     } for f in response]
+    # A.7: verify already-mapped KO ids BY NAME before ingesting under them —
+    # re-keys a mis-keyed committed map (16:31Z positional-rebuild incident)
+    # within this tick. Runs BEFORE the extension so freed ids are
+    # re-claimable and the extension reads the healed on-disk map.
+    corrections, dropped_pfids, heal_warnings, suspect_stages = \
+        heal_mismapped_knockouts(map_rows, fixture_map,
+                                 provider="api_football", write=not dry_run)
+    if corrections:
+        fixture_map.update(corrections)
+    for _pfid in dropped_pfids:
+        fixture_map.pop(_pfid, None)
+    if heal_warnings and warnings_sink is not None:
+        warnings_sink.extend(heal_warnings)
     added = extend_fixture_map_with_knockouts(
-        map_rows, provider="api_football", write=not dry_run)
+        map_rows, provider="api_football", write=not dry_run,
+        skip_stages=suspect_stages)
     if added:
         fixture_map.update(added)
 
@@ -1083,8 +1357,20 @@ def fetch_football_data(token: str, dry_run: bool = False,
         "date": (m.get("utcDate") or "")[:10],
         "round": m.get("stage") or "",
     } for m in matches_raw]
+    # A.7: name-verify already-mapped KO ids before ingestion — see the
+    # api_football adapter above (same fix, football-data flavour).
+    corrections, dropped_pfids, heal_warnings, suspect_stages = \
+        heal_mismapped_knockouts(map_rows, fixture_map,
+                                 provider="football_data", write=not dry_run)
+    if corrections:
+        fixture_map.update(corrections)
+    for _pfid in dropped_pfids:
+        fixture_map.pop(_pfid, None)
+    if heal_warnings and warnings_sink is not None:
+        warnings_sink.extend(heal_warnings)
     added = extend_fixture_map_with_knockouts(
-        map_rows, provider="football_data", write=not dry_run)
+        map_rows, provider="football_data", write=not dry_run,
+        skip_stages=suspect_stages)
     if added:
         fixture_map.update(added)
 

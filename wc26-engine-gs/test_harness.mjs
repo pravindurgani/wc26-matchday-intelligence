@@ -30,6 +30,7 @@ import { execSync } from 'node:child_process';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SOURCE_PATH = join(__dirname, 'WC26_Engine_AppsScript_v2.3.13.gs');
 const XLSX_PATH = join(__dirname, 'WC26_Value_Betting_Engine_AUTOMATED_v2.3.13.xlsx');
+const XLSX_UNZIP_OPTS = { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 };
 
 if (!existsSync(SOURCE_PATH)) {
   console.error('FATAL: source not found:', SOURCE_PATH);
@@ -526,12 +527,15 @@ group('v2.3.12 CRIT-1 — Bets!AT 3-branch PAUSE cascade', () => {
     /IF\(Method!\$B\$81=TRUE\(\)/.test(atLine));
   assert('Bets!AT has explicit drawdown branch (B51>=B52)', () =>
     /IF\(Method!\$B\$51>=Method!\$B\$52/.test(atLine));
-  assert('Bets!AT has "feed stale" message text', () =>
+  assert('Bets!AT distinguishes circuit/pipeline/missing/stale pause causes', () =>
+    atLine.includes('REGEXMATCH(LOWER(Method!$B$63),"circuit")') &&
+    atLine.includes('REGEXMATCH(LOWER(Method!$B$63),"pipeline")') &&
+    atLine.includes('REGEXMATCH(LOWER(Method!$B$63),"missing")') &&
     /feed stale > '\s*\+\s*STALE_MINUTES\s*\+\s*' min/.test(atLine));
   assert('Bets!AT has "drawdown" attribution message', () =>
     atLine.includes('drawdown') && atLine.includes('TEXT(Method!$B$51'));
-  assert('Bets!AT has fallback "see Method!B49/B63 for cause"', () =>
-    atLine.includes('see Method!B49/B63 for cause'));
+  assert('Bets!AT has fallback "see Method!B62/B63/B81 for cause"', () =>
+    atLine.includes('see Method!B62/B63/B81 for cause'));
 
   // Negative invariants — old single-branch lie is GONE
   assert('Bets!AT does NOT have old single-branch drawdown pattern', () =>
@@ -547,10 +551,13 @@ group('v2.3.12 CRIT-1 — Matchday!M 3-branch PAUSE cascade', () => {
     /IF\(Method!\$B\$81=TRUE\(\)/.test(mLine));
   assert('Matchday!M has explicit drawdown branch (B51>=B52)', () =>
     /IF\(Method!\$B\$51>=Method!\$B\$52/.test(mLine));
-  assert('Matchday!M has "feed stale" message text', () =>
+  assert('Matchday!M distinguishes circuit/pipeline/missing/stale pause causes', () =>
+    mLine.includes('REGEXMATCH(LOWER(Method!$B$63),"circuit")') &&
+    mLine.includes('REGEXMATCH(LOWER(Method!$B$63),"pipeline")') &&
+    mLine.includes('REGEXMATCH(LOWER(Method!$B$63),"missing")') &&
     /feed stale \(>'\s*\+\s*STALE_MINUTES\s*\+\s*' min\)/.test(mLine));
-  assert('Matchday!M has fallback "see Method!B49/B63 for cause"', () =>
-    mLine.includes('see Method!B49/B63 for cause'));
+  assert('Matchday!M has fallback "see Method!B62/B63/B81 for cause"', () =>
+    mLine.includes('see Method!B62/B63/B81 for cause'));
 
   // Negative — old "drawdown protection" lie is GONE
   assert('Matchday!M does NOT have old "drawdown protection" message', () =>
@@ -561,20 +568,37 @@ group('v2.3.12 CRIT-1 — Matchday!M 3-branch PAUSE cascade', () => {
 // SUITE 10 — v2.3.13 regressions (this release)
 // =============================================================================
 
-group('v2.3.13 LOW-2 — Method!B63 fresh-branch ON writer', () => {
+group('v2.3.13 LOW-2 / v2.3.14 — Method!B63 fresh-branch live-OK writer', () => {
   const body = extractFunctionBody(STRIPPED, 'refreshLive');
   assert('refreshLive body exists', () => body.length > 0);
 
-  assert('refreshLive fresh-branch writes M_CELL.autoStatus with ON banner', () =>
-    /M_CELL\.autoStatus\)\.setValue\('ON · every '\s*\+\s*POLL_MINUTES\s*\+\s*' min'\)/.test(body));
+  assert('refreshLive fresh-branch writes M_CELL.autoStatus with live-OK banner', () =>
+    /M_CELL\.autoStatus\)\.setValue\('LIVE OK · feed fresh'\)/.test(body));
 
   // Confirm the writer sits after the staleKill clear (fresh-branch, not stale-branch)
-  assert('fresh-branch ON writer sits in the !cbTripped !stale else-arm', () => {
+  assert('fresh-branch live-OK writer sits in the healthy else-arm', () => {
     // Locate the staleKill setValue(false) and then ensure the ON writer is below it
     const idx = body.search(/M_CELL\.staleKill\)\.setValue\(false\)/);
-    const onIdx = body.search(/M_CELL\.autoStatus\)\.setValue\('ON · every '/);
+    const onIdx = body.search(/M_CELL\.autoStatus\)\.setValue\('LIVE OK · feed fresh'\)/);
     return idx >= 0 && onIdx > idx;
   });
+});
+
+group('v2.3.14 LIVE-SAFETY — hard pipeline warnings pause sheet staking', () => {
+  const body = extractFunctionBody(STRIPPED, 'refreshLive');
+  assert('refreshLive body exists', () => body.length > 0);
+
+  assert('hardPauseTypes includes sim/integrity failures, not only circuit_breaker', () =>
+    /hardPauseTypes\s*=\s*\{[\s\S]*sim_failure:\s*true[\s\S]*sigma_gate_failed:\s*true[\s\S]*input_corruption:\s*true[\s\S]*missing_model_artifacts:\s*true[\s\S]*orchestrator_crash:\s*true/.test(body));
+
+  assert('fresh timestamp branch pauses on hardPipelinePause', () =>
+    /\|\|\s*hardPipelinePause/.test(body));
+
+  assert('non-circuit hard pause label says live pipeline warning', () =>
+    body.includes('PAUSED · live pipeline warning'));
+
+  assert('missing timestamp branch preserves non-circuit hard pause reason', () =>
+    body.includes('live pipeline warning AND feed missing last_updated_utc'));
 });
 
 group('v2.3.13 LOW-2 — clearDiagnosticSurfaces wipes B63', () => {
@@ -728,6 +752,13 @@ group('Setup-time invariants — auto-refresh trigger', () => {
     /deleteTrigger/.test(remove) && /M_CELL\.autoStatus\)\.setValue\(['"]OFF['"]\)/.test(remove));
 });
 
+group('Setup-time invariants — protections keep operator knobs editable', () => {
+  const body = extractFunctionBody(STRIPPED, 'applyProtections');
+  assert('applyProtections body exists', () => body.length > 0);
+  assert('Method editable ranges include B87:B88 tail-trap knobs', () =>
+    /Method:\s*\[[\s\S]*['"]B87:B88['"]/.test(body));
+});
+
 group('Setup-time invariants — menu installation (onOpen)', () => {
   const body = extractFunctionBody(STRIPPED, 'onOpen');
   assert('onOpen calls SpreadsheetApp.getUi().createMenu', () =>
@@ -785,8 +816,8 @@ group('XLSX mirror cross-check (Bets row 2 + Matchday row 4)', () => {
   // is brittle. Build the {name → xml path} map dynamically.
   let workbookXml = '', relsXml = '';
   try {
-    workbookXml = execSync(`unzip -p "${XLSX_PATH}" xl/workbook.xml`, { encoding: 'utf8' });
-    relsXml = execSync(`unzip -p "${XLSX_PATH}" xl/_rels/workbook.xml.rels`, { encoding: 'utf8' });
+    workbookXml = execSync(`unzip -p "${XLSX_PATH}" xl/workbook.xml`, XLSX_UNZIP_OPTS);
+    relsXml = execSync(`unzip -p "${XLSX_PATH}" xl/_rels/workbook.xml.rels`, XLSX_UNZIP_OPTS);
   } catch (_) {}
   if (!workbookXml || !relsXml) {
     console.log('  ⊘ could not read workbook.xml / rels — suite skipped');
@@ -825,9 +856,9 @@ group('XLSX mirror cross-check (Bets row 2 + Matchday row 4)', () => {
   }
   let betsXml = '', mdXml = '', dashboardXml = '';
   try {
-    betsXml = execSync(`unzip -p "${XLSX_PATH}" ${betsPath}`, { encoding: 'utf8' });
-    mdXml = execSync(`unzip -p "${XLSX_PATH}" ${mdPath}`, { encoding: 'utf8' });
-    dashboardXml = execSync(`unzip -p "${XLSX_PATH}" ${dashboardPath}`, { encoding: 'utf8' });
+    betsXml = execSync(`unzip -p "${XLSX_PATH}" ${betsPath}`, XLSX_UNZIP_OPTS);
+    mdXml = execSync(`unzip -p "${XLSX_PATH}" ${mdPath}`, XLSX_UNZIP_OPTS);
+    dashboardXml = execSync(`unzip -p "${XLSX_PATH}" ${dashboardPath}`, XLSX_UNZIP_OPTS);
   } catch (_) {}
   if (!betsXml || !mdXml || !dashboardXml) {
     console.log('  ⊘ could not extract Bets/Matchday/Dashboard xml from xlsx — suite skipped');
@@ -915,7 +946,17 @@ group('Negative invariants — pre-v2.3.x bugs are absent', () => {
   // v2.3.13 LOW-2 — no fresh-branch silence
   assert('refreshLive fresh-branch is NOT silent on M_CELL.autoStatus', () => {
     const body = extractFunctionBody(STRIPPED, 'refreshLive');
-    return /M_CELL\.autoStatus\)\.setValue\('ON · every/.test(body);
+    return /M_CELL\.autoStatus\)\.setValue\('LIVE OK · feed fresh'\)/.test(body);
+  });
+
+  assert('refreshLive fetch failure sets staleKill before rethrowing', () => {
+    const body = extractFunctionBody(STRIPPED, 'refreshLive');
+    const failIdx = body.indexOf('live_state fetch failed');
+    if (failIdx < 0) return false;
+    const block = body.slice(failIdx, failIdx + 1000);
+    return /M_CELL\.staleKill\)\.setValue\(true\)/.test(block) &&
+           /PAUSED · live fetch failed/.test(block) &&
+           /throw e/.test(block);
   });
 });
 

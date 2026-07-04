@@ -383,16 +383,17 @@ def test_mf_warnings_probed_at_top_of_main() -> None:
     """The freshness probe must run ONCE at the top of main() so all
     three early-exit guards see its result without re-probing."""
     src = _read_source()
-    # Probe call appears before the circuit-breaker guard.
-    cb_idx = src.find("Circuit breaker tripped")
+    # Probe call appears before circuit-breaker state is interpreted.
+    cb_idx = src.find("cb_open = failures >= CB_THRESHOLD")
     # R6 M2: the mf_warnings assignment now folds in _provider_fallback_warnings()
     # alongside _matchday_freshness_warnings_safe(), so the line may be split
     # across multiple lines. Assert on the function call presence + ordering
     # rather than on a one-line assignment literal.
     probe_idx = src.find("_matchday_freshness_warnings_safe()")
     assert probe_idx > 0, "freshness probe call missing"
+    assert cb_idx > 0, "circuit-breaker open-state assignment missing"
     assert probe_idx < cb_idx, (
-        "freshness probe must precede the circuit-breaker guard so "
+        "freshness probe must precede the circuit-breaker state guard so "
         "early-exit paths can fold its result into their warning arrays."
     )
 
@@ -409,6 +410,78 @@ def test_circuit_breaker_exit_merges_mf_warnings() -> None:
         "circuit_breaker exit drops mf_warnings — matchday freshness "
         "won't reach live_state.json on CB-tripped ticks"
     )
+
+
+def test_circuit_breaker_open_runs_recovery_probe(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A tripped breaker must pause betting but still run a protected probe.
+
+    Pre-fix, `failures >= CB_THRESHOLD` returned before fetch_results ran.
+    The workflow converted rc=2 to success and committed a fresh breaker
+    warning every tick, leaving production permanently paused until manual
+    deletion. A clean probe now reaches fetch/hash and resets CB to 0.
+    """
+    import run_live_update as rlu
+
+    live = tmp_path / "live"
+    proc = tmp_path / "processed"
+    dash = tmp_path / "dashboard"
+    for d in (live, proc, dash):
+        d.mkdir()
+    monkeypatch.setattr(rlu, "LIVE", live)
+    monkeypatch.setattr(rlu, "PROC", proc)
+    monkeypatch.setattr(rlu, "DASH", dash)
+    monkeypatch.setattr(rlu, "CB_PATH", live / "circuit_breaker_state.json")
+    rlu.write_circuit_breaker(rlu.CB_THRESHOLD)
+
+    (live / "results_2026.json").write_text(json.dumps({
+        "completed_matches": [],
+        "in_play": [],
+        "warnings": [],
+        "updated_at": "2026-07-04T11:00:00+00:00",
+    }))
+    (proc / "predictions_live.json").write_text(json.dumps({
+        "team_predictions": [],
+        "input_hash": rlu.compute_input_hash(),
+        "completed_matches": [],
+    }))
+
+    calls: list[list[str]] = []
+
+    def fake_run(cmd):
+        calls.append(cmd)
+        if any("fetch_results.py" in part for part in cmd):
+            (live / "results_2026.json").write_text(json.dumps({
+                "completed_matches": [],
+                "in_play": [],
+                "warnings": [],
+                "updated_at": "2026-07-04T11:10:00+00:00",
+            }))
+        return 0
+
+    monkeypatch.setattr(rlu, "run", fake_run)
+    monkeypatch.setattr(rlu, "_matchday_freshness_warnings_safe", lambda: [])
+    monkeypatch.setattr(rlu, "_provider_fallback_warnings", lambda: [])
+    monkeypatch.setattr(sys, "argv", ["run_live_update.py"])
+
+    assert rlu.main() == 0
+    assert any(any("fetch_results.py" in part for part in cmd) for cmd in calls), (
+        "open breaker returned before fetch_results; recovery probe is dead"
+    )
+    cb = json.loads((live / "circuit_breaker_state.json").read_text())
+    assert cb["consecutive_failures"] == 0
+    state = json.loads((dash / "live_state.json").read_text())
+    assert state["warnings"] == []
+
+
+def test_circuit_breaker_warning_has_no_runner_delete_path() -> None:
+    """Operator warning must not tell users to delete a GitHub-runner path."""
+    import run_live_update as rlu
+
+    w = rlu.circuit_breaker_warning(3, recovery_probe=True)
+    msg = w["message"]
+    assert "/home/runner/" not in msg
+    assert "deleting" not in msg.lower()
+    assert w["recovery_probe"] is True
 
 
 def test_fetch_failure_exit_merges_mf_warnings() -> None:

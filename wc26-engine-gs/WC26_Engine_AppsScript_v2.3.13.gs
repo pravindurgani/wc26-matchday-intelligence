@@ -1077,11 +1077,21 @@ function _seedPauseOverrideHelp_() {
   const ss = SpreadsheetApp.getActive();
   const method = ss.getSheetByName(SHEET.method);
   if (!method) return;
+  method.getRange('C52').setValue(
+    'Drawdown threshold. B55 pauses staking when current drawdown >= this, unless B54=Y. Circuit-breaker/live-feed pauses remain hard stops.'
+  );
   method.getRange('C54').setValue(
     'Type Y to keep betting through drawdown only. Stale-feed and circuit-breaker pauses remain hard stops.'
   );
   method.getRange('C55').setValue(
-    'TRUE pauses staking when drawdown is tripped without B54=Y, or when Live! feed/circuit-breaker safety is active.'
+    'TRUE pauses staking when drawdown is tripped without B54=Y, or when Live! feed/circuit-breaker/pipeline safety is active.'
+  );
+  method.getRange('C63').setValue(
+    'Current live safety status/pause cause from refreshLive(). Auto-refresh trigger status is written only by install/remove auto-refresh.'
+  );
+  method.getRange('A81').setValue('Live safety kill (auto)');
+  method.getRange('C81').setValue(
+    'TRUE when live_state is stale > ' + STALE_MINUTES + ' min, missing/unfetchable, or carries a hard pipeline warning such as circuit_breaker, sim_failure, sigma_gate_failed, input_corruption, missing_model_artifacts, or orchestrator_crash.'
   );
 }
 
@@ -1630,8 +1640,28 @@ function refreshLive(state) {
   const method = ss.getSheetByName(SHEET.method);
   if (!live) throw new Error('Sheet "' + SHEET.live + '" not found');
 
-  if (!state) state = _fetchJson_(_liveUrl_(ss));
   const now = new Date();
+  if (!state) {
+    try {
+      state = _fetchJson_(_liveUrl_(ss));
+    } catch (e) {
+      const msg = '⚠ live_state fetch failed — model paused: ' + (e.message || e);
+      _setIfFinite_(live, LIVE_CELL.lastPoll, now);
+      live.getRange(LIVE_CELL.warnings).setValue('live fetch failed: ' + (e.message || e));
+      live.getRange(LIVE_CELL.staleWarn).setValue(msg);
+      if (method) {
+        method.getRange(M_CELL.lastLivePoll).setValue(now);
+        method.getRange(M_CELL.staleKill).setValue(true);
+        method.getRange(M_CELL.autoStatus).setValue('PAUSED · live fetch failed');
+        method.getRange(M_CELL.warnings).setValue('live fetch failed: ' + (e.message || e));
+      }
+      try {
+        const mdSh = SpreadsheetApp.getActive().getSheetByName(SHEET.matchday);
+        if (mdSh) mdSh.getRange('W1').setValue(msg);
+      } catch (_) {}
+      throw e;
+    }
+  }
   // v2.3.4 HIGH #2: Python's run_live_update emits warnings as objects
   // (`{"type": "circuit_breaker", "message": "..."}`, see
   // scripts/live/run_live_update.py:533,556,570), not bare strings. v2.3.3
@@ -1670,11 +1700,12 @@ function refreshLive(state) {
   // new stakes when the model is paused. v2.3 only wrote a cosmetic string.
   let staleMsg = '';
   // v2.3.3 LOW #14 / v2.3.4 CRIT #1: also kill on circuit-breaker.
-  // live_state.warnings[] may carry circuit_breaker entries from the
-  // upstream sim when its provider-quota guard fires. Treat any such
-  // entry as a stale signal — the model output we'd otherwise hand the
-  // Bets sheet is the LAST known-good state from before the breaker
-  // tripped, which is exactly the case staleKill exists to defend against.
+  // v2.3.14 LIVE-SAFETY: broaden the same hard pause to integrity warnings
+  // where live_state.json is fresh but the model is NOT safe to bet from
+  // (sim failure retained old predictions, sigma gate failed, corrupt input,
+  // missing artifacts, orchestrator crash). Fresh timestamp alone is not a
+  // safety signal; hard pipeline warnings must stop staking until a clean
+  // tick clears them.
   //
   // v2.3.4 CRIT #1: pre-fix v2.3.3 only matched bare strings, but
   // run_live_update.py:533,556,570 emit objects of the form
@@ -1682,19 +1713,46 @@ function refreshLive(state) {
   // breaker scan dead code on every real-world payload. Now match both
   // shapes — string substring OR object whose .type/.message says so.
   const warnArr = Array.isArray(state.warnings) ? state.warnings : [];
-  const cbTripped = warnArr.some(function(w) {
+  const hardPauseTypes = {
+    circuit_breaker: true,
+    sim_failure: true,
+    sigma_gate_failed: true,
+    input_corruption: true,
+    missing_model_artifacts: true,
+    orchestrator_crash: true,
+    pipeline_unhealthy: true
+  };
+  function _warnParts_(w) {
     if (typeof w === 'string') {
-      return w.toLowerCase().indexOf('circuit_breaker') !== -1;
+      const s = w.toLowerCase();
+      return {type: s, message: s};
     }
     if (w && typeof w === 'object') {
-      const t = String(w.type || '').toLowerCase();
-      const m = String(w.message || '').toLowerCase();
-      return t.indexOf('circuit_breaker') !== -1 ||
-             m.indexOf('circuit_breaker') !== -1 ||
-             m.indexOf('circuit breaker') !== -1;
+      return {
+        type: String(w.type || '').toLowerCase(),
+        message: String(w.message || '').toLowerCase()
+      };
     }
-    return false;
+    return {type: '', message: ''};
+  }
+  const cbTripped = warnArr.some(function(w) {
+    const p = _warnParts_(w);
+    return p.type.indexOf('circuit_breaker') !== -1 ||
+           p.message.indexOf('circuit_breaker') !== -1 ||
+           p.message.indexOf('circuit breaker') !== -1;
   });
+  const hardPauseWarn = warnArr.find(function(w) {
+    const p = _warnParts_(w);
+    if (hardPauseTypes[p.type]) return true;
+    if (p.type.indexOf('circuit_breaker') !== -1 ||
+        p.message.indexOf('circuit_breaker') !== -1 ||
+        p.message.indexOf('circuit breaker') !== -1) return true;
+    return Object.keys(hardPauseTypes).some(function(k) {
+      return p.message.indexOf(k) !== -1;
+    });
+  });
+  const hardPipelinePause = !!hardPauseWarn;
+  const hardPauseReason = hardPipelinePause ? _renderWarn_(hardPauseWarn) : '';
 
   // v2.3.4 MED #5: strict date validation. v2.3.3 used a bare truthy
   // check, so the literal strings 'null' / 'undefined' / 'Invalid Date'
@@ -1718,15 +1776,17 @@ function refreshLive(state) {
 
   if (isFinite(_luMs)) {
     const ageMin = (now.getTime() - _luMs) / 60000;
-    if ((isFinite(ageMin) && ageMin > STALE_MINUTES) || cbTripped) {
-      staleMsg = cbTripped
-        ? '⚠ circuit-breaker tripped upstream — model paused'
+    if ((isFinite(ageMin) && ageMin > STALE_MINUTES) || hardPipelinePause) {
+      staleMsg = hardPipelinePause
+        ? (cbTripped
+            ? '⚠ circuit-breaker tripped upstream — model paused'
+            : '⚠ live pipeline warning — model paused: ' + hardPauseReason)
         : '⚠ STALE feed (' + ageMin.toFixed(0) + ' min old) — model paused';
       if (method) {
         method.getRange(M_CELL.staleKill).setValue(true);
         method.getRange(M_CELL.autoStatus).setValue(
-          cbTripped
-            ? 'PAUSED · circuit-breaker upstream'
+          hardPipelinePause
+            ? (cbTripped ? 'PAUSED · circuit-breaker upstream' : 'PAUSED · live pipeline warning')
             : 'PAUSED · stale feed (' + ageMin.toFixed(0) + ' min)');
       }
     } else {
@@ -1736,10 +1796,13 @@ function refreshLive(state) {
         if (cur === true || String(cur).toUpperCase() === 'TRUE') {
           method.getRange(M_CELL.staleKill).setValue(false);
         }
-        // v2.3.13 LOW-2: overwrite B63 with the steady-state "ON" banner
+        // v2.3.13 LOW-2 / v2.3.14 safety-label fix: overwrite B63 with a
+        // fresh-feed banner so a prior PAUSED message doesn't cling after
+        // the kill flag clears. Do not claim the trigger is ON here;
+        // installAutoRefresh/removeAutoRefresh own that state.
         // so a stale-trip message from a prior tick doesn't cling after
-        // the kill flag clears. Mirrors installAutoRefresh()'s writer.
-        method.getRange(M_CELL.autoStatus).setValue('ON · every ' + POLL_MINUTES + ' min');
+        // the kill flag clears.
+        method.getRange(M_CELL.autoStatus).setValue('LIVE OK · feed fresh');
       }
     }
   } else {
@@ -1749,21 +1812,23 @@ function refreshLive(state) {
     // i.e. a stuck-TRUE kill flag stayed stuck, and a stuck-FALSE flag
     // failed to engage. Treat missing-timestamp as STALE (safer side).
     //
-    // v2.3.5 M-2: when cbTripped is ALSO true in this same payload, the
+    // v2.3.5 M-2: when a hard pipeline pause is ALSO true in this same payload, the
     // pre-v2.3.5 branch wrote only the missing-timestamp message and the
     // CB-trip context was silently lost. Missing-ts is usually a downstream
     // symptom of the breaker (the sim paused → no fresh timestamp), so
     // the CB-trip is the actionable root cause. Surface BOTH.
-    if (cbTripped) {
-      staleMsg = '⚠ circuit-breaker tripped upstream AND feed missing last_updated_utc — model paused';
+    if (hardPipelinePause) {
+      staleMsg = cbTripped
+        ? '⚠ circuit-breaker tripped upstream AND feed missing last_updated_utc — model paused'
+        : '⚠ live pipeline warning AND feed missing last_updated_utc — model paused: ' + hardPauseReason;
     } else {
       staleMsg = '⚠ feed missing last_updated_utc — model paused (safe-fail)';
     }
     if (method) {
       method.getRange(M_CELL.staleKill).setValue(true);
       method.getRange(M_CELL.autoStatus).setValue(
-        cbTripped
-          ? 'PAUSED · circuit-breaker upstream + missing timestamp'
+        hardPipelinePause
+          ? (cbTripped ? 'PAUSED · circuit-breaker upstream + missing timestamp' : 'PAUSED · live pipeline warning + missing timestamp')
           : 'PAUSED · feed missing timestamp');
     }
   }
@@ -2725,7 +2790,7 @@ function _knockoutStakingFormulas_(r) {
     // LONG_SHOT_EDGE_MIN, override "Value found" with a long-shot WAIT
     // that surfaces the actual odds + edge so the operator can sanity-
     // check sharp-book consensus before flipping L=Y on the Matchday row.
-    '=IF(AB' + r + '="","Type the 3 odds on the Matchday tab",IF(Method!$B$55=TRUE(),IF(Method!$B$81=TRUE(),"🛑 PAUSED — feed stale > ' + STALE_MINUTES + ' min — check Live tab; refresh feed before betting.",IF(Method!$B$51>=Method!$B$52,"🛑 PAUSED — drawdown "&TEXT(Method!$B$51,"0.0%")&" ≥ "&TEXT(Method!$B$52,"0.0%")&". Set Method!B54=Y to override.","🛑 PAUSED — see Method!B49/B63 for cause; do not override stale/circuit-breaker pauses.")),IF(AH' + r + '="BET",IF(AJ' + r + '=0,"Edge found but stake rounds under £"&Method!$B$9&" — skip",IF(AND(AE' + r + '>=' + LONG_SHOT_ODDS_MIN + ',AG' + r + '>=' + LONG_SHOT_EDGE_MIN + '),"🟡 WAIT — long-shot review: odds "&TEXT(AE' + r + ',"0.00")&" + edge "&TEXT(AG' + r + ',"0.0%")&" — verify sharp-book + team news + stake comfort before Placed=Y","Value found: EV "&TEXT(AF' + r + ',"0.0%")&", edge "&TEXT(AG' + r + ',"0.0%"))),IF(OR(AF' + r + '>Method!$B$87,IFERROR(INDEX(BC' + r + ':BE' + r + ',1,AB' + r + ')/INDEX(S' + r + ':U' + r + ',1,AB' + r + '),0)>Method!$B$88),"🛑 Tail trap — auto-PASS · EV "&TEXT(AF' + r + ',"0.0%")&" (cap "&TEXT(Method!$B$87,"0%")&") · model/market "&TEXT(IFERROR(INDEX(BC' + r + ':BE' + r + ',1,AB' + r + ')/INDEX(S' + r + ':U' + r + ',1,AB' + r + '),0),"0.0")&"× (cap "&TEXT(Method!$B$88,"0.0")&"×)",IF(AF' + r + '<Method!$B$7,"Price too short — EV "&TEXT(AF' + r + ',"0.0%")&" (need "&TEXT(Method!$B$7,"0.0%")&"+)","Model ≈ market — edge "&TEXT(AG' + r + ',"0.0%")&" (need "&TEXT(Method!$B$8,"0.0%")&"+)")))))',
+    '=IF(AB' + r + '="","Type the 3 odds on the Matchday tab",IF(Method!$B$55=TRUE(),IF(Method!$B$81=TRUE(),IF(REGEXMATCH(LOWER(Method!$B$63),"circuit"),"🛑 PAUSED — circuit breaker upstream; wait for a clean live refresh.",IF(REGEXMATCH(LOWER(Method!$B$63),"pipeline"),"🛑 PAUSED — live pipeline warning; check Live!B11/Method!B62 before betting.",IF(REGEXMATCH(LOWER(Method!$B$63),"missing"),"🛑 PAUSED — feed timestamp missing; refresh feed before betting.","🛑 PAUSED — feed stale > ' + STALE_MINUTES + ' min — check Live tab; refresh feed before betting."))),IF(Method!$B$51>=Method!$B$52,"🛑 PAUSED — drawdown "&TEXT(Method!$B$51,"0.0%")&" ≥ "&TEXT(Method!$B$52,"0.0%")&". Set Method!B54=Y to override.","🛑 PAUSED — see Method!B62/B63/B81 for cause; do not override stale/circuit-breaker/pipeline pauses.")),IF(AH' + r + '="BET",IF(AJ' + r + '=0,"Edge found but stake rounds under £"&Method!$B$9&" — skip",IF(AND(AE' + r + '>=' + LONG_SHOT_ODDS_MIN + ',AG' + r + '>=' + LONG_SHOT_EDGE_MIN + '),"🟡 WAIT — long-shot review: odds "&TEXT(AE' + r + ',"0.00")&" + edge "&TEXT(AG' + r + ',"0.0%")&" — verify sharp-book + team news + stake comfort before Placed=Y","Value found: EV "&TEXT(AF' + r + ',"0.0%")&", edge "&TEXT(AG' + r + ',"0.0%"))),IF(OR(AF' + r + '>Method!$B$87,IFERROR(INDEX(BC' + r + ':BE' + r + ',1,AB' + r + ')/INDEX(S' + r + ':U' + r + ',1,AB' + r + '),0)>Method!$B$88),"🛑 Tail trap — auto-PASS · EV "&TEXT(AF' + r + ',"0.0%")&" (cap "&TEXT(Method!$B$87,"0%")&") · model/market "&TEXT(IFERROR(INDEX(BC' + r + ':BE' + r + ',1,AB' + r + ')/INDEX(S' + r + ':U' + r + ',1,AB' + r + '),0),"0.0")&"× (cap "&TEXT(Method!$B$88,"0.0")&"×)",IF(AF' + r + '<Method!$B$7,"Price too short — EV "&TEXT(AF' + r + ',"0.0%")&" (need "&TEXT(Method!$B$7,"0.0%")&"+)","Model ≈ market — edge "&TEXT(AG' + r + ',"0.0%")&" (need "&TEXT(Method!$B$8,"0.0%")&"+)")))))',
     '=IF(AN' + r + '<>"Y","",IF(AH' + r + '="· enter odds","⚠ type the 3 odds (1/X/2) to grade this bet",IF(OR(AV' + r + '="",AO' + r + '="",AP' + r + '=""),"⚠ log backed pick, odds & stake",IF(AZ' + r + '<>"BET","⚠ FUN BET — engine said pass · staked £"&AP' + r + '&" vs engine £"&BA' + r + ',IF(AV' + r + '<>IF(AY' + r + '="",AC' + r + ',AY' + r + '),"⚠ backed "&AV' + r + '&" but engine pick was "&IF(AY' + r + '="",AC' + r + ',AY' + r + '),IF(AP' + r + '>BA' + r + ',"⚠ stake over engine £"&BA' + r + ',IF(ABS(AO' + r + '-IFERROR(INDEX(L' + r + ':N' + r + ',1,MATCH(AV' + r + ',{"H","D","A"},0)),AE' + r + '))>0.02,"⚠ odds moved — re-check value","✓ engine bet")))))))',
     '=IF(Matchday!O' + rm + '="","",Matchday!O' + rm + ')',
   ];
@@ -2786,7 +2851,7 @@ function _matchdayKnockoutRowFormulas_(r) {
     // out the actual odds + edge. Operator runs the 3-cell checklist
     // (sharp-book / team news / stake comfort) and types L=Y to override
     // → engine flips to "🟢 PLACE £..." as normal.
-    '=IF(Bets!AH' + r + '="· enter odds","",IF(Method!$B$55=TRUE(),IF(Method!$B$81=TRUE(),"🛑 PAUSED — feed stale (>' + STALE_MINUTES + ' min); refresh feed before betting.",IF(Method!$B$51>=Method!$B$52,"🛑 PAUSED — drawdown "&TEXT(Method!$B$51,"0.0%")&" ≥ "&TEXT(Method!$B$52,"0.0%")&". Set Method!B54=Y to override.","🛑 PAUSED — see Method!B49/B63 for cause; do not override stale/circuit-breaker pauses.")),IF(Bets!AH' + r + '<>"BET",IF(OR(Bets!AF' + r + '>Method!$B$87,IFERROR(INDEX(Bets!BC' + r + ':BE' + r + ',1,Bets!AB' + r + ')/INDEX(Bets!S' + r + ':U' + r + ',1,Bets!AB' + r + '),0)>Method!$B$88),"🛑 NO BET — tail trap (EV "&TEXT(Bets!AF' + r + ',"0.0%")&" / model "&TEXT(IFERROR(INDEX(Bets!BC' + r + ':BE' + r + ',1,Bets!AB' + r + ')/INDEX(Bets!S' + r + ':U' + r + ',1,Bets!AB' + r + '),0),"0.0")&"× market)","❌ NO BET — price not good enough"),IF(Bets!AJ' + r + '=0,"❌ NO BET — stake under minimum",IF(L' + rm + '="",IF(AND(Bets!AE' + r + '>=' + LONG_SHOT_ODDS_MIN + ',Bets!AG' + r + '>=' + LONG_SHOT_EDGE_MIN + '),"🟡 WAIT — long-shot review: odds "&TEXT(Bets!AE' + r + ',"0.00")&" + edge "&TEXT(Bets!AG' + r + ',"0.0%")&" — verify sharp-book + team news + stake comfort","🟡 WAIT — check team news first"),IF(L' + rm + '="N","🔴 SKIP — team news concern",IF(L' + rm + '="Y","🟢 PLACE £"&Bets!AJ' + r + '&" on "&Bets!AD' + r + ',"")))))))',  // M: decision msg
+    '=IF(Bets!AH' + r + '="· enter odds","",IF(Method!$B$55=TRUE(),IF(Method!$B$81=TRUE(),IF(REGEXMATCH(LOWER(Method!$B$63),"circuit"),"🛑 PAUSED — circuit breaker upstream; wait for a clean live refresh.",IF(REGEXMATCH(LOWER(Method!$B$63),"pipeline"),"🛑 PAUSED — live pipeline warning; check Live!B11/Method!B62 before betting.",IF(REGEXMATCH(LOWER(Method!$B$63),"missing"),"🛑 PAUSED — feed timestamp missing; refresh feed before betting.","🛑 PAUSED — feed stale (>' + STALE_MINUTES + ' min); refresh feed before betting."))),IF(Method!$B$51>=Method!$B$52,"🛑 PAUSED — drawdown "&TEXT(Method!$B$51,"0.0%")&" ≥ "&TEXT(Method!$B$52,"0.0%")&". Set Method!B54=Y to override.","🛑 PAUSED — see Method!B62/B63/B81 for cause; do not override stale/circuit-breaker/pipeline pauses.")),IF(Bets!AH' + r + '<>"BET",IF(OR(Bets!AF' + r + '>Method!$B$87,IFERROR(INDEX(Bets!BC' + r + ':BE' + r + ',1,Bets!AB' + r + ')/INDEX(Bets!S' + r + ':U' + r + ',1,Bets!AB' + r + '),0)>Method!$B$88),"🛑 NO BET — tail trap (EV "&TEXT(Bets!AF' + r + ',"0.0%")&" / model "&TEXT(IFERROR(INDEX(Bets!BC' + r + ':BE' + r + ',1,Bets!AB' + r + ')/INDEX(Bets!S' + r + ':U' + r + ',1,Bets!AB' + r + '),0),"0.0")&"× market)","❌ NO BET — price not good enough"),IF(Bets!AJ' + r + '=0,"❌ NO BET — stake under minimum",IF(L' + rm + '="",IF(AND(Bets!AE' + r + '>=' + LONG_SHOT_ODDS_MIN + ',Bets!AG' + r + '>=' + LONG_SHOT_EDGE_MIN + '),"🟡 WAIT — long-shot review: odds "&TEXT(Bets!AE' + r + ',"0.00")&" + edge "&TEXT(Bets!AG' + r + ',"0.0%")&" — verify sharp-book + team news + stake comfort","🟡 WAIT — check team news first"),IF(L' + rm + '="N","🔴 SKIP — team news concern",IF(L' + rm + '="Y","🟢 PLACE £"&Bets!AJ' + r + '&" on "&Bets!AD' + r + ',"")))))))',  // M: decision msg
     null, null, null, null, null,                                         // N/O/P/Q/R: bet mgmt (operator)
     '=Bets!AU' + r,                                                       // S: audit msg
     null,                                                                 // T: closing odds (operator)
@@ -3187,7 +3252,7 @@ function applyProtections() {
   // locked out of typing odds in E76..G107. Bumping bounds to :107.
   const editable = {
     Matchday: ['E4:G107', 'L4:L107', 'N4:R107', 'T4:T107'],
-    Method:   ['B3', 'B5:B9', 'B13:B14', 'B46', 'B48:B49', 'B52', 'B54', 'B56'],
+    Method:   ['B3', 'B5:B9', 'B13:B14', 'B46', 'B48:B49', 'B52', 'B54', 'B56', 'B87:B88'],
     'Model Refresh': ['B8:D79'],
     'Model vs Market': ['G4:G15'],
     Bets: ['AW2:AY999', 'BB2:BI999'],     // include script-managed v2.3.1 cols

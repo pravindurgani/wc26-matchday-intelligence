@@ -38,6 +38,8 @@ from fetch_results import (  # noqa: E402
     normalize_team, http_get_json, atomic_write_json,
     get_api_football_key, get_football_data_token,
     APIFOOTBALL_BASE, FOOTBALLDATA_BASE,
+    _PHASE_TO_STAGE, _dates_within_one_day, _known_team_set,
+    _resolved_bracket_rows,
 )
 
 # ── Round-label classifier ────────────────────────────────────────────────
@@ -47,6 +49,210 @@ from fetch_results import (  # noqa: E402
 # Re-exported here for back-compat: tests/live/test_knockout_fixture_map.py
 # and any operator tooling import it from this module.
 from _knockout import classify_round  # noqa: E402, F401
+
+
+# ── A.7 (2026-07-03, 16:31Z incident): NAME-FIRST knockout assignment ──────
+# The original knockout strategy paired provider fixtures to internal ids
+# POSITIONALLY (round + chronological order). That assumption is FALSE
+# within a date: FIFA match numbering is not venue-local-kickoff order and
+# provider dates/kickoffs are UTC, so on 2026-06-29 the builder re-keyed
+# the already-name-correct R32 entries wrong (m74/75/76 rotated; m77/78,
+# m81/82, m83/84 swapped) and real scores were ingested under the wrong
+# internal ids. Knockout assignment is now:
+#
+#   1. NAME-FIRST — a provider fixture whose team names are real (both in
+#      the WC26 team set after TEAM_ALIAS normalisation) is assigned by the
+#      SAME criteria fetch_results' A.6 auto-extension uses: stage (via
+#      classify_round) + unordered normalized team pair + date±1 against
+#      the internal bracket with slots resolved from on-disk results
+#      (export_ko_advance resolver via fetch_results._resolved_bracket_rows).
+#      A real-named fixture that cannot be name-placed is REFUSED (left
+#      unmapped + warned) — never guessed positionally.
+#   2. MERGE — existing map entries are preserved unless fresh name
+#      evidence supersedes or refutes them. A positional guess can never
+#      blind-overwrite a previously name-matched entry.
+#   3. POSITIONAL is reserved for genuinely-TBD fixtures (placeholder names
+#      like "Winner Group A", empty, or not in the team set), and only when
+#      unambiguous: the fixture must have exactly ONE unclaimed internal
+#      candidate in its (stage, date±1) bucket AND be that candidate's only
+#      suitor. Ambiguous buckets are refused (unmapped + warned) — mapping
+#      a TBD fixture is a convenience (no result can exist for it yet), so
+#      refusal costs nothing while a wrong guess re-keys real scores.
+_MATCHED_BY_NAME = "name"
+_MATCHED_BY_POSITION = "position"
+_MATCHED_BY_PRESERVED = "preserved"
+
+
+def assign_knockout_ids(
+    provider_fixtures: list[dict],
+    bracket_rows: list[dict],
+    known_teams: set[str],
+    existing_entries: list[dict] | None = None,
+) -> tuple[list[dict], list[dict]]:
+    """Assign internal match ids to knockout provider fixtures, name-first.
+
+    `provider_fixtures`: [{"id", "home_raw", "away_raw", "date", "round"}]
+    (raw provider names; group-stage rows are ignored via classify_round).
+    `bracket_rows`: fetch_results._resolved_bracket_rows() rows — bracket
+    schedule annotated with `resolved_home`/`resolved_away` (None while the
+    feeding results are unknown).
+    `existing_entries`: current map records for THIS provider (m>=73 only)
+    to merge — never blind-overwritten by positional guesses.
+
+    Returns (mapped_records, unmapped_provider). Each mapped record carries
+    `matched_by` ∈ {"name", "position", "preserved"} for auditability.
+    Deterministic: iteration order is (date, provider id) on the provider
+    side and match_id on the merge side, independent of PYTHONHASHSEED.
+    """
+    from collections import Counter
+
+    rows = [r for r in bracket_rows
+            if isinstance(r, dict) and r.get("m") is not None]
+    rows_by_m = {int(r["m"]): r for r in rows}
+    by_stage_pair: dict[tuple[str, tuple[str, str]], dict] = {}
+    for r in rows:
+        h, a = r.get("resolved_home"), r.get("resolved_away")
+        if h and a:
+            by_stage_pair[(r.get("stage"), tuple(sorted((h, a))))] = r
+
+    mapped: list[dict] = []
+    unmapped: list[dict] = []
+    claimed: set[int] = set()
+    assigned_pfids: set[str] = set()
+
+    def _unmapped_entry(f: dict, phase: str, reason: str) -> dict:
+        # `f` is an internal `ko` dict (built below): names already
+        # normalized under "home"/"away", originals under "raw_home"/…
+        return {
+            "provider_fixture_id": str(f["id"]), "phase": phase,
+            "date": f.get("date"),
+            "home": f.get("home") or "",
+            "away": f.get("away") or "",
+            "raw_home": f.get("raw_home"), "raw_away": f.get("raw_away"),
+            "reason": reason,
+        }
+
+    # Classify + normalise once; deterministic provider-side order.
+    ko: list[dict] = []
+    for f in provider_fixtures:
+        phase = classify_round(f.get("round"))
+        if phase is None:
+            continue
+        ko.append({
+            "id": str(f["id"]),
+            "phase": phase,
+            "stage": _PHASE_TO_STAGE.get(phase, phase),
+            "home": normalize_team(f.get("home_raw") or ""),
+            "away": normalize_team(f.get("away_raw") or ""),
+            "raw_home": f.get("home_raw"), "raw_away": f.get("away_raw"),
+            "date": f.get("date"),
+        })
+    ko.sort(key=lambda f: ((f.get("date") or ""), f["id"]))
+
+    real_named = [f for f in ko
+                  if bool(known_teams) and f["home"] and f["away"]
+                  and f["home"] != f["away"]
+                  and f["home"] in known_teams and f["away"] in known_teams]
+    _real_ids = {f["id"] for f in real_named}
+    tbd = [f for f in ko if f["id"] not in _real_ids]
+
+    # ── Pass 1: name matches (authoritative) ────────────────────────────
+    for f in real_named:
+        pair = tuple(sorted((f["home"], f["away"])))
+        row = by_stage_pair.get((f["stage"], pair))
+        if (row is not None
+                and _dates_within_one_day(f.get("date"), row.get("date"))
+                and int(row["m"]) not in claimed):
+            m = int(row["m"])
+            claimed.add(m)
+            assigned_pfids.add(f["id"])
+            mapped.append({
+                "match_id": m, "provider_fixture_id": f["id"],
+                "home": f["home"], "away": f["away"],
+                "date": row.get("date"), "phase": f["phase"],
+                "matched_by": _MATCHED_BY_NAME,
+            })
+        else:
+            # Real names that cannot be name-placed: our bracket resolution
+            # is incomplete or disagrees with the provider. REFUSE — a
+            # positional guess here is exactly the 16:31Z incident.
+            unmapped.append(_unmapped_entry(
+                f, f["phase"],
+                "name_unplaceable (bracket slot unresolved, pairing "
+                "disagreement, or duplicate) — refusing positional guess"))
+
+    unplaceable_pfids = {u["provider_fixture_id"] for u in unmapped}
+
+    # ── Pass 2: merge existing entries (never blind-overwrite) ──────────
+    for e in sorted(existing_entries or [],
+                    key=lambda x: (int(x.get("match_id") or x.get("m") or 0),
+                                   str(x.get("provider_fixture_id") or ""))):
+        if not isinstance(e, dict):
+            continue
+        pfid = str(e.get("provider_fixture_id") or "")
+        try:
+            m = int(e.get("match_id") or e.get("m") or 0)
+        except (TypeError, ValueError):
+            continue
+        if not pfid or m < 73:
+            continue
+        if pfid in assigned_pfids:
+            continue  # fresh name evidence supersedes the old entry
+        if pfid in unplaceable_pfids:
+            continue  # payload has real names that refute/can't confirm it
+        if m in claimed or m not in rows_by_m:
+            continue  # id claimed by name evidence (or bogus) — entry loses
+        claimed.add(m)
+        assigned_pfids.add(pfid)
+        mapped.append({
+            "match_id": m, "provider_fixture_id": pfid,
+            "home": e.get("home") or "TBD", "away": e.get("away") or "TBD",
+            "date": e.get("date") or rows_by_m[m].get("date"),
+            "phase": e.get("phase") or "unknown",
+            "matched_by": e.get("matched_by") or _MATCHED_BY_PRESERVED,
+        })
+
+    # ── Pass 3: positional — genuinely-TBD fixtures, unambiguous only ───
+    pending = [f for f in tbd if f["id"] not in assigned_pfids]
+    cands: dict[str, list[int]] = {}
+    for f in pending:
+        exact: list[int] = []
+        near: list[int] = []
+        fd = (f.get("date") or "")[:10]
+        for r in rows:
+            if r.get("stage") != f["stage"] or int(r["m"]) in claimed:
+                continue
+            rd = (r.get("date") or "")[:10]
+            if fd and rd and fd == rd:
+                exact.append(int(r["m"]))
+            elif _dates_within_one_day(fd, rd):
+                near.append(int(r["m"]))
+        # Exact-date candidates outrank ±1 rollover neighbours.
+        cands[f["id"]] = sorted(exact) if exact else sorted(near)
+    wanted = Counter(m for lst in cands.values() for m in lst)
+    for f in pending:
+        lst = cands[f["id"]]
+        if len(lst) == 1 and wanted[lst[0]] == 1 and lst[0] not in claimed:
+            m = lst[0]
+            row = rows_by_m[m]
+            claimed.add(m)
+            assigned_pfids.add(f["id"])
+            mapped.append({
+                "match_id": m, "provider_fixture_id": f["id"],
+                "home": f["home"] or f.get("raw_home") or "TBD",
+                "away": f["away"] or f.get("raw_away") or "TBD",
+                "date": row.get("date"), "phase": f["phase"],
+                "matched_by": _MATCHED_BY_POSITION,
+            })
+        else:
+            unmapped.append(_unmapped_entry(
+                f, f["phase"],
+                ("ambiguous_positional_bucket "
+                 f"({len(lst)} candidate(s), contested={bool(lst) and wanted[lst[0]] > 1}) "
+                 "— refusing to guess; will name-match once teams resolve")))
+
+    mapped.sort(key=lambda x: x["match_id"])
+    return mapped, unmapped
 
 
 def fetch_apifootball_fixtures(api_key: str, league_id: str, season: str) -> list[dict]:
@@ -184,10 +390,12 @@ def main() -> int:
     # exposes all 32 knockout fixtures with `league.round` labels like
     # "Round of 16" / "Quarter-finals" / "Semi-finals" / "3rd Place Final" /
     # "Final". Pre-draw, the team-name fields hold placeholder strings
-    # ("Winner Group A", "Runner Up Group B", etc.) so we cannot map by
-    # (home, away) name match the way we do for group fixtures. Instead we
-    # pair by round + chronological order — both sides use the same FIFA
-    # schedule, so position-in-round is a stable invariant.
+    # ("Winner Group A", "Runner Up Group B", etc.).
+    # A.7 NOTE: "position-in-round is a stable invariant" was the pre-incident
+    # assumption and it is FALSE — FIFA match numbering within a date is not
+    # UTC-kickoff order (2026-07-03 16:31Z incident). Assignment is now
+    # name-first via assign_knockout_ids; this schedule list only feeds the
+    # coverage accounting below.
     bracket_path = RAW / "knockout_bracket_2026.json"
     knockout_schedule: list[dict] = []
     if bracket_path.exists():
@@ -342,54 +550,51 @@ def main() -> int:
             "home": home, "away": away, "date": date, "phase": "group",
         })
 
-    # ── Knockout: pair by phase + chronological order ────────────────────
-    # Strategy: within each round, both internal schedule and provider feed
-    # are ordered by FIFA's published calendar. Sort each side by (date,
-    # tiebreaker) and pair index-for-index. This works pre-draw (placeholder
-    # team names) because we ignore names entirely for knockouts.
-    knockout_by_phase: dict[str, list[dict]] = {}
-    for ks in knockout_schedule:
-        knockout_by_phase.setdefault(ks["phase"], []).append(ks)
+    # ── Knockout: NAME-FIRST assignment (A.7 — replaces positional) ──────
+    # The pre-A.7 strategy paired provider fixtures to internal ids by
+    # round + chronological order. FIFA match numbering within a date is
+    # NOT UTC-kickoff order, so on 2026-07-03 a bootstrap rebuild re-keyed
+    # the already-name-correct R32 map wrong (m74/75/76 rotated; m77/78,
+    # m81/82, m83/84 swapped) and real scores landed under wrong internal
+    # ids. See assign_knockout_ids for the full strategy: name-first,
+    # merge-preserving, positional ONLY for unambiguous TBD fixtures.
+    ko_provider_fixtures = [f for lst in knockout_fixtures_by_phase.values()
+                            for f in lst]
+    existing_ko_entries: list[dict] = []
+    map_path = LIVE / "provider_fixture_map.json"
+    if map_path.exists():
+        try:
+            _doc = json.loads(map_path.read_text())
+            if (_doc.get("provider") or args.provider) == args.provider:
+                existing_ko_entries = [
+                    e for e in _doc.get("fixtures", [])
+                    if isinstance(e, dict)
+                    and int(e.get("match_id") or e.get("m") or 0) >= 73
+                ]
+            else:
+                print(f"[builder] existing map is for provider "
+                      f"{_doc.get('provider')!r} — not merging its KO entries")
+        except Exception as e:
+            print(f"[builder] WARN: existing map unreadable ({e}) — "
+                  f"no KO entries to merge")
+    bracket_rows = _resolved_bracket_rows()
+    ko_mapped, ko_unmapped = assign_knockout_ids(
+        ko_provider_fixtures, bracket_rows, _known_team_set(),
+        existing_ko_entries)
+    mapped.extend(ko_mapped)
+    unmapped_provider.extend(ko_unmapped)
 
-    for phase, internal_list in knockout_by_phase.items():
-        provider_list = knockout_fixtures_by_phase.get(phase, [])
-        if not provider_list:
-            # No provider fixtures in this round yet — perfectly normal pre-draw.
-            print(f"[builder] {phase}: no provider fixtures yet "
-                  f"({len(internal_list)} internal awaiting upstream resolution)")
-            continue
-        # Stable sort on both sides. `m` is monotonic per FIFA's M-numbering;
-        # provider `kickoff` ISO string sorts lexicographically.
-        internal_sorted = sorted(internal_list, key=lambda x: (x["date"], x["m"]))
-        provider_sorted = sorted(provider_list, key=lambda x: (x["date"], x["kickoff"], x["id"]))
-
-        if len(provider_sorted) != len(internal_sorted):
-            print(f"[builder] WARN {phase}: provider has {len(provider_sorted)} fixtures "
-                  f"but bracket has {len(internal_sorted)}. Pairing the overlap.")
-
-        for ix, internal in enumerate(internal_sorted):
-            if ix >= len(provider_sorted):
-                break  # provider hasn't published this slot yet
-            f = provider_sorted[ix]
-            mapped.append({
-                "match_id": internal["m"],
-                "provider_fixture_id": f["id"],
-                # For knockouts pre-draw, home/away are placeholders — store
-                # whatever the provider currently has so the fetcher's name
-                # debug logs remain useful once teams resolve.
-                "home": normalize_team(f["home_raw"]) or f["home_raw"] or "TBD",
-                "away": normalize_team(f["away_raw"]) or f["away_raw"] or "TBD",
-                "date": internal["date"],
-                "phase": phase,
-            })
-
-        # Any leftover provider fixtures in this phase that didn't pair?
-        for extra in provider_sorted[len(internal_sorted):]:
-            unmapped_provider.append({
-                "provider_fixture_id": extra["id"], "phase": phase,
-                "date": extra["date"], "home": extra["home_raw"], "away": extra["away_raw"],
-                "raw_home": extra["home_raw"], "raw_away": extra["away_raw"],
-            })
+    by_method: dict[str, int] = {}
+    for x in ko_mapped:
+        by_method[x.get("matched_by", "?")] = \
+            by_method.get(x.get("matched_by", "?"), 0) + 1
+    print(f"[builder] knockout assignment: {len(ko_mapped)} mapped "
+          f"({', '.join(f'{k}={v}' for k, v in sorted(by_method.items())) or 'none'}), "
+          f"{len(ko_unmapped)} refused/unmapped")
+    for u in ko_unmapped[:6]:
+        print(f"  ✋ {u.get('phase', '?')}: {u.get('date')} "
+              f"{u.get('raw_home')!r} vs {u.get('raw_away')!r} — "
+              f"{u.get('reason', '?')}")
 
     # ── Coverage reporting ───────────────────────────────────────────────
     mapped_internal = {x["match_id"] for x in mapped}

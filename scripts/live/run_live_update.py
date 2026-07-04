@@ -156,6 +156,36 @@ def write_circuit_breaker(failures: int):
     })
 
 
+def circuit_breaker_warning(failures: int, *, recovery_probe: bool = False) -> dict:
+    """Operator-visible circuit-breaker warning for live_state.json.
+
+    The breaker must pause betting, but it must not become a permanent latch.
+    When `recovery_probe` is true the tick is actively trying to fetch/heal/
+    validate before clearing the breaker on a clean outcome.
+    """
+    base = (
+        f"Circuit breaker open after {failures} consecutive failures "
+        f"(threshold {CB_THRESHOLD})."
+    )
+    if recovery_probe:
+        msg = (
+            base + " Running protected recovery probe this tick; betting "
+            "remains paused until a clean fetch/simulation clears it."
+        )
+    else:
+        msg = (
+            base + " Betting paused. Fix the upstream failure, then the "
+            "next clean live tick will reset data/live/circuit_breaker_state.json."
+        )
+    return {
+        "type": "circuit_breaker",
+        "message": msg,
+        "consecutive_failures": failures,
+        "threshold": CB_THRESHOLD,
+        "recovery_probe": recovery_probe,
+    }
+
+
 def get_completed_count() -> int:
     p = LIVE / "results_2026.json"
     if not p.exists():
@@ -552,15 +582,21 @@ def main() -> int:
     )
 
     failures = read_circuit_breaker()
-    if failures >= CB_THRESHOLD:
-        msg = f"Circuit breaker tripped after {failures} consecutive failures. " \
-              f"Manual intervention required: reset by deleting {CB_PATH}."
-        print(f"[run_live_update] {msg}")
-        # Still emit live_state so the dashboard reflects the situation
-        write_live_state("live", get_completed_count(), sim_rerun=False,
-                         warnings=[{"type": "circuit_breaker", "message": msg}]
-                                  + mf_warnings)
-        return 2
+    cb_open = failures >= CB_THRESHOLD
+    cb_probe_warnings: list[dict] = []
+    if cb_open:
+        # Recovery latch fix (2026-07-04): a tripped breaker used to return
+        # before fetch_results ran. The workflow treated rc=2 as a soft skip
+        # and committed a fresh circuit_breaker warning every tick, so the
+        # system could stay paused forever even after the root cause was fixed.
+        #
+        # Keep the operator-visible pause, but allow this tick to fetch,
+        # validate, and re-simulate. Success paths below already call
+        # write_circuit_breaker(0); failure paths preserve/increment the
+        # breaker. This gives us a safe self-heal path without hiding risk.
+        cb_probe_warnings = [circuit_breaker_warning(
+            failures, recovery_probe=True)]
+        print(f"[run_live_update] {cb_probe_warnings[0]['message']}")
 
     # Step 1: fetch results (pass --dry-run through). R5 C6: also enrich with
     # `--with-events` so a newly-locked FT match's card events land in
@@ -581,7 +617,7 @@ def main() -> int:
         print("[run_live_update] fetch_results failed — emitting warning, keeping prior state")
         write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
                          get_completed_count(), sim_rerun=False,
-                         warnings=[{"type": "fetch_failure",
+                         warnings=cb_probe_warnings + [{"type": "fetch_failure",
                                     "message": "Live result fetcher exited non-zero; "
                                                "previous predictions retained."}]
                                   + mf_warnings)
@@ -595,7 +631,7 @@ def main() -> int:
         print(f"[run_live_update] input validation failed: {reason}")
         write_live_state("live" if get_completed_count() > 0 else "pre_tournament",
                          get_completed_count(), sim_rerun=False,
-                         warnings=[{"type": "input_corruption",
+                         warnings=cb_probe_warnings + [{"type": "input_corruption",
                                     "message": reason}]
                                   + mf_warnings)
         # Don't trip CB — this is a data-integrity issue, not a sim regression.
@@ -646,7 +682,7 @@ def main() -> int:
         print(f"[run_live_update] {msg}")
         write_live_state("live" if new_count > 0 else "pre_tournament",
                          new_count, sim_rerun=False,
-                         warnings=warns + [{
+                         warnings=cb_probe_warnings + warns + [{
                              "type": "missing_model_artifacts",
                              "message": msg,
                              "missing": missing_names,
@@ -697,7 +733,7 @@ def main() -> int:
             sim_msg += f" Last stderr: {stderr_tail[-500:]}"
         write_live_state("live" if new_count > 0 else "pre_tournament",
                          new_count, sim_rerun=False,
-                         warnings=warns + [{
+                         warnings=cb_probe_warnings + warns + [{
                              "type": "sim_failure",
                              "message": sim_msg,
                          }])
