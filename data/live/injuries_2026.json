@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-05T06:33:17.083435+00:00",
+  "generated_at": "2026-07-05T11:00:45.564651+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -9,8 +9,8 @@
   "teams_with_injuries": 21,
   "teams": {
     "Brazil": {
-      "total_elo_adjustment": -60.0,
-      "total_net_elo_adjustment": -40.8,
+      "total_elo_adjustment": -72.0,
+      "total_net_elo_adjustment": -52.8,
       "players": [
         {
           "name": "Neymar",
@@ -49,6 +49,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 1079,
+            "team_top_minutes": 1538
+          }
+        },
+        {
+          "name": "Lucas Paquetá",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring Muscle Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1562344,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.22,
+            "ga90": 0.533,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 338,
             "team_top_minutes": 1538
           }
         }
@@ -973,7 +993,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 34,
+      "count": 38,
       "cases": [
         {
           "team": "Brazil",
@@ -1071,9 +1091,19 @@
           "fixture_id": 1568100
         },
         {
+          "team": "Brazil",
+          "input": "Lucas Paquetá",
+          "fixture_id": 1568100
+        },
+        {
           "team": "Senegal",
           "input": "É. Mendy",
           "fixture_id": 1567308
+        },
+        {
+          "team": "Switzerland",
+          "input": "L. Jaquez",
+          "fixture_id": 1576805
         },
         {
           "team": "Australia",
@@ -1104,6 +1134,16 @@
           "team": "Egypt",
           "input": "Ahmed Abou El Fotouh",
           "fixture_id": 1565178
+        },
+        {
+          "team": "Egypt",
+          "input": "Ahmed Abou El Fotouh",
+          "fixture_id": 1576804
+        },
+        {
+          "team": "Egypt",
+          "input": "Mohamed Abdelmonem",
+          "fixture_id": 1576804
         },
         {
           "team": "South Africa",
@@ -1146,7 +1186,7 @@
           "fixture_id": 1567824
         }
       ],
-      "message": "34 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+31 more)"
+      "message": "38 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+35 more)"
     }
   ]
 }
