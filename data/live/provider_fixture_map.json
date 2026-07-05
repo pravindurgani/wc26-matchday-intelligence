@@ -795,16 +795,26 @@
       "date": "2026-07-07",
       "phase": "r16",
       "matched_by": "name"
+    },
+    {
+      "match_id": 97,
+      "provider_fixture_id": "1578539",
+      "home": "France",
+      "away": "Morocco",
+      "date": "2026-07-09",
+      "phase": "qf"
     }
   ],
   "coverage": {
     "group_mapped": 72,
     "group_total": 72,
-    "knockout_mapped": 24,
+    "knockout_mapped": 25,
     "knockout_total": 32,
-    "total_mapped": 96,
+    "total_mapped": 97,
     "total_expected": 104
   },
   "unmapped_internal_count": 8,
-  "unmapped_provider_count": 0
+  "unmapped_provider_count": 0,
+  "extended_at": "2026-07-05T06:11:06.558285+00:00",
+  "extended_by": "fetch_results.knockout_auto_extension"
 }
