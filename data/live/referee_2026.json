@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-04T21:51:57.689404+00:00",
+  "generated_at": "2026-07-05T02:15:42.812391+00:00",
   "schema_version": 1,
   "cap_used": 8.0,
   "min_matches_for_bonus": 20,
@@ -1241,6 +1241,20 @@
       "home_team": "Canada",
       "away_team": "Morocco",
       "referee_name": "Michael Oliver, England",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "ref_not_in_baseline",
+      "notes": null
+    },
+    {
+      "match_id": 89,
+      "home_team": "Paraguay",
+      "away_team": "France",
+      "referee_name": "Ilgiz Tantashev, Uzbekistan",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "raw_home_elo": 0.0,
