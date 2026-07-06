@@ -1,11 +1,22 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-06T18:51:17.731789+00:00",
+  "last_updated_utc": "2026-07-06T19:01:07.737719+00:00",
   "completed_matches_count": 92,
   "simulation_rerun_this_tick": false,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 93,
+      "home": "Portugal",
+      "away": "Spain",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 1,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 1,
   "warnings": []
 }
