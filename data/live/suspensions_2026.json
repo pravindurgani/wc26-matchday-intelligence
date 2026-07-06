@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-06T02:27:24.015556+00:00",
+  "generated_at": "2026-07-06T07:05:14.372167+00:00",
   "schema_version": 1,
   "source": "fetch_results_events",
   "cap_used": 8.0,
@@ -221,12 +221,41 @@
       "cap_used": 8.0,
       "confidence": "high",
       "source": "fetch_results_events"
+    },
+    {
+      "match_id": 99,
+      "team": "England",
+      "player": "D. Rice",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        46,
+        92
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
+    },
+    {
+      "match_id": 99,
+      "team": "England",
+      "player": "J. Quansah",
+      "reason": "red_card",
+      "evidence_match_ids": [
+        92
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
     }
   ],
   "warnings": [],
   "summary": {
-    "n_completed_matches": 91,
-    "n_with_events": 91,
-    "n_suspensions": 15
+    "n_completed_matches": 92,
+    "n_with_events": 92,
+    "n_suspensions": 17
   }
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-06T02:27:40.764166+00:00",
+  "generated_at": "2026-07-06T07:05:32.014585+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1299,8 +1299,8 @@
     {
       "team": "England",
       "match_id": null,
-      "total_elo_adjustment": -9.72,
-      "raw_sum_before_aggregate_cap": -9.72,
+      "total_elo_adjustment": -11.58,
+      "raw_sum_before_aggregate_cap": -11.58,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1372,6 +1372,21 @@
           "capped_elo": 3.45,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 92,
+          "raw_elo": -1.86,
+          "capped_elo_per_match": -1.86,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.86,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -1391,6 +1406,47 @@
           "cap_used": 15.0,
           "confidence": "static_fallback",
           "source": "open_meteo"
+        }
+      ]
+    },
+    {
+      "team": "England",
+      "match_id": 99,
+      "total_elo_adjustment": -6.0,
+      "raw_sum_before_aggregate_cap": -6.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "suspension",
+          "raw_elo": -3.0,
+          "per_player_capped_elo": -3.0,
+          "cap_used": 8.0,
+          "player": "D. Rice",
+          "reason": "accumulated_yellows",
+          "evidence_match_ids": [
+            46,
+            92
+          ],
+          "confidence": "high",
+          "source": "fetch_results_events",
+          "capped_elo": -3.0,
+          "cap_reason": "per_player"
+        },
+        {
+          "type": "suspension",
+          "raw_elo": -3.0,
+          "per_player_capped_elo": -3.0,
+          "cap_used": 8.0,
+          "player": "J. Quansah",
+          "reason": "red_card",
+          "evidence_match_ids": [
+            92
+          ],
+          "confidence": "high",
+          "source": "fetch_results_events",
+          "capped_elo": -3.0,
+          "cap_reason": "per_player"
         }
       ]
     },
@@ -2080,8 +2136,8 @@
     {
       "team": "Mexico",
       "match_id": null,
-      "total_elo_adjustment": 4.68,
-      "raw_sum_before_aggregate_cap": 4.68,
+      "total_elo_adjustment": 6.54,
+      "raw_sum_before_aggregate_cap": 6.54,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2142,6 +2198,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 0.39,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 92,
+          "raw_elo": 1.86,
+          "capped_elo_per_match": 1.86,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.86,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -3882,9 +3953,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 222,
+    "total_active_components": 226,
     "teams_affected": 48,
-    "matches_affected": 21,
+    "matches_affected": 22,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {
