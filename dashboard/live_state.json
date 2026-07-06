@@ -1,11 +1,29 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-06T12:31:10.470407+00:00",
+  "last_updated_utc": "2026-07-06T12:42:22.401527+00:00",
   "completed_matches_count": 92,
-  "simulation_rerun_this_tick": false,
+  "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [],
   "in_play_count": 0,
-  "warnings": []
+  "warnings": [
+    {
+      "type": "unmapped_provider_fixture",
+      "severity": "critical",
+      "provider": "api_football",
+      "count": 1,
+      "message": "1 provider fixture(s) inside the tournament window could not be mapped to internal match ids \u2014 their results are NOT being ingested. KO auto-extension could not place them: check provider_fixture_map.json coverage and TEAM_ALIAS for the names below, or rebuild via scripts/live/build_provider_fixture_map.py --provider api_football --write.",
+      "fixtures": [
+        {
+          "fixture_id": "1581821",
+          "home": "Norway",
+          "away": "England",
+          "date": "2026-07-11",
+          "status": "NS",
+          "round": "Quarter-finals"
+        }
+      ]
+    }
+  ]
 }
