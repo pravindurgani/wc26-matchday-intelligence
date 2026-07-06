@@ -2,7 +2,7 @@
   "provider": "api_football",
   "league_id": "1",
   "season": "2026",
-  "generated_at": "2026-07-04T11:48:50.848635+00:00",
+  "generated_at": "2026-07-06T12:51:06.998761+00:00",
   "fixtures": [
     {
       "match_id": 1,
@@ -802,7 +802,8 @@
       "home": "France",
       "away": "Morocco",
       "date": "2026-07-09",
-      "phase": "qf"
+      "phase": "qf",
+      "matched_by": "name"
     },
     {
       "match_id": 99,
@@ -810,7 +811,8 @@
       "home": "Norway",
       "away": "England",
       "date": "2026-07-11",
-      "phase": "qf"
+      "phase": "qf",
+      "matched_by": "name"
     }
   ],
   "coverage": {
@@ -821,8 +823,6 @@
     "total_mapped": 98,
     "total_expected": 104
   },
-  "unmapped_internal_count": 8,
-  "unmapped_provider_count": 0,
-  "extended_at": "2026-07-06T05:31:09.513578+00:00",
-  "extended_by": "fetch_results.knockout_auto_extension"
+  "unmapped_internal_count": 6,
+  "unmapped_provider_count": 0
 }
