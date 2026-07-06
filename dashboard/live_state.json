@@ -1,17 +1,22 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-06T00:51:12.682847+00:00",
+  "last_updated_utc": "2026-07-06T01:01:07.156538+00:00",
   "completed_matches_count": 91,
   "simulation_rerun_this_tick": false,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
-  "warnings": [
+  "in_play": [
     {
       "m": 92,
-      "status": "POSTPONED",
-      "note": ""
+      "home": "Mexico",
+      "away": "England",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 1,
+      "status": "LIVE",
+      "status_long": "First Half"
     }
-  ]
+  ],
+  "in_play_count": 1,
+  "warnings": []
 }
