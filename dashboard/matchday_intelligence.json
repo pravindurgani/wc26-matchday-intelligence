@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07T06:39:32.689461+00:00",
+  "generated_at": "2026-07-07T11:40:45.794289+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -813,11 +813,20 @@
     {
       "team": "Colombia",
       "match_id": null,
-      "total_elo_adjustment": 14.73,
-      "raw_sum_before_aggregate_cap": 14.73,
+      "total_elo_adjustment": 2.73,
+      "raw_sum_before_aggregate_cap": 2.73,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 24,
@@ -3578,18 +3587,18 @@
     {
       "team": "Switzerland",
       "match_id": null,
-      "total_elo_adjustment": -17.4,
-      "raw_sum_before_aggregate_cap": -17.4,
+      "total_elo_adjustment": -18.4,
+      "raw_sum_before_aggregate_cap": -18.4,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -24.0,
-          "capped_elo": -24.0,
+          "raw_elo": -36.0,
+          "capped_elo": -25.0,
           "cap_used": 25.0,
-          "n_players": 2,
+          "n_players": 3,
           "source": "api_football"
         },
         {
@@ -4013,7 +4022,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 230,
+    "total_active_components": 231,
     "teams_affected": 48,
     "matches_affected": 22,
     "aggregate_caps_hit": 2

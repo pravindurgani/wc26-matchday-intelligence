@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-07-07T06:39:09.265218+00:00",
+  "generated_at": "2026-07-07T11:40:22.340233+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
   "net_elo_active": true,
   "auto_tier_active": false,
-  "teams_with_injuries": 21,
+  "teams_with_injuries": 22,
   "teams": {
     "Brazil": {
       "total_elo_adjustment": -72.0,
@@ -659,8 +659,8 @@
       ]
     },
     "Switzerland": {
-      "total_elo_adjustment": -24.0,
-      "total_net_elo_adjustment": -24.0,
+      "total_elo_adjustment": -36.0,
+      "total_net_elo_adjustment": -36.0,
       "players": [
         {
           "name": "M. Muheim",
@@ -699,6 +699,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 88,
+            "team_top_minutes": 247
+          }
+        },
+        {
+          "name": "M. Aebischer",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1576805,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.745,
+            "ga90": 0.489,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 184,
             "team_top_minutes": 247
           }
         }
@@ -769,26 +789,6 @@
           }
         },
         {
-          "name": "Ahmed Abou El Fotouh",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Hamstring Muscle Injury",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1489377,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 0.707,
-            "ga90": 0.373,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 241,
-            "team_top_minutes": 341
-          }
-        },
-        {
           "name": "Mohamed Abdelmonem",
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
@@ -805,6 +805,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 96,
+            "team_top_minutes": 341
+          }
+        },
+        {
+          "name": "Ahmed Abou El Fotouh",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring Muscle Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1489377,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.707,
+            "ga90": 0.373,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 241,
             "team_top_minutes": 341
           }
         }
@@ -830,6 +850,32 @@
             "team_top_minutes": 170,
             "floor": 200,
             "minutes": 109
+          }
+        }
+      ]
+    },
+    "Colombia": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "J. Córdoba",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1567310,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.353,
+            "ga90": 0.339,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 531,
+            "team_top_minutes": 1505
           }
         }
       ]
@@ -993,7 +1039,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 38,
+      "count": 39,
       "cases": [
         {
           "team": "Brazil",
@@ -1091,9 +1137,24 @@
           "fixture_id": 1570715
         },
         {
+          "team": "Egypt",
+          "input": "Mohamed Abdelmonem",
+          "fixture_id": 1576804
+        },
+        {
+          "team": "United States",
+          "input": "M. McKenzie",
+          "fixture_id": 1570715
+        },
+        {
           "team": "Brazil",
           "input": "Lucas Paquetá",
           "fixture_id": 1568100
+        },
+        {
+          "team": "Colombia",
+          "input": "J. Córdoba",
+          "fixture_id": 1576805
         },
         {
           "team": "Senegal",
@@ -1141,11 +1202,6 @@
           "fixture_id": 1576804
         },
         {
-          "team": "Egypt",
-          "input": "Mohamed Abdelmonem",
-          "fixture_id": 1576804
-        },
-        {
           "team": "South Africa",
           "input": "T. Zwane",
           "fixture_id": 1489407
@@ -1159,11 +1215,6 @@
           "team": "Algeria",
           "input": "M. Amoura",
           "fixture_id": 1489400
-        },
-        {
-          "team": "United States",
-          "input": "M. McKenzie",
-          "fixture_id": 1570715
         },
         {
           "team": "United States",
@@ -1186,7 +1237,7 @@
           "fixture_id": 1567824
         }
       ],
-      "message": "38 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+35 more)"
+      "message": "39 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+36 more)"
     }
   ]
 }
