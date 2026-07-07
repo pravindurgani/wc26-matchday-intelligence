@@ -821,18 +821,26 @@
       "date": "2026-07-11",
       "phase": "qf",
       "matched_by": "name"
+    },
+    {
+      "match_id": 100,
+      "provider_fixture_id": "1582681",
+      "home": "Argentina",
+      "away": "Switzerland",
+      "date": "2026-07-11",
+      "phase": "qf"
     }
   ],
   "coverage": {
     "group_mapped": 72,
     "group_total": 72,
-    "knockout_mapped": 27,
+    "knockout_mapped": 28,
     "knockout_total": 32,
-    "total_mapped": 99,
+    "total_mapped": 100,
     "total_expected": 104
   },
   "unmapped_internal_count": 6,
   "unmapped_provider_count": 0,
-  "extended_at": "2026-07-07T02:11:18.049720+00:00",
+  "extended_at": "2026-07-07T23:29:18.115944+00:00",
   "extended_by": "fetch_results.knockout_auto_extension"
 }
