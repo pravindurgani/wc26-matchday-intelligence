@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07T02:16:08.648044+00:00",
+  "generated_at": "2026-07-07T06:39:32.689461+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -285,8 +285,8 @@
     {
       "team": "Belgium",
       "match_id": null,
-      "total_elo_adjustment": -14.68,
-      "raw_sum_before_aggregate_cap": -14.68,
+      "total_elo_adjustment": -14.08,
+      "raw_sum_before_aggregate_cap": -14.08,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -347,15 +347,15 @@
         {
           "type": "stats_proxy",
           "match_id": 94,
-          "raw_elo": 2.67,
-          "capped_elo_per_match": 2.67,
+          "raw_elo": 3.27,
+          "capped_elo_per_match": 3.27,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "xg_attempted": true,
           "xg_found": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 2.67,
+          "capped_elo": 3.27,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -3776,8 +3776,8 @@
     {
       "team": "United States",
       "match_id": null,
-      "total_elo_adjustment": -20.41,
-      "raw_sum_before_aggregate_cap": -20.41,
+      "total_elo_adjustment": -21.01,
+      "raw_sum_before_aggregate_cap": -21.01,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -3853,15 +3853,15 @@
         {
           "type": "stats_proxy",
           "match_id": 94,
-          "raw_elo": -2.67,
-          "capped_elo_per_match": -2.67,
+          "raw_elo": -3.27,
+          "capped_elo_per_match": -3.27,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "xg_attempted": true,
           "xg_found": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": -2.67,
+          "capped_elo": -3.27,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
