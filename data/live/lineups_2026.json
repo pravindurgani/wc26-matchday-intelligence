@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-07-07T17:07:33.563596+00:00",
+  "generated_at": "2026-07-07T19:44:44.076318+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 96,
+      "home": "Switzerland",
+      "away": "Colombia",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 25282,
+          "name": "Gregor Kobel",
+          "number": 1,
+          "pos": "G"
+        },
+        {
+          "id": 2810,
+          "name": "Denis Zakaria",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 2803,
+          "name": "Nico Elvedi",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 5,
+          "name": "Manuel Akanji",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 1631,
+          "name": "Ricardo Rodríguez",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 2807,
+          "name": "Remo Freuler",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 1464,
+          "name": "Granit Xhaka",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 163032,
+          "name": "Fabian Rieder",
+          "number": 22,
+          "pos": "M"
+        },
+        {
+          "id": 264705,
+          "name": "Ardon Jashari",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 48648,
+          "name": "Dan Ndoye",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 421,
+          "name": "Breel Embolo",
+          "number": 7,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 2482,
+          "name": "Camilo Vargas",
+          "number": 12,
+          "pos": "G"
+        },
+        {
+          "id": 13736,
+          "name": "Daniel Muñoz",
+          "number": 2,
+          "pos": "D"
+        },
+        {
+          "id": 168,
+          "name": "Davinson Sánchez",
+          "number": 23,
+          "pos": "D"
+        },
+        {
+          "id": 1929,
+          "name": "Jhon Lucumí",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 64268,
+          "name": "Johan Mojica",
+          "number": 17,
+          "pos": "D"
+        },
+        {
+          "id": 324034,
+          "name": "Gustavo Puerta",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 2490,
+          "name": "Jefferson Lerma",
+          "number": 16,
+          "pos": "M"
+        },
+        {
+          "id": 13708,
+          "name": "Jhon Arias",
+          "number": 11,
+          "pos": "M"
+        },
+        {
+          "id": 517,
+          "name": "James Rodríguez",
+          "number": 10,
+          "pos": "F"
+        },
+        {
+          "id": 47237,
+          "name": "Luis Javier Suárez",
+          "number": 25,
+          "pos": "F"
+        },
+        {
+          "id": 2489,
+          "name": "Luis Díaz",
+          "number": 7,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-07-07T19:44:44.076300+00:00"
+    }
+  ],
   "warnings": []
 }
