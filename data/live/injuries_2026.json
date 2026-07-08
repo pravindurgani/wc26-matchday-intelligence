@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-08T08:12:20.113468+00:00",
+  "generated_at": "2026-07-08T10:56:33.926494+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -187,8 +187,8 @@
       ]
     },
     "Belgium": {
-      "total_elo_adjustment": -36.0,
-      "total_net_elo_adjustment": -36.0,
+      "total_elo_adjustment": -48.0,
+      "total_net_elo_adjustment": -48.0,
       "players": [
         {
           "name": "J. Doku",
@@ -247,6 +247,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 80,
+            "team_top_minutes": 289
+          }
+        },
+        {
+          "name": "A. Onana",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Cruciate Ligament Rupture",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1570715,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.796,
+            "ga90": 0.391,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 230,
             "team_top_minutes": 289
           }
         }
@@ -659,8 +679,8 @@
       ]
     },
     "Switzerland": {
-      "total_elo_adjustment": -36.0,
-      "total_net_elo_adjustment": -36.0,
+      "total_elo_adjustment": -48.0,
+      "total_net_elo_adjustment": -48.0,
       "players": [
         {
           "name": "M. Muheim",
@@ -703,11 +723,31 @@
           }
         },
         {
+          "name": "J. Manzambi",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Jumpers Knee",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1576805,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.834,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 206,
+            "team_top_minutes": 247
+          }
+        },
+        {
           "name": "M. Aebischer",
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
           "status": "confirmed_out",
-          "reason": "Injury",
+          "reason": "Muscle Bruise",
           "elo": -12.0,
           "replacement_elo": null,
           "net_elo": -12.0,
@@ -830,30 +870,6 @@
         }
       ]
     },
-    "Sweden": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "I. Hien",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Muscle Bruise",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1539002,
-          "auto_tier_suggestion": null,
-          "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 170,
-            "floor": 200,
-            "minutes": 109
-          }
-        }
-      ]
-    },
     "Colombia": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -876,6 +892,30 @@
             "is_gk": false,
             "minutes": 531,
             "team_top_minutes": 1505
+          }
+        }
+      ]
+    },
+    "Sweden": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "I. Hien",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Muscle Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1539002,
+          "auto_tier_suggestion": null,
+          "auto_tier_components": {
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 170,
+            "floor": 200,
+            "minutes": 109
           }
         }
       ]
@@ -1039,7 +1079,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 39,
+      "count": 41,
       "cases": [
         {
           "team": "Brazil",
@@ -1147,14 +1187,19 @@
           "fixture_id": 1570715
         },
         {
-          "team": "Brazil",
-          "input": "Lucas Paquetá",
-          "fixture_id": 1568100
-        },
-        {
           "team": "Colombia",
           "input": "J. Córdoba",
           "fixture_id": 1576805
+        },
+        {
+          "team": "Belgium",
+          "input": "A. Onana",
+          "fixture_id": 1581821
+        },
+        {
+          "team": "Brazil",
+          "input": "Lucas Paquetá",
+          "fixture_id": 1568100
         },
         {
           "team": "Senegal",
@@ -1202,6 +1247,11 @@
           "fixture_id": 1576804
         },
         {
+          "team": "Egypt",
+          "input": "Mohamed Abdelmonem",
+          "fixture_id": 1489414
+        },
+        {
           "team": "South Africa",
           "input": "T. Zwane",
           "fixture_id": 1489407
@@ -1237,7 +1287,7 @@
           "fixture_id": 1567824
         }
       ],
-      "message": "39 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+36 more)"
+      "message": "41 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+38 more)"
     }
   ]
 }

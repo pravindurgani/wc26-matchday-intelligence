@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-08T08:12:36.215178+00:00",
+  "generated_at": "2026-07-08T10:56:49.711219+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -308,10 +308,10 @@
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -36.0,
+          "raw_elo": -48.0,
           "capped_elo": -25.0,
           "cap_used": 25.0,
-          "n_players": 3,
+          "n_players": 4,
           "source": "api_football"
         },
         {
@@ -3625,10 +3625,10 @@
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -36.0,
+          "raw_elo": -48.0,
           "capped_elo": -25.0,
           "cap_used": 25.0,
-          "n_players": 3,
+          "n_players": 4,
           "source": "api_football"
         },
         {
