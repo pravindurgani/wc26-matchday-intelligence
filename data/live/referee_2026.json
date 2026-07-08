@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07T22:07:04.170701+00:00",
+  "generated_at": "2026-07-08T01:56:37.744228+00:00",
   "schema_version": 1,
   "cap_used": 8.0,
   "min_matches_for_bonus": 20,
@@ -1325,6 +1325,20 @@
       "home_team": "Argentina",
       "away_team": "Egypt",
       "referee_name": "François Letexier, France",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "ref_not_in_baseline",
+      "notes": null
+    },
+    {
+      "match_id": 96,
+      "home_team": "Switzerland",
+      "away_team": "Colombia",
+      "referee_name": "Iván Barton, El Salvador",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "raw_home_elo": 0.0,

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07T22:07:20.401616+00:00",
+  "generated_at": "2026-07-08T01:57:03.037859+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -3694,6 +3694,32 @@
       ]
     },
     {
+      "team": "Switzerland",
+      "match_id": 100,
+      "total_elo_adjustment": -3.0,
+      "raw_sum_before_aggregate_cap": -3.0,
+      "aggregate_cap_applied": false,
+      "aggregate_cap": 35.0,
+      "components": [
+        {
+          "type": "suspension",
+          "raw_elo": -3.0,
+          "per_player_capped_elo": -3.0,
+          "cap_used": 8.0,
+          "player": "G. Xhaka",
+          "reason": "accumulated_yellows",
+          "evidence_match_ids": [
+            49,
+            96
+          ],
+          "confidence": "high",
+          "source": "fetch_results_events",
+          "capped_elo": -3.0,
+          "cap_reason": "per_player"
+        }
+      ]
+    },
+    {
       "team": "Tunisia",
       "match_id": null,
       "total_elo_adjustment": -33.39,
@@ -4052,9 +4078,9 @@
     }
   ],
   "summary": {
-    "total_active_components": 233,
+    "total_active_components": 234,
     "teams_affected": 48,
-    "matches_affected": 22,
+    "matches_affected": 23,
     "aggregate_caps_hit": 2
   },
   "feeds_available": {

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07T22:07:04.488764+00:00",
+  "generated_at": "2026-07-08T01:56:38.136187+00:00",
   "schema_version": 1,
   "source": "fetch_results_events",
   "cap_used": 8.0,
@@ -250,12 +250,27 @@
       "cap_used": 8.0,
       "confidence": "high",
       "source": "fetch_results_events"
+    },
+    {
+      "match_id": 100,
+      "team": "Switzerland",
+      "player": "G. Xhaka",
+      "reason": "accumulated_yellows",
+      "evidence_match_ids": [
+        49,
+        96
+      ],
+      "raw_elo": -3.0,
+      "team_adjustment_elo": -3.0,
+      "cap_used": 8.0,
+      "confidence": "high",
+      "source": "fetch_results_events"
     }
   ],
   "warnings": [],
   "summary": {
-    "n_completed_matches": 95,
-    "n_with_events": 95,
-    "n_suspensions": 17
+    "n_completed_matches": 96,
+    "n_with_events": 96,
+    "n_suspensions": 18
   }
 }
