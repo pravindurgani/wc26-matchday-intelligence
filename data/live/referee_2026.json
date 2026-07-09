@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-09T19:25:53.612706+00:00",
+  "generated_at": "2026-07-09T22:15:47.324896+00:00",
   "schema_version": 1,
   "cap_used": 8.0,
   "min_matches_for_bonus": 20,
@@ -1339,6 +1339,20 @@
       "home_team": "Switzerland",
       "away_team": "Colombia",
       "referee_name": "Iván Barton, El Salvador",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "ref_not_in_baseline",
+      "notes": null
+    },
+    {
+      "match_id": 97,
+      "home_team": "France",
+      "away_team": "Morocco",
+      "referee_name": "Facundo Raul Tello Figueroa, Argentina",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "raw_home_elo": 0.0,
