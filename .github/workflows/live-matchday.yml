@@ -60,10 +60,12 @@ concurrency:
 
 # Wall-clock risk zone (Round 14 audit observation, 2026-06-13):
 # 9/29 recent runs landed in the 540-588s band — within 60s of the 600s
-# CF Worker dispatch interval. timeout-minutes is 15 (900s) so no hard
-# failure, but a run >600s means the next dispatched run queues behind
-# this one (cancel-in-progress: false) and the dashboard misses the
-# 10-min update tick. The 388s baseline floor is the heavy step:
+# CF Worker dispatch interval. timeout-minutes is 20 (1200s; raised from
+# 15 on 2026-07-09 after runs #4195/#4204 hit the 15-min kill mid-sim on
+# cold-cache QF-day re-sim ticks — self-healing but recurring at exactly
+# the moments that matter) so no hard failure, but a run >600s means the
+# next dispatched run queues behind this one (cancel-in-progress: false)
+# and the dashboard misses the 10-min update tick. The 388s baseline floor is the heavy step:
 # scripts/03_simulate.py at 5000×5. If runs trend higher, options:
 #   - drop --sims for live runs (3000 keeps spread < 3pp empirically)
 #   - move heavy validate/sensitivity steps to daily-baseline only
@@ -86,19 +88,13 @@ env:
 jobs:
   live:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-
-      - run: pip install -r requirements.txt
-
+      # Date gate FIRST (moved above checkout/pip, 2026-07-09): it needs
+      # nothing from the repo or Python, and running it after `pip install`
+      # burned ~1.5-2 min of runner time on every out-of-window scheduled
+      # tick — 48×/day forever post-tournament, until GitHub auto-disables
+      # the schedule (~60 days after the last commit).
       - name: Date gate (skip if outside tournament window)
         id: gate
         run: |
@@ -110,18 +106,32 @@ jobs:
           fi
           NOW=$(date -u +%s)
           # Start 24h early so the first kickoff is already covered by an active loop.
-          START=$(date -u -d '2026-06-10 00:00:00' +%s 2>/dev/null || python -c "import datetime;print(int(datetime.datetime(2026,6,10).timestamp()))")
+          START=$(date -u -d '2026-06-10 00:00:00' +%s 2>/dev/null || python3 -c "import datetime;print(int(datetime.datetime(2026,6,10).timestamp()))")
           # End 24h late (final kicks off 19 Jul): extra time + pens or a
           # delayed kickoff pushes FT past midnight UTC, and several US-venue
           # kickoffs land 00:00-03:00 UTC anyway — keep the gate open through
           # the whole of 20 Jul UTC so those FT locks are still ingested.
-          END=$(date -u -d '2026-07-21 00:00:00' +%s 2>/dev/null || python -c "import datetime;print(int(datetime.datetime(2026,7,21).timestamp()))")
+          END=$(date -u -d '2026-07-21 00:00:00' +%s 2>/dev/null || python3 -c "import datetime;print(int(datetime.datetime(2026,7,21).timestamp()))")
           if [ $NOW -lt $START ] || [ $NOW -gt $END ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "Outside tournament window — exiting."
           else
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
+
+      - uses: actions/checkout@v6
+        if: steps.gate.outputs.skip != 'true'
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v6
+        if: steps.gate.outputs.skip != 'true'
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - run: pip install -r requirements.txt
+        if: steps.gate.outputs.skip != 'true'
 
       - name: Resolve provider for this run
         id: provider

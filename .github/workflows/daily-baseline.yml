@@ -24,7 +24,38 @@ env:
   PYTHONHASHSEED: '0'
 
 jobs:
+  # Auto wind-down (2026-07-09): the daily retrain is deterministic on static
+  # historical data — post-tournament it produced zero new artifacts but still
+  # burned a full 25-min runner + an unconditional Vercel prod deploy, daily,
+  # forever. Gate job stops scheduled runs after 21 Jul 2026 00:00 UTC (the
+  # live workflow's window end); manual dispatch still works if a baseline
+  # rebuild is ever needed for the showcase.
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      skip: ${{ steps.gate.outputs.skip }}
+    steps:
+      - name: Date gate (retire scheduled retrains after the tournament)
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Manual dispatch — bypassing date gate."
+            exit 0
+          fi
+          NOW=$(date -u +%s)
+          END=$(date -u -d '2026-07-21 00:00:00' +%s 2>/dev/null || python3 -c "import datetime;print(int(datetime.datetime(2026,7,21).timestamp()))")
+          if [ $NOW -gt $END ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Tournament over — scheduled baseline retrains retired."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
   refresh:
+    needs: gate
+    if: needs.gate.outputs.skip != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:

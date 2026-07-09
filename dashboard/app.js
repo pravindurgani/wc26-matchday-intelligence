@@ -240,10 +240,62 @@ function pickPrimaryData(staticData, livePred, liveState) {
   return (isLive && livePredOk) ? livePred : staticData;
 }
 
+// ── Archive mode (2026-07-09) ───────────────────────────────────────────
+// Once every scheduled match is locked, the pipeline freezes itself
+// (run_live_update.py archive freeze) and the dashboard flips to a
+// permanent retrospective. The authoritative flag is
+// live_state.tournament_complete (+ .champion), but every helper below
+// also derives the answer from data the site already ships — so a state
+// file frozen just before the flag existed still renders the archive
+// view, and a missing champion field degrades gracefully.
+function tournamentComplete(liveState, data) {
+  if (liveState?.tournament_complete === true) return true;
+  const total = data?.tournament?.total_matches
+    || (data?.match_predictions || []).length || 104;
+  if ((liveState?.completed_matches_count || 0) >= total) return true;
+  const fin = (data?.match_predictions || []).find(m => m.stage === 'final');
+  return !!(fin && fin.locked_score);
+}
+
+function finalRow(data) {
+  return (data?.match_predictions || []).find(
+    m => m.stage === 'final' && m.locked_score
+      && typeof m.locked_score === 'object') || null;
+}
+
+function championName(liveState, data) {
+  if (liveState?.champion) return liveState.champion;
+  const row = finalRow(data);
+  if (!row) return null;
+  const ls = row.locked_score;
+  const homeName = ls.home || row.home || null;
+  const awayName = ls.away || row.away || null;
+  if (ls.winner === 'home') return homeName;
+  if (ls.winner === 'away') return awayName;
+  const h = ls.home_score, a = ls.away_score;
+  if (typeof h === 'number' && typeof a === 'number' && h !== a) {
+    return h > a ? homeName : awayName;
+  }
+  return null;
+}
+
+function runnerUpName(liveState, data) {
+  const champ = championName(liveState, data);
+  const row = finalRow(data);
+  if (!champ || !row) return null;
+  const ls = row.locked_score;
+  const homeName = ls.home || row.home || null;
+  const awayName = ls.away || row.away || null;
+  if (homeName && homeName !== champ) return homeName;
+  if (awayName && awayName !== champ) return awayName;
+  return null;
+}
+
 function applyLiveUpdate({ liveState, liveDelta, livePred, fetchFailures = 0 }) {
   const staticData = window._data;
   const travel = window._travel;
   const cal = window._cal;
+  window._liveState = liveState;   // archive-mode helpers read this back
   window._liveDelta = liveDelta;
   window._livePred = livePred;
   // C6: recompute the primary view each tick. If the orchestrator just
@@ -306,6 +358,14 @@ function startLivePolling(intervalMs = 60_000) {
 
   const tick = async () => {
     if (document.hidden) return;          // pause when tab not visible
+    // Archive mode: after the final the data never changes again — stop
+    // burning a fetch every 60s on a page that is now a static exhibit.
+    // (The archived render already happened on boot / the flip tick.)
+    if (tournamentComplete(window._liveState || null,
+                           window._primary || window._data)) {
+      if (_livePollTimer) { clearInterval(_livePollTimer); _livePollTimer = null; }
+      return;
+    }
     const triple = await fetchLiveTriple();
     const fetchFailures = triple.fetchFailures || 0;
     // Always re-evaluate the staleness badge even when nothing changed
@@ -471,6 +531,19 @@ function renderLastUpdated(data, liveState, fetchFailures = 0, matchdayIntel = n
     return ra - rb;
   });
   const hasWarning = warnings.length > 0;
+  // Archive mode: permanent, overrides stale/warn. The pipeline is
+  // deliberately off after the final — "STALE (400h old)" framing would
+  // tell every portfolio visitor the project is broken when it's done.
+  if (tournamentComplete(liveState, data)) {
+    el.classList.remove('stale', 'fetch-error', 'warning');
+    el.classList.add('archived');
+    el.textContent = 'Tournament complete — archived';
+    el.title = `Final data generated ${ts}. The 10-minute live pipeline shut ` +
+      `down after the final on 19 Jul 2026; this page is a permanent record ` +
+      `of the model's tournament run.`;
+    return;
+  }
+  el.classList.remove('archived');
   el.classList.toggle('stale', isStale);
   el.classList.toggle('fetch-error', fetchFailures >= 3);
   el.classList.toggle('warning', hasWarning && !isStale && fetchFailures < 3);
@@ -587,8 +660,37 @@ function renderLiveStatusBar(liveState, data) {
   const isLive = liveState.mode === 'live';
   const providerActive = liveState.provider_mode === 'active';
   const totalMatches = data?.tournament?.total_matches || (data?.match_predictions || []).length;
-  banner.classList.toggle('is-live', isLive);
-  banner.classList.toggle('is-pre', !isLive);
+  const archived = tournamentComplete(liveState, data);
+  banner.classList.toggle('is-live', isLive && !archived);
+  banner.classList.toggle('is-pre', !isLive && !archived);
+  banner.classList.toggle('is-archived', archived);
+  if (archived) {
+    const champ = championName(liveState, data);
+    banner.innerHTML = `
+    <span class="live-dot" aria-hidden="true"></span>
+    <span class="live-mode">Tournament complete</span>
+    <span class="live-meta">
+      ${liveState.completed_matches_count} of ${totalMatches} matches locked${
+        champ ? ` · champions: ${escapeHtml(champ)}` : ''
+      } · archived after the final, 19 Jul 2026
+    </span>
+  `;
+    // One-time copy flip on the "How live updates work" explainer card —
+    // past tense + a frozen-archive note, without touching the static HTML
+    // (inline scripts are CSP-hash-pinned; this file is not).
+    const liveInfoH3 = document.querySelector('#live-info .live-info-card h3');
+    if (liveInfoH3 && !liveInfoH3.dataset.archived) {
+      liveInfoH3.dataset.archived = '1';
+      liveInfoH3.textContent = 'How live updates worked';
+      const note = document.createElement('p');
+      note.className = 'muted small';
+      note.textContent = 'The pipeline ran every 10 minutes for the full ' +
+        'tournament (11 Jun – 19 Jul 2026) and shut itself down after the ' +
+        'final — this page is now a frozen archive of the run.';
+      liveInfoH3.after(note);
+    }
+    return;
+  }
   banner.innerHTML = `
     <span class="live-dot" aria-hidden="true"></span>
     <span class="live-mode">${isLive ? 'Live-adjusted' : 'Pre-tournament static'}</span>
@@ -618,6 +720,58 @@ function renderHero(data, liveState, liveDelta) {
     if (champCi) champCi.textContent = 'See top-bar warning for details (sigma_gate_failed / sim_failure / matchday_consolidated_stale).';
     return;
   }
+  // Archive mode: the hero becomes the retrospective — champions, runner-up,
+  // biggest riser vs the pre-tournament baseline, archive stamp. All fields
+  // derive from data already shipped (final locked_score, live_delta,
+  // static predictions.json), so this works even if the pipeline died the
+  // second the final locked.
+  if (tournamentComplete(liveState, data)) {
+    const champ = championName(liveState, data);
+    const runnerUp = runnerUpName(liveState, data);
+    const fr = finalRow(data);
+    const score = fr ? formatLockedScore(fr.locked_score) : '';
+    const totalMatches = data.tournament?.total_matches || (data.match_predictions || []).length;
+    const setText = (id, txt) => { const n = document.getElementById(id); if (n) n.textContent = txt; };
+    const setTeam = (id, team, fallback) => {
+      const n = document.getElementById(id);
+      if (n) n.innerHTML = team
+        ? `${confedDotHtml(team)}${escapeHtml(team)}` : escapeHtml(fallback || '—');
+    };
+    const champH3 = document.querySelector('.hero-champion h3');
+    if (champH3) champH3.textContent = '2026 World Champions';
+    setTeam('champ-team', champ, 'Final complete');
+    const probRow = document.querySelector('.hero-champion .prob-row');
+    if (probRow) probRow.textContent = score
+      ? `Won the final ${score} · 19 Jul 2026` : 'Sealed 19 Jul 2026';
+    // Honest scorecard line: what the model said BEFORE a ball was kicked
+    // (static predictions.json is the pre-tournament baseline).
+    const baseline = (window._data && window._data.team_predictions) || [];
+    const preIdx = champ ? baseline.findIndex(t => t.team === champ) : -1;
+    setText('champ-ci', (preIdx >= 0 && baseline[preIdx].p_champion != null)
+      ? `Pre-tournament: model ranked them #${preIdx + 1} at ` +
+        `${(baseline[preIdx].p_champion * 100).toFixed(1)}% to win it all`
+      : '');
+    const finalH3 = document.getElementById('final-team')?.closest('.card')?.querySelector('h3');
+    if (finalH3) finalH3.textContent = 'Runner-up';
+    setTeam('final-team', runnerUp);
+    setText('final-prob', runnerUp ? 'Beaten finalists · 19 Jul 2026' : '—');
+    // Dark-horse card → biggest riser vs pre-tournament baseline (from
+    // live_delta, already sorted by |delta|). Falls back to the standard
+    // dark-horse render if the delta file is unavailable.
+    const riser = ((liveDelta && liveDelta.all_movers) || []).filter(m => m.delta_pp > 0)[0];
+    if (riser) {
+      const dhH3 = document.getElementById('dh-team')?.closest('.card')?.querySelector('h3');
+      if (dhH3) dhH3.textContent = 'Biggest riser';
+      setTeam('dh-team', riser.team);
+      setText('dh-prob',
+        `+${riser.delta_pp.toFixed(1)}pp title probability vs pre-tournament`);
+    }
+    setText('mode-label', 'Archive');
+    setText('mode-sub',
+      `${liveState?.completed_matches_count ?? totalMatches} of ${totalMatches} matches locked · final 19 Jul 2026`);
+    return;
+  }
+
   const top = _tp[0];
   document.getElementById('champ-team').innerHTML = `${confedDotHtml(top.team)}${escapeHtml(top.team)}`;
   countUp(document.getElementById('champ-prob'), +(top.p_champion * 100).toFixed(1), '%');
@@ -1211,7 +1365,9 @@ function renderInteresting(data) {
     // actually scroll to where results + upcoming fixtures live — the
     // dashboard has no dedicated bracket section, so the matches grid
     // is where KO entries surface.
-    grid.innerHTML = '<div class="interesting-empty" style="opacity:0.6;padding:1rem;">No upcoming fixtures to curate right now — next-round matchups appear here as soon as their teams are decided. Results live in the <a href="#matches">fixtures grid below</a>.</div>';
+    grid.innerHTML = tournamentComplete(window._liveState || null, data)
+      ? '<div class="interesting-empty" style="opacity:0.6;padding:1rem;">Tournament complete — all 104 fixtures are decided. Full results, with the model&rsquo;s probabilities, live in the <a href="#matches">fixtures grid below</a>.</div>'
+      : '<div class="interesting-empty" style="opacity:0.6;padding:1rem;">No upcoming fixtures to curate right now — next-round matchups appear here as soon as their teams are decided. Results live in the <a href="#matches">fixtures grid below</a>.</div>';
     return;
   }
 
@@ -1528,7 +1684,7 @@ function renderMatches(data, liveState) {
           <span>${predictedHtml}</span>
         </div>` : `
         <div class="match-meta muted small">
-          <span>Bracket TBD — teams resolve as group stage completes.</span>
+          <span>Bracket TBD — teams fill in as the previous round finishes.</span>
         </div>`}
       </div>`;
     }).join('');
@@ -1973,6 +2129,9 @@ function renderAblation(abl) {
   const rows = [];
   for (const [name, m] of Object.entries(abl)) {
     if (name === 'lift' || name === 'note') continue;
+    // Type guard (mirrors appendix.html's loader): any future non-metric
+    // key must not TypeError the whole table render.
+    if (!m || typeof m !== 'object' || typeof m.log_loss !== 'number') continue;
     rows.push(`<tr><td><strong>${escapeHtml(name.replace(/_/g, ' '))}</strong></td>
       <td class="num">${m.log_loss.toFixed(3)}</td>
       <td class="num hide-sm">${m.brier.toFixed(3)}</td>

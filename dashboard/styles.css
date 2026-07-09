@@ -1578,6 +1578,19 @@ section#contenders .card > .filter-row {
   }
 }
 
+/* ─── Archive mode (post-final, 2026-07-09) ──────────────────────────── */
+/* Gold, steady, deliberate: the pipeline is OFF by design, not stuck.
+   Overrides the red stale/fetch-error framing for permanent showcase. */
+.last-updated.archived {
+  color: var(--gold);
+  font-weight: 600;
+}
+.live-status.is-archived .live-dot {
+  background: var(--gold);
+  animation: none;
+}
+.live-status.is-archived .live-mode { color: var(--gold); }
+
 /* ─── B.7 Matchday Intelligence ───────────────────────────────────────── */
 /* Theme-token pass: this block originally referenced tokens that don't
    exist in :root (--bg-elev / --text-muted / --mono), so every rule fell

@@ -1210,6 +1210,32 @@ function refreshAll() {
     const ss = SpreadsheetApp.getActive();
     const errors = [];
 
+    // ── v2.3.17 (2026-07-09): tournament-complete auto-retire ──────────
+    // Once the feed confirms all 104 matches locked AND the operator has
+    // settled the Final (Matchday R107), do one last CLV refresh, retire
+    // the 10-min trigger, and lock the final bankroll into the status
+    // cell. Without this the trigger polls a finished feed forever
+    // (~144 fetches/day) and any future feed removal would flip the
+    // stale-kill pause and paint PAUSED banners over the final P&L.
+    // Exception-safe: a retire-check bug must never block a live tick.
+    try {
+      const methodRetire = ss.getSheetByName(SHEET.method);
+      const matchdayRetire = ss.getSheetByName(SHEET.matchday);
+      if (methodRetire && matchdayRetire &&
+          Number(methodRetire.getRange(M_CELL.completedMatches).getValue()) >= 104 &&
+          String(matchdayRetire.getRange('R107').getValue() || '') !== '') {
+        try { refreshCLV(); } catch (_) {}
+        removeAutoRefresh();
+        const bkFinal = Number(methodRetire.getRange('B10').getValue());
+        methodRetire.getRange(M_CELL.autoStatus).setValue(
+          '🏁 TOURNAMENT COMPLETE — auto-refresh retired · final bankroll ' +
+          (isFinite(bkFinal) ? '£' + bkFinal.toFixed(2) : 'locked'));
+        return;
+      }
+    } catch (retireErr) {
+      // fall through — never block the tick on the retire check
+    }
+
     // v2.3.14 PATCH-FIX: defensive seed of Method!B87 / B88 on every refresh.
     // installEngine seeds these once, but operators who paste the v2.3.14 code
     // into an existing project (the common case — re-running First-time setup
@@ -1529,7 +1555,11 @@ function _isFixturePlaceholder_(value) {
   const s = String(value).trim().toUpperCase();
   if (!s) return true;
   if (s === 'TBD' || s === 'TBC' || s === 'BRACKET TBD') return true;
-  if (/^W\d{1,3}$/.test(s)) return true;
+  // v2.3.17: accept L-codes too (bronze final = "L101 v L102"). Pre-fix the
+  // regex only matched winner slots, so when the feed published the real SF
+  // losers, refreshFixtures classified "L101"/"L102" as operator content →
+  // conflict-preserved forever → the bronze row never mapped to real teams.
+  if (/^[WL]\d{1,3}$/.test(s)) return true;
   if (/^[123][A-L](?:\/[A-L])*$/.test(s)) return true;
   return false;
 }
@@ -1610,7 +1640,14 @@ function refreshModel(payload) {
     // bool or string into the I/J/K probability cells.
     if (!fresh || fresh.some(function(v) {
       return typeof v !== 'number' || !isFinite(v);
-    })) {
+    }) || (fresh[0] + fresh[1] + fresh[2] < 0.5)) {
+      // v2.3.17 zero-guard (the `< 0.5` arm): the feed's knockout
+      // placeholder rows (m=101–104 pre-resolution) switched from null to
+      // literal 0.0 probabilities on 2026-07-09; a real 1X2 triple sums to
+      // ~1.0 while placeholders sum to 0. Without this, zeros pass the
+      // typeof/isFinite gate, land in I:K, produce confident-looking
+      // "EV −40%" PASSes on typed SF odds, and freeze permanently if
+      // Placed=Y is ever set in that window.
       out.push(currentIJK[i]);
       missing++;
       continue;
@@ -3401,7 +3438,12 @@ function _writeCalibratedProbs_(bets, firstRow, rawProbs, matchNos) {
   const away = _calibrationBinsCached_('away');
   // v2.3.5 H-1 helper: NaN/non-finite → '' (Apps Script setValues throws
   // "Invalid argument" on NaN; '' is the cell-empty marker).
+  // v2.3.17: blank-in → blank-out. Number('') === 0, so unresolved rows
+  // (I:K empty, e.g. knockout placeholders) rendered BC:BE as literal 0.0 —
+  // numerically harmless (blend treats blank I the same) but reads as
+  // "model says 0%" to the operator.
   function _safe_(v) {
+    if (v === '' || v === null || v === undefined) return '';
     const n = Number(v);
     return isFinite(n) ? n : '';
   }

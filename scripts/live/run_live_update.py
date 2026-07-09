@@ -38,6 +38,12 @@ LIVE = ROOT / "data" / "live"
 PROC = ROOT / "data" / "processed"
 MODELS = ROOT / "models"
 DASH = ROOT / "dashboard"
+
+# WC26 format is structural: 72 group matches + 32 knockout (m=73..104) —
+# the KO modules (scripts/live/_knockout.py, export_ko_advance) already
+# hardcode the m=73..104 range from wc2026_config.json. Used by the archive
+# flip in write_live_state and the post-final heartbeat freeze in main().
+TOTAL_MATCHES = 104
 CB_PATH = LIVE / "circuit_breaker_state.json"
 CB_THRESHOLD = 3  # consecutive sim failures before tripping the breaker
 
@@ -194,6 +200,69 @@ def get_completed_count() -> int:
         return len(json.loads(p.read_text()).get("completed_matches", []))
     except Exception:
         return 0
+
+
+def get_champion_name() -> str | None:
+    """Winner of the final (m == TOTAL_MATCHES), or None until it's locked.
+
+    Archive mode (2026-07-09): written into live_state.json so the dashboard
+    can render the champion banner without re-deriving it. Returns the team
+    NAME, not the side. Exception-safe — never blocks a tick.
+    """
+    p = LIVE / "results_2026.json"
+    if not p.exists():
+        return None
+    try:
+        rows = json.loads(p.read_text()).get("completed_matches", [])
+        final = next((m for m in rows if m.get("m") == TOTAL_MATCHES), None)
+        if not final:
+            return None
+        side = final.get("winner")
+        if side == "home":
+            return final.get("home")
+        if side == "away":
+            return final.get("away")
+        # No shootout winner recorded: decide on the (ET-inclusive) score.
+        hs, aws = final.get("home_score"), final.get("away_score")
+        if isinstance(hs, int) and isinstance(aws, int) and hs != aws:
+            return final.get("home") if hs > aws else final.get("away")
+        return None
+    except Exception:
+        return None
+
+
+def _strip_results_volatile(results: dict) -> dict:
+    """results_2026.json minus updated_at stamps (top-level AND per-match).
+
+    The fetcher bumps every match row's updated_at each tick, so a byte
+    compare can never detect "nothing actually happened". Archive-freeze
+    helper below compares this stripped view instead.
+    """
+    out = {k: v for k, v in results.items() if k != "updated_at"}
+    out["completed_matches"] = [
+        {k: v for k, v in m.items() if k != "updated_at"}
+        for m in results.get("completed_matches", [])
+    ]
+    return out
+
+
+def restore_results_if_timestamp_churn(path, pre_fetch_bytes) -> None:
+    """Archive freeze (2026-07-09): if this tick's fetch changed nothing but
+    updated_at stamps, put the pre-fetch bytes back so the workflow's commit
+    step sees a clean tree — no commit, no Vercel deploy churn after the
+    final. Exception-safe: on any doubt we keep the freshly-fetched file
+    (worst case = one more no-op commit, never data loss)."""
+    if pre_fetch_bytes is None or not path.exists():
+        return
+    try:
+        old = json.loads(pre_fetch_bytes)
+        new = json.loads(path.read_text())
+        if _strip_results_volatile(old) == _strip_results_volatile(new):
+            path.write_bytes(pre_fetch_bytes)
+            print("[run_live_update] archive freeze: updated_at-only churn reverted")
+    except Exception as e:
+        print(f"[run_live_update] archive freeze: restore skipped "
+              f"({type(e).__name__}: {e})")
 
 
 def validate_results_file() -> tuple[bool, str]:
@@ -476,6 +545,15 @@ def write_live_state(mode: str, completed_count: int, sim_rerun: bool,
         "in_play": in_play,            # P1-G: dashboard LIVE strip
         "in_play_count": len(in_play), # convenient summary
         "warnings": warnings or [],
+        # Archive mode (2026-07-09): permanent flip once every scheduled
+        # match is locked. app.js switches to the post-tournament
+        # retrospective on tournament_complete (it also carries a
+        # client-side fallback keyed off completed_matches_count and the
+        # final's locked_score, so a pre-flip frozen state file still
+        # renders the archive view correctly).
+        "tournament_complete": completed_count >= TOTAL_MATCHES,
+        "champion": (get_champion_name()
+                     if completed_count >= TOTAL_MATCHES else None),
     }
     # KNOCKOUT HEARTBEAT (2026-06-28): every successful tick now bumps
     # last_updated_utc unconditionally, even when no other field changed.
@@ -609,6 +687,13 @@ def main() -> int:
     # Cost is bounded: enrich_matches_with_events skips matches that already
     # have events (existing_events_by_m cache), so worst case ≈ 1-2 extra
     # /fixtures/events calls per fast tick (one per new FT match).
+    # Archive freeze (2026-07-09) support: snapshot the results file BEFORE
+    # the fetch so the post-final freeze in Step 2 can restore it when the
+    # fetch only bumped updated_at stamps (no semantic change).
+    results_path = LIVE / "results_2026.json"
+    pre_fetch_results_bytes = (
+        results_path.read_bytes() if results_path.exists() else None)
+
     fetch_cmd = [sys.executable, "scripts/live/fetch_results.py", "--with-events"]
     if args.dry_run:
         fetch_cmd.append("--dry-run")
@@ -657,6 +742,23 @@ def main() -> int:
     # Step 2: early exit if NOTHING upstream has moved since the last sim
     if not inputs_changed and last_synced >= 0:
         print(f"[run_live_update] inputs unchanged (count={new_count}, hash={current_hash}) — skipping sim")
+        if new_count >= TOTAL_MATCHES:
+            # Archive freeze (2026-07-09): tournament complete and nothing
+            # moving. Touch NOTHING so the workflow's commit step sees a
+            # clean tree — no commit, no deploy churn. The live_state
+            # written by the tick that locked the final
+            # (tournament_complete=true, champion=...) is the permanent
+            # public record; the dashboard's archive chip replaces the
+            # staleness pill, so a frozen last_updated_utc is deliberate.
+            # Post-final warnings are intentionally NOT re-published —
+            # the showcase stays frozen on the final good state.
+            restore_results_if_timestamp_churn(
+                results_path, pre_fetch_results_bytes)
+            if read_circuit_breaker() != 0:
+                write_circuit_breaker(0)
+            print("[run_live_update] tournament complete — archive freeze, "
+                  "no writes this tick")
+            return 0
         mode = "pre_tournament" if new_count == 0 else "live"
         write_live_state(mode, new_count, sim_rerun=False, warnings=warns)
         write_circuit_breaker(0)  # success path resets
@@ -703,10 +805,10 @@ def main() -> int:
     #
     # Time budget: ~5-10 min wall on GHA Ubuntu in practice (vs ~30s locally;
     # shared runners are CPU-bound and much slower for numpy-heavy work). The
-    # job's timeout-minutes is 15 → roughly 33-67% headroom depending on
-    # warm-cache state. Empirical anchor: daily-baseline.yml runs this sim
-    # TWICE plus 5 training scripts inside its 25-min cap, so a single live
-    # sim under a 15-min cap is provably feasible.
+    # job's timeout-minutes is 20 (raised from 15 on 2026-07-09 after two
+    # QF-day ticks hit the 15-min kill on cold-cache runners) → comfortable
+    # headroom. Empirical anchor: daily-baseline.yml runs this sim TWICE plus
+    # 5 training scripts inside its 25-min cap.
     #
     # Cadence note: CF Worker dispatches every 10 min and the workflow uses
     # concurrency: cancel-in-progress: false (ticks serialize). If a sim
