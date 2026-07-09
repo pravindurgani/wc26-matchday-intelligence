@@ -1,6 +1,6 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-09T20:20:40.760469+00:00",
+  "last_updated_utc": "2026-07-09T20:30:44.629854+00:00",
   "completed_matches_count": 96,
   "simulation_rerun_this_tick": false,
   "source": "api_football",
@@ -12,21 +12,13 @@
       "away": "Morocco",
       "home_score": 0,
       "away_score": 0,
-      "elapsed": 10,
+      "elapsed": 30,
       "status": "LIVE",
       "status_long": "First Half"
     }
   ],
   "in_play_count": 1,
-  "warnings": [
-    {
-      "type": "provider_returned_nothing",
-      "message": "Provider 'api_football' returned 0 matches with no warnings; existing locked matches preserved. Investigate the adapter / provider token if this persists across ticks.",
-      "count": 1,
-      "first_seen_utc": "2026-07-09T20:20:40.688751+00:00",
-      "last_seen_utc": "2026-07-09T20:20:40.688751+00:00"
-    }
-  ],
+  "warnings": [],
   "tournament_complete": false,
   "champion": null
 }
