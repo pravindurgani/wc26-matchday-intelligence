@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-07-09T06:41:18.312226+00:00",
+  "generated_at": "2026-07-09T11:48:48.363823+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
   "net_elo_active": true,
   "auto_tier_active": false,
-  "teams_with_injuries": 22,
+  "teams_with_injuries": 24,
   "teams": {
     "Brazil": {
       "total_elo_adjustment": -72.0,
@@ -581,12 +581,12 @@
           "fixture_id": 1489410,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.589,
-            "ga90": 0.0,
+            "minutes_share": 0.726,
+            "ga90": 0.636,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 212,
-            "team_top_minutes": 360
+            "minutes": 283,
+            "team_top_minutes": 390
           }
         },
         {
@@ -599,14 +599,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1489410,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 1.0,
-            "ga90": 0.0,
+            "minutes_share": 0.346,
+            "ga90": 0.667,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 360,
-            "team_top_minutes": 360
+            "minutes": 135,
+            "team_top_minutes": 390
           }
         }
       ]
@@ -633,8 +633,8 @@
       ]
     },
     "England": {
-      "total_elo_adjustment": -24.0,
-      "total_net_elo_adjustment": -24.0,
+      "total_elo_adjustment": -36.0,
+      "total_net_elo_adjustment": -36.0,
       "players": [
         {
           "name": "R. James",
@@ -648,12 +648,12 @@
           "fixture_id": 1489422,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.437,
+            "minutes_share": 0.218,
             "ga90": 1.0,
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 90,
-            "team_top_minutes": 206
+            "team_top_minutes": 413
           }
         },
         {
@@ -669,6 +669,26 @@
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
             "reason": "zero_minutes"
+          }
+        },
+        {
+          "name": "J. Henderson",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Wirst Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1581037,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.046,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 19,
+            "team_top_minutes": 413
           }
         }
       ]
@@ -689,12 +709,12 @@
           "fixture_id": 1489408,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.437,
-            "ga90": 0.833,
+            "minutes_share": 0.121,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 108,
-            "team_top_minutes": 247
+            "minutes": 58,
+            "team_top_minutes": 480
           }
         },
         {
@@ -709,12 +729,12 @@
           "fixture_id": 1567312,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.356,
+            "minutes_share": 0.179,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 88,
-            "team_top_minutes": 247
+            "minutes": 86,
+            "team_top_minutes": 480
           }
         },
         {
@@ -727,14 +747,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1576805,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.834,
-            "ga90": 0.0,
+            "minutes_share": 0.417,
+            "ga90": 2.25,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 206,
-            "team_top_minutes": 247
+            "minutes": 200,
+            "team_top_minutes": 480
           }
         },
         {
@@ -747,14 +767,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1576805,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.745,
-            "ga90": 0.489,
+            "minutes_share": 0.338,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 184,
-            "team_top_minutes": 247
+            "minutes": 162,
+            "team_top_minutes": 480
           }
         }
       ]
@@ -905,12 +925,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1539002,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 170,
-            "floor": 200,
-            "minutes": 109
+            "minutes_share": 0.603,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 217,
+            "team_top_minutes": 360
           }
         }
       ]
@@ -931,7 +953,12 @@
           "fixture_id": 1539074,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "zero_minutes"
+            "minutes_share": 0.392,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": true,
+            "minutes": 153,
+            "team_top_minutes": 390
           }
         }
       ]
@@ -1021,6 +1048,53 @@
         }
       ]
     },
+    "Morocco": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "I. Saibari",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1578539,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.802,
+            "ga90": 0.701,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 385,
+            "team_top_minutes": 480
+          }
+        }
+      ]
+    },
+    "Norway": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "M. Pedersen",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Cold",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1581037,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "reason": "zero_minutes"
+          }
+        }
+      ]
+    },
     "Qatar": {
       "total_elo_adjustment": -24.0,
       "total_net_elo_adjustment": -24.0,
@@ -1071,7 +1145,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 41,
+      "count": 43,
       "cases": [
         {
           "team": "Brazil",
@@ -1204,6 +1278,16 @@
           "fixture_id": 1576805
         },
         {
+          "team": "Switzerland",
+          "input": "L. Jaquez",
+          "fixture_id": 1582681
+        },
+        {
+          "team": "Switzerland",
+          "input": "M. Aebischer",
+          "fixture_id": 1582681
+        },
+        {
           "team": "Australia",
           "input": "M. Leckie",
           "fixture_id": 1565178
@@ -1279,7 +1363,7 @@
           "fixture_id": 1567824
         }
       ],
-      "message": "41 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+38 more)"
+      "message": "43 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+40 more)"
     }
   ]
 }

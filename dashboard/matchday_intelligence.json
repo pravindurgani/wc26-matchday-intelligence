@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-09T06:41:39.718666+00:00",
+  "generated_at": "2026-07-09T11:49:10.172334+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -1353,18 +1353,18 @@
     {
       "team": "England",
       "match_id": null,
-      "total_elo_adjustment": -11.58,
-      "raw_sum_before_aggregate_cap": -11.58,
+      "total_elo_adjustment": -12.58,
+      "raw_sum_before_aggregate_cap": -12.58,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "injury",
           "subtype": "api_aggregate",
-          "raw_elo": -24.0,
-          "capped_elo": -24.0,
+          "raw_elo": -36.0,
+          "capped_elo": -25.0,
           "cap_used": 25.0,
-          "n_players": 2,
+          "n_players": 3,
           "source": "api_football"
         },
         {
@@ -2300,11 +2300,20 @@
     {
       "team": "Morocco",
       "match_id": null,
-      "total_elo_adjustment": 5.07,
-      "raw_sum_before_aggregate_cap": 5.07,
+      "total_elo_adjustment": -6.93,
+      "raw_sum_before_aggregate_cap": -6.93,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 6,
@@ -2480,11 +2489,20 @@
     {
       "team": "Norway",
       "match_id": null,
-      "total_elo_adjustment": 0.36,
-      "raw_sum_before_aggregate_cap": 0.36,
+      "total_elo_adjustment": -11.64,
+      "raw_sum_before_aggregate_cap": -11.64,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "injury",
+          "subtype": "api_aggregate",
+          "raw_elo": -12.0,
+          "capped_elo": -12.0,
+          "cap_used": 25.0,
+          "n_players": 1,
+          "source": "api_football"
+        },
         {
           "type": "stats_proxy",
           "match_id": 18,
@@ -4078,7 +4096,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 234,
+    "total_active_components": 236,
     "teams_affected": 48,
     "matches_affected": 23,
     "aggregate_caps_hit": 2
