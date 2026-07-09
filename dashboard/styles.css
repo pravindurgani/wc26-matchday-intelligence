@@ -909,7 +909,19 @@ section h2 {
 .cmp-row.cmp-a-better .cmp-a-val { color: var(--success); }
 .cmp-row.cmp-b-better .cmp-b-val { color: var(--success); }
 @media (max-width: 640px) {
-  .cmp-row { grid-template-columns: 1.4fr 1fr 1.4fr; gap: 6px; font-size: 12px; }
+  /* 3-col mobile row: A value | label | B value. The base .cmp-label is
+     pinned to grid-column 3 — the CENTRE of the 5-col desktop grid, but the
+     LAST column of this 3-col one. That exiled .cmp-b-val (auto-placed after
+     the label; the placement cursor never moves backwards) onto an implicit
+     second row at far-left, where it read as part of the neighbouring row.
+     Re-pin the label to the true centre column and edge-align the values so
+     the mono numbers form clean vertical rails under each team. The `auto`
+     centre column keeps long labels ("Advance from group") on one line down
+     to 320px. */
+  .cmp-row { grid-template-columns: 1fr auto 1fr; gap: 6px; font-size: 12px; }
+  .cmp-label { grid-column: 2; }
+  .cmp-a-val { text-align: left; }
+  .cmp-b-val { text-align: right; }
   .cmp-row > .cmp-bar { display: none; }
   .cmp-head { grid-template-columns: 1fr auto 1fr; font-size: 13px; gap: 6px; }
   .cmp-head .cmp-team-a, .cmp-head .cmp-team-b { font-size: 13px; }
