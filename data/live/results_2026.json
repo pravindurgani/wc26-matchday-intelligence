@@ -1,6 +1,6 @@
 {
   "schema": "Completed WC 2026 matches \u2014 locked. Future matches are simulated.",
-  "updated_at": "2026-07-09T20:10:49.884623+00:00",
+  "updated_at": "2026-07-09T20:20:40.688751+00:00",
   "source": "api_football",
   "completed_matches": [
     {
@@ -17162,5 +17162,13 @@
       "status_long": "First Half"
     }
   ],
-  "warnings": []
+  "warnings": [
+    {
+      "type": "provider_returned_nothing",
+      "message": "Provider 'api_football' returned 0 matches with no warnings; existing locked matches preserved. Investigate the adapter / provider token if this persists across ticks.",
+      "count": 1,
+      "first_seen_utc": "2026-07-09T20:20:40.688751+00:00",
+      "last_seen_utc": "2026-07-09T20:20:40.688751+00:00"
+    }
+  ]
 }
