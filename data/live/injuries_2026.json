@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-09T02:09:40.473887+00:00",
+  "generated_at": "2026-07-09T06:41:18.312226+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -200,14 +200,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1489415,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.844,
-            "ga90": 0.738,
+            "minutes_share": 0.46,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 244,
-            "team_top_minutes": 289
+            "minutes": 221,
+            "team_top_minutes": 480
           }
         },
         {
@@ -222,12 +222,12 @@
           "fixture_id": 1489415,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.907,
+            "minutes_share": 0.512,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 262,
-            "team_top_minutes": 289
+            "minutes": 246,
+            "team_top_minutes": 480
           }
         },
         {
@@ -242,12 +242,7 @@
           "fixture_id": 1489377,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.277,
-            "ga90": 1.125,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 80,
-            "team_top_minutes": 289
+            "reason": "zero_minutes"
           }
         },
         {
@@ -260,14 +255,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1570715,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.796,
-            "ga90": 0.391,
+            "minutes_share": 0.221,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 230,
-            "team_top_minutes": 289
+            "minutes": 106,
+            "team_top_minutes": 480
           }
         }
       ]
@@ -934,12 +929,9 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1539074,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 184,
-            "floor": 200,
-            "minutes": 153
+            "reason": "zero_minutes"
           }
         }
       ]
