@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T06:36:38.020549+00:00",
+  "generated_at": "2026-07-10T11:44:41.080878+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -653,12 +653,12 @@
           "fixture_id": 1489422,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.218,
+            "minutes_share": 0.437,
             "ga90": 1.0,
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 90,
-            "team_top_minutes": 413
+            "team_top_minutes": 206
           }
         },
         {
@@ -688,12 +688,12 @@
           "fixture_id": 1581037,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.046,
+            "minutes_share": 0.092,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 19,
-            "team_top_minutes": 413
+            "team_top_minutes": 206
           }
         }
       ]
@@ -714,12 +714,12 @@
           "fixture_id": 1489408,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.121,
-            "ga90": 0.0,
+            "minutes_share": 0.437,
+            "ga90": 0.833,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 58,
-            "team_top_minutes": 480
+            "minutes": 108,
+            "team_top_minutes": 247
           }
         },
         {
@@ -734,12 +734,12 @@
           "fixture_id": 1567312,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.179,
+            "minutes_share": 0.356,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 86,
-            "team_top_minutes": 480
+            "minutes": 88,
+            "team_top_minutes": 247
           }
         },
         {
@@ -752,14 +752,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1576805,
-          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.417,
-            "ga90": 2.25,
+            "minutes_share": 0.834,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 200,
-            "team_top_minutes": 480
+            "minutes": 206,
+            "team_top_minutes": 247
           }
         },
         {
@@ -772,14 +772,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1576805,
-          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.338,
-            "ga90": 0.0,
+            "minutes_share": 0.745,
+            "ga90": 0.489,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 162,
-            "team_top_minutes": 480
+            "minutes": 184,
+            "team_top_minutes": 247
           }
         }
       ]
@@ -916,6 +916,32 @@
         }
       ]
     },
+    "Morocco": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "I. Saibari",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Hamstring Injury",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1578539,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.587,
+            "ga90": 0.989,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 182,
+            "team_top_minutes": 310
+          }
+        }
+      ]
+    },
     "Sweden": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -930,14 +956,12 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1539002,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": null,
           "auto_tier_components": {
-            "minutes_share": 0.603,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 217,
-            "team_top_minutes": 360
+            "reason": "team_top_minutes_below_floor",
+            "team_top_minutes": 170,
+            "floor": 200,
+            "minutes": 109
           }
         }
       ]
@@ -1051,32 +1075,6 @@
         }
       ]
     },
-    "Morocco": {
-      "total_elo_adjustment": -12.0,
-      "total_net_elo_adjustment": -12.0,
-      "players": [
-        {
-          "name": "I. Saibari",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Hamstring Injury",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1578539,
-          "auto_tier_suggestion": "tier_2_starter",
-          "auto_tier_components": {
-            "minutes_share": 0.802,
-            "ga90": 0.701,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 385,
-            "team_top_minutes": 480
-          }
-        }
-      ]
-    },
     "Norway": {
       "total_elo_adjustment": -12.0,
       "total_net_elo_adjustment": -12.0,
@@ -1148,7 +1146,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 43,
+      "count": 45,
       "cases": [
         {
           "team": "Brazil",
@@ -1271,6 +1269,16 @@
           "fixture_id": 1568100
         },
         {
+          "team": "England",
+          "input": "J. Quansah",
+          "fixture_id": 1570714
+        },
+        {
+          "team": "England",
+          "input": "J. Quansah",
+          "fixture_id": 1581037
+        },
+        {
           "team": "Senegal",
           "input": "É. Mendy",
           "fixture_id": 1567308
@@ -1366,7 +1374,7 @@
           "fixture_id": 1567824
         }
       ],
-      "message": "43 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+40 more)"
+      "message": "45 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+42 more)"
     }
   ]
 }
