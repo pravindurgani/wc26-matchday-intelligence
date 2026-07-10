@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T02:08:48.864419+00:00",
+  "generated_at": "2026-07-10T06:36:38.020549+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -200,14 +200,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1489415,
-          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.46,
-            "ga90": 0.0,
+            "minutes_share": 0.844,
+            "ga90": 0.738,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 221,
-            "team_top_minutes": 480
+            "minutes": 244,
+            "team_top_minutes": 289
           }
         },
         {
@@ -222,12 +222,12 @@
           "fixture_id": 1489415,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.512,
+            "minutes_share": 0.907,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 246,
-            "team_top_minutes": 480
+            "minutes": 262,
+            "team_top_minutes": 289
           }
         },
         {
@@ -242,7 +242,12 @@
           "fixture_id": 1489377,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "zero_minutes"
+            "minutes_share": 0.277,
+            "ga90": 1.125,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 80,
+            "team_top_minutes": 289
           }
         },
         {
@@ -255,14 +260,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1570715,
-          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.221,
-            "ga90": 0.0,
+            "minutes_share": 0.796,
+            "ga90": 0.391,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 106,
-            "team_top_minutes": 480
+            "minutes": 230,
+            "team_top_minutes": 289
           }
         }
       ]
@@ -535,12 +540,12 @@
           "fixture_id": 1489387,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.044,
+            "minutes_share": 0.093,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 20,
-            "team_top_minutes": 457
+            "team_top_minutes": 216
           }
         },
         {
@@ -555,12 +560,12 @@
           "fixture_id": 1489408,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.322,
+            "minutes_share": 0.264,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 147,
-            "team_top_minutes": 457
+            "minutes": 57,
+            "team_top_minutes": 216
           }
         }
       ]
@@ -795,12 +800,12 @@
           "fixture_id": 1489414,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.136,
+            "minutes_share": 0.111,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 67,
-            "team_top_minutes": 492
+            "minutes": 38,
+            "team_top_minutes": 341
           }
         },
         {
@@ -815,12 +820,12 @@
           "fixture_id": 1489414,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.514,
+            "minutes_share": 0.762,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 253,
-            "team_top_minutes": 492
+            "minutes": 260,
+            "team_top_minutes": 341
           }
         },
         {
@@ -835,12 +840,12 @@
           "fixture_id": 1565178,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.744,
+            "minutes_share": 0.889,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 366,
-            "team_top_minutes": 492
+            "minutes": 303,
+            "team_top_minutes": 341
           }
         },
         {
@@ -855,12 +860,12 @@
           "fixture_id": 1565178,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.195,
+            "minutes_share": 0.282,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 96,
-            "team_top_minutes": 492
+            "team_top_minutes": 341
           }
         },
         {
@@ -875,12 +880,12 @@
           "fixture_id": 1489377,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.545,
-            "ga90": 0.0,
+            "minutes_share": 0.707,
+            "ga90": 0.373,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 268,
-            "team_top_minutes": 492
+            "minutes": 241,
+            "team_top_minutes": 341
           }
         }
       ]
