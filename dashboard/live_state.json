@@ -1,12 +1,23 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-10T19:00:54.254989+00:00",
+  "last_updated_utc": "2026-07-10T19:10:47.927828+00:00",
   "completed_matches_count": 97,
   "simulation_rerun_this_tick": false,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [],
-  "in_play_count": 0,
+  "in_play": [
+    {
+      "m": 98,
+      "home": "Spain",
+      "away": "Belgium",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 11,
+      "status": "LIVE",
+      "status_long": "First Half"
+    }
+  ],
+  "in_play_count": 1,
   "warnings": [],
   "tournament_complete": false,
   "champion": null
