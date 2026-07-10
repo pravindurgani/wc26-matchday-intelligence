@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T19:19:03.513991+00:00",
+  "generated_at": "2026-07-10T21:54:23.033157+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -300,8 +300,8 @@
     {
       "team": "Belgium",
       "match_id": null,
-      "total_elo_adjustment": -14.08,
-      "raw_sum_before_aggregate_cap": -14.08,
+      "total_elo_adjustment": -18.67,
+      "raw_sum_before_aggregate_cap": -18.67,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -371,6 +371,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 3.27,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 98,
+          "raw_elo": -4.59,
+          "capped_elo_per_match": -4.59,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -4.59,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -4111,7 +4126,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 237,
+    "total_active_components": 238,
     "teams_affected": 48,
     "matches_affected": 23,
     "aggregate_caps_hit": 2
