@@ -837,18 +837,26 @@
       "away": "Spain",
       "date": "2026-07-14",
       "phase": "sf"
+    },
+    {
+      "match_id": 102,
+      "provider_fixture_id": "1586077",
+      "home": "England",
+      "away": "Argentina",
+      "date": "2026-07-15",
+      "phase": "sf"
     }
   ],
   "coverage": {
     "group_mapped": 72,
     "group_total": 72,
-    "knockout_mapped": 29,
+    "knockout_mapped": 30,
     "knockout_total": 32,
-    "total_mapped": 101,
+    "total_mapped": 102,
     "total_expected": 104
   },
   "unmapped_internal_count": 6,
   "unmapped_provider_count": 0,
-  "extended_at": "2026-07-10T21:21:20.308776+00:00",
+  "extended_at": "2026-07-12T06:01:25.575172+00:00",
   "extended_by": "fetch_results.knockout_auto_extension"
 }
