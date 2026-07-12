@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T15:52:43.470691+00:00",
+  "generated_at": "2026-07-12T18:54:25.607951+00:00",
   "schema_version": 1,
   "source": "api_football",
   "season": 2026,
@@ -7952,11 +7952,29 @@
           "position": null
         },
         {
-          "name": "G. Mensah",
-          "minutes": 110,
+          "name": "T. Partey",
+          "minutes": 270,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Djiku",
+          "minutes": 184,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "A. Baba",
+          "minutes": 1,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -7968,6 +7986,24 @@
           "appearances": 1,
           "clean_sheets": 0,
           "position": "D"
+        },
+        {
+          "name": "D. Luckassen",
+          "minutes": 180,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "I. Williams",
+          "minutes": 128,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "A"
         },
         {
           "name": "M. Ashimeru",
@@ -7988,10 +8024,19 @@
           "position": "A"
         },
         {
-          "name": "J. Opoku",
-          "minutes": 101,
+          "name": "P. Pfeiffer",
+          "minutes": 25,
           "goals": 0,
           "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "D. Köhn",
+          "minutes": 158,
+          "goals": 0,
+          "assists": 1,
           "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
@@ -8004,15 +8049,6 @@
           "appearances": 1,
           "clean_sheets": 0,
           "position": "A"
-        },
-        {
-          "name": "M. Senaya",
-          "minutes": 99,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
         },
         {
           "name": "N. Adjei",
@@ -8033,31 +8069,13 @@
           "position": "M"
         },
         {
-          "name": "I. Osman",
-          "minutes": 75,
+          "name": "A. Boakye",
+          "minutes": 0,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 0,
           "clean_sheets": 0,
           "position": "M"
-        },
-        {
-          "name": "Razak Simpson",
-          "minutes": 24,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "F. Afena-Gyan",
-          "minutes": 67,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
         },
         {
           "name": "I. Sulemana",
@@ -8078,8 +8096,17 @@
           "position": "D"
         },
         {
-          "name": "J. Opoku",
-          "minutes": 15,
+          "name": "K. Peprah Oppong",
+          "minutes": 55,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "C. Bonsu Baah",
+          "minutes": 0,
           "goals": 0,
           "assists": 0,
           "appearances": 0,
@@ -8096,15 +8123,6 @@
           "position": "M"
         },
         {
-          "name": "A. Issah",
-          "minutes": 15,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
           "name": "O. Naasei",
           "minutes": 89,
           "goals": 0,
@@ -8112,24 +8130,6 @@
           "appearances": 1,
           "clean_sheets": 0,
           "position": "D"
-        },
-        {
-          "name": "J. Afriyie",
-          "minutes": 23,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "P. Amoako",
-          "minutes": 24,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
         },
         {
           "name": "I. Osman",
@@ -20301,10 +20301,10 @@
         },
         {
           "name": "F. Muslera",
-          "minutes": 90,
+          "minutes": 225,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "G"
         },
