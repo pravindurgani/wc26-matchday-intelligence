@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T08:04:19.519986+00:00",
+  "generated_at": "2026-07-12T10:20:00.114694+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -530,12 +530,7 @@
           "fixture_id": 1489387,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.093,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 20,
-            "team_top_minutes": 216
+            "reason": "no_stats_record"
           }
         },
         {
@@ -733,26 +728,6 @@
           }
         },
         {
-          "name": "J. Manzambi",
-          "tier": "tier_2_starter",
-          "auto_tier_source": "default",
-          "status": "confirmed_out",
-          "reason": "Jumpers Knee",
-          "elo": -12.0,
-          "replacement_elo": null,
-          "net_elo": -12.0,
-          "fixture_id": 1576805,
-          "auto_tier_suggestion": "tier_3_squad",
-          "auto_tier_components": {
-            "minutes_share": 0.333,
-            "ga90": 2.25,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 200,
-            "team_top_minutes": 600
-          }
-        },
-        {
           "name": "M. Aebischer",
           "tier": "tier_2_starter",
           "auto_tier_source": "default",
@@ -769,6 +744,26 @@
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 162,
+            "team_top_minutes": 600
+          }
+        },
+        {
+          "name": "J. Manzambi",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Jumpers Knee",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1576805,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "minutes_share": 0.333,
+            "ga90": 2.25,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 200,
             "team_top_minutes": 600
           }
         }
@@ -850,11 +845,11 @@
           "fixture_id": 1565178,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.2,
+            "minutes_share": 0.031,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 96,
+            "minutes": 15,
             "team_top_minutes": 480
           }
         },
@@ -967,12 +962,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1539002,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 170,
-            "floor": 200,
-            "minutes": 109
+            "minutes_share": 0.603,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 217,
+            "team_top_minutes": 360
           }
         }
       ]
@@ -1061,12 +1058,9 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1489412,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 188,
-            "floor": 200,
-            "minutes": 79
+            "reason": "no_stats_record"
           }
         },
         {
@@ -1136,7 +1130,7 @@
   "warnings": [
     {
       "type": "duplicate_record",
-      "count": 46,
+      "count": 47,
       "cases": [
         {
           "team": "Brazil",
@@ -1229,6 +1223,21 @@
           "fixture_id": 1576805
         },
         {
+          "team": "Switzerland",
+          "input": "L. Jaquez",
+          "fixture_id": 1576805
+        },
+        {
+          "team": "Switzerland",
+          "input": "L. Jaquez",
+          "fixture_id": 1582681
+        },
+        {
+          "team": "Switzerland",
+          "input": "M. Aebischer",
+          "fixture_id": 1582681
+        },
+        {
           "team": "Belgium",
           "input": "A. Onana",
           "fixture_id": 1581821
@@ -1274,24 +1283,14 @@
           "fixture_id": 1581037
         },
         {
+          "team": "England",
+          "input": "J. Quansah",
+          "fixture_id": 1586077
+        },
+        {
           "team": "Senegal",
           "input": "É. Mendy",
           "fixture_id": 1567308
-        },
-        {
-          "team": "Switzerland",
-          "input": "L. Jaquez",
-          "fixture_id": 1576805
-        },
-        {
-          "team": "Switzerland",
-          "input": "L. Jaquez",
-          "fixture_id": 1582681
-        },
-        {
-          "team": "Switzerland",
-          "input": "M. Aebischer",
-          "fixture_id": 1582681
         },
         {
           "team": "Australia",
@@ -1369,7 +1368,7 @@
           "fixture_id": 1567824
         }
       ],
-      "message": "46 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+43 more)"
+      "message": "47 duplicate (team, player) record(s) dropped to avoid double-counting: Brazil/'Neymar', Brazil/'Neymar', Uruguay/'G. de Arrascaeta' (+44 more)"
     }
   ]
 }
