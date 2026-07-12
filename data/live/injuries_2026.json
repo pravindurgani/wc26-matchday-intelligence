@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T10:20:00.114694+00:00",
+  "generated_at": "2026-07-12T13:03:08.707332+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -176,7 +176,7 @@
           "fixture_id": 1539012,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "no_stats_record"
+            "reason": "zero_minutes"
           }
         }
       ]
@@ -322,12 +322,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1489418,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 184,
-            "floor": 200,
-            "minutes": 95
+            "minutes_share": 0.072,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 26,
+            "team_top_minutes": 360
           }
         },
         {
@@ -340,12 +342,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1567312,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 184,
-            "floor": 200,
-            "minutes": 42
+            "minutes_share": 0.125,
+            "ga90": 2.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 45,
+            "team_top_minutes": 360
           }
         }
       ]
@@ -484,12 +488,12 @@
           "fixture_id": 1489407,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.636,
-            "ga90": 0.0,
+            "minutes_share": 0.755,
+            "ga90": 0.325,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 157,
-            "team_top_minutes": 247
+            "minutes": 277,
+            "team_top_minutes": 367
           }
         },
         {
@@ -502,14 +506,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1539004,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.547,
-            "ga90": 0.667,
+            "minutes_share": 0.063,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 135,
-            "team_top_minutes": 247
+            "minutes": 23,
+            "team_top_minutes": 367
           }
         }
       ]
@@ -530,7 +534,7 @@
           "fixture_id": 1489387,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "no_stats_record"
+            "reason": "zero_minutes"
           }
         },
         {
@@ -545,12 +549,12 @@
           "fixture_id": 1489408,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.264,
+            "minutes_share": 0.322,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 57,
-            "team_top_minutes": 216
+            "minutes": 147,
+            "team_top_minutes": 457
           }
         }
       ]
@@ -1034,11 +1038,11 @@
           "fixture_id": 1489411,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.095,
+            "minutes_share": 0.139,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 112,
+            "minutes": 164,
             "team_top_minutes": 1181
           }
         }
@@ -1060,7 +1064,7 @@
           "fixture_id": 1489412,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "no_stats_record"
+            "reason": "zero_minutes"
           }
         },
         {
