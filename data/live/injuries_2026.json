@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13T14:12:19.377220+00:00",
+  "generated_at": "2026-07-13T17:09:13.695847+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -922,12 +922,12 @@
           "fixture_id": 1578539,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.675,
-            "ga90": 0.701,
+            "minutes_share": 0.587,
+            "ga90": 0.989,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 385,
-            "team_top_minutes": 570
+            "minutes": 182,
+            "team_top_minutes": 310
           }
         }
       ]
