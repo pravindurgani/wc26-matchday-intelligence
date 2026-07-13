@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13T17:09:13.695847+00:00",
+  "generated_at": "2026-07-13T19:15:50.182218+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -202,12 +202,12 @@
           "fixture_id": 1489415,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.546,
-            "ga90": 0.0,
+            "minutes_share": 0.844,
+            "ga90": 0.738,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 311,
-            "team_top_minutes": 570
+            "minutes": 244,
+            "team_top_minutes": 289
           }
         },
         {
@@ -222,12 +222,12 @@
           "fixture_id": 1489415,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.589,
+            "minutes_share": 0.907,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 336,
-            "team_top_minutes": 570
+            "minutes": 262,
+            "team_top_minutes": 289
           }
         },
         {
@@ -240,14 +240,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1570715,
-          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.186,
-            "ga90": 0.0,
+            "minutes_share": 0.796,
+            "ga90": 0.391,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 106,
-            "team_top_minutes": 570
+            "minutes": 230,
+            "team_top_minutes": 289
           }
         },
         {
@@ -262,7 +262,12 @@
           "fixture_id": 1489377,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "zero_minutes"
+            "minutes_share": 0.277,
+            "ga90": 1.125,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 80,
+            "team_top_minutes": 289
           }
         }
       ]
@@ -704,12 +709,12 @@
           "fixture_id": 1489408,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.153,
-            "ga90": 0.0,
+            "minutes_share": 0.425,
+            "ga90": 0.833,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 92,
-            "team_top_minutes": 600
+            "minutes": 108,
+            "team_top_minutes": 254
           }
         },
         {
@@ -724,12 +729,7 @@
           "fixture_id": 1567312,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.143,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 86,
-            "team_top_minutes": 600
+            "reason": "no_stats_record"
           }
         },
         {
@@ -744,12 +744,7 @@
           "fixture_id": 1576805,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.27,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 162,
-            "team_top_minutes": 600
+            "reason": "no_stats_record"
           }
         },
         {
@@ -762,14 +757,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1576805,
-          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.333,
-            "ga90": 2.25,
+            "minutes_share": 0.811,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 200,
-            "team_top_minutes": 600
+            "minutes": 206,
+            "team_top_minutes": 254
           }
         }
       ]
