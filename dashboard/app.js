@@ -149,7 +149,7 @@ async function init() {
   safe(() => renderLiveStrip(liveState),                        'renderLiveStrip');
   safe(() => renderHero(primary, liveState, liveDelta),         'renderHero');
   safe(() => renderStatsStrip(primary, cal),                    'renderStatsStrip');
-  safe(() => renderStorylines(primary, travel),                 'renderStorylines');
+  safe(() => renderStorylines(primary, travel, liveDelta),                 'renderStorylines');
   safe(() => renderMovers(primary, liveState, liveDelta),       'renderMovers');
   safe(() => renderContenders(primary, liveDelta, travel),      'renderContenders');
   safe(() => renderGroups(primary),                             'renderGroups');
@@ -323,7 +323,7 @@ function applyLiveUpdate({ liveState, liveDelta, livePred, fetchFailures = 0 }) 
   // R11 B2 INTEL_TOP_BAR_TYPES whitelist, but the matchday-intel
   // SECTION below the fold rendered only on boot).
   safe(() => renderStatsStrip(primary, cal),              'renderStatsStrip');
-  safe(() => renderStorylines(primary, travel),           'renderStorylines');
+  safe(() => renderStorylines(primary, travel, liveDelta),           'renderStorylines');
   safe(() => renderInteresting(primary),                  'renderInteresting');
   safe(() => renderMovers(primary, liveState, liveDelta), 'renderMovers');
   safe(() => renderContenders(primary, liveDelta, travel),'renderContenders');
@@ -785,9 +785,24 @@ function renderHero(data, liveState, liveDelta) {
   document.getElementById('final-prob').textContent = `${fmt(finalLeader.p_reach_final)} to reach the final`;
 
   const dh = darkHorse(data);
+  const dhCard = document.getElementById('dh-team')?.closest('.card');
+  const dhH3 = dhCard?.querySelector('h3');
   if (dh && dh.team) {
+    if (dhH3) dhH3.textContent = 'Dark horse';
     document.getElementById('dh-team').innerHTML = `${confedDotHtml(dh.team)}${escapeHtml(dh.team)}`;
     document.getElementById('dh-prob').textContent = `${fmt(dh.p_reach_sf)} reach SF · Model Elo ${Math.round(dh.elo)}`;
+  } else {
+    // Late-knockout fallback: no viable outsider remains in the field.
+    // Swap to biggest riser vs pre-tournament (same source archive mode
+    // uses) so the card never surfaces an eliminated team.
+    const riser = biggestRiser(liveDelta);
+    if (riser) {
+      if (dhH3) dhH3.textContent = 'Biggest riser';
+      document.getElementById('dh-team').innerHTML =
+        `${confedDotHtml(riser.team)}${escapeHtml(riser.team)}`;
+      document.getElementById('dh-prob').textContent =
+        `+${riser.delta_pp.toFixed(1)}pp title probability vs pre-tournament`;
+    }
   }
 
   const isLive = liveState?.mode === 'live';
@@ -807,16 +822,29 @@ function renderHero(data, liveState, liveDelta) {
 // scales like eloratings.net), so traditional powerhouses like Germany
 // were getting crowned "dark horses" purely because of Elo-scale drift —
 // reads wrong to anyone who cross-checks.
+//
+// 2026-07-13: filter to teams still alive (p_reach_sf > 0) BEFORE the
+// headline slice. In late knockouts only 4–8 teams have non-zero SF prob;
+// the old "sortedByChamp[6]" fallback then landed on an eliminated team
+// (South Korea was surfacing as "Dark horse" in the SF window because it
+// was the 7th entry among the p_champion=0 tail). If no live outsider
+// exists, return null — callers swap in the biggest-riser fallback.
 function darkHorse(data) {
-  const sortedByChamp = [...data.team_predictions].sort(
-    (a, b) => b.p_champion - a.p_champion);
-  const headlineTop = new Set(sortedByChamp.slice(0, 6).map(t => t.team));
-  // Eligibility: clearly outside the headline + still has real run potential
-  // (p_champion ≥ 1%). Among those, the team with the best p_reach_sf wins.
-  const pool = sortedByChamp.filter(
+  const alive = data.team_predictions
+    .filter(t => (t.p_reach_sf || 0) > 0)
+    .sort((a, b) => b.p_champion - a.p_champion);
+  const headlineTop = new Set(alive.slice(0, 6).map(t => t.team));
+  const pool = alive.filter(
     t => !headlineTop.has(t.team) && t.p_champion >= 0.01);
-  const winner = pool.sort((a, b) => b.p_reach_sf - a.p_reach_sf)[0];
-  return winner || sortedByChamp[6] || sortedByChamp[0];
+  return pool.sort((a, b) => b.p_reach_sf - a.p_reach_sf)[0] || null;
+}
+
+// Shared fallback for hero + storyline "Dark horse" cards when the field
+// has shrunk below the headline set (late knockouts). Uses the same
+// biggest-riser logic archive-mode already relies on.
+function biggestRiser(liveDelta) {
+  return ((liveDelta && liveDelta.all_movers) || [])
+    .filter(m => m.delta_pp > 0)[0] || null;
 }
 
 function renderStatsStrip(data, cal) {
@@ -840,7 +868,7 @@ function renderStatsStrip(data, cal) {
 }
 
 // ---- STORYLINES ----
-function renderStorylines(data, travel) {
+function renderStorylines(data, travel, liveDelta) {
   const grid = document.getElementById('storylines-grid');
   if (!grid) return;
 
@@ -884,12 +912,27 @@ function renderStorylines(data, travel) {
       stat: `Won ${fmt(fav.p_champion)} of simulations · Model Elo ${Math.round(fav.elo)}`,
       link: `#team=${encodeURIComponent(fav.team)}`,
     },
-    {
-      icon: icon(`<path d="M3 12h18"/><path d="m13 5 7 7-7 7"/>`),
-      label: 'Dark horse', team: dh.team,
-      stat: `Reaches SF in ${fmt(dh.p_reach_sf)} of simulations`,
-      link: `#team=${encodeURIComponent(dh.team)}`,
-    },
+    (dh && dh.team)
+      ? {
+          icon: icon(`<path d="M3 12h18"/><path d="m13 5 7 7-7 7"/>`),
+          label: 'Dark horse', team: dh.team,
+          stat: `Reaches SF in ${fmt(dh.p_reach_sf)} of simulations`,
+          link: `#team=${encodeURIComponent(dh.team)}`,
+        }
+      : (() => {
+          // Late-knockout fallback (see darkHorse()): the field has shrunk
+          // below the headline — swap in biggest riser vs pre-tournament.
+          const riser = biggestRiser(liveDelta);
+          const team = riser ? riser.team : (fav?.team || '—');
+          return {
+            icon: icon(`<path d="M3 12h18"/><path d="m13 5 7 7-7 7"/>`),
+            label: 'Biggest riser', team,
+            stat: riser
+              ? `+${riser.delta_pp.toFixed(1)}pp title probability vs pre-tournament`
+              : '—',
+            link: `#team=${encodeURIComponent(team)}`,
+          };
+        })(),
     {
       icon: icon(`<circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/>`),
       label: `Toughest group · ${toughest.group}`,
