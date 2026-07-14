@@ -1,8 +1,8 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-14T19:11:34.445490+00:00",
+  "last_updated_utc": "2026-07-14T19:21:07.413438+00:00",
   "completed_matches_count": 100,
-  "simulation_rerun_this_tick": true,
+  "simulation_rerun_this_tick": false,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [
@@ -12,7 +12,7 @@
       "away": "Spain",
       "home_score": 0,
       "away_score": 0,
-      "elapsed": 11,
+      "elapsed": 21,
       "status": "LIVE",
       "status_long": "First Half"
     }
