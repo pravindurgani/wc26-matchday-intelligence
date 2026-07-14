@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-14T13:14:38.410276+00:00",
+  "generated_at": "2026-07-14T16:09:37.282433+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -114,14 +114,14 @@
           "replacement_elo": -9.6,
           "net_elo": -20.4,
           "fixture_id": 1489391,
-          "auto_tier_suggestion": "tier_1_star",
+          "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.94,
-            "ga90": 0.814,
+            "minutes_share": 0.505,
+            "ga90": 0.402,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 221,
-            "team_top_minutes": 235
+            "minutes": 224,
+            "team_top_minutes": 444
           }
         },
         {
@@ -136,12 +136,12 @@
           "fixture_id": 1570715,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.817,
-            "ga90": 0.469,
+            "minutes_share": 0.707,
+            "ga90": 0.86,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 192,
-            "team_top_minutes": 235
+            "minutes": 314,
+            "team_top_minutes": 444
           }
         },
         {
@@ -154,14 +154,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1562586,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.694,
+            "minutes_share": 0.203,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 163,
-            "team_top_minutes": 235
+            "minutes": 90,
+            "team_top_minutes": 444
           }
         },
         {
@@ -176,12 +176,7 @@
           "fixture_id": 1539012,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.477,
-            "ga90": 0.0,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 112,
-            "team_top_minutes": 235
+            "reason": "zero_minutes"
           }
         }
       ]
@@ -327,12 +322,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1489418,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 184,
-            "floor": 200,
-            "minutes": 95
+            "minutes_share": 0.072,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 26,
+            "team_top_minutes": 360
           }
         },
         {
@@ -345,12 +342,14 @@
           "replacement_elo": null,
           "net_elo": -12.0,
           "fixture_id": 1567312,
-          "auto_tier_suggestion": null,
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "team_top_minutes_below_floor",
-            "team_top_minutes": 184,
-            "floor": 200,
-            "minutes": 42
+            "minutes_share": 0.125,
+            "ga90": 2.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 45,
+            "team_top_minutes": 360
           }
         }
       ]
@@ -790,12 +789,12 @@
           "fixture_id": 1489414,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.111,
+            "minutes_share": 0.14,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 38,
-            "team_top_minutes": 341
+            "minutes": 67,
+            "team_top_minutes": 480
           }
         },
         {
@@ -810,12 +809,12 @@
           "fixture_id": 1489414,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.762,
+            "minutes_share": 0.502,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 260,
-            "team_top_minutes": 341
+            "minutes": 241,
+            "team_top_minutes": 480
           }
         },
         {
@@ -830,12 +829,12 @@
           "fixture_id": 1565178,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.889,
+            "minutes_share": 0.748,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 303,
-            "team_top_minutes": 341
+            "minutes": 359,
+            "team_top_minutes": 480
           }
         },
         {
@@ -850,12 +849,12 @@
           "fixture_id": 1565178,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.044,
+            "minutes_share": 0.031,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 15,
-            "team_top_minutes": 341
+            "team_top_minutes": 480
           }
         },
         {
@@ -870,12 +869,12 @@
           "fixture_id": 1489377,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.707,
-            "ga90": 0.373,
+            "minutes_share": 0.558,
+            "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 241,
-            "team_top_minutes": 341
+            "minutes": 268,
+            "team_top_minutes": 480
           }
         }
       ]
@@ -922,12 +921,12 @@
           "fixture_id": 1578539,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.587,
-            "ga90": 0.989,
+            "minutes_share": 0.675,
+            "ga90": 0.701,
             "cs_share": 0.0,
             "is_gk": false,
-            "minutes": 182,
-            "team_top_minutes": 310
+            "minutes": 385,
+            "team_top_minutes": 570
           }
         }
       ]
