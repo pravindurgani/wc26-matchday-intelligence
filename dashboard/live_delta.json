@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-07-14T19:11:34.441039+00:00",
+  "generated_at": "2026-07-14T21:01:37.848407+00:00",
   "min_pp_threshold": 0.3,
   "top_movers_up": [
     {
-      "team": "France",
-      "static": 0.09844,
-      "live": 0.22884,
-      "delta_pp": 13.04
+      "team": "Spain",
+      "static": 0.25767999999999996,
+      "live": 0.5396799999999999,
+      "delta_pp": 28.199999999999996
     },
     {
       "team": "England",
       "static": 0.06323999999999999,
-      "live": 0.18712,
-      "delta_pp": 12.388000000000002
+      "live": 0.1708,
+      "delta_pp": 10.756000000000002
     },
     {
       "team": "Argentina",
       "static": 0.2112,
-      "live": 0.30179999999999996,
-      "delta_pp": 9.059999999999995
-    },
-    {
-      "team": "Spain",
-      "static": 0.25767999999999996,
-      "live": 0.28224,
-      "delta_pp": 2.4560000000000026
+      "live": 0.28952,
+      "delta_pp": 7.832
     }
   ],
   "top_movers_down": [
+    {
+      "team": "France",
+      "static": 0.09844,
+      "live": 0.0,
+      "delta_pp": -9.844
+    },
     {
       "team": "Colombia",
       "static": 0.05136,
@@ -81,32 +81,32 @@
       "static": 0.013919999999999998,
       "live": 0.0,
       "delta_pp": -1.392
-    },
-    {
-      "team": "Mexico",
-      "static": 0.01348,
-      "live": 0.0,
-      "delta_pp": -1.348
     }
   ],
   "all_movers": [
     {
-      "team": "France",
-      "static": 0.09844,
-      "live": 0.22884,
-      "delta_pp": 13.04
+      "team": "Spain",
+      "static": 0.25767999999999996,
+      "live": 0.5396799999999999,
+      "delta_pp": 28.199999999999996
     },
     {
       "team": "England",
       "static": 0.06323999999999999,
-      "live": 0.18712,
-      "delta_pp": 12.388000000000002
+      "live": 0.1708,
+      "delta_pp": 10.756000000000002
+    },
+    {
+      "team": "France",
+      "static": 0.09844,
+      "live": 0.0,
+      "delta_pp": -9.844
     },
     {
       "team": "Argentina",
       "static": 0.2112,
-      "live": 0.30179999999999996,
-      "delta_pp": 9.059999999999995
+      "live": 0.28952,
+      "delta_pp": 7.832
     },
     {
       "team": "Colombia",
@@ -143,12 +143,6 @@
       "static": 0.02752,
       "live": 0.0,
       "delta_pp": -2.752
-    },
-    {
-      "team": "Spain",
-      "static": 0.25767999999999996,
-      "live": 0.28224,
-      "delta_pp": 2.4560000000000026
     },
     {
       "team": "Morocco",
