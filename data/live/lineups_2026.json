@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-07-14T16:09:40.212873+00:00",
+  "generated_at": "2026-07-14T19:06:49.155289+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 101,
+      "home": "France",
+      "away": "Spain",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 22221,
+          "name": "M. Maignan",
+          "number": 16,
+          "pos": "G"
+        },
+        {
+          "id": 1257,
+          "name": "J. Koundé",
+          "number": 5,
+          "pos": "D"
+        },
+        {
+          "id": 1149,
+          "name": "D. Upamecano",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 22090,
+          "name": "W. Saliba",
+          "number": 17,
+          "pos": "D"
+        },
+        {
+          "id": 2724,
+          "name": "L. Digne",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 1271,
+          "name": "A. Tchouaméni",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 272,
+          "name": "A. Rabiot",
+          "number": 14,
+          "pos": "M"
+        },
+        {
+          "id": 153,
+          "name": "O. Dembélé",
+          "number": 7,
+          "pos": "F"
+        },
+        {
+          "id": 19617,
+          "name": "M. Olise",
+          "number": 11,
+          "pos": "F"
+        },
+        {
+          "id": 161904,
+          "name": "B. Barcola",
+          "number": 12,
+          "pos": "F"
+        },
+        {
+          "id": 278,
+          "name": "Kylian Mbappé",
+          "number": 10,
+          "pos": "F"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 47270,
+          "name": "Unai Simón",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 47519,
+          "name": "Pedro Porro",
+          "number": 12,
+          "pos": "D"
+        },
+        {
+          "id": 396623,
+          "name": "Pau Cubarsí Paredes",
+          "number": 22,
+          "pos": "D"
+        },
+        {
+          "id": 622,
+          "name": "Aymeric Laporte",
+          "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 47380,
+          "name": "Marc Cucurella",
+          "number": 24,
+          "pos": "D"
+        },
+        {
+          "id": 44,
+          "name": "Rodri",
+          "number": 16,
+          "pos": "M"
+        },
+        {
+          "id": 1323,
+          "name": "Dani Olmo",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 328,
+          "name": "Fabián Ruiz",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 386828,
+          "name": "Lamine Yamal",
+          "number": 19,
+          "pos": "F"
+        },
+        {
+          "id": 47323,
+          "name": "Mikel Oyarzabal",
+          "number": 21,
+          "pos": "F"
+        },
+        {
+          "id": 182219,
+          "name": "Álex Baena",
+          "number": 15,
+          "pos": "M"
+        }
+      ],
+      "captured_at": "2026-07-14T19:06:49.155265+00:00"
+    }
+  ],
   "warnings": []
 }
