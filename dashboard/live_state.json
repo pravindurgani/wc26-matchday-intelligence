@@ -1,8 +1,8 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-15T19:01:19.430463+00:00",
+  "last_updated_utc": "2026-07-15T19:06:50.206629+00:00",
   "completed_matches_count": 101,
-  "simulation_rerun_this_tick": true,
+  "simulation_rerun_this_tick": false,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [
@@ -12,7 +12,7 @@
       "away": "Argentina",
       "home_score": 0,
       "away_score": 0,
-      "elapsed": 1,
+      "elapsed": 7,
       "status": "LIVE",
       "status_long": "First Half"
     }
