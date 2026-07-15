@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T13:18:40.208655+00:00",
+  "generated_at": "2026-07-15T16:15:20.502796+00:00",
   "schema_version": 1,
   "source": "api_football",
   "season": 2026,
@@ -1623,200 +1623,47 @@
       ]
     },
     "Austria": {
-      "team_top_minutes": 360,
+      "team_top_minutes": 252,
       "players": [
         {
-          "name": "A. Schlager",
-          "minutes": 360,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
           "name": "S. Posch",
-          "minutes": 333,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "P. Lienhart",
-          "minutes": 180,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "D. Alaba",
-          "minutes": 278,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "P. Mwene",
-          "minutes": 148,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "N. Seiwald",
-          "minutes": 315,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "X. Schlager",
-          "minutes": 239,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "R. Schmid",
-          "minutes": 266,
+          "minutes": 205,
           "goals": 1,
+          "assists": 1,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "C. Baumgartner",
+          "minutes": 139,
+          "goals": 0,
           "assists": 0,
-          "appearances": 4,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
-          "name": "K. Laimer",
-          "minutes": 360,
+          "name": "F. Grillitsch",
+          "minutes": 57,
           "goals": 0,
-          "assists": 1,
-          "appearances": 4,
+          "assists": 0,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "M. Sabitzer",
-          "minutes": 360,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "S. Kalajdzic",
-          "minutes": 77,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "M. Arnautović",
-          "minutes": 142,
-          "goals": 2,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "K. Danso",
-          "minutes": 239,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "C. Chukwuemeka",
-          "minutes": 89,
-          "goals": 0,
-          "assists": 0,
+          "minutes": 252,
+          "goals": 3,
+          "assists": 2,
           "appearances": 3,
           "clean_sheets": 0,
           "position": "M"
         },
         {
-          "name": "P. Wanner",
-          "minutes": 234,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "P. Wimmer",
-          "minutes": 33,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "F. Wiegele",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "P. Pentz",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "D. Affengruber",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "M. Friedl",
-          "minutes": 23,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "A. Schöpf",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "D. Alaba",
-          "minutes": 74,
+          "name": "M. Svoboda",
+          "minutes": 61,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
@@ -1824,58 +1671,139 @@
           "position": "D"
         },
         {
-          "name": "X. Schlager",
-          "minutes": 140,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "K. Laimer",
-          "minutes": 115,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "D. Ljubičić",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "T. Lawal",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "P. Pentz",
-          "minutes": 90,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "S. Kalajdzic",
+          "name": "A. Prass",
           "minutes": 75,
           "goals": 0,
           "assists": 0,
           "appearances": 3,
           "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "N. Seiwald",
+          "minutes": 217,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Schlager",
+          "minutes": 139,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "R. Schmid",
+          "minutes": 102,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "M. Arnautović",
+          "minutes": 138,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
           "position": "A"
+        },
+        {
+          "name": "K. Danso",
+          "minutes": 94,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "M. Gregoritsch",
+          "minutes": 136,
+          "goals": 1,
+          "assists": 1,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "M. Friedl",
+          "minutes": 172,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "P. Mwene",
+          "minutes": 172,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "P. Lienhart",
+          "minutes": 155,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "D. Affengruber",
+          "minutes": 14,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "P. Wimmer",
+          "minutes": 94,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "C. Chukwuemeka",
+          "minutes": 94,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "F. Wiegele",
+          "minutes": 49,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "P. Wanner",
+          "minutes": 142,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
         }
       ]
     },
@@ -2173,7 +2101,7 @@
       ]
     },
     "Bosnia and Herzegovina": {
-      "team_top_minutes": 277,
+      "team_top_minutes": 180,
       "players": [
         {
           "name": "I. Šunjić",
@@ -2354,105 +2282,6 @@
           "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
-        },
-        {
-          "name": "E. Bičakčić",
-          "minutes": 3,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "E. Džeko",
-          "minutes": 46,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "F"
-        },
-        {
-          "name": "S. Kolašinac",
-          "minutes": 180,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "H. Tabaković",
-          "minutes": 15,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "A. Hadžiahmetović",
-          "minutes": 12,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "D. Hadžikadunić",
-          "minutes": 27,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "J. Lukić",
-          "minutes": 74,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "E. Bajraktarevic",
-          "minutes": 229,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Ermin Mahmić",
-          "minutes": 72,
-          "goals": 2,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Kerim-Sam Alajbegović",
-          "minutes": 277,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "M. Jurkas",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
         }
       ]
     },
@@ -2998,231 +2827,6 @@
           "appearances": 7,
           "clean_sheets": 0,
           "position": "A"
-        },
-        {
-          "name": "Alex Telles",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Alex Sandro",
-          "minutes": 164,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Andreas Pereira",
-          "minutes": 22,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Vitinho",
-          "minutes": 61,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Léo Ortiz",
-          "minutes": 47,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Antony",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Jean Lucas",
-          "minutes": 17,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Kaio Jorge",
-          "minutes": 19,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Éderson",
-          "minutes": 10,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Léo Pereira",
-          "minutes": 228,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Douglas Santos",
-          "minutes": 90,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Matheus Pereira",
-          "minutes": 12,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Dodô",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Hugo Souza",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "Samuel Lino",
-          "minutes": 61,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Alexsandro Ribeiro",
-          "minutes": 275,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Danilo Santos",
-          "minutes": 112,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Andrey Santos",
-          "minutes": 109,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Wesley",
-          "minutes": 205,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Murillo",
-          "minutes": 45,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Léo Pereira",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Gabriel Sara",
-          "minutes": 15,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Danilo Santos",
-          "minutes": 43,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Kaiki",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Rayan",
-          "minutes": 289,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
         }
       ]
     },
@@ -3628,243 +3232,8 @@
       ]
     },
     "Cape Verde": {
-      "team_top_minutes": 390,
-      "players": [
-        {
-          "name": "Vózinha",
-          "minutes": 390,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "S. Moreira",
-          "minutes": 301,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Pico",
-          "minutes": 390,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Diney Borges",
-          "minutes": 390,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "S. Lopes Cabral",
-          "minutes": 286,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Kevin Pina",
-          "minutes": 351,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Ryan Mendes",
-          "minutes": 331,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "L. Duarte",
-          "minutes": 166,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Jamiro Monteiro",
-          "minutes": 283,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Jovane Cabral",
-          "minutes": 141,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "D. Livramento",
-          "minutes": 175,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Deroy Duarte",
-          "minutes": 264,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Willy Semedo",
-          "minutes": 130,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Nuno da Costa",
-          "minutes": 157,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "João Paulo",
-          "minutes": 104,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Telmo Arcanjo",
-          "minutes": 56,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Márcio Rosa",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "C. dos Santos",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "Stopira",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Logan Costa",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Garry Rodrigues",
-          "minutes": 77,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Yannick Semedo",
-          "minutes": 30,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Kelvin Pires",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Hélio Varela",
-          "minutes": 101,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Gilson Benchimol",
-          "minutes": 78,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Wagner Pina",
-          "minutes": 89,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        }
-      ]
+      "team_top_minutes": 0,
+      "players": []
     },
     "Colombia": {
       "team_top_minutes": 1505,
@@ -4529,270 +3898,8 @@
       ]
     },
     "Croatia": {
-      "team_top_minutes": 171,
-      "players": [
-        {
-          "name": "K. Letica",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "I. Perišić",
-          "minutes": 158,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "L. Modrić",
-          "minutes": 116,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "N. Vlašić",
-          "minutes": 66,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Pongračić",
-          "minutes": 143,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "D. Livaković",
-          "minutes": 171,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "N. Moro",
-          "minutes": 41,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "D. Ćaleta-Car",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Mario Pasalic",
-          "minutes": 86,
-          "goals": 1,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "I. Smolčić",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "I. Pandur",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "K. Jakić",
-          "minutes": 19,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Šutalo",
-          "minutes": 79,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "M. Erlić",
-          "minutes": 104,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "J. Stanišić",
-          "minutes": 148,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "I. Matanović",
-          "minutes": 67,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "Marco Pasalic",
-          "minutes": 119,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "T. Fruk",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "P. Sučić",
-          "minutes": 138,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "L. Vušković",
-          "minutes": 112,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "D. Kotarski",
-          "minutes": 31,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "A. Kramarić",
-          "minutes": 64,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "L. Majer",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Kovačić",
-          "minutes": 103,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "L. Sučić",
-          "minutes": 57,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Budimir",
-          "minutes": 77,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "P. Musa",
-          "minutes": 58,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "J. Gvardiol",
-          "minutes": 149,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "M. Baturina",
-          "minutes": 116,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        }
-      ]
+      "team_top_minutes": 0,
+      "players": []
     },
     "Curacao": {
       "team_top_minutes": 934,
@@ -5232,315 +4339,8 @@
       ]
     },
     "Czechia": {
-      "team_top_minutes": 270,
-      "players": [
-        {
-          "name": "M. Sadílek",
-          "minutes": 3,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "V. Černý",
-          "minutes": 159,
-          "goals": 1,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "P. Schick",
-          "minutes": 152,
-          "goals": 3,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "T. Chorý",
-          "minutes": 90,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "J. Zelený",
-          "minutes": 136,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "T. Souček",
-          "minutes": 180,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "T. Holeš",
-          "minutes": 23,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "V. Kušej",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "M. Jedlička",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "D. Douděra",
-          "minutes": 10,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "V. Jemelka",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "J. Kuchta",
-          "minutes": 11,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "L. Provod",
-          "minutes": 119,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "P. Šulc",
-          "minutes": 148,
-          "goals": 1,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Kliment",
-          "minutes": 28,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "D. Zima",
-          "minutes": 157,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "D. Jurásek",
-          "minutes": 44,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "L. Červ",
-          "minutes": 125,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Boula",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Šín",
-          "minutes": 10,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "V. Coufal",
-          "minutes": 170,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "A. Král",
-          "minutes": 55,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "V. Darida",
-          "minutes": 55,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Hložek",
-          "minutes": 157,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "M. Chytil",
-          "minutes": 13,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "J. Staněk",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "L. Krejčí",
-          "minutes": 180,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "M. Kovář",
-          "minutes": 180,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "R. Hranáč",
-          "minutes": 270,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "L. Horníček",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "D. Višinský",
-          "minutes": 56,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Š. Chaloupek",
-          "minutes": 90,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "A. Sojka",
-          "minutes": 149,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "H. Sochurek",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        }
-      ]
+      "team_top_minutes": 0,
+      "players": []
     },
     "DR Congo": {
       "team_top_minutes": 120,
@@ -5745,7 +4545,7 @@
         },
         {
           "name": "G. Kalulu",
-          "minutes": 10,
+          "minutes": 0,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -5754,19 +4554,19 @@
         },
         {
           "name": "A. Tshibola",
-          "minutes": 0,
+          "minutes": 18,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 1,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "G. Kakuta",
-          "minutes": 0,
+          "minutes": 32,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 1,
           "clean_sheets": 0,
           "position": "M"
         },
@@ -6335,10 +5135,10 @@
         },
         {
           "name": "Jeremy Arévalo",
-          "minutes": 0,
+          "minutes": 76,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "A"
         },
@@ -6417,74 +5217,56 @@
       ]
     },
     "Egypt": {
-      "team_top_minutes": 480,
+      "team_top_minutes": 341,
       "players": [
         {
-          "name": "Mohamed Salah",
-          "minutes": 428,
-          "goals": 1,
-          "assists": 2,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
           "name": "Ahmed Abou El Fotouh",
-          "minutes": 268,
+          "minutes": 241,
           "goals": 0,
-          "assists": 0,
+          "assists": 1,
           "appearances": 3,
           "clean_sheets": 0,
           "position": "D"
         },
         {
           "name": "Mohamed Hany",
-          "minutes": 480,
+          "minutes": 326,
           "goals": 0,
-          "assists": 1,
-          "appearances": 5,
+          "assists": 2,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "Karim Hafez",
-          "minutes": 172,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 3,
+          "name": "Trézéguet",
+          "minutes": 169,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 4,
           "clean_sheets": 0,
-          "position": "D"
+          "position": "A"
+        },
+        {
+          "name": "Mostafa Mohamed",
+          "minutes": 36,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "A"
         },
         {
           "name": "Mohamed El Shenawy",
-          "minutes": 0,
+          "minutes": 82,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "G"
         },
         {
           "name": "Yasser Ibrahim",
-          "minutes": 466,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Rami Rabia",
-          "minutes": 368,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Hamdi Fathy",
-          "minutes": 241,
+          "minutes": 324,
           "goals": 0,
           "assists": 0,
           "appearances": 4,
@@ -6492,17 +5274,26 @@
           "position": "D"
         },
         {
-          "name": "Al Mahdi Soliman",
-          "minutes": 0,
+          "name": "Rami Rabia",
+          "minutes": 81,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 2,
           "clean_sheets": 0,
-          "position": "G"
+          "position": "D"
+        },
+        {
+          "name": "Hamdi Fathy",
+          "minutes": 260,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
         },
         {
           "name": "Mohanad Lasheen",
-          "minutes": 359,
+          "minutes": 303,
           "goals": 0,
           "assists": 0,
           "appearances": 4,
@@ -6511,7 +5302,34 @@
         },
         {
           "name": "Zizo",
-          "minutes": 64,
+          "minutes": 178,
+          "goals": 1,
+          "assists": 1,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Islam Issa",
+          "minutes": 126,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Emam Ashour",
+          "minutes": 138,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "H. Hassan",
+          "minutes": 168,
           "goals": 0,
           "assists": 0,
           "appearances": 4,
@@ -6519,83 +5337,65 @@
           "position": "A"
         },
         {
-          "name": "Emam Ashour",
-          "minutes": 366,
-          "goals": 2,
+          "name": "Mahmoud Saber",
+          "minutes": 45,
+          "goals": 0,
           "assists": 0,
-          "appearances": 5,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "Ibrahim Adel",
-          "minutes": 2,
+          "minutes": 105,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 3,
           "clean_sheets": 0,
-          "position": "A"
+          "position": "M"
         },
         {
           "name": "Omar Marmoush",
-          "minutes": 326,
-          "goals": 0,
+          "minutes": 300,
+          "goals": 1,
           "assists": 0,
-          "appearances": 5,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "A"
         },
         {
           "name": "Marwan Attia",
-          "minutes": 434,
+          "minutes": 341,
           "goals": 0,
-          "assists": 1,
-          "appearances": 5,
+          "assists": 0,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "Mostafa Shobeir",
-          "minutes": 480,
+          "minutes": 281,
           "goals": 0,
           "assists": 0,
-          "appearances": 5,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "G"
         },
         {
           "name": "Hossam Abdelmaguid",
-          "minutes": 67,
+          "minutes": 38,
           "goals": 0,
           "assists": 0,
-          "appearances": 2,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "Mostafa Zico",
-          "minutes": 375,
-          "goals": 2,
-          "assists": 1,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Mohamed Alaa",
+          "name": "N. Mansy",
           "minutes": 0,
           "goals": 0,
           "assists": 0,
           "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "H. Abdelkarim",
-          "minutes": 57,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
           "clean_sheets": 0,
           "position": "A"
         },
@@ -7641,43 +6441,34 @@
           "position": "M"
         },
         {
-          "name": "S. Gnabry",
-          "minutes": 135,
-          "goals": 1,
-          "assists": 1,
+          "name": "M. Neuer",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "F. Nmecha",
+          "minutes": 164,
+          "goals": 0,
+          "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "N. Amiri",
-          "minutes": 40,
+          "minutes": 21,
           "goals": 0,
-          "assists": 1,
+          "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
-          "name": "P. Groß",
-          "minutes": 17,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "C. Führich",
-          "minutes": 29,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Vagnoman",
+          "name": "W. Anton",
           "minutes": 29,
           "goals": 0,
           "assists": 0,
@@ -7695,17 +6486,8 @@
           "position": "G"
         },
         {
-          "name": "A. Stiller",
-          "minutes": 45,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "N. Woltemade",
-          "minutes": 32,
+          "name": "J. Leweling",
+          "minutes": 18,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -7714,12 +6496,21 @@
         },
         {
           "name": "M. Beier",
-          "minutes": 26,
+          "minutes": 39,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "A"
+        },
+        {
+          "name": "M. Thiaw",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
         },
         {
           "name": "A. Stach",
@@ -7740,6 +6531,15 @@
           "position": "M"
         },
         {
+          "name": "J. Musiala",
+          "minutes": 170,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
           "name": "J. Urbig",
           "minutes": 0,
           "goals": 0,
@@ -7749,20 +6549,20 @@
           "position": "G"
         },
         {
+          "name": "A. Pavlović",
+          "minutes": 170,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
           "name": "A. Ouédraogo",
           "minutes": 0,
           "goals": 0,
           "assists": 0,
           "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "L. Karl",
-          "minutes": 145,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 3,
           "clean_sheets": 0,
           "position": "M"
         }
@@ -8434,15 +7234,6 @@
           "position": "M"
         },
         {
-          "name": "L. Joseph",
-          "minutes": 116,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
           "name": "B. Labissiere",
           "minutes": 27,
           "goals": 1,
@@ -8462,7 +7253,7 @@
         },
         {
           "name": "W. Isidor",
-          "minutes": 188,
+          "minutes": 60,
           "goals": 1,
           "assists": 0,
           "appearances": 3,
@@ -8522,6 +7313,15 @@
           "appearances": 4,
           "clean_sheets": 0,
           "position": "D"
+        },
+        {
+          "name": "D. Simon",
+          "minutes": 35,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
         },
         {
           "name": "D. Jean",
@@ -11787,223 +10587,70 @@
       ]
     },
     "Morocco": {
-      "team_top_minutes": 570,
+      "team_top_minutes": 310,
       "players": [
         {
           "name": "A. Hakimi",
-          "minutes": 570,
-          "goals": 1,
-          "assists": 2,
-          "appearances": 6,
+          "minutes": 221,
+          "goals": 0,
+          "assists": 3,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "D"
         },
         {
           "name": "N. Mazraoui",
-          "minutes": 486,
+          "minutes": 177,
           "goals": 0,
           "assists": 0,
-          "appearances": 6,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "D"
         },
         {
           "name": "Brahim Díaz",
-          "minutes": 462,
-          "goals": 0,
-          "assists": 4,
-          "appearances": 6,
+          "minutes": 186,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "Y. Bounou",
-          "minutes": 570,
+          "minutes": 271,
           "goals": 0,
           "assists": 0,
-          "appearances": 6,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "M. Mohamedi",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "A. Tagnaouti",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "G"
         },
         {
           "name": "I. Diop",
-          "minutes": 477,
-          "goals": 1,
+          "minutes": 310,
+          "goals": 0,
           "assists": 0,
-          "appearances": 5,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "D"
         },
         {
           "name": "S. Rahimi",
           "minutes": 175,
-          "goals": 2,
-          "assists": 1,
-          "appearances": 6,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "A"
-        },
-        {
-          "name": "M. Saâdane",
-          "minutes": 13,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
         },
         {
           "name": "A. Ounahi",
-          "minutes": 437,
-          "goals": 2,
-          "assists": 0,
-          "appearances": 6,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "I. Saibari",
-          "minutes": 385,
-          "goals": 3,
-          "assists": 0,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "A. Salah-Eddine",
-          "minutes": 212,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "N. El Aynaoui",
-          "minutes": 563,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 6,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "C. Riad",
-          "minutes": 345,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "R. Halhal",
-          "minutes": 180,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "C. Talbi",
-          "minutes": 183,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "B. El Khannouss",
-          "minutes": 466,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 6,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "S. El Mourabet",
-          "minutes": 96,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Bouaddi",
-          "minutes": 384,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Amaimouni",
-          "minutes": 23,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "S. Amrabat",
-          "minutes": 145,
+          "minutes": 181,
           "goals": 0,
           "assists": 0,
           "appearances": 3,
           "clean_sheets": 0,
           "position": "M"
-        },
-        {
-          "name": "A. El Kaabi",
-          "minutes": 70,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "S. El Karouani",
-          "minutes": 8,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "A. Adli",
-          "minutes": 23,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
         },
         {
           "name": "M. Benabid",
@@ -12024,11 +10671,20 @@
           "position": "M"
         },
         {
-          "name": "Y. Belammari",
-          "minutes": 0,
+          "name": "I. Saibari",
+          "minutes": 182,
+          "goals": 2,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "A. Salah-Eddine",
+          "minutes": 155,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -12042,8 +10698,152 @@
           "position": "M"
         },
         {
+          "name": "N. El Aynaoui",
+          "minutes": 244,
+          "goals": 2,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "C. Riad",
+          "minutes": 200,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "M. Harrar",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "C. Talbi",
+          "minutes": 91,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "B. El Khannouss",
+          "minutes": 156,
+          "goals": 1,
+          "assists": 1,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Gessime Yassine",
+          "minutes": 113,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "I. Baouf",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "S. El Mourabet",
+          "minutes": 163,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "S. Amrabat",
+          "minutes": 127,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "M. Mohamedi",
+          "minutes": 90,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "A. Tagnaouti",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "A. El Kaabi",
+          "minutes": 95,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "M. Saâdane",
+          "minutes": 51,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "S. El Karouani",
+          "minutes": 8,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "A. Adli",
+          "minutes": 23,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Y. Belammari",
+          "minutes": 86,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
           "name": "A. Sbaï",
-          "minutes": 12,
+          "minutes": 10,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -12052,10 +10852,10 @@
         },
         {
           "name": "Z. El Ouahdi",
-          "minutes": 16,
+          "minutes": 50,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -12069,29 +10869,11 @@
           "position": "M"
         },
         {
-          "name": "M. Harrar",
-          "minutes": 0,
+          "name": "R. Halhal",
+          "minutes": 161,
           "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "Gessime Yassine",
-          "minutes": 77,
-          "goals": 1,
           "assists": 0,
           "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "I. Baouf",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -12114,148 +10896,8 @@
           "position": "D"
         },
         {
-          "name": "M. Zabiri",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "A"
-        }
-      ]
-    },
-    "Netherlands": {
-      "team_top_minutes": 390,
-      "players": [
-        {
-          "name": "D. Dumfries",
-          "minutes": 390,
-          "goals": 0,
-          "assists": 2,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "C. Gakpo",
-          "minutes": 371,
-          "goals": 3,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "D. Malen",
-          "minutes": 187,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "V. van Dijk",
-          "minutes": 390,
-          "goals": 1,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "F. de Jong",
-          "minutes": 331,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "R. Gravenberch",
-          "minutes": 347,
-          "goals": 0,
-          "assists": 2,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Depay",
-          "minutes": 51,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "N. Aké",
-          "minutes": 170,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "M. Flekken",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "T. Koopmeiners",
-          "minutes": 118,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "T. Reijnders",
-          "minutes": 201,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "L. Geertruida",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "C. Summerville",
-          "minutes": 253,
-          "goals": 2,
-          "assists": 2,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "J. van Hecke",
-          "minutes": 390,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "Q. Timber",
-          "minutes": 54,
+          "name": "A. Bouaddi",
+          "minutes": 90,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
@@ -12263,34 +10905,120 @@
           "position": "M"
         },
         {
-          "name": "B. Brobbey",
-          "minutes": 232,
-          "goals": 3,
+          "name": "M. Zabiri",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "A. Amaimouni",
+          "minutes": 72,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "A"
+        }
+      ]
+    },
+    "Netherlands": {
+      "team_top_minutes": 298,
+      "players": [
+        {
+          "name": "S. de Vrij",
+          "minutes": 100,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "D. Dumfries",
+          "minutes": 195,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "C. Gakpo",
+          "minutes": 298,
+          "goals": 2,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "D. Malen",
+          "minutes": 220,
+          "goals": 0,
           "assists": 0,
           "appearances": 4,
           "clean_sheets": 0,
           "position": "A"
         },
         {
-          "name": "B. Verbruggen",
-          "minutes": 390,
-          "goals": 0,
+          "name": "V. van Dijk",
+          "minutes": 273,
+          "goals": 1,
           "assists": 0,
           "appearances": 4,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "M. van de Ven",
-          "minutes": 266,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
           "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "R. Roefs",
+          "name": "R. Gravenberch",
+          "minutes": 217,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "W. Weghorst",
+          "minutes": 37,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "M. Flekken",
+          "minutes": 113,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "T. Koopmeiners",
+          "minutes": 131,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "T. Reijnders",
+          "minutes": 229,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "J. Bijlow",
           "minutes": 0,
           "goals": 0,
           "assists": 0,
@@ -12299,13 +11027,85 @@
           "position": "G"
         },
         {
-          "name": "J. Hato",
-          "minutes": 34,
+          "name": "L. Geertruida",
+          "minutes": 98,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "J. Schouten",
+          "minutes": 101,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "J. van Hecke",
+          "minutes": 292,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Q. Timber",
+          "minutes": 125,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "B. Brobbey",
+          "minutes": 132,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "B. Verbruggen",
+          "minutes": 205,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "M. van de Ven",
+          "minutes": 273,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "X. Simons",
+          "minutes": 100,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "K. Smit",
+          "minutes": 70,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
           "clean_sheets": 0,
-          "position": "D"
+          "position": "M"
         },
         {
           "name": "F. de Jong",
@@ -12747,7 +11547,7 @@
       ]
     },
     "Norway": {
-      "team_top_minutes": 310,
+      "team_top_minutes": 180,
       "players": [
         {
           "name": "E. Botheim",
@@ -13003,19 +11803,19 @@
         },
         {
           "name": "F. Aursnes",
-          "minutes": 310,
+          "minutes": 135,
           "goals": 0,
           "assists": 0,
-          "appearances": 6,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "F. Bjørkan",
-          "minutes": 45,
+          "minutes": 124,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -13030,10 +11830,10 @@
         },
         {
           "name": "K. Thorstvedt",
-          "minutes": 62,
+          "minutes": 112,
           "goals": 0,
           "assists": 0,
-          "appearances": 2,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "M"
         },
@@ -13048,7 +11848,7 @@
         },
         {
           "name": "H. Falchener",
-          "minutes": 66,
+          "minutes": 15,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -19294,105 +18094,6 @@
           "appearances": 4,
           "clean_sheets": 0,
           "position": "M"
-        },
-        {
-          "name": "H. Wright",
-          "minutes": 2,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "A. Zendejas",
-          "minutes": 13,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "B. Aaronson",
-          "minutes": 77,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Scally",
-          "minutes": 87,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "C. Roldan",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "T. Tessmann",
-          "minutes": 64,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "P. Schulte",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "J. Cardoso",
-          "minutes": 45,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Morris",
-          "minutes": 43,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Arfsten",
-          "minutes": 1,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "P. Agyemang",
-          "minutes": 19,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
         }
       ]
     },
@@ -19938,402 +18639,6 @@
           "appearances": 0,
           "clean_sheets": 0,
           "position": "D"
-        },
-        {
-          "name": "J. Giménez",
-          "minutes": 778,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 9,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "M. Vecino",
-          "minutes": 33,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "R. Bentancur",
-          "minutes": 740,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 9,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "G. Varela",
-          "minutes": 510,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 8,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "G. de Arrascaeta",
-          "minutes": 470,
-          "goals": 2,
-          "assists": 0,
-          "appearances": 8,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Gómez",
-          "minutes": 17,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "B. Méndez",
-          "minutes": 32,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "M. Olivera",
-          "minutes": 893,
-          "goals": 1,
-          "assists": 1,
-          "appearances": 13,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "L. Olaza",
-          "minutes": 174,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "J. Rodríguez",
-          "minutes": 24,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "F. Viñas",
-          "minutes": 88,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "F. Carballo",
-          "minutes": 62,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Canobbio",
-          "minutes": 81,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "B. Rodríguez",
-          "minutes": 431,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 8,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "F. Torres",
-          "minutes": 84,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "F. Israel",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "S. Mele",
-          "minutes": 366,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "C. Olivera",
-          "minutes": 507,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 8,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "R. Araújo",
-          "minutes": 726,
-          "goals": 1,
-          "assists": 0,
-          "appearances": 8,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "S. Bueno",
-          "minutes": 335,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "L. Suárez",
-          "minutes": 114,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "M. Saracchi",
-          "minutes": 207,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 5,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "L. Torreira",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Merentiel",
-          "minutes": 52,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "R. Aguirre",
-          "minutes": 430,
-          "goals": 3,
-          "assists": 1,
-          "appearances": 7,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "N. Fonseca",
-          "minutes": 121,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Sant&apos;Anna",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "C. Fiermarín",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "R. Zalazar",
-          "minutes": 42,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "E. Martínez",
-          "minutes": 115,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "N. Marichal",
-          "minutes": 137,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "T. Palacios",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "A. Álvarez",
-          "minutes": 10,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "L. Rodríguez",
-          "minutes": 1,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "S. Mouriño",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "J. Lavega",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "F. Bernal",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Abaldo",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "L. Pino",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Rodríguez",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "F. Muslera",
-          "minutes": 90,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "I. Laquintana",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Sanabria",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "K. Amaro",
-          "minutes": 19,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
         }
       ]
     },
@@ -20784,5 +19089,70 @@
       ]
     }
   },
-  "warnings": []
+  "warnings": [
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 775,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    },
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 1113,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    },
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 6,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    },
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 1533,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    },
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 3,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    },
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 770,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    },
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 2384,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    },
+    {
+      "type": "api_error",
+      "endpoint": "/players",
+      "team_id": 7,
+      "errors": {
+        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
+      }
+    }
+  ]
 }
