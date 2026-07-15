@@ -2,7 +2,7 @@
   "provider": "api_football",
   "league_id": "1",
   "season": "2026",
-  "generated_at": "2026-07-06T12:51:06.998761+00:00",
+  "generated_at": "2026-07-15T21:20:52.099439+00:00",
   "fixtures": [
     {
       "match_id": 1,
@@ -811,7 +811,8 @@
       "home": "Spain",
       "away": "Belgium",
       "date": "2026-07-10",
-      "phase": "qf"
+      "phase": "qf",
+      "matched_by": "name"
     },
     {
       "match_id": 99,
@@ -828,7 +829,8 @@
       "home": "Argentina",
       "away": "Switzerland",
       "date": "2026-07-11",
-      "phase": "qf"
+      "phase": "qf",
+      "matched_by": "name"
     },
     {
       "match_id": 101,
@@ -836,7 +838,8 @@
       "home": "France",
       "away": "Spain",
       "date": "2026-07-14",
-      "phase": "sf"
+      "phase": "sf",
+      "matched_by": "name"
     },
     {
       "match_id": 102,
@@ -844,19 +847,36 @@
       "home": "England",
       "away": "Argentina",
       "date": "2026-07-15",
-      "phase": "sf"
+      "phase": "sf",
+      "matched_by": "name"
+    },
+    {
+      "match_id": 103,
+      "provider_fixture_id": "1591865",
+      "home": "France",
+      "away": "England",
+      "date": "2026-07-18",
+      "phase": "third_place",
+      "matched_by": "name"
+    },
+    {
+      "match_id": 104,
+      "provider_fixture_id": "1591866",
+      "home": "Spain",
+      "away": "Argentina",
+      "date": "2026-07-19",
+      "phase": "final",
+      "matched_by": "name"
     }
   ],
   "coverage": {
     "group_mapped": 72,
     "group_total": 72,
-    "knockout_mapped": 30,
+    "knockout_mapped": 32,
     "knockout_total": 32,
-    "total_mapped": 102,
+    "total_mapped": 104,
     "total_expected": 104
   },
-  "unmapped_internal_count": 6,
-  "unmapped_provider_count": 0,
-  "extended_at": "2026-07-12T06:01:25.575172+00:00",
-  "extended_by": "fetch_results.knockout_auto_extension"
+  "unmapped_internal_count": 0,
+  "unmapped_provider_count": 0
 }

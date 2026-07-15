@@ -1,39 +1,13 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-15T21:11:09.579191+00:00",
+  "last_updated_utc": "2026-07-15T21:20:52.597248+00:00",
   "completed_matches_count": 102,
-  "simulation_rerun_this_tick": true,
+  "simulation_rerun_this_tick": false,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [],
   "in_play_count": 0,
-  "warnings": [
-    {
-      "type": "unmapped_provider_fixture",
-      "severity": "critical",
-      "provider": "api_football",
-      "count": 2,
-      "message": "2 provider fixture(s) inside the tournament window could not be mapped to internal match ids \u2014 their results are NOT being ingested. KO auto-extension could not place them: check provider_fixture_map.json coverage and TEAM_ALIAS for the names below, or rebuild via scripts/live/build_provider_fixture_map.py --provider api_football --write.",
-      "fixtures": [
-        {
-          "fixture_id": "1591865",
-          "home": "France",
-          "away": "England",
-          "date": "2026-07-18",
-          "status": "NS",
-          "round": "3rd Place Final"
-        },
-        {
-          "fixture_id": "1591866",
-          "home": "Spain",
-          "away": "Argentina",
-          "date": "2026-07-19",
-          "status": "NS",
-          "round": "Final"
-        }
-      ]
-    }
-  ],
+  "warnings": [],
   "tournament_complete": false,
   "champion": null
 }
