@@ -133,7 +133,7 @@ Every decision is appended to `data/live/matchday_intelligence_log.jsonl` so any
 ## 📊 Model performance (v3)
 
 <!-- AUTO:MODEL_METRICS:BEGIN -->
-> _Snapshot: 2026-07-15 07:31:53 UTC · regenerates nightly · [live dashboard](https://wc26-matchday-intelligence.vercel.app/) for current numbers._
+> _Snapshot: 2026-07-16 07:36:11 UTC · regenerates nightly · [live dashboard](https://wc26-matchday-intelligence.vercel.app/) for current numbers._
 
 | Metric                          | Value  | Notes |
 |---|---|---|
@@ -150,16 +150,16 @@ Every decision is appended to `data/live/matchday_intelligence_log.jsonl` so any
 <!-- AUTO:TOP_CONTENDERS:BEGIN -->
 ## Top contenders (latest run — 25,000 sims, 5 seeds × 5,000)
 
-> _Snapshot: 2026-07-15 07:31:53 UTC · regenerates nightly · [live dashboard](https://wc26-matchday-intelligence.vercel.app/) for current numbers._
+> _Snapshot: 2026-07-16 07:36:11 UTC · regenerates nightly · [live dashboard](https://wc26-matchday-intelligence.vercel.app/) for current numbers._
 
 | # | Team       | Champion | Sim range (5 seeds) | Reach SF | Model Elo |
 |---|---|---|---|---|---|
-| 1 | Spain      | 25.8% | [24.9, 27.0] | 52.1% | 2209 |
-| 2 | Argentina  | 21.1% | [20.5, 22.5] | 47.5% | 2174 |
-| 3 | France     | 9.8% | [9.5, 10.3] | 30.2% | 2116 |
-| 4 | England    | 6.3% | [5.8, 6.9] | 22.4% | 2081 |
-| 5 | Colombia   | 5.1% | [5.0, 5.2] | 19.6% | 2049 |
-| 6 | Brazil     | 3.9% | [3.7, 4.3] | 19.9% | 2054 |
+| 1 | Spain      | 25.6% | [25.0, 26.2] | 51.0% | 2209 |
+| 2 | Argentina  | 21.3% | [21.0, 21.6] | 47.3% | 2174 |
+| 3 | France     | 10.2% | [10.0, 10.4] | 32.6% | 2116 |
+| 4 | England    | 6.1% | [5.7, 6.9] | 22.2% | 2081 |
+| 5 | Colombia   | 5.3% | [5.1, 5.5] | 19.7% | 2049 |
+| 6 | Brazil     | 3.8% | [3.5, 4.1] | 18.7% | 2054 |
 <!-- AUTO:TOP_CONTENDERS:END -->
 
 > "Model Elo" is in-repo (modified Glicko + extra friendlies + exponential time decay). Runs ~50–100 above eloratings.net by design — rank order is what's meaningful. Tables above are regenerated nightly by `scripts/10_regen_readme.py`; do not edit by hand.
