@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T16:11:33.355762+00:00",
+  "generated_at": "2026-07-16T18:59:47.461506+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -370,12 +370,7 @@
           "fixture_id": 1489379,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.358,
-            "ga90": 0.383,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 470,
-            "team_top_minutes": 1313
+            "reason": "no_stats_record"
           }
         },
         {
@@ -388,14 +383,9 @@
           "replacement_elo": -9.6,
           "net_elo": -20.4,
           "fixture_id": 1489379,
-          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "minutes_share": 0.553,
-            "ga90": 0.124,
-            "cs_share": 0.0,
-            "is_gk": false,
-            "minutes": 726,
-            "team_top_minutes": 1313
+            "reason": "no_stats_record"
           }
         }
       ]
