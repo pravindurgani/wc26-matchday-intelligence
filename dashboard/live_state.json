@@ -1,21 +1,13 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-16T10:51:00.065110+00:00",
+  "last_updated_utc": "2026-07-16T10:57:37.306349+00:00",
   "completed_matches_count": 102,
-  "simulation_rerun_this_tick": false,
+  "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [],
   "in_play_count": 0,
-  "warnings": [
-    {
-      "type": "provider_returned_nothing",
-      "message": "Provider 'api_football' returned 0 matches with no warnings; existing locked matches preserved. Investigate the adapter / provider token if this persists across ticks.",
-      "count": 1,
-      "first_seen_utc": "2026-07-16T10:50:59.985359+00:00",
-      "last_seen_utc": "2026-07-16T10:50:59.985359+00:00"
-    }
-  ],
+  "warnings": [],
   "tournament_complete": false,
   "champion": null
 }
