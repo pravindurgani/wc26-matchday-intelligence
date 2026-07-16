@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T16:16:24.353254+00:00",
+  "generated_at": "2026-07-16T19:01:52.625797+00:00",
   "n_simulations_per_seed": 5000,
   "n_seeds": 5,
   "n_simulations_total": 25000,
@@ -1316,15 +1316,15 @@
       "altitude_m": 7,
       "climate": "warm_humid",
       "stage": "group",
-      "lam_home": 1.4875074625015259,
+      "lam_home": 1.4726868867874146,
       "lam_away": 1.1757023334503174,
-      "p_home_win": 0.41683576293924485,
-      "p_draw": 0.2848471572603745,
-      "p_away_win": 0.29831707980038075,
+      "p_home_win": 0.41357487319679104,
+      "p_draw": 0.28606847173794636,
+      "p_away_win": 0.3003566550652626,
       "elo_home": 2053.8972698963917,
       "elo_away": 1988.7160644414807,
       "effective_elo_home": 2061.074903289677,
-      "effective_elo_away": 2011.4152931203325,
+      "effective_elo_away": 2005.4152931203325,
       "home_travel_km": 0,
       "away_travel_km": 0,
       "home_rest_days": 30,
@@ -1355,13 +1355,13 @@
       "climate": "warm",
       "stage": "group",
       "lam_home": 0.9333598017692566,
-      "lam_away": 1.7620295286178589,
-      "p_home_win": 0.2111215650266093,
-      "p_draw": 0.2688989237842374,
-      "p_away_win": 0.5199795111891531,
+      "lam_away": 1.733963966369629,
+      "p_home_win": 0.21406737976089354,
+      "p_draw": 0.2716273809108936,
+      "p_away_win": 0.5143052393282129,
       "elo_home": 1690.0601159887806,
       "elo_away": 1848.0944339789598,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1831.4499161228484,
       "home_travel_km": 0,
       "away_travel_km": 0,
@@ -1392,15 +1392,15 @@
       "altitude_m": 0,
       "climate": "mild_indoor",
       "stage": "group",
-      "lam_home": 1.0624390840530396,
+      "lam_home": 1.1217036247253418,
       "lam_away": 1.1295288801193237,
-      "p_home_win": 0.3241147753911687,
-      "p_draw": 0.3237063956601632,
-      "p_away_win": 0.35217882894866814,
+      "p_home_win": 0.3390313802491469,
+      "p_draw": 0.31870452121802645,
+      "p_away_win": 0.3422640985328264,
       "elo_home": 1896.4640255664654,
       "elo_away": 1964.8489881684468,
       "effective_elo_home": 1861.7785023926044,
-      "effective_elo_away": 1960.784720808239,
+      "effective_elo_away": 1956.464720808239,
       "home_travel_km": 0,
       "away_travel_km": 0,
       "home_rest_days": 30,
@@ -1779,7 +1779,7 @@
       "p_away_win": 0.6212783033039393,
       "elo_home": 1747.8934851988183,
       "elo_away": 1973.8089295127777,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1990.673170363496,
       "home_travel_km": 0,
       "away_travel_km": 0,
@@ -2236,7 +2236,7 @@
       "elo_home": 1848.0944339789598,
       "elo_away": 1988.7160644414807,
       "effective_elo_home": 1831.4499161228484,
-      "effective_elo_away": 2010.3196931203324,
+      "effective_elo_away": 2004.3196931203324,
       "home_travel_km": 0,
       "away_travel_km": 273.9,
       "home_rest_days": 6,
@@ -2266,15 +2266,15 @@
       "altitude_m": 12,
       "climate": "warm_humid",
       "stage": "group",
-      "lam_home": 2.7283754348754883,
-      "lam_away": 0.5863939523696899,
-      "p_home_win": 0.744840595800923,
-      "p_draw": 0.17552239206369033,
-      "p_away_win": 0.07963701213538672,
+      "lam_home": 2.5489423274993896,
+      "lam_away": 0.5798348784446716,
+      "p_home_win": 0.7237814859372613,
+      "p_draw": 0.18980943138747894,
+      "p_away_win": 0.08640908267526001,
       "elo_home": 2053.8972698963917,
       "elo_away": 1690.0601159887806,
       "effective_elo_home": 2060.525303289677,
-      "effective_elo_away": 1646.1562430352842,
+      "effective_elo_away": 1652.1562430352842,
       "home_travel_km": 137.4,
       "away_travel_km": 408.1,
       "home_rest_days": 6,
@@ -2305,13 +2305,13 @@
       "climate": "mild_dry",
       "stage": "group",
       "lam_home": 1.4992173910140991,
-      "lam_away": 1.0080127716064453,
-      "p_home_win": 0.44981567753591833,
-      "p_draw": 0.2919806821776588,
-      "p_away_win": 0.25820364028642273,
+      "lam_away": 1.0465666055679321,
+      "p_home_win": 0.4426019224889418,
+      "p_draw": 0.29022318097454547,
+      "p_away_win": 0.26717489653651283,
       "elo_home": 1964.8489881684468,
       "elo_away": 1904.3871264264383,
-      "effective_elo_home": 1955.4907208082388,
+      "effective_elo_home": 1951.170720808239,
       "effective_elo_away": 1863.9362064839474,
       "home_travel_km": 1323.5,
       "away_travel_km": 504.6,
@@ -2684,15 +2684,15 @@
       "altitude_m": 12,
       "climate": "warm_humid",
       "stage": "group",
-      "lam_home": 2.8389737606048584,
+      "lam_home": 2.5524466037750244,
       "lam_away": 0.6842857003211975,
-      "p_home_win": 0.7388935069573656,
-      "p_draw": 0.17180893384486776,
-      "p_away_win": 0.08929755919776672,
+      "p_home_win": 0.7029125366221584,
+      "p_draw": 0.1939650476396344,
+      "p_away_win": 0.10312241573820731,
       "elo_home": 2116.1496379024643,
       "elo_away": 1747.8934851988183,
       "effective_elo_home": 2168.9100051211226,
-      "effective_elo_away": 1693.7449037908975,
+      "effective_elo_away": 1697.0749037908975,
       "home_travel_km": 137.4,
       "away_travel_km": 408.1,
       "home_rest_days": 6,
@@ -3064,15 +3064,15 @@
       "altitude_m": 320,
       "climate": "hot_humid_indoor",
       "stage": "group",
-      "lam_home": 2.1951677799224854,
-      "lam_away": 0.5966677665710449,
-      "p_home_win": 0.669222302242892,
-      "p_draw": 0.2232069937497058,
-      "p_away_win": 0.10757070400740207,
+      "lam_home": 2.1906371116638184,
+      "lam_away": 0.6266449093818665,
+      "p_home_win": 0.6619094297573201,
+      "p_draw": 0.2246444795964418,
+      "p_away_win": 0.11344609064623797,
       "elo_home": 1988.7160644414807,
       "elo_away": 1690.0601159887806,
-      "effective_elo_home": 2005.5120931203326,
-      "effective_elo_away": 1643.5178430352842,
+      "effective_elo_home": 1999.5120931203326,
+      "effective_elo_away": 1649.5178430352842,
       "home_travel_km": 1475.8,
       "away_travel_km": 1067.7,
       "home_rest_days": 5,
@@ -3330,14 +3330,14 @@
       "altitude_m": 30,
       "climate": "warm_dry_indoor",
       "stage": "group",
-      "lam_home": 1.7802023887634277,
-      "lam_away": 1.1438897848129272,
-      "p_home_win": 0.48370047799758303,
-      "p_draw": 0.2619296325250805,
-      "p_away_win": 0.2543698894773364,
+      "lam_home": 1.7320661544799805,
+      "lam_away": 1.1602996587753296,
+      "p_home_win": 0.4710962636270469,
+      "p_draw": 0.2653613986141488,
+      "p_away_win": 0.2635423377588043,
       "elo_home": 1964.8489881684468,
       "elo_away": 1840.920011778242,
-      "effective_elo_home": 1958.766320808239,
+      "effective_elo_home": 1954.446320808239,
       "effective_elo_away": 1878.3240587123582,
       "home_travel_km": 504.6,
       "away_travel_km": 1553.1,
@@ -3444,15 +3444,15 @@
       "altitude_m": 76,
       "climate": "mild",
       "stage": "group",
-      "lam_home": 1.7097651958465576,
+      "lam_home": 1.7063404321670532,
       "lam_away": 0.7337285280227661,
-      "p_home_win": 0.5508660795770921,
-      "p_draw": 0.2772821977178713,
-      "p_away_win": 0.17185172270503654,
+      "p_home_win": 0.5501628928063848,
+      "p_draw": 0.2776708630163964,
+      "p_away_win": 0.17216624417721885,
       "elo_home": 1907.6528961032573,
       "elo_away": 1747.8934851988183,
       "effective_elo_home": 1873.2613063594333,
-      "effective_elo_away": 1694.1997037908975,
+      "effective_elo_away": 1697.5297037908974,
       "home_travel_km": 540.1,
       "away_travel_km": 544.4,
       "home_rest_days": 4,
@@ -3951,7 +3951,7 @@
       "p_home_win": 0.4017083676570609,
       "p_draw": 0.3068967782654506,
       "p_away_win": 0.2913948540774885,
-      "p_advance_match": 0.5700182684917184,
+      "p_advance_match": 0.5709447799361307,
       "elo_home": 2011.7423508183908,
       "elo_away": 1988.7160644414807
     },
@@ -4476,7 +4476,7 @@
       "p_home_win": 0.26198593499858325,
       "p_draw": 0.3165359445775536,
       "p_away_win": 0.42147812042386323,
-      "p_advance_match": 0.3850592725504254,
+      "p_advance_match": 0.38599464049285165,
       "elo_home": 1891.68871347244,
       "elo_away": 1988.7160644414807
     },
@@ -4714,14 +4714,14 @@
         "winner": "home",
         "status": "FT"
       },
-      "lambda_home": 1.779437243938446,
-      "lambda_away": 1.2586804032325745,
-      "lam_home": 1.779437243938446,
-      "lam_away": 1.2586804032325745,
-      "p_home_win": 0.46322453595589597,
-      "p_draw": 0.25822993382789894,
-      "p_away_win": 0.27854553021620504,
-      "p_advance_match": 0.6248069122125433,
+      "lambda_home": 1.7908369302749634,
+      "lambda_away": 1.282393753528595,
+      "lam_home": 1.7908369302749634,
+      "lam_away": 1.282393753528595,
+      "p_home_win": 0.46138850037856693,
+      "p_draw": 0.2565443719153409,
+      "p_away_win": 0.2820671277060922,
+      "p_advance_match": 0.622021692160728,
       "elo_home": 2116.1496379024643,
       "elo_away": 1988.7160644414807
     },
@@ -5611,7 +5611,7 @@
     101,
     102
   ],
-  "input_hash": "d6566708210d6fe0",
+  "input_hash": "ff86aad6a89c881b",
   "grand_cap_applied": {
     "Czechia": {
       "raw_elo": -45.87,
@@ -5849,7 +5849,7 @@
     {
       "match_id": 42,
       "home_match_total_intel": 16.0,
-      "away_match_total_intel": -13.36,
+      "away_match_total_intel": -10.03,
       "home_match_scoped_delta": -4.0,
       "away_match_scoped_delta": -1.0,
       "home_intel_bonus_applied": 0.0,
@@ -6201,7 +6201,7 @@
       "lambda_home": 1.6161112785339355,
       "lambda_away": 0.8967651128768921,
       "effective_elo_home": 1828.9756138903788,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Algeria",
@@ -6214,10 +6214,10 @@
     {
       "home": "Algeria",
       "away": "Iraq",
-      "lambda_home": 1.3790828585624695,
-      "lambda_away": 0.9269366562366486,
+      "lambda_home": 1.3645610213279724,
+      "lambda_away": 0.9279688894748688,
       "effective_elo_home": 1828.9756138903788,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Algeria",
@@ -6257,7 +6257,7 @@
       "lambda_home": 0.8053179383277893,
       "lambda_away": 1.5642889738082886,
       "effective_elo_home": 1828.9756138903788,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Algeria",
@@ -6390,10 +6390,10 @@
     {
       "home": "Algeria",
       "away": "Turkey",
-      "lambda_home": 0.8831726014614105,
-      "lambda_away": 1.423117220401764,
+      "lambda_home": 0.893791526556015,
+      "lambda_away": 1.4086426496505737,
       "effective_elo_home": 1828.9756138903788,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Algeria",
@@ -6577,7 +6577,7 @@
       "lambda_home": 3.069539785385132,
       "lambda_away": 0.38430945575237274,
       "effective_elo_home": 2225.0407966931166,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Argentina",
@@ -6593,7 +6593,7 @@
       "lambda_home": 2.8929792642593384,
       "lambda_away": 0.39462877064943314,
       "effective_elo_home": 2225.0407966931166,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Argentina",
@@ -6630,10 +6630,10 @@
     {
       "home": "Argentina",
       "away": "Morocco",
-      "lambda_home": 1.7243006825447083,
-      "lambda_away": 0.6607363373041153,
+      "lambda_home": 1.7247146964073181,
+      "lambda_away": 0.653842493891716,
       "effective_elo_home": 2225.0407966931166,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Argentina",
@@ -6766,10 +6766,10 @@
     {
       "home": "Argentina",
       "away": "Turkey",
-      "lambda_home": 2.044537365436554,
-      "lambda_away": 0.5265175998210907,
+      "lambda_home": 2.0676888823509216,
+      "lambda_away": 0.5146211981773376,
       "effective_elo_home": 2225.0407966931166,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Argentina",
@@ -6951,9 +6951,9 @@
       "home": "Australia",
       "away": "Haiti",
       "lambda_home": 1.7632890939712524,
-      "lambda_away": 0.7380614578723907,
+      "lambda_away": 0.8073903620243073,
       "effective_elo_home": 1861.7785023926044,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Australia",
@@ -6966,10 +6966,10 @@
     {
       "home": "Australia",
       "away": "Iraq",
-      "lambda_home": 1.5207314491271973,
-      "lambda_away": 0.7502800226211548,
+      "lambda_home": 1.5178257822990417,
+      "lambda_away": 0.7749161124229431,
       "effective_elo_home": 1861.7785023926044,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Australia",
@@ -7006,10 +7006,10 @@
     {
       "home": "Australia",
       "away": "Morocco",
-      "lambda_home": 0.9095894694328308,
+      "lambda_home": 0.9117321670055389,
       "lambda_away": 1.3167695999145508,
       "effective_elo_home": 1861.7785023926044,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Australia",
@@ -7142,10 +7142,10 @@
     {
       "home": "Australia",
       "away": "Turkey",
-      "lambda_home": 1.0036533772945404,
+      "lambda_home": 1.0332856476306915,
       "lambda_away": 1.328893780708313,
       "effective_elo_home": 1861.7785023926044,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Australia",
@@ -7326,10 +7326,10 @@
     {
       "home": "Austria",
       "away": "Haiti",
-      "lambda_home": 1.699748933315277,
-      "lambda_away": 0.7504130899906158,
+      "lambda_home": 1.6993040442466736,
+      "lambda_away": 0.7668917179107666,
       "effective_elo_home": 1867.3505608580824,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Austria",
@@ -7342,10 +7342,10 @@
     {
       "home": "Austria",
       "away": "Iraq",
-      "lambda_home": 1.5251386165618896,
+      "lambda_home": 1.5228683352470398,
       "lambda_away": 0.8221887350082397,
       "effective_elo_home": 1867.3505608580824,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Austria",
@@ -7382,10 +7382,10 @@
     {
       "home": "Austria",
       "away": "Morocco",
-      "lambda_home": 0.8563898205757141,
-      "lambda_away": 1.3528909087181091,
+      "lambda_home": 0.8905301094055176,
+      "lambda_away": 1.3481496572494507,
       "effective_elo_home": 1867.3505608580824,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Austria",
@@ -7518,10 +7518,10 @@
     {
       "home": "Austria",
       "away": "Turkey",
-      "lambda_home": 0.9905521869659424,
+      "lambda_home": 1.001210331916809,
       "lambda_away": 1.4197136163711548,
       "effective_elo_home": 1867.3505608580824,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Austria",
@@ -7702,10 +7702,10 @@
     {
       "home": "Belgium",
       "away": "Haiti",
-      "lambda_home": 2.1727206707000732,
+      "lambda_home": 2.12117862701416,
       "lambda_away": 0.600306361913681,
       "effective_elo_home": 1942.3634292236334,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Belgium",
@@ -7719,9 +7719,9 @@
       "home": "Belgium",
       "away": "Iraq",
       "lambda_home": 1.88347727060318,
-      "lambda_away": 0.6205373704433441,
+      "lambda_away": 0.6410238146781921,
       "effective_elo_home": 1942.3634292236334,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Belgium",
@@ -7758,10 +7758,10 @@
     {
       "home": "Belgium",
       "away": "Morocco",
-      "lambda_home": 1.1485034823417664,
+      "lambda_home": 1.1605029702186584,
       "lambda_away": 1.298330545425415,
       "effective_elo_home": 1942.3634292236334,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Belgium",
@@ -7894,10 +7894,10 @@
     {
       "home": "Belgium",
       "away": "Turkey",
-      "lambda_home": 1.2178833484649658,
-      "lambda_away": 1.3051143884658813,
+      "lambda_home": 1.2993006110191345,
+      "lambda_away": 1.2579936981201172,
       "effective_elo_home": 1942.3634292236334,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Belgium",
@@ -8078,10 +8078,10 @@
     {
       "home": "Bosnia and Herzegovina",
       "away": "Haiti",
-      "lambda_home": 1.2286561131477356,
-      "lambda_away": 1.2660337686538696,
+      "lambda_home": 1.2005214095115662,
+      "lambda_away": 1.265769898891449,
       "effective_elo_home": 1644.2095107557593,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Bosnia and Herzegovina",
@@ -8097,7 +8097,7 @@
       "lambda_home": 1.0397940278053284,
       "lambda_away": 1.229334533214569,
       "effective_elo_home": 1644.2095107557593,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Bosnia and Herzegovina",
@@ -8137,7 +8137,7 @@
       "lambda_home": 0.5689466297626495,
       "lambda_away": 2.008061945438385,
       "effective_elo_home": 1644.2095107557593,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Bosnia and Herzegovina",
@@ -8270,10 +8270,10 @@
     {
       "home": "Bosnia and Herzegovina",
       "away": "Turkey",
-      "lambda_home": 0.6623885631561279,
-      "lambda_away": 1.963440716266632,
+      "lambda_home": 0.6753900647163391,
+      "lambda_away": 1.8561938405036926,
       "effective_elo_home": 1644.2095107557593,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Bosnia and Herzegovina",
@@ -8454,10 +8454,10 @@
     {
       "home": "Brazil",
       "away": "Haiti",
-      "lambda_home": 2.8772025108337402,
-      "lambda_away": 0.5932378470897675,
+      "lambda_home": 2.787485957145691,
+      "lambda_away": 0.5899583101272583,
       "effective_elo_home": 2061.074903289677,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Brazil",
@@ -8473,7 +8473,7 @@
       "lambda_home": 2.0948511362075806,
       "lambda_away": 0.5515328943729401,
       "effective_elo_home": 2061.074903289677,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Brazil",
@@ -8510,10 +8510,10 @@
     {
       "home": "Brazil",
       "away": "Morocco",
-      "lambda_home": 1.450757920742035,
+      "lambda_home": 1.452113687992096,
       "lambda_away": 1.109594702720642,
       "effective_elo_home": 2061.074903289677,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Brazil",
@@ -8646,10 +8646,10 @@
     {
       "home": "Brazil",
       "away": "Turkey",
-      "lambda_home": 1.7453416585922241,
+      "lambda_home": 1.7430509328842163,
       "lambda_away": 1.0682857632637024,
       "effective_elo_home": 2061.074903289677,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Brazil",
@@ -8830,10 +8830,10 @@
     {
       "home": "Canada",
       "away": "Haiti",
-      "lambda_home": 1.9130155444145203,
-      "lambda_away": 0.7013528347015381,
+      "lambda_home": 1.7783070802688599,
+      "lambda_away": 0.7017983794212341,
       "effective_elo_home": 1885.7123964905543,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Canada",
@@ -8847,9 +8847,9 @@
       "home": "Canada",
       "away": "Iraq",
       "lambda_home": 1.51219242811203,
-      "lambda_away": 0.7595439851284027,
+      "lambda_away": 0.7687911093235016,
       "effective_elo_home": 1885.7123964905543,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Canada",
@@ -8889,7 +8889,7 @@
       "lambda_home": 0.9185846745967865,
       "lambda_away": 1.3037014603614807,
       "effective_elo_home": 1885.7123964905543,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Canada",
@@ -9022,10 +9022,10 @@
     {
       "home": "Canada",
       "away": "Turkey",
-      "lambda_home": 1.0291956067085266,
+      "lambda_home": 1.0491933822631836,
       "lambda_away": 1.3303137421607971,
       "effective_elo_home": 1885.7123964905543,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Canada",
@@ -9206,10 +9206,10 @@
     {
       "home": "Cape Verde",
       "away": "Haiti",
-      "lambda_home": 1.2345614433288574,
-      "lambda_away": 1.2312069535255432,
+      "lambda_home": 1.2132523655891418,
+      "lambda_away": 1.2383439540863037,
       "effective_elo_home": 1658.1141147902829,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Cape Verde",
@@ -9225,7 +9225,7 @@
       "lambda_home": 1.030107021331787,
       "lambda_away": 1.138413667678833,
       "effective_elo_home": 1658.1141147902829,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Cape Verde",
@@ -9262,10 +9262,10 @@
     {
       "home": "Cape Verde",
       "away": "Morocco",
-      "lambda_home": 0.5518267452716827,
+      "lambda_home": 0.5643049478530884,
       "lambda_away": 1.9992327094078064,
       "effective_elo_home": 1658.1141147902829,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Cape Verde",
@@ -9398,10 +9398,10 @@
     {
       "home": "Cape Verde",
       "away": "Turkey",
-      "lambda_home": 0.6379963457584381,
+      "lambda_home": 0.6448987424373627,
       "lambda_away": 1.8609660863876343,
       "effective_elo_home": 1658.1141147902829,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Cape Verde",
@@ -9582,10 +9582,10 @@
     {
       "home": "Colombia",
       "away": "Haiti",
-      "lambda_home": 2.828654170036316,
-      "lambda_away": 0.5696777999401093,
+      "lambda_home": 2.8335940837860107,
+      "lambda_away": 0.5760707557201385,
       "effective_elo_home": 2069.2145138455708,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Colombia",
@@ -9599,9 +9599,9 @@
       "home": "Colombia",
       "away": "Iraq",
       "lambda_home": 2.089070200920105,
-      "lambda_away": 0.5366398394107819,
+      "lambda_away": 0.5387826859951019,
       "effective_elo_home": 2069.2145138455708,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Colombia",
@@ -9639,9 +9639,9 @@
       "home": "Colombia",
       "away": "Morocco",
       "lambda_home": 1.381014347076416,
-      "lambda_away": 1.010126531124115,
+      "lambda_away": 1.0185049176216125,
       "effective_elo_home": 2069.2145138455708,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Colombia",
@@ -9774,10 +9774,10 @@
     {
       "home": "Colombia",
       "away": "Turkey",
-      "lambda_home": 1.6556346416473389,
-      "lambda_away": 0.9890545606613159,
+      "lambda_home": 1.689170002937317,
+      "lambda_away": 0.9796679019927979,
       "effective_elo_home": 2069.2145138455708,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Colombia",
@@ -9958,10 +9958,10 @@
     {
       "home": "Croatia",
       "away": "Haiti",
-      "lambda_home": 2.2527703046798706,
-      "lambda_away": 0.6527386009693146,
+      "lambda_home": 2.111669182777405,
+      "lambda_away": 0.6553553640842438,
       "effective_elo_home": 1964.0599501675604,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Croatia",
@@ -9977,7 +9977,7 @@
       "lambda_home": 1.9948991537094116,
       "lambda_away": 0.6413271725177765,
       "effective_elo_home": 1964.0599501675604,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Croatia",
@@ -10014,10 +10014,10 @@
     {
       "home": "Croatia",
       "away": "Morocco",
-      "lambda_home": 1.1302008628845215,
-      "lambda_away": 1.3440676927566528,
+      "lambda_home": 1.1329883933067322,
+      "lambda_away": 1.3097994923591614,
       "effective_elo_home": 1964.0599501675604,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Croatia",
@@ -10150,10 +10150,10 @@
     {
       "home": "Croatia",
       "away": "Turkey",
-      "lambda_home": 1.4923880696296692,
-      "lambda_away": 1.2853437662124634,
+      "lambda_home": 1.5116960406303406,
+      "lambda_away": 1.2571337223052979,
       "effective_elo_home": 1964.0599501675604,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Croatia",
@@ -10334,10 +10334,10 @@
     {
       "home": "Curacao",
       "away": "Haiti",
-      "lambda_home": 1.0710891485214233,
-      "lambda_away": 1.572878897190094,
+      "lambda_home": 1.0729967951774597,
+      "lambda_away": 1.5722630620002747,
       "effective_elo_home": 1567.8638698146224,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Curacao",
@@ -10350,10 +10350,10 @@
     {
       "home": "Curacao",
       "away": "Iraq",
-      "lambda_home": 0.9299242198467255,
-      "lambda_away": 1.4377485513687134,
+      "lambda_home": 0.9272356033325195,
+      "lambda_away": 1.4576247930526733,
       "effective_elo_home": 1567.8638698146224,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Curacao",
@@ -10390,10 +10390,10 @@
     {
       "home": "Curacao",
       "away": "Morocco",
-      "lambda_home": 0.5028321892023087,
-      "lambda_away": 2.7692151069641113,
+      "lambda_home": 0.5261281430721283,
+      "lambda_away": 2.7417781352996826,
       "effective_elo_home": 1567.8638698146224,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Curacao",
@@ -10526,10 +10526,10 @@
     {
       "home": "Curacao",
       "away": "Turkey",
-      "lambda_home": 0.5668831169605255,
-      "lambda_away": 2.410650134086609,
+      "lambda_home": 0.572548896074295,
+      "lambda_away": 2.3776755332946777,
       "effective_elo_home": 1567.8638698146224,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Curacao",
@@ -10710,10 +10710,10 @@
     {
       "home": "Czechia",
       "away": "Haiti",
-      "lambda_home": 1.5276551246643066,
-      "lambda_away": 1.013537973165512,
+      "lambda_home": 1.5154487490653992,
+      "lambda_away": 1.0267795622348785,
       "effective_elo_home": 1759.8611272962464,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Czechia",
@@ -10726,10 +10726,10 @@
     {
       "home": "Czechia",
       "away": "Iraq",
-      "lambda_home": 1.3531468510627747,
+      "lambda_home": 1.3510356545448303,
       "lambda_away": 0.9810307323932648,
       "effective_elo_home": 1759.8611272962464,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Czechia",
@@ -10767,9 +10767,9 @@
       "home": "Czechia",
       "away": "Morocco",
       "lambda_home": 0.7133950293064117,
-      "lambda_away": 2.131990671157837,
+      "lambda_away": 2.127248167991638,
       "effective_elo_home": 1759.8611272962464,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Czechia",
@@ -10902,10 +10902,10 @@
     {
       "home": "Czechia",
       "away": "Turkey",
-      "lambda_home": 0.8410334289073944,
-      "lambda_away": 2.0098506212234497,
+      "lambda_home": 0.8515295684337616,
+      "lambda_away": 1.9859459400177002,
       "effective_elo_home": 1759.8611272962464,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Czechia",
@@ -11086,10 +11086,10 @@
     {
       "home": "DR Congo",
       "away": "Haiti",
-      "lambda_home": 1.3310867547988892,
-      "lambda_away": 0.9621764421463013,
+      "lambda_home": 1.326878011226654,
+      "lambda_away": 1.007014900445938,
       "effective_elo_home": 1762.8708306018193,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "DR Congo",
@@ -11105,7 +11105,7 @@
       "lambda_home": 1.1755834221839905,
       "lambda_away": 0.9737618565559387,
       "effective_elo_home": 1762.8708306018193,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "DR Congo",
@@ -11142,10 +11142,10 @@
     {
       "home": "DR Congo",
       "away": "Morocco",
-      "lambda_home": 0.6751750707626343,
+      "lambda_home": 0.6816573441028595,
       "lambda_away": 1.797071099281311,
       "effective_elo_home": 1762.8708306018193,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "DR Congo",
@@ -11278,10 +11278,10 @@
     {
       "home": "DR Congo",
       "away": "Turkey",
-      "lambda_home": 0.7225266396999359,
+      "lambda_home": 0.7375735342502594,
       "lambda_away": 1.6852396130561829,
       "effective_elo_home": 1762.8708306018193,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "DR Congo",
@@ -11465,7 +11465,7 @@
       "lambda_home": 2.2226392030715942,
       "lambda_away": 0.6065613925457001,
       "effective_elo_home": 1993.9767443807336,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Ecuador",
@@ -11481,7 +11481,7 @@
       "lambda_home": 1.8713249564170837,
       "lambda_away": 0.6055412888526917,
       "effective_elo_home": 1993.9767443807336,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Ecuador",
@@ -11518,10 +11518,10 @@
     {
       "home": "Ecuador",
       "away": "Morocco",
-      "lambda_home": 1.0905967056751251,
-      "lambda_away": 1.2474982142448425,
+      "lambda_home": 1.1516041159629822,
+      "lambda_away": 1.203356146812439,
       "effective_elo_home": 1993.9767443807336,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Ecuador",
@@ -11654,10 +11654,10 @@
     {
       "home": "Ecuador",
       "away": "Turkey",
-      "lambda_home": 1.2908397316932678,
+      "lambda_home": 1.3171212077140808,
       "lambda_away": 1.1344122886657715,
       "effective_elo_home": 1993.9767443807336,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Ecuador",
@@ -11838,10 +11838,10 @@
     {
       "home": "Egypt",
       "away": "Haiti",
-      "lambda_home": 1.509989321231842,
-      "lambda_away": 0.8628207147121429,
+      "lambda_home": 1.403133749961853,
+      "lambda_away": 0.9087500274181366,
       "effective_elo_home": 1804.0292095635034,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Egypt",
@@ -11854,10 +11854,10 @@
     {
       "home": "Egypt",
       "away": "Iraq",
-      "lambda_home": 1.308620035648346,
+      "lambda_home": 1.2936644554138184,
       "lambda_away": 0.8628731369972229,
       "effective_elo_home": 1804.0292095635034,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Egypt",
@@ -11895,9 +11895,9 @@
       "home": "Egypt",
       "away": "Morocco",
       "lambda_home": 0.8025139272212982,
-      "lambda_away": 1.5838422775268555,
+      "lambda_away": 1.5633458495140076,
       "effective_elo_home": 1804.0292095635034,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Egypt",
@@ -12030,10 +12030,10 @@
     {
       "home": "Egypt",
       "away": "Turkey",
-      "lambda_home": 0.8803685009479523,
-      "lambda_away": 1.4638965129852295,
+      "lambda_home": 0.926086038351059,
+      "lambda_away": 1.4582372903823853,
       "effective_elo_home": 1804.0292095635034,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Egypt",
@@ -12214,10 +12214,10 @@
     {
       "home": "England",
       "away": "Haiti",
-      "lambda_home": 3.033952474594116,
-      "lambda_away": 0.5508237183094025,
+      "lambda_home": 2.8991302251815796,
+      "lambda_away": 0.5458147525787354,
       "effective_elo_home": 2106.177335666467,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "England",
@@ -12233,7 +12233,7 @@
       "lambda_home": 2.395529627799988,
       "lambda_away": 0.5390583574771881,
       "effective_elo_home": 2106.177335666467,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "England",
@@ -12271,9 +12271,9 @@
       "home": "England",
       "away": "Morocco",
       "lambda_home": 1.4428589344024658,
-      "lambda_away": 0.944250077009201,
+      "lambda_away": 0.9250674843788147,
       "effective_elo_home": 2106.177335666467,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "England",
@@ -12406,10 +12406,10 @@
     {
       "home": "England",
       "away": "Turkey",
-      "lambda_home": 1.5934261083602905,
-      "lambda_away": 0.9734040796756744,
+      "lambda_home": 1.6098837852478027,
+      "lambda_away": 0.9711886048316956,
       "effective_elo_home": 2106.177335666467,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "England",
@@ -12593,7 +12593,7 @@
       "lambda_home": 3.3907437324523926,
       "lambda_away": 0.5472524017095566,
       "effective_elo_home": 2169.4596051211224,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "France",
@@ -12606,10 +12606,10 @@
     {
       "home": "France",
       "away": "Iraq",
-      "lambda_home": 2.7397342920303345,
+      "lambda_home": 2.5964707136154175,
       "lambda_away": 0.5866838991641998,
       "effective_elo_home": 2169.4596051211224,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "France",
@@ -12646,10 +12646,10 @@
     {
       "home": "France",
       "away": "Morocco",
-      "lambda_home": 1.779437243938446,
-      "lambda_away": 1.2586804032325745,
+      "lambda_home": 1.7908369302749634,
+      "lambda_away": 1.282393753528595,
       "effective_elo_home": 2169.4596051211224,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "France",
@@ -12782,10 +12782,10 @@
     {
       "home": "France",
       "away": "Turkey",
-      "lambda_home": 2.1057214736938477,
-      "lambda_away": 0.9146388173103333,
+      "lambda_home": 2.1314570903778076,
+      "lambda_away": 0.8148224353790283,
       "effective_elo_home": 2169.4596051211224,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "France",
@@ -12967,9 +12967,9 @@
       "home": "Germany",
       "away": "Haiti",
       "lambda_home": 2.3286222219467163,
-      "lambda_away": 0.5868283212184906,
+      "lambda_away": 0.5875966548919678,
       "effective_elo_home": 2004.3929258781554,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Germany",
@@ -12983,9 +12983,9 @@
       "home": "Germany",
       "away": "Iraq",
       "lambda_home": 1.980495035648346,
-      "lambda_away": 0.6489558815956116,
+      "lambda_away": 0.6074675619602203,
       "effective_elo_home": 2004.3929258781554,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Germany",
@@ -13022,10 +13022,10 @@
     {
       "home": "Germany",
       "away": "Morocco",
-      "lambda_home": 1.2474443316459656,
+      "lambda_home": 1.2570666074752808,
       "lambda_away": 1.1894550919532776,
       "effective_elo_home": 2004.3929258781554,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Germany",
@@ -13158,10 +13158,10 @@
     {
       "home": "Germany",
       "away": "Turkey",
-      "lambda_home": 1.4687001705169678,
-      "lambda_away": 1.0520416498184204,
+      "lambda_home": 1.478767216205597,
+      "lambda_away": 1.0434655547142029,
       "effective_elo_home": 2004.3929258781554,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Germany",
@@ -13342,10 +13342,10 @@
     {
       "home": "Ghana",
       "away": "Haiti",
-      "lambda_home": 1.1495218873023987,
-      "lambda_away": 1.3308780789375305,
+      "lambda_home": 1.099244236946106,
+      "lambda_away": 1.371778964996338,
       "effective_elo_home": 1633.242396065518,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Ghana",
@@ -13361,7 +13361,7 @@
       "lambda_home": 1.0634667575359344,
       "lambda_away": 1.267670750617981,
       "effective_elo_home": 1633.242396065518,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Ghana",
@@ -13401,7 +13401,7 @@
       "lambda_home": 0.5698057413101196,
       "lambda_away": 2.1038440465927124,
       "effective_elo_home": 1633.242396065518,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Ghana",
@@ -13534,10 +13534,10 @@
     {
       "home": "Ghana",
       "away": "Turkey",
-      "lambda_home": 0.6194260716438293,
-      "lambda_away": 1.9893537759780884,
+      "lambda_home": 0.6261569857597351,
+      "lambda_away": 1.9623660445213318,
       "effective_elo_home": 1633.242396065518,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Ghana",
@@ -13568,7 +13568,7 @@
       "away": "Algeria",
       "lambda_home": 0.8967651128768921,
       "lambda_away": 1.6161112785339355,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1828.9756138903788
     },
     {
@@ -13576,103 +13576,103 @@
       "away": "Argentina",
       "lambda_home": 0.38430945575237274,
       "lambda_away": 3.069539785385132,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2225.0407966931166
     },
     {
       "home": "Haiti",
       "away": "Australia",
-      "lambda_home": 0.7380614578723907,
+      "lambda_home": 0.8073903620243073,
       "lambda_away": 1.7632890939712524,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1861.7785023926044
     },
     {
       "home": "Haiti",
       "away": "Austria",
-      "lambda_home": 0.7504130899906158,
-      "lambda_away": 1.699748933315277,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.7668917179107666,
+      "lambda_away": 1.6993040442466736,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1867.3505608580824
     },
     {
       "home": "Haiti",
       "away": "Belgium",
       "lambda_home": 0.600306361913681,
-      "lambda_away": 2.1727206707000732,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_away": 2.12117862701416,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1942.3634292236334
     },
     {
       "home": "Haiti",
       "away": "Bosnia and Herzegovina",
-      "lambda_home": 1.2660337686538696,
-      "lambda_away": 1.2286561131477356,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.265769898891449,
+      "lambda_away": 1.2005214095115662,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1644.2095107557593
     },
     {
       "home": "Haiti",
       "away": "Brazil",
-      "lambda_home": 0.5932378470897675,
-      "lambda_away": 2.8772025108337402,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.5899583101272583,
+      "lambda_away": 2.787485957145691,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2061.074903289677
     },
     {
       "home": "Haiti",
       "away": "Canada",
-      "lambda_home": 0.7013528347015381,
-      "lambda_away": 1.9130155444145203,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.7017983794212341,
+      "lambda_away": 1.7783070802688599,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1885.7123964905543
     },
     {
       "home": "Haiti",
       "away": "Cape Verde",
-      "lambda_home": 1.2312069535255432,
-      "lambda_away": 1.2345614433288574,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.2383439540863037,
+      "lambda_away": 1.2132523655891418,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1658.1141147902829
     },
     {
       "home": "Haiti",
       "away": "Colombia",
-      "lambda_home": 0.5696777999401093,
-      "lambda_away": 2.828654170036316,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.5760707557201385,
+      "lambda_away": 2.8335940837860107,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2069.2145138455708
     },
     {
       "home": "Haiti",
       "away": "Croatia",
-      "lambda_home": 0.6527386009693146,
-      "lambda_away": 2.2527703046798706,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.6553553640842438,
+      "lambda_away": 2.111669182777405,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1964.0599501675604
     },
     {
       "home": "Haiti",
       "away": "Curacao",
-      "lambda_home": 1.572878897190094,
-      "lambda_away": 1.0710891485214233,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.5722630620002747,
+      "lambda_away": 1.0729967951774597,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1567.8638698146224
     },
     {
       "home": "Haiti",
       "away": "Czechia",
-      "lambda_home": 1.013537973165512,
-      "lambda_away": 1.5276551246643066,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.0267795622348785,
+      "lambda_away": 1.5154487490653992,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1759.8611272962464
     },
     {
       "home": "Haiti",
       "away": "DR Congo",
-      "lambda_home": 0.9621764421463013,
-      "lambda_away": 1.3310867547988892,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.007014900445938,
+      "lambda_away": 1.326878011226654,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1762.8708306018193
     },
     {
@@ -13680,23 +13680,23 @@
       "away": "Ecuador",
       "lambda_home": 0.6065613925457001,
       "lambda_away": 2.2226392030715942,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1993.9767443807336
     },
     {
       "home": "Haiti",
       "away": "Egypt",
-      "lambda_home": 0.8628207147121429,
-      "lambda_away": 1.509989321231842,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.9087500274181366,
+      "lambda_away": 1.403133749961853,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1804.0292095635034
     },
     {
       "home": "Haiti",
       "away": "England",
-      "lambda_home": 0.5508237183094025,
-      "lambda_away": 3.033952474594116,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.5458147525787354,
+      "lambda_away": 2.8991302251815796,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2106.177335666467
     },
     {
@@ -13704,47 +13704,47 @@
       "away": "France",
       "lambda_home": 0.5472524017095566,
       "lambda_away": 3.3907437324523926,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2169.4596051211224
     },
     {
       "home": "Haiti",
       "away": "Germany",
-      "lambda_home": 0.5868283212184906,
+      "lambda_home": 0.5875966548919678,
       "lambda_away": 2.3286222219467163,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2004.3929258781554
     },
     {
       "home": "Haiti",
       "away": "Ghana",
-      "lambda_home": 1.3308780789375305,
-      "lambda_away": 1.1495218873023987,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.371778964996338,
+      "lambda_away": 1.099244236946106,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1633.242396065518
     },
     {
       "home": "Haiti",
       "away": "Iran",
-      "lambda_home": 0.749832272529602,
-      "lambda_away": 1.806450366973877,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.7654502987861633,
+      "lambda_away": 1.805992841720581,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1867.5808304602413
     },
     {
       "home": "Haiti",
       "away": "Iraq",
-      "lambda_home": 1.0772101879119873,
-      "lambda_away": 1.2099447846412659,
-      "effective_elo_home": 1647.7886430352842,
-      "effective_elo_away": 1696.3773037908975
+      "lambda_home": 1.0808919072151184,
+      "lambda_away": 1.1871452331542969,
+      "effective_elo_home": 1653.7886430352842,
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Haiti",
       "away": "Ivory Coast",
       "lambda_home": 0.8690944612026215,
       "lambda_away": 1.7270600199699402,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1824.7870710500176
     },
     {
@@ -13752,127 +13752,127 @@
       "away": "Japan",
       "lambda_home": 0.6528646051883698,
       "lambda_away": 1.9137828946113586,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1953.8399169164568
     },
     {
       "home": "Haiti",
       "away": "Jordan",
-      "lambda_home": 1.166890263557434,
+      "lambda_home": 1.177970051765442,
       "lambda_away": 1.4165912866592407,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1722.6213891251145
     },
     {
       "home": "Haiti",
       "away": "Mexico",
-      "lambda_home": 0.6052884757518768,
+      "lambda_home": 0.6084666848182678,
       "lambda_away": 2.1700159311294556,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2006.3776023270427
     },
     {
       "home": "Haiti",
       "away": "Morocco",
-      "lambda_home": 0.5853316783905029,
-      "lambda_away": 2.099415421485901,
-      "effective_elo_home": 1647.7886430352842,
-      "effective_elo_away": 2011.4152931203325
+      "lambda_home": 0.6003202497959137,
+      "lambda_away": 2.0971500873565674,
+      "effective_elo_home": 1653.7886430352842,
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Haiti",
       "away": "Netherlands",
       "lambda_home": 0.6423980593681335,
-      "lambda_away": 2.570499300956726,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_away": 2.5354305505752563,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2042.1308414688683
     },
     {
       "home": "Haiti",
       "away": "New Zealand",
-      "lambda_home": 1.1661953330039978,
-      "lambda_away": 1.465506374835968,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.1679616570472717,
+      "lambda_away": 1.4305312633514404,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1696.6052228537021
     },
     {
       "home": "Haiti",
       "away": "Norway",
-      "lambda_home": 0.5532317459583282,
+      "lambda_home": 0.5787156820297241,
       "lambda_away": 2.3717997074127197,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1990.673170363496
     },
     {
       "home": "Haiti",
       "away": "Panama",
-      "lambda_home": 1.0081939101219177,
-      "lambda_away": 1.5344489216804504,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.012729823589325,
+      "lambda_away": 1.5176787376403809,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1782.2196440006328
     },
     {
       "home": "Haiti",
       "away": "Paraguay",
-      "lambda_home": 0.7375543713569641,
-      "lambda_away": 1.7802444696426392,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.7531265020370483,
+      "lambda_away": 1.778405785560608,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1865.9546064839474
     },
     {
       "home": "Haiti",
       "away": "Portugal",
       "lambda_home": 0.598177582025528,
-      "lambda_away": 2.5553267002105713,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_away": 2.520934581756592,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2041.6277324150003
     },
     {
       "home": "Haiti",
       "away": "Qatar",
-      "lambda_home": 1.484102189540863,
-      "lambda_away": 0.9890582859516144,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.4815847277641296,
+      "lambda_away": 0.9948314130306244,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1525.4826403981444
     },
     {
       "home": "Haiti",
       "away": "Saudi Arabia",
-      "lambda_home": 1.09822416305542,
-      "lambda_away": 1.2621721029281616,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.095543086528778,
+      "lambda_away": 1.2608816623687744,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1680.1938684100867
     },
     {
       "home": "Haiti",
       "away": "Scotland",
       "lambda_home": 0.8614577054977417,
-      "lambda_away": 1.8011191487312317,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_away": 1.7870863676071167,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1831.4499161228484
     },
     {
       "home": "Haiti",
       "away": "Senegal",
-      "lambda_home": 0.7213799953460693,
-      "lambda_away": 1.8621102571487427,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.7492359280586243,
+      "lambda_away": 1.8565261960029602,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1875.4217063594333
     },
     {
       "home": "Haiti",
       "away": "South Africa",
-      "lambda_home": 1.245240569114685,
-      "lambda_away": 0.9725100100040436,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.2526935338974,
+      "lambda_away": 0.9705803394317627,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1628.0809249686204
     },
     {
       "home": "Haiti",
       "away": "South Korea",
-      "lambda_home": 0.755328357219696,
+      "lambda_home": 0.8078016936779022,
       "lambda_away": 1.7474892139434814,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1865.252814694604
     },
     {
@@ -13880,15 +13880,15 @@
       "away": "Spain",
       "lambda_home": 0.40706638991832733,
       "lambda_away": 3.8118021488189697,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 2261.9885283779367
     },
     {
       "home": "Haiti",
       "away": "Sweden",
-      "lambda_home": 1.0524832904338837,
-      "lambda_away": 1.576260268688202,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 1.0956011414527893,
+      "lambda_away": 1.5697265267372131,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1767.3226289470083
     },
     {
@@ -13896,47 +13896,47 @@
       "away": "Switzerland",
       "lambda_home": 0.6376659870147705,
       "lambda_away": 2.193908452987671,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1959.0971672327287
     },
     {
       "home": "Haiti",
       "away": "Tunisia",
-      "lambda_home": 1.0930189490318298,
+      "lambda_home": 1.0925843715667725,
       "lambda_away": 1.3084059357643127,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1687.790031145238
     },
     {
       "home": "Haiti",
       "away": "Turkey",
-      "lambda_home": 0.6905188262462616,
+      "lambda_home": 0.706058919429779,
       "lambda_away": 1.9368707537651062,
-      "effective_elo_home": 1647.7886430352842,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_home": 1653.7886430352842,
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Haiti",
       "away": "United States",
-      "lambda_home": 0.9237392842769623,
-      "lambda_away": 1.8642005920410156,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.9182773530483246,
+      "lambda_away": 1.847070574760437,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1849.5364587123581
     },
     {
       "home": "Haiti",
       "away": "Uruguay",
-      "lambda_home": 0.7083516716957092,
+      "lambda_home": 0.7037728726863861,
       "lambda_away": 1.9891172647476196,
-      "effective_elo_home": 1647.7886430352842,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1917.2856931995602
     },
     {
       "home": "Haiti",
       "away": "Uzbekistan",
-      "lambda_home": 0.9318126440048218,
-      "lambda_away": 1.4695318341255188,
-      "effective_elo_home": 1647.7886430352842,
+      "lambda_home": 0.9314262866973877,
+      "lambda_away": 1.466781198978424,
+      "effective_elo_home": 1653.7886430352842,
       "effective_elo_away": 1779.1347145490186
     },
     {
@@ -14102,18 +14102,18 @@
     {
       "home": "Iran",
       "away": "Haiti",
-      "lambda_home": 1.806450366973877,
-      "lambda_away": 0.749832272529602,
+      "lambda_home": 1.805992841720581,
+      "lambda_away": 0.7654502987861633,
       "effective_elo_home": 1867.5808304602413,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Iran",
       "away": "Iraq",
-      "lambda_home": 1.5463095307350159,
+      "lambda_home": 1.5439324975013733,
       "lambda_away": 0.7882215678691864,
       "effective_elo_home": 1867.5808304602413,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Iran",
@@ -14150,10 +14150,10 @@
     {
       "home": "Iran",
       "away": "Morocco",
-      "lambda_home": 0.9447053074836731,
-      "lambda_away": 1.4249252676963806,
+      "lambda_home": 0.9593434035778046,
+      "lambda_away": 1.420035719871521,
       "effective_elo_home": 1867.5808304602413,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Iran",
@@ -14286,10 +14286,10 @@
     {
       "home": "Iran",
       "away": "Turkey",
-      "lambda_home": 1.040934979915619,
+      "lambda_home": 1.0611863136291504,
       "lambda_away": 1.3945150971412659,
       "effective_elo_home": 1867.5808304602413,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Iran",
@@ -14318,9 +14318,9 @@
     {
       "home": "Iraq",
       "away": "Algeria",
-      "lambda_home": 0.9269366562366486,
-      "lambda_away": 1.3790828585624695,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_home": 0.9279688894748688,
+      "lambda_away": 1.3645610213279724,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1828.9756138903788
     },
     {
@@ -14328,31 +14328,31 @@
       "away": "Argentina",
       "lambda_home": 0.39462877064943314,
       "lambda_away": 2.8929792642593384,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2225.0407966931166
     },
     {
       "home": "Iraq",
       "away": "Australia",
-      "lambda_home": 0.7502800226211548,
-      "lambda_away": 1.5207314491271973,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_home": 0.7749161124229431,
+      "lambda_away": 1.5178257822990417,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1861.7785023926044
     },
     {
       "home": "Iraq",
       "away": "Austria",
       "lambda_home": 0.8221887350082397,
-      "lambda_away": 1.5251386165618896,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.5228683352470398,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1867.3505608580824
     },
     {
       "home": "Iraq",
       "away": "Belgium",
-      "lambda_home": 0.6205373704433441,
+      "lambda_home": 0.6410238146781921,
       "lambda_away": 1.88347727060318,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1942.3634292236334
     },
     {
@@ -14360,7 +14360,7 @@
       "away": "Bosnia and Herzegovina",
       "lambda_home": 1.229334533214569,
       "lambda_away": 1.0397940278053284,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1644.2095107557593
     },
     {
@@ -14368,15 +14368,15 @@
       "away": "Brazil",
       "lambda_home": 0.5515328943729401,
       "lambda_away": 2.0948511362075806,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2061.074903289677
     },
     {
       "home": "Iraq",
       "away": "Canada",
-      "lambda_home": 0.7595439851284027,
+      "lambda_home": 0.7687911093235016,
       "lambda_away": 1.51219242811203,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1885.7123964905543
     },
     {
@@ -14384,15 +14384,15 @@
       "away": "Cape Verde",
       "lambda_home": 1.138413667678833,
       "lambda_away": 1.030107021331787,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1658.1141147902829
     },
     {
       "home": "Iraq",
       "away": "Colombia",
-      "lambda_home": 0.5366398394107819,
+      "lambda_home": 0.5387826859951019,
       "lambda_away": 2.089070200920105,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2069.2145138455708
     },
     {
@@ -14400,23 +14400,23 @@
       "away": "Croatia",
       "lambda_home": 0.6413271725177765,
       "lambda_away": 1.9948991537094116,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1964.0599501675604
     },
     {
       "home": "Iraq",
       "away": "Curacao",
-      "lambda_home": 1.4377485513687134,
-      "lambda_away": 0.9299242198467255,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_home": 1.4576247930526733,
+      "lambda_away": 0.9272356033325195,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1567.8638698146224
     },
     {
       "home": "Iraq",
       "away": "Czechia",
       "lambda_home": 0.9810307323932648,
-      "lambda_away": 1.3531468510627747,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.3510356545448303,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1759.8611272962464
     },
     {
@@ -14424,7 +14424,7 @@
       "away": "DR Congo",
       "lambda_home": 0.9737618565559387,
       "lambda_away": 1.1755834221839905,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1762.8708306018193
     },
     {
@@ -14432,15 +14432,15 @@
       "away": "Ecuador",
       "lambda_home": 0.6055412888526917,
       "lambda_away": 1.8713249564170837,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1993.9767443807336
     },
     {
       "home": "Iraq",
       "away": "Egypt",
       "lambda_home": 0.8628731369972229,
-      "lambda_away": 1.308620035648346,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.2936644554138184,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1804.0292095635034
     },
     {
@@ -14448,23 +14448,23 @@
       "away": "England",
       "lambda_home": 0.5390583574771881,
       "lambda_away": 2.395529627799988,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2106.177335666467
     },
     {
       "home": "Iraq",
       "away": "France",
       "lambda_home": 0.5866838991641998,
-      "lambda_away": 2.7397342920303345,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 2.5964707136154175,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2169.4596051211224
     },
     {
       "home": "Iraq",
       "away": "Germany",
-      "lambda_home": 0.6489558815956116,
+      "lambda_home": 0.6074675619602203,
       "lambda_away": 1.980495035648346,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2004.3929258781554
     },
     {
@@ -14472,31 +14472,31 @@
       "away": "Ghana",
       "lambda_home": 1.267670750617981,
       "lambda_away": 1.0634667575359344,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1633.242396065518
     },
     {
       "home": "Iraq",
       "away": "Haiti",
-      "lambda_home": 1.2099447846412659,
-      "lambda_away": 1.0772101879119873,
-      "effective_elo_home": 1696.3773037908975,
-      "effective_elo_away": 1647.7886430352842
+      "lambda_home": 1.1871452331542969,
+      "lambda_away": 1.0808919072151184,
+      "effective_elo_home": 1699.7073037908974,
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Iraq",
       "away": "Iran",
       "lambda_home": 0.7882215678691864,
-      "lambda_away": 1.5463095307350159,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.5439324975013733,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1867.5808304602413
     },
     {
       "home": "Iraq",
       "away": "Ivory Coast",
       "lambda_home": 0.9019296169281006,
-      "lambda_away": 1.4071130752563477,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.4050575494766235,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1824.7870710500176
     },
     {
@@ -14504,15 +14504,15 @@
       "away": "Japan",
       "lambda_home": 0.6672586798667908,
       "lambda_away": 1.735170602798462,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1953.8399169164568
     },
     {
       "home": "Iraq",
       "away": "Jordan",
       "lambda_home": 1.0177350044250488,
-      "lambda_away": 1.2614235877990723,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.2559983134269714,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1722.6213891251145
     },
     {
@@ -14520,23 +14520,23 @@
       "away": "Mexico",
       "lambda_home": 0.6723826229572296,
       "lambda_away": 1.8105659484863281,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2006.3776023270427
     },
     {
       "home": "Iraq",
       "away": "Morocco",
-      "lambda_home": 0.6041146516799927,
-      "lambda_away": 1.9214997291564941,
-      "effective_elo_home": 1696.3773037908975,
-      "effective_elo_away": 2011.4152931203325
+      "lambda_home": 0.6160073578357697,
+      "lambda_away": 1.8271377086639404,
+      "effective_elo_home": 1699.7073037908974,
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Iraq",
       "away": "Netherlands",
       "lambda_home": 0.6102604269981384,
-      "lambda_away": 2.1436742544174194,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 2.13206946849823,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2042.1308414688683
     },
     {
@@ -14544,7 +14544,7 @@
       "away": "New Zealand",
       "lambda_home": 1.149769365787506,
       "lambda_away": 1.2058045864105225,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1696.6052228537021
     },
     {
@@ -14552,23 +14552,23 @@
       "away": "Norway",
       "lambda_home": 0.5653013586997986,
       "lambda_away": 1.9622264504432678,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1990.673170363496
     },
     {
       "home": "Iraq",
       "away": "Panama",
       "lambda_home": 0.9740867614746094,
-      "lambda_away": 1.3522697687149048,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.3502716422080994,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1782.2196440006328
     },
     {
       "home": "Iraq",
       "away": "Paraguay",
       "lambda_home": 0.7723685801029205,
-      "lambda_away": 1.553756296634674,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.514905333518982,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1865.9546064839474
     },
     {
@@ -14576,55 +14576,55 @@
       "away": "Portugal",
       "lambda_home": 0.6010438799858093,
       "lambda_away": 2.1249910593032837,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2041.6277324150003
     },
     {
       "home": "Iraq",
       "away": "Qatar",
       "lambda_home": 1.4243532419204712,
-      "lambda_away": 0.7710517644882202,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 0.7663189172744751,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1525.4826403981444
     },
     {
       "home": "Iraq",
       "away": "Saudi Arabia",
-      "lambda_home": 1.0853422284126282,
-      "lambda_away": 1.0730948448181152,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_home": 1.1187816858291626,
+      "lambda_away": 1.0432400107383728,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1680.1938684100867
     },
     {
       "home": "Iraq",
       "away": "Scotland",
       "lambda_home": 0.8444348871707916,
-      "lambda_away": 1.4600628018379211,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.4579102993011475,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1831.4499161228484
     },
     {
       "home": "Iraq",
       "away": "Senegal",
       "lambda_home": 0.7984386682510376,
-      "lambda_away": 1.6310173869132996,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.6268346905708313,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1875.4217063594333
     },
     {
       "home": "Iraq",
       "away": "South Africa",
       "lambda_home": 1.1745111346244812,
-      "lambda_away": 0.9441031515598297,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 0.9357311427593231,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1628.0809249686204
     },
     {
       "home": "Iraq",
       "away": "South Korea",
       "lambda_home": 0.7846167981624603,
-      "lambda_away": 1.5050724148750305,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.4672260880470276,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1865.252814694604
     },
     {
@@ -14632,63 +14632,63 @@
       "away": "Spain",
       "lambda_home": 0.4142948389053345,
       "lambda_away": 2.8626456260681152,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 2261.9885283779367
     },
     {
       "home": "Iraq",
       "away": "Sweden",
-      "lambda_home": 1.0483078956604004,
+      "lambda_home": 1.0584036707878113,
       "lambda_away": 1.3979414105415344,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1767.3226289470083
     },
     {
       "home": "Iraq",
       "away": "Switzerland",
       "lambda_home": 0.6137153506278992,
-      "lambda_away": 2.0389533042907715,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.9421420693397522,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1959.0971672327287
     },
     {
       "home": "Iraq",
       "away": "Tunisia",
-      "lambda_home": 1.073310375213623,
-      "lambda_away": 1.149566113948822,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_home": 1.084667146205902,
+      "lambda_away": 1.138678789138794,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1687.790031145238
     },
     {
       "home": "Iraq",
       "away": "Turkey",
-      "lambda_home": 0.6719478666782379,
-      "lambda_away": 1.8602481484413147,
-      "effective_elo_home": 1696.3773037908975,
-      "effective_elo_away": 1960.784720808239
+      "lambda_home": 0.6952039301395416,
+      "lambda_away": 1.7671375274658203,
+      "effective_elo_home": 1699.7073037908974,
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Iraq",
       "away": "United States",
-      "lambda_home": 0.912639319896698,
-      "lambda_away": 1.613720417022705,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_home": 0.9139057397842407,
+      "lambda_away": 1.5348783731460571,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1849.5364587123581
     },
     {
       "home": "Iraq",
       "away": "Uruguay",
       "lambda_home": 0.707075446844101,
-      "lambda_away": 1.5598539113998413,
-      "effective_elo_home": 1696.3773037908975,
+      "lambda_away": 1.5560187697410583,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1917.2856931995602
     },
     {
       "home": "Iraq",
       "away": "Uzbekistan",
-      "lambda_home": 0.9089569747447968,
+      "lambda_home": 0.9073618650436401,
       "lambda_away": 1.3242955803871155,
-      "effective_elo_home": 1696.3773037908975,
+      "effective_elo_home": 1699.7073037908974,
       "effective_elo_away": 1779.1347145490186
     },
     {
@@ -14857,7 +14857,7 @@
       "lambda_home": 1.7270600199699402,
       "lambda_away": 0.8690944612026215,
       "effective_elo_home": 1824.7870710500176,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Ivory Coast",
@@ -14870,10 +14870,10 @@
     {
       "home": "Ivory Coast",
       "away": "Iraq",
-      "lambda_home": 1.4071130752563477,
+      "lambda_home": 1.4050575494766235,
       "lambda_away": 0.9019296169281006,
       "effective_elo_home": 1824.7870710500176,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Ivory Coast",
@@ -14905,7 +14905,7 @@
       "lambda_home": 0.868296891450882,
       "lambda_away": 1.4744971990585327,
       "effective_elo_home": 1824.7870710500176,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Ivory Coast",
@@ -15038,10 +15038,10 @@
     {
       "home": "Ivory Coast",
       "away": "Turkey",
-      "lambda_home": 0.9508445560932159,
+      "lambda_home": 0.9609107077121735,
       "lambda_away": 1.4383371472358704,
       "effective_elo_home": 1824.7870710500176,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Ivory Coast",
@@ -15233,7 +15233,7 @@
       "lambda_home": 1.9137828946113586,
       "lambda_away": 0.6528646051883698,
       "effective_elo_home": 1953.8399169164568,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Japan",
@@ -15249,7 +15249,7 @@
       "lambda_home": 1.735170602798462,
       "lambda_away": 0.6672586798667908,
       "effective_elo_home": 1953.8399169164568,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Japan",
@@ -15281,7 +15281,7 @@
       "lambda_home": 1.0148130655288696,
       "lambda_away": 1.2574012279510498,
       "effective_elo_home": 1953.8399169164568,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Japan",
@@ -15414,10 +15414,10 @@
     {
       "home": "Japan",
       "away": "Turkey",
-      "lambda_home": 1.2036181688308716,
+      "lambda_home": 1.224585473537445,
       "lambda_away": 1.2285702228546143,
       "effective_elo_home": 1953.8399169164568,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Japan",
@@ -15607,9 +15607,9 @@
       "home": "Jordan",
       "away": "Haiti",
       "lambda_home": 1.4165912866592407,
-      "lambda_away": 1.166890263557434,
+      "lambda_away": 1.177970051765442,
       "effective_elo_home": 1722.6213891251145,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Jordan",
@@ -15622,10 +15622,10 @@
     {
       "home": "Jordan",
       "away": "Iraq",
-      "lambda_home": 1.2614235877990723,
+      "lambda_home": 1.2559983134269714,
       "lambda_away": 1.0177350044250488,
       "effective_elo_home": 1722.6213891251145,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Jordan",
@@ -15654,10 +15654,10 @@
     {
       "home": "Jordan",
       "away": "Morocco",
-      "lambda_home": 0.6889678835868835,
+      "lambda_home": 0.6933224201202393,
       "lambda_away": 2.110010862350464,
       "effective_elo_home": 1722.6213891251145,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Jordan",
@@ -15790,10 +15790,10 @@
     {
       "home": "Jordan",
       "away": "Turkey",
-      "lambda_home": 0.7590495645999908,
-      "lambda_away": 2.1173351407051086,
+      "lambda_home": 0.7659644782543182,
+      "lambda_away": 2.121159613132477,
       "effective_elo_home": 1722.6213891251145,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Jordan",
@@ -15983,9 +15983,9 @@
       "home": "Mexico",
       "away": "Haiti",
       "lambda_home": 2.1700159311294556,
-      "lambda_away": 0.6052884757518768,
+      "lambda_away": 0.6084666848182678,
       "effective_elo_home": 2006.3776023270427,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Mexico",
@@ -16001,7 +16001,7 @@
       "lambda_home": 1.8105659484863281,
       "lambda_away": 0.6723826229572296,
       "effective_elo_home": 2006.3776023270427,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Mexico",
@@ -16030,10 +16030,10 @@
     {
       "home": "Mexico",
       "away": "Morocco",
-      "lambda_home": 1.1446491479873657,
+      "lambda_home": 1.154488980770111,
       "lambda_away": 1.1582545042037964,
       "effective_elo_home": 2006.3776023270427,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Mexico",
@@ -16166,10 +16166,10 @@
     {
       "home": "Mexico",
       "away": "Turkey",
-      "lambda_home": 1.3475506901741028,
-      "lambda_away": 1.1168388724327087,
+      "lambda_home": 1.4219363331794739,
+      "lambda_away": 1.1138727068901062,
       "effective_elo_home": 2006.3776023270427,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Mexico",
@@ -16200,39 +16200,39 @@
       "away": "Algeria",
       "lambda_home": 1.5642889738082886,
       "lambda_away": 0.8053179383277893,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1828.9756138903788
     },
     {
       "home": "Morocco",
       "away": "Argentina",
-      "lambda_home": 0.6607363373041153,
-      "lambda_away": 1.7243006825447083,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 0.653842493891716,
+      "lambda_away": 1.7247146964073181,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2225.0407966931166
     },
     {
       "home": "Morocco",
       "away": "Australia",
       "lambda_home": 1.3167695999145508,
-      "lambda_away": 0.9095894694328308,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 0.9117321670055389,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1861.7785023926044
     },
     {
       "home": "Morocco",
       "away": "Austria",
-      "lambda_home": 1.3528909087181091,
-      "lambda_away": 0.8563898205757141,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.3481496572494507,
+      "lambda_away": 0.8905301094055176,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1867.3505608580824
     },
     {
       "home": "Morocco",
       "away": "Belgium",
       "lambda_home": 1.298330545425415,
-      "lambda_away": 1.1485034823417664,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 1.1605029702186584,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1942.3634292236334
     },
     {
@@ -16240,15 +16240,15 @@
       "away": "Bosnia and Herzegovina",
       "lambda_home": 2.008061945438385,
       "lambda_away": 0.5689466297626495,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1644.2095107557593
     },
     {
       "home": "Morocco",
       "away": "Brazil",
       "lambda_home": 1.109594702720642,
-      "lambda_away": 1.450757920742035,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 1.452113687992096,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2061.074903289677
     },
     {
@@ -16256,95 +16256,95 @@
       "away": "Canada",
       "lambda_home": 1.3037014603614807,
       "lambda_away": 0.9185846745967865,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1885.7123964905543
     },
     {
       "home": "Morocco",
       "away": "Cape Verde",
       "lambda_home": 1.9992327094078064,
-      "lambda_away": 0.5518267452716827,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 0.5643049478530884,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1658.1141147902829
     },
     {
       "home": "Morocco",
       "away": "Colombia",
-      "lambda_home": 1.010126531124115,
+      "lambda_home": 1.0185049176216125,
       "lambda_away": 1.381014347076416,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2069.2145138455708
     },
     {
       "home": "Morocco",
       "away": "Croatia",
-      "lambda_home": 1.3440676927566528,
-      "lambda_away": 1.1302008628845215,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.3097994923591614,
+      "lambda_away": 1.1329883933067322,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1964.0599501675604
     },
     {
       "home": "Morocco",
       "away": "Curacao",
-      "lambda_home": 2.7692151069641113,
-      "lambda_away": 0.5028321892023087,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 2.7417781352996826,
+      "lambda_away": 0.5261281430721283,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1567.8638698146224
     },
     {
       "home": "Morocco",
       "away": "Czechia",
-      "lambda_home": 2.131990671157837,
+      "lambda_home": 2.127248167991638,
       "lambda_away": 0.7133950293064117,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1759.8611272962464
     },
     {
       "home": "Morocco",
       "away": "DR Congo",
       "lambda_home": 1.797071099281311,
-      "lambda_away": 0.6751750707626343,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 0.6816573441028595,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1762.8708306018193
     },
     {
       "home": "Morocco",
       "away": "Ecuador",
-      "lambda_home": 1.2474982142448425,
-      "lambda_away": 1.0905967056751251,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.203356146812439,
+      "lambda_away": 1.1516041159629822,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1993.9767443807336
     },
     {
       "home": "Morocco",
       "away": "Egypt",
-      "lambda_home": 1.5838422775268555,
+      "lambda_home": 1.5633458495140076,
       "lambda_away": 0.8025139272212982,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1804.0292095635034
     },
     {
       "home": "Morocco",
       "away": "England",
-      "lambda_home": 0.944250077009201,
+      "lambda_home": 0.9250674843788147,
       "lambda_away": 1.4428589344024658,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2106.177335666467
     },
     {
       "home": "Morocco",
       "away": "France",
-      "lambda_home": 1.2586804032325745,
-      "lambda_away": 1.779437243938446,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.282393753528595,
+      "lambda_away": 1.7908369302749634,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2169.4596051211224
     },
     {
       "home": "Morocco",
       "away": "Germany",
       "lambda_home": 1.1894550919532776,
-      "lambda_away": 1.2474443316459656,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 1.2570666074752808,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2004.3929258781554
     },
     {
@@ -16352,39 +16352,39 @@
       "away": "Ghana",
       "lambda_home": 2.1038440465927124,
       "lambda_away": 0.5698057413101196,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1633.242396065518
     },
     {
       "home": "Morocco",
       "away": "Haiti",
-      "lambda_home": 2.099415421485901,
-      "lambda_away": 0.5853316783905029,
-      "effective_elo_home": 2011.4152931203325,
-      "effective_elo_away": 1647.7886430352842
+      "lambda_home": 2.0971500873565674,
+      "lambda_away": 0.6003202497959137,
+      "effective_elo_home": 2005.4152931203325,
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Morocco",
       "away": "Iran",
-      "lambda_home": 1.4249252676963806,
-      "lambda_away": 0.9447053074836731,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.420035719871521,
+      "lambda_away": 0.9593434035778046,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1867.5808304602413
     },
     {
       "home": "Morocco",
       "away": "Iraq",
-      "lambda_home": 1.9214997291564941,
-      "lambda_away": 0.6041146516799927,
-      "effective_elo_home": 2011.4152931203325,
-      "effective_elo_away": 1696.3773037908975
+      "lambda_home": 1.8271377086639404,
+      "lambda_away": 0.6160073578357697,
+      "effective_elo_home": 2005.4152931203325,
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Morocco",
       "away": "Ivory Coast",
       "lambda_home": 1.4744971990585327,
       "lambda_away": 0.868296891450882,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1824.7870710500176
     },
     {
@@ -16392,23 +16392,23 @@
       "away": "Japan",
       "lambda_home": 1.2574012279510498,
       "lambda_away": 1.0148130655288696,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1953.8399169164568
     },
     {
       "home": "Morocco",
       "away": "Jordan",
       "lambda_home": 2.110010862350464,
-      "lambda_away": 0.6889678835868835,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 0.6933224201202393,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1722.6213891251145
     },
     {
       "home": "Morocco",
       "away": "Mexico",
       "lambda_home": 1.1582545042037964,
-      "lambda_away": 1.1446491479873657,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 1.154488980770111,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2006.3776023270427
     },
     {
@@ -16416,39 +16416,39 @@
       "away": "Netherlands",
       "lambda_home": 1.0470427870750427,
       "lambda_away": 1.321085274219513,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2042.1308414688683
     },
     {
       "home": "Morocco",
       "away": "New Zealand",
-      "lambda_home": 2.1102145314216614,
-      "lambda_away": 0.6518351137638092,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 2.010831296443939,
+      "lambda_away": 0.6532370150089264,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1696.6052228537021
     },
     {
       "home": "Morocco",
       "away": "Norway",
-      "lambda_home": 1.2503616213798523,
-      "lambda_away": 1.1001892685890198,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.2054384350776672,
+      "lambda_away": 1.1431007385253906,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1990.673170363496
     },
     {
       "home": "Morocco",
       "away": "Panama",
-      "lambda_home": 1.760092318058014,
-      "lambda_away": 0.7561948299407959,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.755121886730194,
+      "lambda_away": 0.772640198469162,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1782.2196440006328
     },
     {
       "home": "Morocco",
       "away": "Paraguay",
-      "lambda_home": 1.3751863837242126,
+      "lambda_home": 1.370307445526123,
       "lambda_away": 0.9230194389820099,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1865.9546064839474
     },
     {
@@ -16456,23 +16456,23 @@
       "away": "Portugal",
       "lambda_home": 1.0740625262260437,
       "lambda_away": 1.3623562455177307,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2041.6277324150003
     },
     {
       "home": "Morocco",
       "away": "Qatar",
-      "lambda_home": 2.5656358003616333,
-      "lambda_away": 0.4103945940732956,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 2.5591535568237305,
+      "lambda_away": 0.41525885462760925,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1525.4826403981444
     },
     {
       "home": "Morocco",
       "away": "Saudi Arabia",
-      "lambda_home": 2.0299596190452576,
-      "lambda_away": 0.622061550617218,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 2.0152013897895813,
+      "lambda_away": 0.629564642906189,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1680.1938684100867
     },
     {
@@ -16480,95 +16480,95 @@
       "away": "Scotland",
       "lambda_home": 1.7270802855491638,
       "lambda_away": 0.8550716936588287,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1831.4499161228484
     },
     {
       "home": "Morocco",
       "away": "Senegal",
-      "lambda_home": 1.431721031665802,
-      "lambda_away": 1.0003143548965454,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.4173409342765808,
+      "lambda_away": 1.0014042556285858,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1875.4217063594333
     },
     {
       "home": "Morocco",
       "away": "South Africa",
-      "lambda_home": 1.996671736240387,
-      "lambda_away": 0.5133157223463058,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.9649915099143982,
+      "lambda_away": 0.5271972119808197,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1628.0809249686204
     },
     {
       "home": "Morocco",
       "away": "South Korea",
-      "lambda_home": 1.490829348564148,
+      "lambda_home": 1.4857866764068604,
       "lambda_away": 0.9769057929515839,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1865.252814694604
     },
     {
       "home": "Morocco",
       "away": "Spain",
-      "lambda_home": 0.688125342130661,
-      "lambda_away": 1.9476068019866943,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 0.693251371383667,
+      "lambda_away": 1.9803215861320496,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 2261.9885283779367
     },
     {
       "home": "Morocco",
       "away": "Sweden",
       "lambda_home": 2.289703369140625,
-      "lambda_away": 0.7476873695850372,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 0.7670266032218933,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1767.3226289470083
     },
     {
       "home": "Morocco",
       "away": "Switzerland",
-      "lambda_home": 1.3977623581886292,
-      "lambda_away": 1.1008820533752441,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_home": 1.346655547618866,
+      "lambda_away": 1.1036184430122375,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1959.0971672327287
     },
     {
       "home": "Morocco",
       "away": "Tunisia",
       "lambda_home": 1.9603893756866455,
-      "lambda_away": 0.641574501991272,
-      "effective_elo_home": 2011.4152931203325,
+      "lambda_away": 0.6468172967433929,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1687.790031145238
     },
     {
       "home": "Morocco",
       "away": "Turkey",
-      "lambda_home": 1.3528056740760803,
+      "lambda_home": 1.3675697445869446,
       "lambda_away": 1.0511634349822998,
-      "effective_elo_home": 2011.4152931203325,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_home": 2005.4152931203325,
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Morocco",
       "away": "United States",
       "lambda_home": 1.9506118893623352,
       "lambda_away": 0.9303759336471558,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1849.5364587123581
     },
     {
       "home": "Morocco",
       "away": "Uruguay",
-      "lambda_home": 1.3811835050582886,
+      "lambda_home": 1.3803064823150635,
       "lambda_away": 0.9503983855247498,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1917.2856931995602
     },
     {
       "home": "Morocco",
       "away": "Uzbekistan",
-      "lambda_home": 1.6587520241737366,
+      "lambda_home": 1.6541160941123962,
       "lambda_away": 0.7577522695064545,
-      "effective_elo_home": 2011.4152931203325,
+      "effective_elo_home": 2005.4152931203325,
       "effective_elo_away": 1779.1347145490186
     },
     {
@@ -16734,10 +16734,10 @@
     {
       "home": "Netherlands",
       "away": "Haiti",
-      "lambda_home": 2.570499300956726,
+      "lambda_home": 2.5354305505752563,
       "lambda_away": 0.6423980593681335,
       "effective_elo_home": 2042.1308414688683,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Netherlands",
@@ -16750,10 +16750,10 @@
     {
       "home": "Netherlands",
       "away": "Iraq",
-      "lambda_home": 2.1436742544174194,
+      "lambda_home": 2.13206946849823,
       "lambda_away": 0.6102604269981384,
       "effective_elo_home": 2042.1308414688683,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Netherlands",
@@ -16793,7 +16793,7 @@
       "lambda_home": 1.321085274219513,
       "lambda_away": 1.0470427870750427,
       "effective_elo_home": 2042.1308414688683,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Netherlands",
@@ -16918,10 +16918,10 @@
     {
       "home": "Netherlands",
       "away": "Turkey",
-      "lambda_home": 1.5811467170715332,
+      "lambda_home": 1.6148324608802795,
       "lambda_away": 1.0686704516410828,
       "effective_elo_home": 2042.1308414688683,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Netherlands",
@@ -17110,10 +17110,10 @@
     {
       "home": "New Zealand",
       "away": "Haiti",
-      "lambda_home": 1.465506374835968,
-      "lambda_away": 1.1661953330039978,
+      "lambda_home": 1.4305312633514404,
+      "lambda_away": 1.1679616570472717,
       "effective_elo_home": 1696.6052228537021,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "New Zealand",
@@ -17129,7 +17129,7 @@
       "lambda_home": 1.2058045864105225,
       "lambda_away": 1.149769365787506,
       "effective_elo_home": 1696.6052228537021,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "New Zealand",
@@ -17166,10 +17166,10 @@
     {
       "home": "New Zealand",
       "away": "Morocco",
-      "lambda_home": 0.6518351137638092,
-      "lambda_away": 2.1102145314216614,
+      "lambda_home": 0.6532370150089264,
+      "lambda_away": 2.010831296443939,
       "effective_elo_home": 1696.6052228537021,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "New Zealand",
@@ -17294,10 +17294,10 @@
     {
       "home": "New Zealand",
       "away": "Turkey",
-      "lambda_home": 0.6776487827301025,
-      "lambda_away": 2.0244035720825195,
+      "lambda_home": 0.6847967207431793,
+      "lambda_away": 1.9299487471580505,
       "effective_elo_home": 1696.6052228537021,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "New Zealand",
@@ -17487,9 +17487,9 @@
       "home": "Norway",
       "away": "Haiti",
       "lambda_home": 2.3717997074127197,
-      "lambda_away": 0.5532317459583282,
+      "lambda_away": 0.5787156820297241,
       "effective_elo_home": 1990.673170363496,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Norway",
@@ -17505,7 +17505,7 @@
       "lambda_home": 1.9622264504432678,
       "lambda_away": 0.5653013586997986,
       "effective_elo_home": 1990.673170363496,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Norway",
@@ -17542,10 +17542,10 @@
     {
       "home": "Norway",
       "away": "Morocco",
-      "lambda_home": 1.1001892685890198,
-      "lambda_away": 1.2503616213798523,
+      "lambda_home": 1.1431007385253906,
+      "lambda_away": 1.2054384350776672,
       "effective_elo_home": 1990.673170363496,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Norway",
@@ -17670,10 +17670,10 @@
     {
       "home": "Norway",
       "away": "Turkey",
-      "lambda_home": 1.5009857416152954,
+      "lambda_home": 1.5349422693252563,
       "lambda_away": 1.0918033123016357,
       "effective_elo_home": 1990.673170363496,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Norway",
@@ -17862,10 +17862,10 @@
     {
       "home": "Panama",
       "away": "Haiti",
-      "lambda_home": 1.5344489216804504,
-      "lambda_away": 1.0081939101219177,
+      "lambda_home": 1.5176787376403809,
+      "lambda_away": 1.012729823589325,
       "effective_elo_home": 1782.2196440006328,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Panama",
@@ -17878,10 +17878,10 @@
     {
       "home": "Panama",
       "away": "Iraq",
-      "lambda_home": 1.3522697687149048,
+      "lambda_home": 1.3502716422080994,
       "lambda_away": 0.9740867614746094,
       "effective_elo_home": 1782.2196440006328,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Panama",
@@ -17918,10 +17918,10 @@
     {
       "home": "Panama",
       "away": "Morocco",
-      "lambda_home": 0.7561948299407959,
-      "lambda_away": 1.760092318058014,
+      "lambda_home": 0.772640198469162,
+      "lambda_away": 1.755121886730194,
       "effective_elo_home": 1782.2196440006328,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Panama",
@@ -18046,10 +18046,10 @@
     {
       "home": "Panama",
       "away": "Turkey",
-      "lambda_home": 0.9117208421230316,
+      "lambda_home": 0.9220368266105652,
       "lambda_away": 1.709757387638092,
       "effective_elo_home": 1782.2196440006328,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Panama",
@@ -18238,10 +18238,10 @@
     {
       "home": "Paraguay",
       "away": "Haiti",
-      "lambda_home": 1.7802444696426392,
-      "lambda_away": 0.7375543713569641,
+      "lambda_home": 1.778405785560608,
+      "lambda_away": 0.7531265020370483,
       "effective_elo_home": 1865.9546064839474,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Paraguay",
@@ -18254,10 +18254,10 @@
     {
       "home": "Paraguay",
       "away": "Iraq",
-      "lambda_home": 1.553756296634674,
+      "lambda_home": 1.514905333518982,
       "lambda_away": 0.7723685801029205,
       "effective_elo_home": 1865.9546064839474,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Paraguay",
@@ -18295,9 +18295,9 @@
       "home": "Paraguay",
       "away": "Morocco",
       "lambda_home": 0.9230194389820099,
-      "lambda_away": 1.3751863837242126,
+      "lambda_away": 1.370307445526123,
       "effective_elo_home": 1865.9546064839474,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Paraguay",
@@ -18422,10 +18422,10 @@
     {
       "home": "Paraguay",
       "away": "Turkey",
-      "lambda_home": 1.0290398299694061,
+      "lambda_home": 1.0613030791282654,
       "lambda_away": 1.3731225728988647,
       "effective_elo_home": 1865.9546064839474,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Paraguay",
@@ -18614,10 +18614,10 @@
     {
       "home": "Portugal",
       "away": "Haiti",
-      "lambda_home": 2.5553267002105713,
+      "lambda_home": 2.520934581756592,
       "lambda_away": 0.598177582025528,
       "effective_elo_home": 2041.6277324150003,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Portugal",
@@ -18633,7 +18633,7 @@
       "lambda_home": 2.1249910593032837,
       "lambda_away": 0.6010438799858093,
       "effective_elo_home": 2041.6277324150003,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Portugal",
@@ -18673,7 +18673,7 @@
       "lambda_home": 1.3623562455177307,
       "lambda_away": 1.0740625262260437,
       "effective_elo_home": 2041.6277324150003,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Portugal",
@@ -18798,10 +18798,10 @@
     {
       "home": "Portugal",
       "away": "Turkey",
-      "lambda_home": 1.5983393788337708,
+      "lambda_home": 1.632977306842804,
       "lambda_away": 1.0944449305534363,
       "effective_elo_home": 2041.6277324150003,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Portugal",
@@ -18990,10 +18990,10 @@
     {
       "home": "Qatar",
       "away": "Haiti",
-      "lambda_home": 0.9890582859516144,
-      "lambda_away": 1.484102189540863,
+      "lambda_home": 0.9948314130306244,
+      "lambda_away": 1.4815847277641296,
       "effective_elo_home": 1525.4826403981444,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Qatar",
@@ -19006,10 +19006,10 @@
     {
       "home": "Qatar",
       "away": "Iraq",
-      "lambda_home": 0.7710517644882202,
+      "lambda_home": 0.7663189172744751,
       "lambda_away": 1.4243532419204712,
       "effective_elo_home": 1525.4826403981444,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Qatar",
@@ -19046,10 +19046,10 @@
     {
       "home": "Qatar",
       "away": "Morocco",
-      "lambda_home": 0.4103945940732956,
-      "lambda_away": 2.5656358003616333,
+      "lambda_home": 0.41525885462760925,
+      "lambda_away": 2.5591535568237305,
       "effective_elo_home": 1525.4826403981444,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Qatar",
@@ -19174,10 +19174,10 @@
     {
       "home": "Qatar",
       "away": "Turkey",
-      "lambda_home": 0.43979765474796295,
+      "lambda_home": 0.4451639652252197,
       "lambda_away": 2.2968740463256836,
       "effective_elo_home": 1525.4826403981444,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Qatar",
@@ -19366,10 +19366,10 @@
     {
       "home": "Saudi Arabia",
       "away": "Haiti",
-      "lambda_home": 1.2621721029281616,
-      "lambda_away": 1.09822416305542,
+      "lambda_home": 1.2608816623687744,
+      "lambda_away": 1.095543086528778,
       "effective_elo_home": 1680.1938684100867,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Saudi Arabia",
@@ -19382,10 +19382,10 @@
     {
       "home": "Saudi Arabia",
       "away": "Iraq",
-      "lambda_home": 1.0730948448181152,
-      "lambda_away": 1.0853422284126282,
+      "lambda_home": 1.0432400107383728,
+      "lambda_away": 1.1187816858291626,
       "effective_elo_home": 1680.1938684100867,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Saudi Arabia",
@@ -19422,10 +19422,10 @@
     {
       "home": "Saudi Arabia",
       "away": "Morocco",
-      "lambda_home": 0.622061550617218,
-      "lambda_away": 2.0299596190452576,
+      "lambda_home": 0.629564642906189,
+      "lambda_away": 2.0152013897895813,
       "effective_elo_home": 1680.1938684100867,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Saudi Arabia",
@@ -19550,10 +19550,10 @@
     {
       "home": "Saudi Arabia",
       "away": "Turkey",
-      "lambda_home": 0.6288487911224365,
+      "lambda_home": 0.6355760991573334,
       "lambda_away": 1.8723623156547546,
       "effective_elo_home": 1680.1938684100867,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Saudi Arabia",
@@ -19742,10 +19742,10 @@
     {
       "home": "Scotland",
       "away": "Haiti",
-      "lambda_home": 1.8011191487312317,
+      "lambda_home": 1.7870863676071167,
       "lambda_away": 0.8614577054977417,
       "effective_elo_home": 1831.4499161228484,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Scotland",
@@ -19758,10 +19758,10 @@
     {
       "home": "Scotland",
       "away": "Iraq",
-      "lambda_home": 1.4600628018379211,
+      "lambda_home": 1.4579102993011475,
       "lambda_away": 0.8444348871707916,
       "effective_elo_home": 1831.4499161228484,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Scotland",
@@ -19801,7 +19801,7 @@
       "lambda_home": 0.8550716936588287,
       "lambda_away": 1.7270802855491638,
       "effective_elo_home": 1831.4499161228484,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Scotland",
@@ -19926,10 +19926,10 @@
     {
       "home": "Scotland",
       "away": "Turkey",
-      "lambda_home": 0.9771871566772461,
-      "lambda_away": 1.5313649773597717,
+      "lambda_home": 0.9968290328979492,
+      "lambda_away": 1.5308998227119446,
       "effective_elo_home": 1831.4499161228484,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Scotland",
@@ -20118,10 +20118,10 @@
     {
       "home": "Senegal",
       "away": "Haiti",
-      "lambda_home": 1.8621102571487427,
-      "lambda_away": 0.7213799953460693,
+      "lambda_home": 1.8565261960029602,
+      "lambda_away": 0.7492359280586243,
       "effective_elo_home": 1875.4217063594333,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Senegal",
@@ -20134,10 +20134,10 @@
     {
       "home": "Senegal",
       "away": "Iraq",
-      "lambda_home": 1.6310173869132996,
+      "lambda_home": 1.6268346905708313,
       "lambda_away": 0.7984386682510376,
       "effective_elo_home": 1875.4217063594333,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Senegal",
@@ -20174,10 +20174,10 @@
     {
       "home": "Senegal",
       "away": "Morocco",
-      "lambda_home": 1.0003143548965454,
-      "lambda_away": 1.431721031665802,
+      "lambda_home": 1.0014042556285858,
+      "lambda_away": 1.4173409342765808,
       "effective_elo_home": 1875.4217063594333,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Senegal",
@@ -20302,10 +20302,10 @@
     {
       "home": "Senegal",
       "away": "Turkey",
-      "lambda_home": 1.1257320642471313,
+      "lambda_home": 1.149094045162201,
       "lambda_away": 1.4083606004714966,
       "effective_elo_home": 1875.4217063594333,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Senegal",
@@ -20494,10 +20494,10 @@
     {
       "home": "South Africa",
       "away": "Haiti",
-      "lambda_home": 0.9725100100040436,
-      "lambda_away": 1.245240569114685,
+      "lambda_home": 0.9705803394317627,
+      "lambda_away": 1.2526935338974,
       "effective_elo_home": 1628.0809249686204,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "South Africa",
@@ -20510,10 +20510,10 @@
     {
       "home": "South Africa",
       "away": "Iraq",
-      "lambda_home": 0.9441031515598297,
+      "lambda_home": 0.9357311427593231,
       "lambda_away": 1.1745111346244812,
       "effective_elo_home": 1628.0809249686204,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "South Africa",
@@ -20550,10 +20550,10 @@
     {
       "home": "South Africa",
       "away": "Morocco",
-      "lambda_home": 0.5133157223463058,
-      "lambda_away": 1.996671736240387,
+      "lambda_home": 0.5271972119808197,
+      "lambda_away": 1.9649915099143982,
       "effective_elo_home": 1628.0809249686204,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "South Africa",
@@ -20678,10 +20678,10 @@
     {
       "home": "South Africa",
       "away": "Turkey",
-      "lambda_home": 0.6003072559833527,
-      "lambda_away": 1.9261507391929626,
+      "lambda_home": 0.6153046190738678,
+      "lambda_away": 1.9105224013328552,
       "effective_elo_home": 1628.0809249686204,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "South Africa",
@@ -20871,9 +20871,9 @@
       "home": "South Korea",
       "away": "Haiti",
       "lambda_home": 1.7474892139434814,
-      "lambda_away": 0.755328357219696,
+      "lambda_away": 0.8078016936779022,
       "effective_elo_home": 1865.252814694604,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "South Korea",
@@ -20886,10 +20886,10 @@
     {
       "home": "South Korea",
       "away": "Iraq",
-      "lambda_home": 1.5050724148750305,
+      "lambda_home": 1.4672260880470276,
       "lambda_away": 0.7846167981624603,
       "effective_elo_home": 1865.252814694604,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "South Korea",
@@ -20927,9 +20927,9 @@
       "home": "South Korea",
       "away": "Morocco",
       "lambda_home": 0.9769057929515839,
-      "lambda_away": 1.490829348564148,
+      "lambda_away": 1.4857866764068604,
       "effective_elo_home": 1865.252814694604,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "South Korea",
@@ -21054,10 +21054,10 @@
     {
       "home": "South Korea",
       "away": "Turkey",
-      "lambda_home": 1.0690723657608032,
+      "lambda_home": 1.111107885837555,
       "lambda_away": 1.4579293727874756,
       "effective_elo_home": 1865.252814694604,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "South Korea",
@@ -21249,7 +21249,7 @@
       "lambda_home": 3.8118021488189697,
       "lambda_away": 0.40706638991832733,
       "effective_elo_home": 2261.9885283779367,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Spain",
@@ -21265,7 +21265,7 @@
       "lambda_home": 2.8626456260681152,
       "lambda_away": 0.4142948389053345,
       "effective_elo_home": 2261.9885283779367,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Spain",
@@ -21302,10 +21302,10 @@
     {
       "home": "Spain",
       "away": "Morocco",
-      "lambda_home": 1.9476068019866943,
-      "lambda_away": 0.688125342130661,
+      "lambda_home": 1.9803215861320496,
+      "lambda_away": 0.693251371383667,
       "effective_elo_home": 2261.9885283779367,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Spain",
@@ -21430,10 +21430,10 @@
     {
       "home": "Spain",
       "away": "Turkey",
-      "lambda_home": 2.2907758355140686,
+      "lambda_home": 2.3179925084114075,
       "lambda_away": 0.5505823045969009,
       "effective_elo_home": 2261.9885283779367,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Spain",
@@ -21622,10 +21622,10 @@
     {
       "home": "Sweden",
       "away": "Haiti",
-      "lambda_home": 1.576260268688202,
-      "lambda_away": 1.0524832904338837,
+      "lambda_home": 1.5697265267372131,
+      "lambda_away": 1.0956011414527893,
       "effective_elo_home": 1767.3226289470083,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Sweden",
@@ -21639,9 +21639,9 @@
       "home": "Sweden",
       "away": "Iraq",
       "lambda_home": 1.3979414105415344,
-      "lambda_away": 1.0483078956604004,
+      "lambda_away": 1.0584036707878113,
       "effective_elo_home": 1767.3226289470083,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Sweden",
@@ -21678,10 +21678,10 @@
     {
       "home": "Sweden",
       "away": "Morocco",
-      "lambda_home": 0.7476873695850372,
+      "lambda_home": 0.7670266032218933,
       "lambda_away": 2.289703369140625,
       "effective_elo_home": 1767.3226289470083,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Sweden",
@@ -21806,10 +21806,10 @@
     {
       "home": "Sweden",
       "away": "Turkey",
-      "lambda_home": 0.8902807533740997,
-      "lambda_away": 2.1685750484466553,
+      "lambda_home": 0.9188132882118225,
+      "lambda_away": 2.109096050262451,
       "effective_elo_home": 1767.3226289470083,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Sweden",
@@ -22001,7 +22001,7 @@
       "lambda_home": 2.193908452987671,
       "lambda_away": 0.6376659870147705,
       "effective_elo_home": 1959.0971672327287,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Switzerland",
@@ -22014,10 +22014,10 @@
     {
       "home": "Switzerland",
       "away": "Iraq",
-      "lambda_home": 2.0389533042907715,
+      "lambda_home": 1.9421420693397522,
       "lambda_away": 0.6137153506278992,
       "effective_elo_home": 1959.0971672327287,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Switzerland",
@@ -22054,10 +22054,10 @@
     {
       "home": "Switzerland",
       "away": "Morocco",
-      "lambda_home": 1.1008820533752441,
-      "lambda_away": 1.3977623581886292,
+      "lambda_home": 1.1036184430122375,
+      "lambda_away": 1.346655547618866,
       "effective_elo_home": 1959.0971672327287,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Switzerland",
@@ -22182,10 +22182,10 @@
     {
       "home": "Switzerland",
       "away": "Turkey",
-      "lambda_home": 1.4493646025657654,
+      "lambda_home": 1.4780961871147156,
       "lambda_away": 1.28883558511734,
       "effective_elo_home": 1959.0971672327287,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Switzerland",
@@ -22375,9 +22375,9 @@
       "home": "Tunisia",
       "away": "Haiti",
       "lambda_home": 1.3084059357643127,
-      "lambda_away": 1.0930189490318298,
+      "lambda_away": 1.0925843715667725,
       "effective_elo_home": 1687.790031145238,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Tunisia",
@@ -22390,10 +22390,10 @@
     {
       "home": "Tunisia",
       "away": "Iraq",
-      "lambda_home": 1.149566113948822,
-      "lambda_away": 1.073310375213623,
+      "lambda_home": 1.138678789138794,
+      "lambda_away": 1.084667146205902,
       "effective_elo_home": 1687.790031145238,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Tunisia",
@@ -22430,10 +22430,10 @@
     {
       "home": "Tunisia",
       "away": "Morocco",
-      "lambda_home": 0.641574501991272,
+      "lambda_home": 0.6468172967433929,
       "lambda_away": 1.9603893756866455,
       "effective_elo_home": 1687.790031145238,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Tunisia",
@@ -22558,10 +22558,10 @@
     {
       "home": "Tunisia",
       "away": "Turkey",
-      "lambda_home": 0.6700348556041718,
+      "lambda_home": 0.6771768927574158,
       "lambda_away": 1.960691511631012,
       "effective_elo_home": 1687.790031145238,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Tunisia",
@@ -22590,377 +22590,377 @@
     {
       "home": "Turkey",
       "away": "Algeria",
-      "lambda_home": 1.423117220401764,
-      "lambda_away": 0.8831726014614105,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.4086426496505737,
+      "lambda_away": 0.893791526556015,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1828.9756138903788
     },
     {
       "home": "Turkey",
       "away": "Argentina",
-      "lambda_home": 0.5265175998210907,
-      "lambda_away": 2.044537365436554,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 0.5146211981773376,
+      "lambda_away": 2.0676888823509216,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2225.0407966931166
     },
     {
       "home": "Turkey",
       "away": "Australia",
       "lambda_home": 1.328893780708313,
-      "lambda_away": 1.0036533772945404,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.0332856476306915,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1861.7785023926044
     },
     {
       "home": "Turkey",
       "away": "Austria",
       "lambda_home": 1.4197136163711548,
-      "lambda_away": 0.9905521869659424,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.001210331916809,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1867.3505608580824
     },
     {
       "home": "Turkey",
       "away": "Belgium",
-      "lambda_home": 1.3051143884658813,
-      "lambda_away": 1.2178833484649658,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.2579936981201172,
+      "lambda_away": 1.2993006110191345,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1942.3634292236334
     },
     {
       "home": "Turkey",
       "away": "Bosnia and Herzegovina",
-      "lambda_home": 1.963440716266632,
-      "lambda_away": 0.6623885631561279,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.8561938405036926,
+      "lambda_away": 0.6753900647163391,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1644.2095107557593
     },
     {
       "home": "Turkey",
       "away": "Brazil",
       "lambda_home": 1.0682857632637024,
-      "lambda_away": 1.7453416585922241,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.7430509328842163,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2061.074903289677
     },
     {
       "home": "Turkey",
       "away": "Canada",
       "lambda_home": 1.3303137421607971,
-      "lambda_away": 1.0291956067085266,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.0491933822631836,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1885.7123964905543
     },
     {
       "home": "Turkey",
       "away": "Cape Verde",
       "lambda_home": 1.8609660863876343,
-      "lambda_away": 0.6379963457584381,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 0.6448987424373627,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1658.1141147902829
     },
     {
       "home": "Turkey",
       "away": "Colombia",
-      "lambda_home": 0.9890545606613159,
-      "lambda_away": 1.6556346416473389,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 0.9796679019927979,
+      "lambda_away": 1.689170002937317,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2069.2145138455708
     },
     {
       "home": "Turkey",
       "away": "Croatia",
-      "lambda_home": 1.2853437662124634,
-      "lambda_away": 1.4923880696296692,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.2571337223052979,
+      "lambda_away": 1.5116960406303406,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1964.0599501675604
     },
     {
       "home": "Turkey",
       "away": "Curacao",
-      "lambda_home": 2.410650134086609,
-      "lambda_away": 0.5668831169605255,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 2.3776755332946777,
+      "lambda_away": 0.572548896074295,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1567.8638698146224
     },
     {
       "home": "Turkey",
       "away": "Czechia",
-      "lambda_home": 2.0098506212234497,
-      "lambda_away": 0.8410334289073944,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.9859459400177002,
+      "lambda_away": 0.8515295684337616,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1759.8611272962464
     },
     {
       "home": "Turkey",
       "away": "DR Congo",
       "lambda_home": 1.6852396130561829,
-      "lambda_away": 0.7225266396999359,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 0.7375735342502594,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1762.8708306018193
     },
     {
       "home": "Turkey",
       "away": "Ecuador",
       "lambda_home": 1.1344122886657715,
-      "lambda_away": 1.2908397316932678,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.3171212077140808,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1993.9767443807336
     },
     {
       "home": "Turkey",
       "away": "Egypt",
-      "lambda_home": 1.4638965129852295,
-      "lambda_away": 0.8803685009479523,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.4582372903823853,
+      "lambda_away": 0.926086038351059,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1804.0292095635034
     },
     {
       "home": "Turkey",
       "away": "England",
-      "lambda_home": 0.9734040796756744,
-      "lambda_away": 1.5934261083602905,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 0.9711886048316956,
+      "lambda_away": 1.6098837852478027,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2106.177335666467
     },
     {
       "home": "Turkey",
       "away": "France",
-      "lambda_home": 0.9146388173103333,
-      "lambda_away": 2.1057214736938477,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 0.8148224353790283,
+      "lambda_away": 2.1314570903778076,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2169.4596051211224
     },
     {
       "home": "Turkey",
       "away": "Germany",
-      "lambda_home": 1.0520416498184204,
-      "lambda_away": 1.4687001705169678,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.0434655547142029,
+      "lambda_away": 1.478767216205597,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2004.3929258781554
     },
     {
       "home": "Turkey",
       "away": "Ghana",
-      "lambda_home": 1.9893537759780884,
-      "lambda_away": 0.6194260716438293,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.9623660445213318,
+      "lambda_away": 0.6261569857597351,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1633.242396065518
     },
     {
       "home": "Turkey",
       "away": "Haiti",
       "lambda_home": 1.9368707537651062,
-      "lambda_away": 0.6905188262462616,
-      "effective_elo_home": 1960.784720808239,
-      "effective_elo_away": 1647.7886430352842
+      "lambda_away": 0.706058919429779,
+      "effective_elo_home": 1956.464720808239,
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Turkey",
       "away": "Iran",
       "lambda_home": 1.3945150971412659,
-      "lambda_away": 1.040934979915619,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.0611863136291504,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1867.5808304602413
     },
     {
       "home": "Turkey",
       "away": "Iraq",
-      "lambda_home": 1.8602481484413147,
-      "lambda_away": 0.6719478666782379,
-      "effective_elo_home": 1960.784720808239,
-      "effective_elo_away": 1696.3773037908975
+      "lambda_home": 1.7671375274658203,
+      "lambda_away": 0.6952039301395416,
+      "effective_elo_home": 1956.464720808239,
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Turkey",
       "away": "Ivory Coast",
       "lambda_home": 1.4383371472358704,
-      "lambda_away": 0.9508445560932159,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 0.9609107077121735,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1824.7870710500176
     },
     {
       "home": "Turkey",
       "away": "Japan",
       "lambda_home": 1.2285702228546143,
-      "lambda_away": 1.2036181688308716,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.224585473537445,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1953.8399169164568
     },
     {
       "home": "Turkey",
       "away": "Jordan",
-      "lambda_home": 2.1173351407051086,
-      "lambda_away": 0.7590495645999908,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 2.121159613132477,
+      "lambda_away": 0.7659644782543182,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1722.6213891251145
     },
     {
       "home": "Turkey",
       "away": "Mexico",
-      "lambda_home": 1.1168388724327087,
-      "lambda_away": 1.3475506901741028,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.1138727068901062,
+      "lambda_away": 1.4219363331794739,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2006.3776023270427
     },
     {
       "home": "Turkey",
       "away": "Morocco",
       "lambda_home": 1.0511634349822998,
-      "lambda_away": 1.3528056740760803,
-      "effective_elo_home": 1960.784720808239,
-      "effective_elo_away": 2011.4152931203325
+      "lambda_away": 1.3675697445869446,
+      "effective_elo_home": 1956.464720808239,
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Turkey",
       "away": "Netherlands",
       "lambda_home": 1.0686704516410828,
-      "lambda_away": 1.5811467170715332,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.6148324608802795,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2042.1308414688683
     },
     {
       "home": "Turkey",
       "away": "New Zealand",
-      "lambda_home": 2.0244035720825195,
-      "lambda_away": 0.6776487827301025,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.9299487471580505,
+      "lambda_away": 0.6847967207431793,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1696.6052228537021
     },
     {
       "home": "Turkey",
       "away": "Norway",
       "lambda_home": 1.0918033123016357,
-      "lambda_away": 1.5009857416152954,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.5349422693252563,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1990.673170363496
     },
     {
       "home": "Turkey",
       "away": "Panama",
       "lambda_home": 1.709757387638092,
-      "lambda_away": 0.9117208421230316,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 0.9220368266105652,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1782.2196440006328
     },
     {
       "home": "Turkey",
       "away": "Paraguay",
       "lambda_home": 1.3731225728988647,
-      "lambda_away": 1.0290398299694061,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.0613030791282654,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1865.9546064839474
     },
     {
       "home": "Turkey",
       "away": "Portugal",
       "lambda_home": 1.0944449305534363,
-      "lambda_away": 1.5983393788337708,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.632977306842804,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2041.6277324150003
     },
     {
       "home": "Turkey",
       "away": "Qatar",
       "lambda_home": 2.2968740463256836,
-      "lambda_away": 0.43979765474796295,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 0.4451639652252197,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1525.4826403981444
     },
     {
       "home": "Turkey",
       "away": "Saudi Arabia",
       "lambda_home": 1.8723623156547546,
-      "lambda_away": 0.6288487911224365,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 0.6355760991573334,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1680.1938684100867
     },
     {
       "home": "Turkey",
       "away": "Scotland",
-      "lambda_home": 1.5313649773597717,
-      "lambda_away": 0.9771871566772461,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.5308998227119446,
+      "lambda_away": 0.9968290328979492,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1831.4499161228484
     },
     {
       "home": "Turkey",
       "away": "Senegal",
       "lambda_home": 1.4083606004714966,
-      "lambda_away": 1.1257320642471313,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.149094045162201,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1875.4217063594333
     },
     {
       "home": "Turkey",
       "away": "South Africa",
-      "lambda_home": 1.9261507391929626,
-      "lambda_away": 0.6003072559833527,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.9105224013328552,
+      "lambda_away": 0.6153046190738678,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1628.0809249686204
     },
     {
       "home": "Turkey",
       "away": "South Korea",
       "lambda_home": 1.4579293727874756,
-      "lambda_away": 1.0690723657608032,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.111107885837555,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1865.252814694604
     },
     {
       "home": "Turkey",
       "away": "Spain",
       "lambda_home": 0.5505823045969009,
-      "lambda_away": 2.2907758355140686,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 2.3179925084114075,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 2261.9885283779367
     },
     {
       "home": "Turkey",
       "away": "Sweden",
-      "lambda_home": 2.1685750484466553,
-      "lambda_away": 0.8902807533740997,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 2.109096050262451,
+      "lambda_away": 0.9188132882118225,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1767.3226289470083
     },
     {
       "home": "Turkey",
       "away": "Switzerland",
       "lambda_home": 1.28883558511734,
-      "lambda_away": 1.4493646025657654,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 1.4780961871147156,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1959.0971672327287
     },
     {
       "home": "Turkey",
       "away": "Tunisia",
       "lambda_home": 1.960691511631012,
-      "lambda_away": 0.6700348556041718,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_away": 0.6771768927574158,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1687.790031145238
     },
     {
       "home": "Turkey",
       "away": "United States",
-      "lambda_home": 1.8009926080703735,
-      "lambda_away": 1.0845410227775574,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.7960942387580872,
+      "lambda_away": 1.1090447306632996,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1849.5364587123581
     },
     {
       "home": "Turkey",
       "away": "Uruguay",
-      "lambda_home": 1.3300185799598694,
-      "lambda_away": 1.0875072181224823,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.3041455149650574,
+      "lambda_away": 1.1112208664417267,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1917.2856931995602
     },
     {
       "home": "Turkey",
       "away": "Uzbekistan",
-      "lambda_home": 1.6014071106910706,
-      "lambda_away": 0.9071960151195526,
-      "effective_elo_home": 1960.784720808239,
+      "lambda_home": 1.600520670413971,
+      "lambda_away": 0.9269653856754303,
+      "effective_elo_home": 1956.464720808239,
       "effective_elo_away": 1779.1347145490186
     },
     {
@@ -23126,10 +23126,10 @@
     {
       "home": "United States",
       "away": "Haiti",
-      "lambda_home": 1.8642005920410156,
-      "lambda_away": 0.9237392842769623,
+      "lambda_home": 1.847070574760437,
+      "lambda_away": 0.9182773530483246,
       "effective_elo_home": 1849.5364587123581,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "United States",
@@ -23142,10 +23142,10 @@
     {
       "home": "United States",
       "away": "Iraq",
-      "lambda_home": 1.613720417022705,
-      "lambda_away": 0.912639319896698,
+      "lambda_home": 1.5348783731460571,
+      "lambda_away": 0.9139057397842407,
       "effective_elo_home": 1849.5364587123581,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "United States",
@@ -23185,7 +23185,7 @@
       "lambda_home": 0.9303759336471558,
       "lambda_away": 1.9506118893623352,
       "effective_elo_home": 1849.5364587123581,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "United States",
@@ -23318,10 +23318,10 @@
     {
       "home": "United States",
       "away": "Turkey",
-      "lambda_home": 1.0845410227775574,
-      "lambda_away": 1.8009926080703735,
+      "lambda_home": 1.1090447306632996,
+      "lambda_away": 1.7960942387580872,
       "effective_elo_home": 1849.5364587123581,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "United States",
@@ -23503,9 +23503,9 @@
       "home": "Uruguay",
       "away": "Haiti",
       "lambda_home": 1.9891172647476196,
-      "lambda_away": 0.7083516716957092,
+      "lambda_away": 0.7037728726863861,
       "effective_elo_home": 1917.2856931995602,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Uruguay",
@@ -23518,10 +23518,10 @@
     {
       "home": "Uruguay",
       "away": "Iraq",
-      "lambda_home": 1.5598539113998413,
+      "lambda_home": 1.5560187697410583,
       "lambda_away": 0.707075446844101,
       "effective_elo_home": 1917.2856931995602,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Uruguay",
@@ -23559,9 +23559,9 @@
       "home": "Uruguay",
       "away": "Morocco",
       "lambda_home": 0.9503983855247498,
-      "lambda_away": 1.3811835050582886,
+      "lambda_away": 1.3803064823150635,
       "effective_elo_home": 1917.2856931995602,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Uruguay",
@@ -23694,10 +23694,10 @@
     {
       "home": "Uruguay",
       "away": "Turkey",
-      "lambda_home": 1.0875072181224823,
-      "lambda_away": 1.3300185799598694,
+      "lambda_home": 1.1112208664417267,
+      "lambda_away": 1.3041455149650574,
       "effective_elo_home": 1917.2856931995602,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Uruguay",
@@ -23878,10 +23878,10 @@
     {
       "home": "Uzbekistan",
       "away": "Haiti",
-      "lambda_home": 1.4695318341255188,
-      "lambda_away": 0.9318126440048218,
+      "lambda_home": 1.466781198978424,
+      "lambda_away": 0.9314262866973877,
       "effective_elo_home": 1779.1347145490186,
-      "effective_elo_away": 1647.7886430352842
+      "effective_elo_away": 1653.7886430352842
     },
     {
       "home": "Uzbekistan",
@@ -23895,9 +23895,9 @@
       "home": "Uzbekistan",
       "away": "Iraq",
       "lambda_home": 1.3242955803871155,
-      "lambda_away": 0.9089569747447968,
+      "lambda_away": 0.9073618650436401,
       "effective_elo_home": 1779.1347145490186,
-      "effective_elo_away": 1696.3773037908975
+      "effective_elo_away": 1699.7073037908974
     },
     {
       "home": "Uzbekistan",
@@ -23935,9 +23935,9 @@
       "home": "Uzbekistan",
       "away": "Morocco",
       "lambda_home": 0.7577522695064545,
-      "lambda_away": 1.6587520241737366,
+      "lambda_away": 1.6541160941123962,
       "effective_elo_home": 1779.1347145490186,
-      "effective_elo_away": 2011.4152931203325
+      "effective_elo_away": 2005.4152931203325
     },
     {
       "home": "Uzbekistan",
@@ -24070,10 +24070,10 @@
     {
       "home": "Uzbekistan",
       "away": "Turkey",
-      "lambda_home": 0.9071960151195526,
-      "lambda_away": 1.6014071106910706,
+      "lambda_home": 0.9269653856754303,
+      "lambda_away": 1.600520670413971,
       "effective_elo_home": 1779.1347145490186,
-      "effective_elo_away": 1960.784720808239
+      "effective_elo_away": 1956.464720808239
     },
     {
       "home": "Uzbekistan",
@@ -24131,12 +24131,12 @@
       "lambda_home": 1.321085274219513,
       "lambda_away": 1.0470427870750427,
       "effective_elo_home": 2042.1308414688683,
-      "effective_elo_away": 2011.4152931203325,
+      "effective_elo_away": 2005.4152931203325,
       "p_home_win": 0.4017083676570609,
       "p_draw": 0.3068967782654506,
       "p_away_win": 0.2913948540774885,
-      "p_tiebreak_home_win": 0.5484251147435564,
-      "p_advance_match": 0.5700182684917184
+      "p_tiebreak_home_win": 0.5514440823901012,
+      "p_advance_match": 0.5709447799361307
     },
     {
       "m": 76,
@@ -24356,12 +24356,12 @@
       "lambda_home": 0.9185846745967865,
       "lambda_away": 1.3037014603614807,
       "effective_elo_home": 1885.7123964905543,
-      "effective_elo_away": 2011.4152931203325,
+      "effective_elo_away": 2005.4152931203325,
       "p_home_win": 0.26198593499858325,
       "p_draw": 0.3165359445775536,
       "p_away_win": 0.42147812042386323,
-      "p_tiebreak_home_win": 0.3888131495337595,
-      "p_advance_match": 0.3850592725504254
+      "p_tiebreak_home_win": 0.3917681628851645,
+      "p_advance_match": 0.38599464049285165
     },
     {
       "m": 91,
@@ -24458,15 +24458,15 @@
       "stage": "qf",
       "home": "France",
       "away": "Morocco",
-      "lambda_home": 1.779437243938446,
-      "lambda_away": 1.2586804032325745,
+      "lambda_home": 1.7908369302749634,
+      "lambda_away": 1.282393753528595,
       "effective_elo_home": 2169.4596051211224,
-      "effective_elo_away": 2011.4152931203325,
-      "p_home_win": 0.46322453595589597,
-      "p_draw": 0.25822993382789894,
-      "p_away_win": 0.27854553021620504,
-      "p_tiebreak_home_win": 0.6257306186831778,
-      "p_advance_match": 0.6248069122125433
+      "effective_elo_away": 2005.4152931203325,
+      "p_home_win": 0.46138850037856693,
+      "p_draw": 0.2565443719153409,
+      "p_away_win": 0.2820671277060922,
+      "p_tiebreak_home_win": 0.6261419441123801,
+      "p_advance_match": 0.622021692160728
     },
     {
       "m": 98,
