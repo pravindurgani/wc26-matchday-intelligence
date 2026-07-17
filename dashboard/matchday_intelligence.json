@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T01:56:52.940134+00:00",
+  "generated_at": "2026-07-17T05:35:04.889569+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -17,8 +17,8 @@
     {
       "team": "Algeria",
       "match_id": null,
-      "total_elo_adjustment": -18.69,
-      "raw_sum_before_aggregate_cap": -18.69,
+      "total_elo_adjustment": -24.39,
+      "raw_sum_before_aggregate_cap": -24.39,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -30,6 +30,21 @@
           "cap_used": 25.0,
           "n_players": 2,
           "source": "api_football"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 19,
+          "raw_elo": -3.6,
+          "capped_elo_per_match": -3.6,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.6,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         },
         {
           "type": "stats_proxy",
@@ -60,17 +75,47 @@
           "capped_elo": 1.05,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 85,
+          "raw_elo": -2.1,
+          "capped_elo_per_match": -2.1,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -2.1,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
     {
       "team": "Argentina",
       "match_id": null,
-      "total_elo_adjustment": 7.86,
-      "raw_sum_before_aggregate_cap": 7.86,
+      "total_elo_adjustment": 15.48,
+      "raw_sum_before_aggregate_cap": 15.48,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 19,
+          "raw_elo": 3.6,
+          "capped_elo_per_match": 3.6,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.6,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 41,
@@ -103,6 +148,21 @@
         },
         {
           "type": "stats_proxy",
+          "match_id": 95,
+          "raw_elo": 4.02,
+          "capped_elo_per_match": 4.02,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 4.02,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
           "match_id": 102,
           "raw_elo": 2.82,
           "capped_elo_per_match": 2.82,
@@ -121,8 +181,8 @@
     {
       "team": "Australia",
       "match_id": null,
-      "total_elo_adjustment": -25.23,
-      "raw_sum_before_aggregate_cap": -25.23,
+      "total_elo_adjustment": -25.89,
+      "raw_sum_before_aggregate_cap": -25.89,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -147,6 +207,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.36,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 29,
+          "raw_elo": -0.66,
+          "capped_elo_per_match": -0.66,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -0.66,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -240,8 +315,8 @@
     {
       "team": "Belgium",
       "match_id": null,
-      "total_elo_adjustment": -14.08,
-      "raw_sum_before_aggregate_cap": -14.08,
+      "total_elo_adjustment": -18.67,
+      "raw_sum_before_aggregate_cap": -18.67,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -311,6 +386,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 3.27,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 98,
+          "raw_elo": -4.59,
+          "capped_elo_per_match": -4.59,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -4.59,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -584,8 +674,8 @@
     {
       "team": "Canada",
       "match_id": null,
-      "total_elo_adjustment": -19.02,
-      "raw_sum_before_aggregate_cap": -19.02,
+      "total_elo_adjustment": -9.06,
+      "raw_sum_before_aggregate_cap": -9.06,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -615,6 +705,21 @@
         },
         {
           "type": "stats_proxy",
+          "match_id": 27,
+          "raw_elo": 6.0,
+          "capped_elo_per_match": 6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
           "match_id": 49,
           "raw_elo": 2.55,
           "capped_elo_per_match": 2.55,
@@ -625,6 +730,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 2.55,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 73,
+          "raw_elo": 3.96,
+          "capped_elo_per_match": 3.96,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.96,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -648,8 +768,8 @@
     {
       "team": "Cape Verde",
       "match_id": null,
-      "total_elo_adjustment": -12.45,
-      "raw_sum_before_aggregate_cap": -12.45,
+      "total_elo_adjustment": -18.12,
+      "raw_sum_before_aggregate_cap": -18.12,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -661,6 +781,21 @@
           "cap_used": 25.0,
           "n_players": 1,
           "source": "api_football"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 13,
+          "raw_elo": -5.67,
+          "capped_elo_per_match": -5.67,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -5.67,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         },
         {
           "type": "stats_proxy",
@@ -723,8 +858,8 @@
     {
       "team": "Colombia",
       "match_id": null,
-      "total_elo_adjustment": -4.02,
-      "raw_sum_before_aggregate_cap": -4.02,
+      "total_elo_adjustment": 2.73,
+      "raw_sum_before_aggregate_cap": 2.73,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -736,6 +871,36 @@
           "cap_used": 25.0,
           "n_players": 1,
           "source": "api_football"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 24,
+          "raw_elo": 1.53,
+          "capped_elo_per_match": 1.53,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.53,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 48,
+          "raw_elo": 5.22,
+          "capped_elo_per_match": 5.22,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 5.22,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         },
         {
           "type": "stats_proxy",
@@ -772,8 +937,8 @@
     {
       "team": "Croatia",
       "match_id": null,
-      "total_elo_adjustment": -3.54,
-      "raw_sum_before_aggregate_cap": -3.54,
+      "total_elo_adjustment": -1.59,
+      "raw_sum_before_aggregate_cap": -1.59,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -804,6 +969,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -0.06,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 68,
+          "raw_elo": 1.95,
+          "capped_elo_per_match": 1.95,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.95,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -846,14 +1026,29 @@
     {
       "team": "Curacao",
       "match_id": null,
-      "total_elo_adjustment": -7.14,
-      "raw_sum_before_aggregate_cap": -7.14,
+      "total_elo_adjustment": -13.14,
+      "raw_sum_before_aggregate_cap": -13.14,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
         {
           "type": "stats_proxy",
           "match_id": 9,
+          "raw_elo": -6.0,
+          "capped_elo_per_match": -6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 35,
           "raw_elo": -6.0,
           "capped_elo_per_match": -6.0,
           "cap_per_match": 8.0,
@@ -969,11 +1164,56 @@
     {
       "team": "DR Congo",
       "match_id": null,
-      "total_elo_adjustment": -3.45,
-      "raw_sum_before_aggregate_cap": -3.45,
+      "total_elo_adjustment": -7.23,
+      "raw_sum_before_aggregate_cap": -7.23,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 21,
+          "raw_elo": -0.15,
+          "capped_elo_per_match": -0.15,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -0.15,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 48,
+          "raw_elo": -5.22,
+          "capped_elo_per_match": -5.22,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -5.22,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 70,
+          "raw_elo": 1.59,
+          "capped_elo_per_match": 1.59,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.59,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 80,
@@ -994,8 +1234,8 @@
     {
       "team": "Ecuador",
       "match_id": null,
-      "total_elo_adjustment": -1.92,
-      "raw_sum_before_aggregate_cap": -1.92,
+      "total_elo_adjustment": 4.08,
+      "raw_sum_before_aggregate_cap": 4.08,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1011,6 +1251,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -1.5,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 35,
+          "raw_elo": 6.0,
+          "capped_elo_per_match": 6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 6.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -1049,8 +1304,8 @@
     {
       "team": "Egypt",
       "match_id": null,
-      "total_elo_adjustment": -24.25,
-      "raw_sum_before_aggregate_cap": -24.25,
+      "total_elo_adjustment": -26.71,
+      "raw_sum_before_aggregate_cap": -26.71,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1077,14 +1332,59 @@
           "capped_elo": 0.75,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 40,
+          "raw_elo": 1.08,
+          "capped_elo_per_match": 1.08,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.08,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 65,
+          "raw_elo": 0.48,
+          "capped_elo_per_match": 0.48,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 0.48,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 95,
+          "raw_elo": -4.02,
+          "capped_elo_per_match": -4.02,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -4.02,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
     {
       "team": "England",
       "match_id": null,
-      "total_elo_adjustment": -18.37,
-      "raw_sum_before_aggregate_cap": -18.37,
+      "total_elo_adjustment": -15.4,
+      "raw_sum_before_aggregate_cap": -15.4,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1109,6 +1409,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 4.5,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 46,
+          "raw_elo": 2.97,
+          "capped_elo_per_match": 2.97,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 2.97,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -1237,8 +1552,8 @@
     {
       "team": "France",
       "match_id": null,
-      "total_elo_adjustment": 11.43,
-      "raw_sum_before_aggregate_cap": 11.43,
+      "total_elo_adjustment": 20.0,
+      "raw_sum_before_aggregate_cap": 20.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1274,18 +1589,48 @@
         },
         {
           "type": "stats_proxy",
-          "match_id": 97,
-          "raw_elo": 4.2,
-          "capped_elo_per_match": 4.2,
+          "match_id": 61,
+          "raw_elo": 3.21,
+          "capped_elo_per_match": 3.21,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "xg_attempted": true,
           "xg_found": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 4.2,
+          "capped_elo": 3.21,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 77,
+          "raw_elo": 6.0,
+          "capped_elo_per_match": 6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 89,
+          "raw_elo": 4.53,
+          "capped_elo_per_match": 4.53,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.5599999999999987,
+          "cap_used": 20.0,
+          "cap_reason": "group_total"
         }
       ]
     },
@@ -1413,8 +1758,8 @@
     {
       "team": "Ghana",
       "match_id": null,
-      "total_elo_adjustment": -6.54,
-      "raw_sum_before_aggregate_cap": -6.54,
+      "total_elo_adjustment": -11.46,
+      "raw_sum_before_aggregate_cap": -11.46,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1430,6 +1775,36 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -1.41,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 46,
+          "raw_elo": -2.97,
+          "capped_elo_per_match": -2.97,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -2.97,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 68,
+          "raw_elo": -1.95,
+          "capped_elo_per_match": -1.95,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.95,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -1453,8 +1828,8 @@
     {
       "team": "Haiti",
       "match_id": null,
-      "total_elo_adjustment": -1.11,
-      "raw_sum_before_aggregate_cap": -1.11,
+      "total_elo_adjustment": -7.11,
+      "raw_sum_before_aggregate_cap": -7.11,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1487,17 +1862,47 @@
           "capped_elo": -1.26,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 52,
+          "raw_elo": -6.0,
+          "capped_elo_per_match": -6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
     {
       "team": "Iran",
       "match_id": null,
-      "total_elo_adjustment": -3.15,
-      "raw_sum_before_aggregate_cap": -3.15,
+      "total_elo_adjustment": -5.58,
+      "raw_sum_before_aggregate_cap": -5.58,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 16,
+          "raw_elo": -1.95,
+          "capped_elo_per_match": -1.95,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.95,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 38,
@@ -1510,6 +1915,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.15,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 65,
+          "raw_elo": -0.48,
+          "capped_elo_per_match": -0.48,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -0.48,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -1662,8 +2082,8 @@
     {
       "team": "Japan",
       "match_id": null,
-      "total_elo_adjustment": -25.51,
-      "raw_sum_before_aggregate_cap": -25.51,
+      "total_elo_adjustment": -33.22,
+      "raw_sum_before_aggregate_cap": -33.22,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1678,16 +2098,31 @@
         },
         {
           "type": "stats_proxy",
-          "match_id": 36,
-          "raw_elo": 3.51,
-          "capped_elo_per_match": 3.51,
+          "match_id": 10,
+          "raw_elo": -2.1,
+          "capped_elo_per_match": -2.1,
           "cap_per_match": 8.0,
           "true_xg_available": false,
           "xg_attempted": true,
           "xg_found": false,
           "downweighted_for_live_team_state": true,
           "source": "api_football",
-          "capped_elo": 3.51,
+          "capped_elo": -2.1,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 57,
+          "raw_elo": -2.1,
+          "capped_elo_per_match": -2.1,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -2.1,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -1895,8 +2330,8 @@
     {
       "team": "Morocco",
       "match_id": null,
-      "total_elo_adjustment": -17.13,
-      "raw_sum_before_aggregate_cap": -17.13,
+      "total_elo_adjustment": -11.13,
+      "raw_sum_before_aggregate_cap": -11.13,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -1941,6 +2376,21 @@
         },
         {
           "type": "stats_proxy",
+          "match_id": 52,
+          "raw_elo": 6.0,
+          "capped_elo_per_match": 6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
           "match_id": 90,
           "raw_elo": -0.9,
           "capped_elo_per_match": -0.9,
@@ -1974,11 +2424,26 @@
     {
       "team": "Netherlands",
       "match_id": null,
-      "total_elo_adjustment": 1.53,
-      "raw_sum_before_aggregate_cap": 1.53,
+      "total_elo_adjustment": 3.63,
+      "raw_sum_before_aggregate_cap": 3.63,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 10,
+          "raw_elo": 2.1,
+          "capped_elo_per_match": 2.1,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 2.1,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 33,
@@ -2014,11 +2479,41 @@
     {
       "team": "New Zealand",
       "match_id": null,
-      "total_elo_adjustment": -5.25,
-      "raw_sum_before_aggregate_cap": -5.25,
+      "total_elo_adjustment": -4.38,
+      "raw_sum_before_aggregate_cap": -4.38,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 16,
+          "raw_elo": 1.95,
+          "capped_elo_per_match": 1.95,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.95,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 40,
+          "raw_elo": -1.08,
+          "capped_elo_per_match": -1.08,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.08,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 66,
@@ -2039,8 +2534,8 @@
     {
       "team": "Norway",
       "match_id": null,
-      "total_elo_adjustment": -10.29,
-      "raw_sum_before_aggregate_cap": -10.29,
+      "total_elo_adjustment": -11.64,
+      "raw_sum_before_aggregate_cap": -11.64,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2065,6 +2560,36 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 3.03,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 43,
+          "raw_elo": 1.86,
+          "capped_elo_per_match": 1.86,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.86,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 61,
+          "raw_elo": -3.21,
+          "capped_elo_per_match": -3.21,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.21,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -2177,9 +2702,9 @@
     {
       "team": "Paraguay",
       "match_id": null,
-      "total_elo_adjustment": -30.73,
-      "raw_sum_before_aggregate_cap": -30.73,
-      "aggregate_cap_applied": false,
+      "total_elo_adjustment": -35.0,
+      "raw_sum_before_aggregate_cap": -39.58,
+      "aggregate_cap_applied": true,
       "aggregate_cap": 35.0,
       "components": [
         {
@@ -2208,6 +2733,21 @@
         },
         {
           "type": "stats_proxy",
+          "match_id": 32,
+          "raw_elo": -4.32,
+          "capped_elo_per_match": -4.32,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -4.32,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
           "match_id": 60,
           "raw_elo": -2.13,
           "capped_elo_per_match": -2.13,
@@ -2218,6 +2758,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -2.13,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 89,
+          "raw_elo": -4.53,
+          "capped_elo_per_match": -4.53,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -4.53,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -2303,11 +2858,26 @@
     {
       "team": "Portugal",
       "match_id": null,
-      "total_elo_adjustment": 0.81,
-      "raw_sum_before_aggregate_cap": 0.81,
+      "total_elo_adjustment": -2.04,
+      "raw_sum_before_aggregate_cap": -2.04,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 21,
+          "raw_elo": 0.15,
+          "capped_elo_per_match": 0.15,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 0.15,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 45,
@@ -2352,15 +2922,30 @@
           "capped_elo": -1.02,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 93,
+          "raw_elo": -3.0,
+          "capped_elo_per_match": -3.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
     {
       "team": "Qatar",
       "match_id": null,
-      "total_elo_adjustment": -29.04,
-      "raw_sum_before_aggregate_cap": -29.04,
-      "aggregate_cap_applied": false,
+      "total_elo_adjustment": -35.0,
+      "raw_sum_before_aggregate_cap": -35.04,
+      "aggregate_cap_applied": true,
       "aggregate_cap": 35.0,
       "components": [
         {
@@ -2384,6 +2969,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.84,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 27,
+          "raw_elo": -6.0,
+          "capped_elo_per_match": -6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -6.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -2447,8 +3047,8 @@
     {
       "team": "Saudi Arabia",
       "match_id": null,
-      "total_elo_adjustment": -5.7,
-      "raw_sum_before_aggregate_cap": -5.7,
+      "total_elo_adjustment": -11.01,
+      "raw_sum_before_aggregate_cap": -11.01,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2464,6 +3064,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 37,
+          "raw_elo": -5.31,
+          "capped_elo_per_match": -5.31,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -5.31,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -2542,8 +3157,8 @@
     {
       "team": "Senegal",
       "match_id": null,
-      "total_elo_adjustment": -9.9,
-      "raw_sum_before_aggregate_cap": -9.9,
+      "total_elo_adjustment": -11.76,
+      "raw_sum_before_aggregate_cap": -11.76,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2573,6 +3188,21 @@
         },
         {
           "type": "stats_proxy",
+          "match_id": 43,
+          "raw_elo": -1.86,
+          "capped_elo_per_match": -1.86,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.86,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
           "match_id": 62,
           "raw_elo": 6.0,
           "capped_elo_per_match": 6.0,
@@ -2591,8 +3221,8 @@
     {
       "team": "South Africa",
       "match_id": null,
-      "total_elo_adjustment": -24.87,
-      "raw_sum_before_aggregate_cap": -24.87,
+      "total_elo_adjustment": -28.92,
+      "raw_sum_before_aggregate_cap": -28.92,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2632,6 +3262,36 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 0.81,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 54,
+          "raw_elo": -0.09,
+          "capped_elo_per_match": -0.09,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -0.09,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 73,
+          "raw_elo": -3.96,
+          "capped_elo_per_match": -3.96,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.96,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -2706,8 +3366,8 @@
     {
       "team": "South Korea",
       "match_id": null,
-      "total_elo_adjustment": 0.45,
-      "raw_sum_before_aggregate_cap": 0.45,
+      "total_elo_adjustment": 0.54,
+      "raw_sum_before_aggregate_cap": 0.54,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2738,6 +3398,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -0.81,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 54,
+          "raw_elo": 0.09,
+          "capped_elo_per_match": 0.09,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 0.09,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         }
@@ -2803,11 +3478,41 @@
     {
       "team": "Spain",
       "match_id": null,
-      "total_elo_adjustment": 7.11,
-      "raw_sum_before_aggregate_cap": 7.11,
+      "total_elo_adjustment": 20.0,
+      "raw_sum_before_aggregate_cap": 20.0,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 13,
+          "raw_elo": 5.67,
+          "capped_elo_per_match": 5.67,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 5.67,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 37,
+          "raw_elo": 5.31,
+          "capped_elo_per_match": 5.31,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 5.31,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 63,
@@ -2837,6 +3542,21 @@
           "capped_elo": 6.0,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 93,
+          "raw_elo": 3.0,
+          "capped_elo_per_match": 3.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 1.9100000000000001,
+          "cap_used": 20.0,
+          "cap_reason": "group_total"
         }
       ]
     },
@@ -2862,8 +3582,8 @@
     {
       "team": "Sweden",
       "match_id": null,
-      "total_elo_adjustment": -7.65,
-      "raw_sum_before_aggregate_cap": -7.65,
+      "total_elo_adjustment": -11.55,
+      "raw_sum_before_aggregate_cap": -11.55,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2905,6 +3625,36 @@
           "capped_elo": 1.05,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 57,
+          "raw_elo": 2.1,
+          "capped_elo_per_match": 2.1,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 2.1,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 77,
+          "raw_elo": -6.0,
+          "capped_elo_per_match": -6.0,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -6.0,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -2930,8 +3680,8 @@
     {
       "team": "Switzerland",
       "match_id": null,
-      "total_elo_adjustment": -20.5,
-      "raw_sum_before_aggregate_cap": -20.5,
+      "total_elo_adjustment": -18.4,
+      "raw_sum_before_aggregate_cap": -18.4,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2988,6 +3738,21 @@
           "capped_elo": -2.55,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 85,
+          "raw_elo": 2.1,
+          "capped_elo_per_match": 2.1,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 2.1,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
@@ -3020,8 +3785,8 @@
     {
       "team": "Tunisia",
       "match_id": null,
-      "total_elo_adjustment": -33.39,
-      "raw_sum_before_aggregate_cap": -33.39,
+      "total_elo_adjustment": -29.88,
+      "raw_sum_before_aggregate_cap": -29.88,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -3051,21 +3816,6 @@
         },
         {
           "type": "stats_proxy",
-          "match_id": 36,
-          "raw_elo": -3.51,
-          "capped_elo_per_match": -3.51,
-          "cap_per_match": 8.0,
-          "true_xg_available": false,
-          "xg_attempted": true,
-          "xg_found": false,
-          "downweighted_for_live_team_state": true,
-          "source": "api_football",
-          "capped_elo": -3.51,
-          "cap_used": 20.0,
-          "cap_reason": "per_match"
-        },
-        {
-          "type": "stats_proxy",
           "match_id": 58,
           "raw_elo": -2.58,
           "capped_elo_per_match": -2.58,
@@ -3084,8 +3834,8 @@
     {
       "team": "Turkey",
       "match_id": null,
-      "total_elo_adjustment": 3.36,
-      "raw_sum_before_aggregate_cap": 3.36,
+      "total_elo_adjustment": 4.23,
+      "raw_sum_before_aggregate_cap": 4.23,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -3103,14 +3853,44 @@
           "capped_elo": 3.36,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 32,
+          "raw_elo": 4.32,
+          "capped_elo_per_match": 4.32,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 4.32,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 59,
+          "raw_elo": -3.45,
+          "capped_elo_per_match": -3.45,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.45,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     },
     {
       "team": "United States",
       "match_id": null,
-      "total_elo_adjustment": -25.12,
-      "raw_sum_before_aggregate_cap": -25.12,
+      "total_elo_adjustment": -21.01,
+      "raw_sum_before_aggregate_cap": -21.01,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -3135,6 +3915,36 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": 3.6,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 29,
+          "raw_elo": 0.66,
+          "capped_elo_per_match": 0.66,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 0.66,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 59,
+          "raw_elo": 3.45,
+          "capped_elo_per_match": 3.45,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.45,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -3262,11 +4072,26 @@
     {
       "team": "Uzbekistan",
       "match_id": null,
-      "total_elo_adjustment": -4.68,
-      "raw_sum_before_aggregate_cap": -4.68,
+      "total_elo_adjustment": -7.8,
+      "raw_sum_before_aggregate_cap": -7.8,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
+        {
+          "type": "stats_proxy",
+          "match_id": 24,
+          "raw_elo": -1.53,
+          "capped_elo_per_match": -1.53,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.53,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
         {
           "type": "stats_proxy",
           "match_id": 45,
@@ -3281,15 +4106,30 @@
           "capped_elo": -4.68,
           "cap_used": 20.0,
           "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 70,
+          "raw_elo": -1.59,
+          "capped_elo_per_match": -1.59,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -1.59,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
         }
       ]
     }
   ],
   "summary": {
-    "total_active_components": 182,
+    "total_active_components": 238,
     "teams_affected": 48,
     "matches_affected": 23,
-    "aggregate_caps_hit": 0
+    "aggregate_caps_hit": 2
   },
   "feeds_available": {
     "injuries": true,
@@ -3303,205 +4143,7 @@
   "warnings": [
     {
       "type": "fetch_error",
-      "match_id": 10,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 13,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 16,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 19,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 21,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 24,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 27,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 29,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 32,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 35,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 37,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 40,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 43,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 46,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 48,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 52,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 54,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 57,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 59,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 61,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 65,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 68,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 70,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 73,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 75,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 77,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 82,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 85,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 86,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 89,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 93,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 95,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 98,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    },
-    {
-      "type": "fetch_error",
-      "match_id": 101,
+      "match_id": 36,
       "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
       "feed": "stats_proxy"
     }
