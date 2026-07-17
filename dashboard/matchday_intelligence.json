@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T05:35:04.889569+00:00",
+  "generated_at": "2026-07-17T07:56:26.249797+00:00",
   "schema_version": 1,
   "caps": {
     "injury_normal": 25.0,
@@ -2082,8 +2082,8 @@
     {
       "team": "Japan",
       "match_id": null,
-      "total_elo_adjustment": -33.22,
-      "raw_sum_before_aggregate_cap": -33.22,
+      "total_elo_adjustment": -29.71,
+      "raw_sum_before_aggregate_cap": -29.71,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -2108,6 +2108,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -2.1,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 36,
+          "raw_elo": 3.51,
+          "capped_elo_per_match": 3.51,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": 3.51,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -3785,8 +3800,8 @@
     {
       "team": "Tunisia",
       "match_id": null,
-      "total_elo_adjustment": -29.88,
-      "raw_sum_before_aggregate_cap": -29.88,
+      "total_elo_adjustment": -33.39,
+      "raw_sum_before_aggregate_cap": -33.39,
       "aggregate_cap_applied": false,
       "aggregate_cap": 35.0,
       "components": [
@@ -3811,6 +3826,21 @@
           "downweighted_for_live_team_state": true,
           "source": "api_football",
           "capped_elo": -3.3,
+          "cap_used": 20.0,
+          "cap_reason": "per_match"
+        },
+        {
+          "type": "stats_proxy",
+          "match_id": 36,
+          "raw_elo": -3.51,
+          "capped_elo_per_match": -3.51,
+          "cap_per_match": 8.0,
+          "true_xg_available": false,
+          "xg_attempted": true,
+          "xg_found": false,
+          "downweighted_for_live_team_state": true,
+          "source": "api_football",
+          "capped_elo": -3.51,
           "cap_used": 20.0,
           "cap_reason": "per_match"
         },
@@ -4126,7 +4156,7 @@
     }
   ],
   "summary": {
-    "total_active_components": 238,
+    "total_active_components": 240,
     "teams_affected": 48,
     "matches_affected": 23,
     "aggregate_caps_hit": 2
@@ -4140,14 +4170,7 @@
     "lineups": true,
     "stats_proxy": true
   },
-  "warnings": [
-    {
-      "type": "fetch_error",
-      "match_id": 36,
-      "error": "RuntimeError: API errors: {'rateLimit': 'Too many requests. You have exceeded the limit of requests per minute of your subscription.'}",
-      "feed": "stats_proxy"
-    }
-  ],
+  "warnings": [],
   "degradation_warnings": [],
   "pipeline_unhealthy": false
 }

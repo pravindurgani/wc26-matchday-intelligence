@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T05:34:43.472748+00:00",
+  "generated_at": "2026-07-17T07:56:07.092418+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -1066,7 +1066,7 @@
           "fixture_id": 1489412,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "no_stats_record"
+            "reason": "zero_minutes"
           }
         },
         {
@@ -1081,7 +1081,7 @@
           "fixture_id": 1489412,
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
-            "reason": "no_stats_record"
+            "reason": "zero_minutes"
           }
         }
       ]
