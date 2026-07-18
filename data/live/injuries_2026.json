@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-07-18T07:29:56.697916+00:00",
+  "generated_at": "2026-07-18T10:12:43.938865+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
   "season": 2026,
   "net_elo_active": true,
   "auto_tier_active": false,
-  "teams_with_injuries": 24,
+  "teams_with_injuries": 25,
   "teams": {
     "Brazil": {
       "total_elo_adjustment": -72.0,
@@ -948,6 +948,32 @@
           "auto_tier_suggestion": "tier_3_squad",
           "auto_tier_components": {
             "reason": "zero_minutes"
+          }
+        }
+      ]
+    },
+    "France": {
+      "total_elo_adjustment": -12.0,
+      "total_net_elo_adjustment": -12.0,
+      "players": [
+        {
+          "name": "W. Saliba",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Back Bruise",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1591865,
+          "auto_tier_suggestion": "tier_2_starter",
+          "auto_tier_components": {
+            "minutes_share": 0.762,
+            "ga90": 0.0,
+            "cs_share": 0.0,
+            "is_gk": false,
+            "minutes": 480,
+            "team_top_minutes": 630
           }
         }
       ]
