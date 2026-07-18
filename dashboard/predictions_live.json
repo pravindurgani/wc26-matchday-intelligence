@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-18T07:41:03.708684+00:00",
+  "generated_at": "2026-07-18T10:20:59.918779+00:00",
   "n_simulations_per_seed": 5000,
   "n_seeds": 5,
   "n_simulations_total": 25000,
@@ -5611,7 +5611,7 @@
     101,
     102
   ],
-  "input_hash": "2d744a11553088f5",
+  "input_hash": "f8235b3b20650557",
   "grand_cap_applied": {
     "Czechia": {
       "raw_elo": -45.87,
@@ -5649,11 +5649,11 @@
       "tournament_wide_intel": -19.96
     },
     "France": {
-      "raw_elo": 65.0,
+      "raw_elo": 53.0,
       "applied_elo": 45.0,
       "cap_elo": 45.0,
       "live_team_state": 45.0,
-      "tournament_wide_intel": 20.0
+      "tournament_wide_intel": 8.0
     },
     "Argentina": {
       "raw_elo": 60.48,
@@ -5731,7 +5731,7 @@
     },
     {
       "match_id": 17,
-      "home_match_total_intel": 16.0,
+      "home_match_total_intel": 4.0,
       "away_match_total_intel": -11.76,
       "home_match_scoped_delta": -4.0,
       "away_match_scoped_delta": 0.0,
@@ -5848,7 +5848,7 @@
     },
     {
       "match_id": 42,
-      "home_match_total_intel": 16.0,
+      "home_match_total_intel": 4.0,
       "away_match_total_intel": -13.36,
       "home_match_scoped_delta": -4.0,
       "away_match_scoped_delta": -1.0,
@@ -5953,7 +5953,7 @@
     {
       "match_id": 61,
       "home_match_total_intel": -11.64,
-      "away_match_total_intel": 20.0,
+      "away_match_total_intel": 8.0,
       "home_match_scoped_delta": 0.0,
       "away_match_scoped_delta": 0.0,
       "home_intel_bonus_applied": 0.0,
