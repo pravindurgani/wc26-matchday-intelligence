@@ -1,8 +1,8 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-18T21:40:44.085786+00:00",
+  "last_updated_utc": "2026-07-18T21:51:15.671459+00:00",
   "completed_matches_count": 102,
-  "simulation_rerun_this_tick": false,
+  "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [
@@ -11,10 +11,10 @@
       "home": "France",
       "away": "England",
       "home_score": 0,
-      "away_score": 3,
-      "elapsed": 41,
+      "away_score": 4,
+      "elapsed": 45,
       "status": "LIVE",
-      "status_long": "First Half"
+      "status_long": "Halftime"
     }
   ],
   "in_play_count": 1,
