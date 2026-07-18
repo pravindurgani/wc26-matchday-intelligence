@@ -1,23 +1,12 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-18T23:00:37.713215+00:00",
-  "completed_matches_count": 102,
-  "simulation_rerun_this_tick": false,
+  "last_updated_utc": "2026-07-18T23:11:05.854670+00:00",
+  "completed_matches_count": 103,
+  "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
-  "in_play": [
-    {
-      "m": 103,
-      "home": "France",
-      "away": "England",
-      "home_score": 4,
-      "away_score": 5,
-      "elapsed": 90,
-      "status": "LIVE",
-      "status_long": "Second Half"
-    }
-  ],
-  "in_play_count": 1,
+  "in_play": [],
+  "in_play_count": 0,
   "warnings": [],
   "tournament_complete": false,
   "champion": null
