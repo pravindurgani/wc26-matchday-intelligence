@@ -1,8 +1,8 @@
 {
   "mode": "live",
-  "last_updated_utc": "2026-07-19T21:41:39.071707+00:00",
+  "last_updated_utc": "2026-07-19T21:51:52.442376+00:00",
   "completed_matches_count": 103,
-  "simulation_rerun_this_tick": false,
+  "simulation_rerun_this_tick": true,
   "source": "api_football",
   "provider_mode": "active",
   "in_play": [
@@ -10,11 +10,11 @@
       "m": 104,
       "home": "Spain",
       "away": "Argentina",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 0,
-      "elapsed": null,
+      "elapsed": 115,
       "status": "LIVE",
-      "status_long": "Break Time"
+      "status_long": "Extra Time"
     }
   ],
   "in_play_count": 1,
