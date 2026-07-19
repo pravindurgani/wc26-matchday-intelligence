@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-18T21:43:10.435011+00:00",
+  "generated_at": "2026-07-19T01:55:33.470038+00:00",
   "schema_version": 1,
   "cap_used": 8.0,
   "min_matches_for_bonus": 20,
@@ -1423,6 +1423,20 @@
       "home_team": "England",
       "away_team": "Argentina",
       "referee_name": "Ismail Elfath, USA",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "raw_home_elo": 0.0,
+      "cap_used": 8.0,
+      "n_matches": 0,
+      "confidence": "none",
+      "reason": "ref_not_in_baseline",
+      "notes": null
+    },
+    {
+      "match_id": 103,
+      "home_team": "France",
+      "away_team": "England",
+      "referee_name": "Jesús Valenzuela, Venezuela",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
       "raw_home_elo": 0.0,

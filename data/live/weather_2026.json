@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-07-18T21:43:12.227442+00:00",
+  "updated_at": "2026-07-19T01:55:34.365791+00:00",
   "source": "open_meteo + wc2026_config_fallback",
   "forecast_horizon_days": 16,
-  "fetched_count": 2,
-  "fallback_count": 102,
+  "fetched_count": 1,
+  "fallback_count": 103,
   "weather": [
     {
       "match_id": 1,
@@ -1749,21 +1749,12 @@
       "venue": "Miami Gardens",
       "city": "Miami",
       "kickoff_utc": "2026-07-18T21:00:00Z",
-      "temperature_c": 32.5,
-      "humidity_pct": 56,
-      "apparent_temperature_c": 36.3,
-      "precipitation_mm": 0.0,
-      "wind_kph": 14.8,
-      "gust_kph": 19.1,
-      "weather_code": 3,
-      "cloud_cover_pct": 100,
-      "heat_index_c": 37.00226779861119,
-      "wet_bulb_proxy_c": 25.539725101816426,
-      "weather_bucket": "hot",
+      "weather_bucket": "normal",
+      "static_climate_label": "very_hot_humid",
       "home_team_adjustment_elo": 0.0,
       "away_team_adjustment_elo": 0.0,
-      "confidence": "forecast",
-      "source": "open_meteo"
+      "confidence": "static_fallback",
+      "source": "wc2026_config.host_cities[].climate"
     },
     {
       "match_id": 104,
