@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T01:55:33.357427+00:00",
+  "generated_at": "2026-07-19T05:44:13.020964+00:00",
   "schema_version": 1,
   "source": "api_football",
   "season": 2026,
@@ -189,8 +189,26 @@
           "position": "A"
         },
         {
-          "name": "Z. Belaïd",
-          "minutes": 31,
+          "name": "N. Bentaleb",
+          "minutes": 94,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "O. Benbot",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "M. Tougai",
+          "minutes": 49,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
@@ -199,21 +217,12 @@
         },
         {
           "name": "S. Chergui",
-          "minutes": 19,
+          "minutes": 0,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
           "clean_sheets": 0,
           "position": "D"
-        },
-        {
-          "name": "A. Mandréa",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
         },
         {
           "name": "A. Aouchiche",
@@ -225,58 +234,49 @@
           "position": "M"
         },
         {
-          "name": "S. Nair",
-          "minutes": 0,
+          "name": "J. Hadjam",
+          "minutes": 49,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "M. Dorval",
+          "name": "M. Mastil",
           "minutes": 0,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 2,
           "clean_sheets": 0,
-          "position": "D"
+          "position": "G"
         },
         {
-          "name": "A. Benbouali",
-          "minutes": 45,
+          "name": "A. Hadj-Moussa",
+          "minutes": 49,
           "goals": 1,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "A"
         },
         {
-          "name": "Y. Titraoui",
-          "minutes": 0,
+          "name": "A. Boulbina",
+          "minutes": 25,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "F. Ghedjemis",
-          "minutes": 1,
+          "minutes": 0,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
           "clean_sheets": 0,
           "position": "A"
-        },
-        {
-          "name": "A. Abada",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
         },
         {
           "name": "Amin Chiakha",
@@ -3000,15 +3000,6 @@
           "position": "A"
         },
         {
-          "name": "Fabinho",
-          "minutes": 78,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
           "name": "Alex Telles",
           "minutes": 0,
           "goals": 0,
@@ -3090,6 +3081,15 @@
           "position": "M"
         },
         {
+          "name": "Léo Pereira",
+          "minutes": 228,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
           "name": "Douglas Santos",
           "minutes": 90,
           "goals": 0,
@@ -3144,13 +3144,13 @@
           "position": "D"
         },
         {
-          "name": "Thiago",
-          "minutes": 62,
-          "goals": 0,
+          "name": "Danilo Santos",
+          "minutes": 112,
+          "goals": 1,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 4,
           "clean_sheets": 0,
-          "position": "A"
+          "position": "M"
         },
         {
           "name": "Andrey Santos",
@@ -7641,43 +7641,34 @@
           "position": "M"
         },
         {
-          "name": "S. Gnabry",
-          "minutes": 135,
-          "goals": 1,
-          "assists": 1,
+          "name": "M. Neuer",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "F. Nmecha",
+          "minutes": 164,
+          "goals": 0,
+          "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "N. Amiri",
-          "minutes": 40,
+          "minutes": 21,
           "goals": 0,
-          "assists": 1,
+          "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
-          "name": "P. Groß",
-          "minutes": 17,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "C. Führich",
-          "minutes": 29,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Vagnoman",
+          "name": "W. Anton",
           "minutes": 29,
           "goals": 0,
           "assists": 0,
@@ -7695,17 +7686,8 @@
           "position": "G"
         },
         {
-          "name": "A. Stiller",
-          "minutes": 45,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "N. Woltemade",
-          "minutes": 32,
+          "name": "J. Leweling",
+          "minutes": 18,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -7714,12 +7696,21 @@
         },
         {
           "name": "M. Beier",
-          "minutes": 26,
+          "minutes": 39,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "A"
+        },
+        {
+          "name": "M. Thiaw",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
         },
         {
           "name": "A. Stach",
@@ -7740,6 +7731,15 @@
           "position": "M"
         },
         {
+          "name": "J. Musiala",
+          "minutes": 170,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
           "name": "J. Urbig",
           "minutes": 0,
           "goals": 0,
@@ -7749,6 +7749,15 @@
           "position": "G"
         },
         {
+          "name": "A. Pavlović",
+          "minutes": 170,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
           "name": "A. Ouédraogo",
           "minutes": 0,
           "goals": 0,
@@ -7756,24 +7765,24 @@
           "appearances": 0,
           "clean_sheets": 0,
           "position": "M"
-        },
-        {
-          "name": "L. Karl",
-          "minutes": 145,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
         }
       ]
     },
     "Ghana": {
-      "team_top_minutes": 360,
+      "team_top_minutes": 251,
       "players": [
         {
+          "name": "T. Partey",
+          "minutes": 221,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
           "name": "L. Zigi",
-          "minutes": 135,
+          "minutes": 139,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
@@ -7782,52 +7791,34 @@
         },
         {
           "name": "J. Ayew",
-          "minutes": 304,
-          "goals": 0,
+          "minutes": 251,
+          "goals": 1,
           "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "K. Sibo",
-          "minutes": 249,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "M"
         },
         {
-          "name": "G. Mensah",
-          "minutes": 360,
+          "name": "K. Sibo",
+          "minutes": 159,
           "goals": 0,
           "assists": 0,
-          "appearances": 4,
+          "appearances": 3,
           "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "A. Mumin",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
+          "position": "M"
         },
         {
           "name": "A. Semenyo",
-          "minutes": 360,
+          "minutes": 176,
           "goals": 0,
           "assists": 0,
-          "appearances": 4,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "E. Owusu",
-          "minutes": 151,
+          "minutes": 113,
           "goals": 0,
           "assists": 0,
           "appearances": 3,
@@ -7835,20 +7826,38 @@
           "position": "M"
         },
         {
-          "name": "B. Thomas-Asante",
-          "minutes": 51,
+          "name": "A. Djiku",
+          "minutes": 184,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
-          "position": "A"
+          "position": "D"
         },
         {
-          "name": "J. Opoku",
-          "minutes": 270,
+          "name": "D. Luckassen",
+          "minutes": 34,
           "goals": 0,
           "assists": 0,
-          "appearances": 3,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "P. Pfeiffer",
+          "minutes": 25,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "D. Köhn",
+          "minutes": 158,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -7862,17 +7871,35 @@
           "position": "G"
         },
         {
-          "name": "M. Senaya",
-          "minutes": 280,
+          "name": "K. Sulemana",
+          "minutes": 69,
           "goals": 0,
           "assists": 0,
-          "appearances": 4,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "A. Fatawu",
+          "minutes": 139,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "J. Adjetey",
+          "minutes": 249,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "A. Seidu",
-          "minutes": 77,
+          "name": "K. Peprah Oppong",
+          "minutes": 56,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -7880,44 +7907,17 @@
           "position": "D"
         },
         {
-          "name": "K. Sulemana",
-          "minutes": 129,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 2,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "A. Fatawu",
-          "minutes": 129,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "E. Nuamah",
-          "minutes": 88,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "J. Adjetey",
-          "minutes": 225,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
           "name": "P. Adu",
-          "minutes": 48,
+          "minutes": 180,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "C. Bonsu Baah",
+          "minutes": 39,
           "goals": 0,
           "assists": 0,
           "appearances": 3,
@@ -7926,16 +7926,16 @@
         },
         {
           "name": "Caleb Marfo Yirenkyi",
-          "minutes": 272,
+          "minutes": 189,
           "goals": 1,
           "assists": 0,
-          "appearances": 4,
+          "appearances": 3,
           "clean_sheets": 0,
-          "position": "M"
+          "position": "D"
         },
         {
           "name": "B. Asare",
-          "minutes": 225,
+          "minutes": 211,
           "goals": 0,
           "assists": 0,
           "appearances": 0,
@@ -8434,15 +8434,6 @@
           "position": "M"
         },
         {
-          "name": "L. Joseph",
-          "minutes": 116,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
           "name": "B. Labissiere",
           "minutes": 27,
           "goals": 1,
@@ -8462,7 +8453,7 @@
         },
         {
           "name": "W. Isidor",
-          "minutes": 188,
+          "minutes": 60,
           "goals": 1,
           "assists": 0,
           "appearances": 3,
@@ -8522,6 +8513,15 @@
           "appearances": 4,
           "clean_sheets": 0,
           "position": "D"
+        },
+        {
+          "name": "D. Simon",
+          "minutes": 35,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
         },
         {
           "name": "D. Jean",
@@ -9711,6 +9711,168 @@
           "appearances": 0,
           "clean_sheets": 0,
           "position": "M"
+        },
+        {
+          "name": "Sherko Kareem",
+          "minutes": 112,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Hussein Ali",
+          "minutes": 15,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Ali Faez Atiyah",
+          "minutes": 92,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Kevin Yakob",
+          "minutes": 90,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Sher",
+          "minutes": 253,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Amar Muhsin",
+          "minutes": 34,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Mohammed Qasim",
+          "minutes": 48,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Haron Ahmed Zubair",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Qasem",
+          "minutes": 29,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Hasan Abdulkareem",
+          "minutes": 50,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Alai Ghasem",
+          "minutes": 9,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Charbel Shamoon",
+          "minutes": 16,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Kamil Saad",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "Sajjad Jasim",
+          "minutes": 41,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Jasim",
+          "minutes": 162,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 19,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Yahya",
+          "minutes": 11,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "M. Jawad",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Z. Ismaeel",
+          "minutes": 62,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
         }
       ]
     },
@@ -9898,35 +10060,17 @@
           "position": "M"
         },
         {
-          "name": "E. Ndicka",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "J. Seri",
-          "minutes": 13,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "E. Guessand",
-          "minutes": 16,
+          "name": "F. Kessié",
+          "minutes": 158,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
-          "position": "A"
+          "position": "M"
         },
         {
-          "name": "C. Akpa",
-          "minutes": 79,
+          "name": "C. Operi",
+          "minutes": 22,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -9934,35 +10078,53 @@
           "position": "D"
         },
         {
-          "name": "P. Guiagon",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "S. Adingra",
-          "minutes": 15,
+          "name": "A. Lafont",
+          "minutes": 90,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
           "clean_sheets": 0,
-          "position": "A"
+          "position": "G"
         },
         {
-          "name": "B. Traoré",
-          "minutes": 80,
+          "name": "O. Kossounou",
+          "minutes": 90,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "E. Wahi",
+          "minutes": 144,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "A. Bonny",
+          "minutes": 22,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
           "clean_sheets": 0,
           "position": "A"
         },
         {
           "name": "O. Diakité",
-          "minutes": 34,
+          "minutes": 45,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "B. Touré",
+          "minutes": 113,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
@@ -9970,13 +10132,13 @@
           "position": "A"
         },
         {
-          "name": "M. Godo",
-          "minutes": 64,
-          "goals": 1,
-          "assists": 1,
+          "name": "Y. Diomande",
+          "minutes": 67,
+          "goals": 0,
+          "assists": 0,
           "appearances": 1,
           "clean_sheets": 0,
-          "position": "A"
+          "position": "M"
         }
       ]
     },
@@ -10743,6 +10905,420 @@
           "appearances": 0,
           "clean_sheets": 0,
           "position": "A"
+        },
+        {
+          "name": "Yazan Al Arab",
+          "minutes": 998,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 14,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Bara Marie",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Obieda Al Samrieh",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Saleh Ratib",
+          "minutes": 12,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Feras Shilbaya",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Abdallah Al Zoubi",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "Mahmoud Al Mardi",
+          "minutes": 745,
+          "goals": 1,
+          "assists": 4,
+          "appearances": 14,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Noureddin Bani Attiah",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "Ali Olwan",
+          "minutes": 795,
+          "goals": 6,
+          "assists": 1,
+          "appearances": 13,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Anas Al Awadat",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Ibrahim Saadeh",
+          "minutes": 308,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Mahmoud Aqel",
+          "minutes": 1,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Yazan Al Naimat",
+          "minutes": 1006,
+          "goals": 5,
+          "assists": 2,
+          "appearances": 16,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Saed Al Rosan",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Ahmad Juaidi",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "Mohannad Abu Taha",
+          "minutes": 671,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 11,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Husam Abudahab",
+          "minutes": 257,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Mustafa Eid",
+          "minutes": 45,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Aref Al-Haj",
+          "minutes": 10,
+          "goals": 0,
+          "assists": 1,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Yousef Abu Jalboush",
+          "minutes": 26,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Ahmad Ersan",
+          "minutes": 20,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Saleem Obaid",
+          "minutes": 135,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Mohammed Abu Zurayq",
+          "minutes": 38,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 6,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "M. Abualnadi",
+          "minutes": 516,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 7,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Mohammad Al Daoud",
+          "minutes": 8,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "Yousef Abu Al Jazar",
+          "minutes": 42,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Abdallah Mohannad",
+          "minutes": 13,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Adham Al Quraishi",
+          "minutes": 17,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Abdallah Al Fakhouri",
+          "minutes": 33,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "Amer Jamous",
+          "minutes": 289,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Hijazi Maher",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Hadi Al Hourani",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Mohannad Jehad Semreen",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Assaf",
+          "minutes": 163,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Mohamad Al Naser",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Ali Ahmad Hajabi",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Mohammad Al Emwasi",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "Ibrahim Sabra",
+          "minutes": 26,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "F"
+        },
+        {
+          "name": "Reziq Bani Hani",
+          "minutes": 17,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Odeh Al Fakhouri",
+          "minutes": 148,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "Saad Al-Rosan",
+          "minutes": 9,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "M. Abu Dahab",
+          "minutes": 178,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "A. Azaizeh",
+          "minutes": 60,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "M. Abu Ghoush",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "Y. Qashi",
+          "minutes": 11,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "A. Badawi",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "D"
         }
       ]
     },
@@ -11395,21 +11971,48 @@
         },
         {
           "name": "S. Amrabat",
-          "minutes": 145,
+          "minutes": 127,
           "goals": 0,
           "assists": 0,
-          "appearances": 3,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
-          "name": "A. El Kaabi",
-          "minutes": 70,
+          "name": "M. Mohamedi",
+          "minutes": 90,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
           "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "A. Tagnaouti",
+          "minutes": 0,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 0,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "A. El Kaabi",
+          "minutes": 95,
+          "goals": 1,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
           "position": "A"
+        },
+        {
+          "name": "M. Saâdane",
+          "minutes": 51,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
         },
         {
           "name": "S. El Karouani",
@@ -11430,44 +12033,17 @@
           "position": "A"
         },
         {
-          "name": "M. Benabid",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "M. Hrimat",
-          "minutes": 89,
+          "name": "Y. Belammari",
+          "minutes": 86,
           "goals": 0,
           "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "Y. Belammari",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "A. Ezzalzouli",
-          "minutes": 179,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 4,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
           "name": "A. Sbaï",
-          "minutes": 12,
+          "minutes": 10,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -11476,10 +12052,10 @@
         },
         {
           "name": "Z. El Ouahdi",
-          "minutes": 16,
+          "minutes": 50,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -11493,29 +12069,11 @@
           "position": "M"
         },
         {
-          "name": "M. Harrar",
-          "minutes": 0,
+          "name": "R. Halhal",
+          "minutes": 161,
           "goals": 0,
-          "assists": 0,
-          "appearances": 0,
-          "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "Gessime Yassine",
-          "minutes": 77,
-          "goals": 1,
           "assists": 0,
           "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "I. Baouf",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -11538,11 +12096,29 @@
           "position": "D"
         },
         {
+          "name": "A. Bouaddi",
+          "minutes": 90,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
           "name": "M. Zabiri",
           "minutes": 0,
           "goals": 0,
           "assists": 0,
           "appearances": 0,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "A. Amaimouni",
+          "minutes": 72,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "A"
         }
@@ -12171,7 +12747,7 @@
       ]
     },
     "Norway": {
-      "team_top_minutes": 310,
+      "team_top_minutes": 180,
       "players": [
         {
           "name": "E. Botheim",
@@ -12427,19 +13003,19 @@
         },
         {
           "name": "F. Aursnes",
-          "minutes": 310,
+          "minutes": 135,
           "goals": 0,
           "assists": 0,
-          "appearances": 6,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "F. Bjørkan",
-          "minutes": 45,
+          "minutes": 124,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "D"
         },
@@ -12454,10 +13030,10 @@
         },
         {
           "name": "K. Thorstvedt",
-          "minutes": 62,
+          "minutes": 112,
           "goals": 0,
           "assists": 0,
-          "appearances": 2,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "M"
         },
@@ -12472,7 +13048,7 @@
         },
         {
           "name": "H. Falchener",
-          "minutes": 66,
+          "minutes": 15,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -16408,6 +16984,24 @@
           "position": "D"
         },
         {
+          "name": "S. Chaine",
+          "minutes": 52,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "G"
+        },
+        {
+          "name": "N. Sibisi",
+          "minutes": 30,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
           "name": "B. Hlongwane",
           "minutes": 60,
           "goals": 0,
@@ -16417,44 +17011,35 @@
           "position": "A"
         },
         {
-          "name": "R. Leaner",
-          "minutes": 45,
+          "name": "I. Rayners",
+          "minutes": 52,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
           "clean_sheets": 0,
-          "position": "G"
-        },
-        {
-          "name": "T. Moremi",
-          "minutes": 39,
-          "goals": 0,
-          "assists": 1,
-          "appearances": 2,
-          "clean_sheets": 0,
           "position": "A"
         },
         {
-          "name": "T. Matuludi",
-          "minutes": 0,
+          "name": "B. Cross",
+          "minutes": 30,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 1,
           "clean_sheets": 0,
           "position": "D"
         },
         {
           "name": "T. Maseko",
-          "minutes": 245,
-          "goals": 1,
+          "minutes": 82,
+          "goals": 0,
           "assists": 0,
-          "appearances": 3,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "A"
         },
         {
           "name": "K. Sebelebele",
-          "minutes": 14,
+          "minutes": 45,
           "goals": 0,
           "assists": 0,
           "appearances": 1,
@@ -16462,20 +17047,11 @@
           "position": "M"
         },
         {
-          "name": "R. Mofokeng",
-          "minutes": 170,
+          "name": "O. Makhanya",
+          "minutes": 97,
           "goals": 0,
           "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "S. Kabini",
-          "minutes": 0,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 0,
+          "appearances": 1,
           "clean_sheets": 0,
           "position": "D"
         }
@@ -18014,20 +18590,11 @@
       ]
     },
     "Tunisia": {
-      "team_top_minutes": 270,
+      "team_top_minutes": 188,
       "players": [
         {
-          "name": "D. Bronn",
-          "minutes": 45,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 1,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
           "name": "F. Chaouat",
-          "minutes": 54,
+          "minutes": 111,
           "goals": 0,
           "assists": 0,
           "appearances": 3,
@@ -18036,34 +18603,25 @@
         },
         {
           "name": "Y. Valery",
-          "minutes": 252,
+          "minutes": 94,
           "goals": 0,
           "assists": 0,
-          "appearances": 3,
+          "appearances": 1,
           "clean_sheets": 0,
-          "position": "M"
+          "position": "D"
         },
         {
           "name": "E. Skhiri",
-          "minutes": 251,
+          "minutes": 188,
           "goals": 0,
           "assists": 0,
-          "appearances": 3,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "M"
         },
         {
           "name": "R. Khedira",
-          "minutes": 151,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "E. Achouri",
-          "minutes": 41,
+          "minutes": 82,
           "goals": 0,
           "assists": 0,
           "appearances": 3,
@@ -18075,76 +18633,76 @@
           "minutes": 0,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 1,
           "clean_sheets": 0,
           "position": "G"
         },
         {
           "name": "A. Dahmen",
-          "minutes": 180,
+          "minutes": 0,
           "goals": 0,
           "assists": 0,
-          "appearances": 2,
+          "appearances": 0,
           "clean_sheets": 0,
           "position": "G"
         },
         {
           "name": "A. Abdi",
-          "minutes": 269,
+          "minutes": 94,
           "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "M"
-        },
-        {
-          "name": "M. Talbi",
-          "minutes": 270,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "S. Tounekti",
-          "minutes": 83,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "A"
-        },
-        {
-          "name": "A. Ben Hmida",
-          "minutes": 203,
-          "goals": 0,
-          "assists": 0,
-          "appearances": 3,
-          "clean_sheets": 0,
-          "position": "D"
-        },
-        {
-          "name": "O. Rekik",
-          "minutes": 180,
-          "goals": 1,
           "assists": 0,
           "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "H. Mejbri",
-          "minutes": 270,
+          "name": "M. Talbi",
+          "minutes": 188,
           "goals": 0,
-          "assists": 2,
-          "appearances": 3,
+          "assists": 0,
+          "appearances": 2,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "S. Tounekti",
+          "minutes": 81,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
           "clean_sheets": 0,
           "position": "A"
         },
         {
+          "name": "H. Mahmoud",
+          "minutes": 110,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
+          "name": "O. Rekik",
+          "minutes": 188,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 3,
+          "clean_sheets": 0,
+          "position": "D"
+        },
+        {
+          "name": "H. Mejbri",
+          "minutes": 78,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 1,
+          "clean_sheets": 0,
+          "position": "M"
+        },
+        {
           "name": "A. Ben Slimane",
-          "minutes": 242,
+          "minutes": 90,
           "goals": 0,
           "assists": 0,
           "appearances": 3,
@@ -18153,19 +18711,19 @@
         },
         {
           "name": "Ismaël Gharbi",
-          "minutes": 134,
+          "minutes": 124,
           "goals": 0,
           "assists": 0,
-          "appearances": 3,
+          "appearances": 4,
           "clean_sheets": 0,
-          "position": "A"
+          "position": "M"
         },
         {
           "name": "E. Saad",
-          "minutes": 117,
+          "minutes": 12,
           "goals": 0,
           "assists": 0,
-          "appearances": 2,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "A"
         },
@@ -18174,12 +18732,21 @@
           "minutes": 0,
           "goals": 0,
           "assists": 0,
-          "appearances": 0,
+          "appearances": 2,
           "clean_sheets": 0,
           "position": "D"
         },
         {
-          "name": "A. Arous",
+          "name": "K. Ayari",
+          "minutes": 77,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "A"
+        },
+        {
+          "name": "R. Chikhaoui",
           "minutes": 0,
           "goals": 0,
           "assists": 0,
@@ -18189,12 +18756,21 @@
         },
         {
           "name": "C. Abdelmouhib",
-          "minutes": 90,
+          "minutes": 188,
           "goals": 0,
           "assists": 0,
-          "appearances": 1,
+          "appearances": 3,
           "clean_sheets": 0,
           "position": "G"
+        },
+        {
+          "name": "R. Elloumi",
+          "minutes": 47,
+          "goals": 0,
+          "assists": 0,
+          "appearances": 4,
+          "clean_sheets": 0,
+          "position": "A"
         },
         {
           "name": "D. Bronn",
@@ -20208,22 +20784,5 @@
       ]
     }
   },
-  "warnings": [
-    {
-      "type": "api_error",
-      "endpoint": "/players",
-      "team_id": 1567,
-      "errors": {
-        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
-      }
-    },
-    {
-      "type": "api_error",
-      "endpoint": "/players",
-      "team_id": 1548,
-      "errors": {
-        "rateLimit": "Too many requests. You have exceeded the limit of requests per minute of your subscription."
-      }
-    }
-  ]
+  "warnings": []
 }
