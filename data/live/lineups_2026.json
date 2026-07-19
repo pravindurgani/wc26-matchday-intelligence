@@ -1,8 +1,156 @@
 {
-  "generated_at": "2026-07-19T15:50:56.447120+00:00",
+  "generated_at": "2026-07-19T18:54:57.578546+00:00",
   "schema_version": 1,
   "source": "api_football",
   "hours_ahead": 4,
-  "lineups": [],
+  "lineups": [
+    {
+      "match_id": 104,
+      "home": "Spain",
+      "away": "Argentina",
+      "home_team_adjustment_elo": 0.0,
+      "away_team_adjustment_elo": 0.0,
+      "home_adjustment_reason": null,
+      "away_adjustment_reason": null,
+      "baseline_source": "none:first_recorded_xi",
+      "home_xi": [
+        {
+          "id": 47270,
+          "name": "Unai Simón",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 47519,
+          "name": "Pedro Porro",
+          "number": 12,
+          "pos": "D"
+        },
+        {
+          "id": 396623,
+          "name": "Pau Cubarsí Paredes",
+          "number": 22,
+          "pos": "D"
+        },
+        {
+          "id": 622,
+          "name": "Aymeric Laporte",
+          "number": 14,
+          "pos": "D"
+        },
+        {
+          "id": 47380,
+          "name": "Marc Cucurella",
+          "number": 24,
+          "pos": "D"
+        },
+        {
+          "id": 44,
+          "name": "Rodri",
+          "number": 16,
+          "pos": "M"
+        },
+        {
+          "id": 1323,
+          "name": "Dani Olmo",
+          "number": 10,
+          "pos": "M"
+        },
+        {
+          "id": 328,
+          "name": "Fabián Ruiz",
+          "number": 8,
+          "pos": "M"
+        },
+        {
+          "id": 386828,
+          "name": "Lamine Yamal",
+          "number": 19,
+          "pos": "F"
+        },
+        {
+          "id": 47323,
+          "name": "Mikel Oyarzabal",
+          "number": 21,
+          "pos": "F"
+        },
+        {
+          "id": 182219,
+          "name": "Álex Baena",
+          "number": 15,
+          "pos": "M"
+        }
+      ],
+      "away_xi": [
+        {
+          "id": 19599,
+          "name": "E. Martínez",
+          "number": 23,
+          "pos": "G"
+        },
+        {
+          "id": 2468,
+          "name": "G. Montiel",
+          "number": 4,
+          "pos": "D"
+        },
+        {
+          "id": 30776,
+          "name": "C. Romero",
+          "number": 13,
+          "pos": "D"
+        },
+        {
+          "id": 2467,
+          "name": "Lisandro Martínez",
+          "number": 6,
+          "pos": "D"
+        },
+        {
+          "id": 529,
+          "name": "N. Tagliafico",
+          "number": 3,
+          "pos": "D"
+        },
+        {
+          "id": 2472,
+          "name": "R. De Paul",
+          "number": 7,
+          "pos": "M"
+        },
+        {
+          "id": 5996,
+          "name": "E. Fernández",
+          "number": 24,
+          "pos": "M"
+        },
+        {
+          "id": 6716,
+          "name": "A. Mac Allister",
+          "number": 20,
+          "pos": "M"
+        },
+        {
+          "id": 26315,
+          "name": "N. González",
+          "number": 15,
+          "pos": "F"
+        },
+        {
+          "id": 154,
+          "name": "L. Messi",
+          "number": 10,
+          "pos": "F"
+        },
+        {
+          "id": 6009,
+          "name": "J. Álvarez",
+          "number": 9,
+          "pos": "F"
+        }
+      ],
+      "captured_at": "2026-07-19T18:54:57.578520+00:00"
+    }
+  ],
   "warnings": []
 }
