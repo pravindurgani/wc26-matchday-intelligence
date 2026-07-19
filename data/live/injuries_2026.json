@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T08:03:04.108039+00:00",
+  "generated_at": "2026-07-19T10:20:56.264995+00:00",
   "schema_version": 1,
   "source": "api_football",
   "league_id": 1,
@@ -628,8 +628,8 @@
       ]
     },
     "England": {
-      "total_elo_adjustment": -36.0,
-      "total_net_elo_adjustment": -36.0,
+      "total_elo_adjustment": -48.0,
+      "total_net_elo_adjustment": -48.0,
       "players": [
         {
           "name": "R. James",
@@ -684,6 +684,21 @@
             "is_gk": false,
             "minutes": 19,
             "team_top_minutes": 634
+          }
+        },
+        {
+          "name": "K. Mainoo",
+          "tier": "tier_2_starter",
+          "auto_tier_source": "default",
+          "status": "confirmed_out",
+          "reason": "Wound",
+          "elo": -12.0,
+          "replacement_elo": null,
+          "net_elo": -12.0,
+          "fixture_id": 1591865,
+          "auto_tier_suggestion": "tier_3_squad",
+          "auto_tier_components": {
+            "reason": "zero_minutes"
           }
         }
       ]
@@ -969,12 +984,12 @@
           "fixture_id": 1591865,
           "auto_tier_suggestion": "tier_2_starter",
           "auto_tier_components": {
-            "minutes_share": 0.762,
+            "minutes_share": 0.667,
             "ga90": 0.0,
             "cs_share": 0.0,
             "is_gk": false,
             "minutes": 480,
-            "team_top_minutes": 630
+            "team_top_minutes": 720
           }
         }
       ]
