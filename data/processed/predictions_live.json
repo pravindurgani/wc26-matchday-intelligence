@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T21:51:52.125562+00:00",
+  "generated_at": "2026-07-19T22:11:55.194443+00:00",
   "n_simulations_per_seed": 5000,
   "n_seeds": 5,
   "n_simulations_total": 25000,
@@ -163,30 +163,10 @@
       "p_reach_qf": 1.0,
       "p_reach_sf": 1.0,
       "p_reach_final": 1.0,
-      "p_champion": 0.5136800000000001,
+      "p_champion": 1.0,
       "p_third_place": 0.0,
-      "p_champion_p05": 0.50092,
-      "p_champion_p95": 0.52308,
-      "p_finish_1st_group": 1.0,
-      "p_finish_2nd_group": 0.0,
-      "p_finish_3rd_group": 0.0,
-      "p_finish_4th_group": 0.0
-    },
-    {
-      "team": "Argentina",
-      "group": "J",
-      "elo": 2174.2760725140956,
-      "fifa_pts": 1873.2,
-      "squad_value_eur_m": 819,
-      "p_advance_groups": 1.0,
-      "p_reach_r16": 1.0,
-      "p_reach_qf": 1.0,
-      "p_reach_sf": 1.0,
-      "p_reach_final": 1.0,
-      "p_champion": 0.4863200000000001,
-      "p_third_place": 0.0,
-      "p_champion_p05": 0.47692,
-      "p_champion_p95": 0.49908,
+      "p_champion_p05": 1.0,
+      "p_champion_p95": 1.0,
       "p_finish_1st_group": 1.0,
       "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
@@ -889,6 +869,26 @@
       "p_champion_p95": 0.0,
       "p_finish_1st_group": 0.0,
       "p_finish_2nd_group": 1.0,
+      "p_finish_3rd_group": 0.0,
+      "p_finish_4th_group": 0.0
+    },
+    {
+      "team": "Argentina",
+      "group": "J",
+      "elo": 2174.2760725140956,
+      "fifa_pts": 1873.2,
+      "squad_value_eur_m": 819,
+      "p_advance_groups": 1.0,
+      "p_reach_r16": 1.0,
+      "p_reach_qf": 1.0,
+      "p_reach_sf": 1.0,
+      "p_reach_final": 1.0,
+      "p_champion": 0.0,
+      "p_third_place": 0.0,
+      "p_champion_p05": 0.0,
+      "p_champion_p95": 0.0,
+      "p_finish_1st_group": 1.0,
+      "p_finish_2nd_group": 0.0,
       "p_finish_3rd_group": 0.0,
       "p_finish_4th_group": 0.0
     },
@@ -4949,7 +4949,16 @@
       "slot_b": "W102",
       "home": "Spain",
       "away": "Argentina",
-      "locked_score": null,
+      "locked_score": {
+        "home": "Spain",
+        "away": "Argentina",
+        "home_score": 1,
+        "away_score": 0,
+        "home_pens": null,
+        "away_pens": null,
+        "winner": "home",
+        "status": "AET"
+      },
       "lambda_home": 1.3830830454826355,
       "lambda_away": 1.3460047543048859,
       "lam_home": 1.3830830454826355,
@@ -5441,9 +5450,9 @@
   },
   "annex_c_misses": 0,
   "concentration": {
-    "top1_champion_p": 0.5136800000000001,
-    "top2_combined": 1.0000000000000002,
-    "top5_combined": 1.0000000000000002
+    "top1_champion_p": 1.0,
+    "top2_combined": 1.0,
+    "top5_combined": 1.0
   },
   "model_caveats": [
     "Probabilities are Monte Carlo frequencies, not point forecasts.",
@@ -5619,9 +5628,10 @@
     100,
     101,
     102,
-    103
+    103,
+    104
   ],
-  "input_hash": "a05606bccd68858c",
+  "input_hash": "49e1704a9f8bad8e",
   "grand_cap_applied": {
     "Czechia": {
       "raw_elo": -45.87,
