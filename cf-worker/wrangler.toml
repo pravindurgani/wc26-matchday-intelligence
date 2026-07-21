@@ -10,8 +10,14 @@ compatibility_date = "2026-06-10"
 # CF cron triggers are reliably delivered (unlike GitHub Actions schedule,
 # which load-sheds during peak). 10-min cadence matches the design intent
 # of live-matchday.yml.
+# 2026-07-21 wind-down: tournament over, dispatcher retired. An empty cron
+# list removes the scheduled trigger on the next `wrangler deploy`. The live
+# Worker keeps its old cron until that deploy runs (or the Worker is deleted
+# from the Cloudflare dashboard) — but live-matchday.yml is now
+# live-matchday.yml.disabled, so any stray dispatch just 404s and burns
+# nothing. Restore with crons = ["*/10 * * * *"] to resume.
 [triggers]
-crons = ["*/10 * * * *"]
+crons = []
 
 # Tunable knobs without a code change. NOTE: [vars] edits still require a
 # `wrangler deploy` to reach the live Worker — nothing in this directory

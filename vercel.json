@@ -4,6 +4,12 @@
   "outputDirectory": "dashboard",
   "framework": null,
   "cleanUrls": true,
+  "//": "2026-07-21 wind-down: tournament over. Git-push deployments are switched off so no build minutes are consumed. The last production deployment stays live and keeps serving the site. To resume, set these back to true (or remove the `git` block).",
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
   "headers": [
     {
       "source": "/(.*\\.json)",
