@@ -15,19 +15,22 @@ name: Test + pre-flight
 # Cheap: each suite runs in <2s, pre_flight runs in ~3s, JS syntax check is
 # instant. Total wall-clock budget: ~30s including checkout + pip cache.
 
+# 2026-07-21 wind-down: the tournament is over and the site is frozen as a
+# read-only showcase. Automatic triggers (push / pull_request) are removed so
+# no Actions minutes are consumed. Run this manually from the Actions tab if
+# the code is ever touched again — then restore the push/PR triggers below.
+#
+#   push:
+#     branches: [main]
+#     paths-ignore:
+#       - 'data/live/**'
+#       - 'dashboard/predictions_live.json'
+#       - 'dashboard/live_state.json'
+#       - 'dashboard/live_delta.json'
+#       - 'dashboard/matchday_intelligence.json'
+#   pull_request:
+#     branches: [main]
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      # Bot commits touch only data files — skip the gate when nothing else
-      # changed. Pytest + pre_flight cover code paths, not data refresh.
-      - 'data/live/**'
-      - 'dashboard/predictions_live.json'
-      - 'dashboard/live_state.json'
-      - 'dashboard/live_delta.json'
-      - 'dashboard/matchday_intelligence.json'
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
